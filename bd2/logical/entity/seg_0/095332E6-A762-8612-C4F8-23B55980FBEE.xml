@@ -15,23 +15,9 @@
 <minVolumes>0</minVolumes>
 <normalForm>Third</normalForm>
 <attributes itemClass="oracle.dbtools.crest.model.design.logical.Attribute">
-<Attribute name="Id" id="C62E1F72-1585-88DC-E682-F780D00B2C1F">
-<createdBy>kamil</createdBy>
-<createdTime>2025-04-26 11:43:34 UTC</createdTime>
-<generatorID>BA854D00-3DD7-C5D6-4262-17D93CF73E0C</generatorID>
-<ownerDesignName>bd2</ownerDesignName>
-<engineerTo>
-<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
-</engineerTo>
-<referedAttribute>36084928-AA8D-9865-2E4E-E54AFB85D96D</referedAttribute>
-<useDomainConstraints>false</useDomainConstraints>
-<use>1</use>
-<logicalDatatype>LOGDT011</logicalDatatype>
-<ownDataTypeParameters>,,</ownDataTypeParameters>
-</Attribute>
-<Attribute name="Id_1" id="679B3A32-6322-3EFF-C6F6-A115F5B12418">
-<createdBy>kamil</createdBy>
-<createdTime>2025-04-26 11:59:44 UTC</createdTime>
+<Attribute name="Id" id="CCDA2467-F42C-839F-131F-C356DBF00705">
+<createdBy>Michciu</createdBy>
+<createdTime>2025-04-26 16:04:58 UTC</createdTime>
 <ownerDesignName>bd2</ownerDesignName>
 <engineerTo>
 <item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
@@ -54,6 +40,20 @@
 <dataTypeSize>50 CHAR</dataTypeSize>
 <ownDataTypeParameters>50 CHAR,,</ownDataTypeParameters>
 </Attribute>
+<Attribute name="Attribute_69" id="C62E1F72-1585-88DC-E682-F780D00B2C1F">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 11:43:34 UTC</createdTime>
+<generatorID>BA854D00-3DD7-C5D6-4262-17D93CF73E0C</generatorID>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<referedAttribute>36084928-AA8D-9865-2E4E-E54AFB85D96D</referedAttribute>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT011</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
 </attributes>
 <identifiers itemClass="oracle.dbtools.crest.model.design.logical.CandidateKey">
 <identifier id="61AB3A73-4DB2-822F-C385-62D6B78AAC8E" name="Kod rabatowy PK">
@@ -65,7 +65,7 @@
 </engineerTo>
 <pk>true</pk>
 <usedAttributes>
-<attributeRef>679B3A32-6322-3EFF-C6F6-A115F5B12418</attributeRef>
+<attributeRef>CCDA2467-F42C-839F-131F-C356DBF00705</attributeRef>
 </usedAttributes>
 </identifier>
 </identifiers>

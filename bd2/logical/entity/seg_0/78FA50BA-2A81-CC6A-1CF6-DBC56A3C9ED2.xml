@@ -15,9 +15,9 @@
 <minVolumes>0</minVolumes>
 <normalForm>Third</normalForm>
 <attributes itemClass="oracle.dbtools.crest.model.design.logical.Attribute">
-<Attribute name="Ilość biegów" id="8145F35D-8C47-AC7A-DAEA-6F798D76F473">
+<Attribute name="Id" id="DF5DEC37-2663-F4F5-C2A7-423BC07B1D6A">
 <createdBy>kamil</createdBy>
-<createdTime>2025-04-26 11:34:49 UTC</createdTime>
+<createdTime>2025-04-26 11:35:03 UTC</createdTime>
 <ownerDesignName>bd2</ownerDesignName>
 <engineerTo>
 <item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
@@ -27,9 +27,9 @@
 <logicalDatatype>LOGDT011</logicalDatatype>
 <ownDataTypeParameters>,,</ownDataTypeParameters>
 </Attribute>
-<Attribute name="Id" id="DF5DEC37-2663-F4F5-C2A7-423BC07B1D6A">
+<Attribute name="Ilość biegów" id="8145F35D-8C47-AC7A-DAEA-6F798D76F473">
 <createdBy>kamil</createdBy>
-<createdTime>2025-04-26 11:35:03 UTC</createdTime>
+<createdTime>2025-04-26 11:34:49 UTC</createdTime>
 <ownerDesignName>bd2</ownerDesignName>
 <engineerTo>
 <item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>

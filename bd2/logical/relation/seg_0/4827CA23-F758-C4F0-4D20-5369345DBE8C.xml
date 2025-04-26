@@ -8,8 +8,8 @@
 </engineerTo>
 <sourcePk>B0FDC0BC-FBF6-51EA-16E2-B84AF7079C8C</sourcePk>
 <identifying>false</identifying>
-<nameOnSource>dotyczyć</nameOnSource>
-<nameOnTarget>jeździć na</nameOnTarget>
+<nameOnSource>zasila</nameOnSource>
+<nameOnTarget>jest zasilany przez</nameOnTarget>
 <optionalSource>true</optionalSource>
 <optionalTarget>false</optionalTarget>
 <sourceCardinality>1</sourceCardinality>

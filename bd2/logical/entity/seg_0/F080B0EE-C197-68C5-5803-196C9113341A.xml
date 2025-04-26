@@ -22,7 +22,6 @@
 <engineerTo>
 <item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
 </engineerTo>
-<nullsAllowed>true</nullsAllowed>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
 <logicalDatatype>LOGDT011</logicalDatatype>
@@ -42,4 +41,18 @@
 <ownDataTypeParameters>,,</ownDataTypeParameters>
 </Attribute>
 </attributes>
+<identifiers itemClass="oracle.dbtools.crest.model.design.logical.CandidateKey">
+<identifier id="1601A494-CD49-8AB8-5BCA-5218FF24A333" name="Status dostawy PK">
+<createdBy>Michciu</createdBy>
+<createdTime>2025-04-26 16:02:32 UTC</createdTime>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<pk>true</pk>
+<usedAttributes>
+<attributeRef>ABC00480-0E4B-DE7B-2E64-3ED914FC84BC</attributeRef>
+</usedAttributes>
+</identifier>
+</identifiers>
 </Entity>

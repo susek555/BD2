@@ -7,8 +7,9 @@
 <item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
 </engineerTo>
 <sourcePk>CF937945-7411-AC6E-CF6B-3CCB9FA8C1DA</sourcePk>
-<arc>B779168D-6B0A-80F7-5064-4A54F3C6F2FF</arc>
 <identifying>false</identifying>
+<nameOnSource>składa się z </nameOnSource>
+<nameOnTarget>należy do</nameOnTarget>
 <optionalSource>true</optionalSource>
 <optionalTarget>false</optionalTarget>
 <sourceCardinality>1</sourceCardinality>

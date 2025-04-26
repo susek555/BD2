@@ -8,8 +8,8 @@
 </engineerTo>
 <sourcePk>5136E9F4-15B7-A203-AD24-DADF0C6CDE61</sourcePk>
 <identifying>false</identifying>
-<nameOnSource>być</nameOnSource>
-<nameOnTarget>mieć</nameOnTarget>
+<nameOnSource>produkuje</nameOnSource>
+<nameOnTarget>wyprodukowany przez</nameOnTarget>
 <optionalSource>true</optionalSource>
 <optionalTarget>false</optionalTarget>
 <sourceCardinality>1</sourceCardinality>

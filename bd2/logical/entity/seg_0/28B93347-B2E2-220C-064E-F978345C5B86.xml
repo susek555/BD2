@@ -29,18 +29,6 @@
 <logicalDatatype>LOGDT011</logicalDatatype>
 <ownDataTypeParameters>,,</ownDataTypeParameters>
 </Attribute>
-<Attribute name="Id_1" id="9ACD752A-5589-0762-862B-AC9399F4BB2B">
-<createdBy>kamil</createdBy>
-<createdTime>2025-04-26 11:45:37 UTC</createdTime>
-<ownerDesignName>bd2</ownerDesignName>
-<engineerTo>
-<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
-</engineerTo>
-<useDomainConstraints>false</useDomainConstraints>
-<use>1</use>
-<logicalDatatype>LOGDT011</logicalDatatype>
-<ownDataTypeParameters>,,</ownDataTypeParameters>
-</Attribute>
 <Attribute name="Token" id="C76A4F73-B849-808A-67A8-ECD7DF869DA0">
 <createdBy>kamil</createdBy>
 <createdTime>2025-04-26 11:45:53 UTC</createdTime>
@@ -65,7 +53,7 @@
 </engineerTo>
 <pk>true</pk>
 <usedAttributes>
-<attributeRef>9ACD752A-5589-0762-862B-AC9399F4BB2B</attributeRef>
+<attributeRef>558BF25B-270D-B02A-0DBB-B60CD2B17A65</attributeRef>
 </usedAttributes>
 </identifier>
 </identifiers>

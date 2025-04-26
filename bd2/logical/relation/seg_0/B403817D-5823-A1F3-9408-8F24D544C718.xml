@@ -8,8 +8,8 @@
 </engineerTo>
 <sourcePk>31350A17-D8F7-7638-3F34-77711DF29F00</sourcePk>
 <identifying>false</identifying>
-<nameOnSource>mieć</nameOnSource>
-<nameOnTarget>opisywać</nameOnTarget>
+<nameOnSource>powiązana z </nameOnSource>
+<nameOnTarget>opsisuje</nameOnTarget>
 <optionalSource>true</optionalSource>
 <optionalTarget>false</optionalTarget>
 <sourceCardinality>1</sourceCardinality>

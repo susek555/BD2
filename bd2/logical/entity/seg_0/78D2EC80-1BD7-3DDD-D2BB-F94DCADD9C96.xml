@@ -15,7 +15,7 @@
 <minVolumes>0</minVolumes>
 <normalForm>Third</normalForm>
 <attributes itemClass="oracle.dbtools.crest.model.design.logical.Attribute">
-<Attribute name="Id" id="B8EE1419-A049-8B85-0DF3-C4F6FA706895">
+<Attribute name="a" id="B8EE1419-A049-8B85-0DF3-C4F6FA706895">
 <createdBy>kamil</createdBy>
 <createdTime>2025-04-26 09:48:28 UTC</createdTime>
 <generatorID>7CF1E103-84E2-B14B-A2B8-7B05110DCE03</generatorID>
@@ -29,7 +29,7 @@
 <logicalDatatype>LOGDT011</logicalDatatype>
 <ownDataTypeParameters>,,</ownDataTypeParameters>
 </Attribute>
-<Attribute name="Id_1" id="1C3640B6-5150-99C9-9F93-38E894260DBB">
+<Attribute name="Id" id="1C3640B6-5150-99C9-9F93-38E894260DBB">
 <createdBy>kamil</createdBy>
 <createdTime>2025-04-26 11:53:22 UTC</createdTime>
 <ownerDesignName>bd2</ownerDesignName>
@@ -81,16 +81,15 @@
 <logicalDatatype>LOGDT011</logicalDatatype>
 <ownDataTypeParameters>,,</ownDataTypeParameters>
 </Attribute>
-<Attribute name="Id_11" id="600F2D22-6458-E8B4-E1BB-3049D1C54D37">
-<createdBy>kamil</createdBy>
-<createdTime>2025-04-26 12:00:22 UTC</createdTime>
+<Attribute name="Id3" id="D22E8E6D-492D-7BDF-146B-4D79132D2AD2">
+<createdBy>Michciu</createdBy>
+<createdTime>2025-04-26 16:05:08 UTC</createdTime>
 <generatorID>8A7BFB2D-A29E-6474-10D7-7E6EA99B080C</generatorID>
 <ownerDesignName>bd2</ownerDesignName>
 <engineerTo>
 <item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
 </engineerTo>
-<referedAttribute>679B3A32-6322-3EFF-C6F6-A115F5B12418</referedAttribute>
-<useDomainConstraints>false</useDomainConstraints>
+<referedAttribute>CCDA2467-F42C-839F-131F-C356DBF00705</referedAttribute>
 <use>1</use>
 <logicalDatatype>LOGDT011</logicalDatatype>
 <ownDataTypeParameters>,,</ownDataTypeParameters>

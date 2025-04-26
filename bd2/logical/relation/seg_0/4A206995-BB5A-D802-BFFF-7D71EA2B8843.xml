@@ -8,8 +8,8 @@
 </engineerTo>
 <sourcePk>5709245F-9D90-140C-A845-A20DEFBAF791</sourcePk>
 <identifying>false</identifying>
-<nameOnSource>być posiadanym</nameOnSource>
-<nameOnTarget>posiadać</nameOnTarget>
+<nameOnSource>montowana w</nameOnSource>
+<nameOnTarget>wyposażony  w</nameOnTarget>
 <optionalSource>true</optionalSource>
 <optionalTarget>false</optionalTarget>
 <sourceCardinality>1</sourceCardinality>

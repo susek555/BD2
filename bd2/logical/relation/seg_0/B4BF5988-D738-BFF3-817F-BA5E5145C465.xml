@@ -6,9 +6,10 @@
 <engineerTo>
 <item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
 </engineerTo>
+<sourcePk>1601A494-CD49-8AB8-5BCA-5218FF24A333</sourcePk>
 <identifying>false</identifying>
-<nameOnSource>być posiadany</nameOnSource>
-<nameOnTarget>posiadać</nameOnTarget>
+<nameOnSource>przypisany do</nameOnSource>
+<nameOnTarget>zaweira</nameOnTarget>
 <optionalSource>true</optionalSource>
 <optionalTarget>false</optionalTarget>
 <sourceCardinality>1</sourceCardinality>

@@ -8,8 +8,8 @@
 </engineerTo>
 <sourcePk>AB85CC48-E3D7-C1B1-719C-3CA175BA098B</sourcePk>
 <identifying>false</identifying>
-<nameOnSource>być posiadany</nameOnSource>
-<nameOnTarget>posiadać</nameOnTarget>
+<nameOnSource>przypisany do</nameOnSource>
+<nameOnTarget>zawiera</nameOnTarget>
 <optionalSource>true</optionalSource>
 <optionalTarget>false</optionalTarget>
 <sourceCardinality>1</sourceCardinality>

@@ -39,6 +39,20 @@
 <logicalDatatype>LOGDT007</logicalDatatype>
 <ownDataTypeParameters>,,</ownDataTypeParameters>
 </Attribute>
+<Attribute name="Id1" id="55F18A66-1F50-0639-16F1-C8E242F15715">
+<createdBy>Michciu</createdBy>
+<createdTime>2025-04-26 16:02:33 UTC</createdTime>
+<generatorID>B4BF5988-D738-BFF3-817F-BA5E5145C465</generatorID>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<referedAttribute>ABC00480-0E4B-DE7B-2E64-3ED914FC84BC</referedAttribute>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT011</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
 </attributes>
 <identifiers itemClass="oracle.dbtools.crest.model.design.logical.CandidateKey">
 <identifier id="31350A17-D8F7-7638-3F34-77711DF29F00" name="Dostawa PK">

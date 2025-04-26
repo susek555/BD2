@@ -9,8 +9,8 @@
 <sourcePk>61AB3A73-4DB2-822F-C385-62D6B78AAC8E</sourcePk>
 <arc>4F106731-FA70-2ECE-4D56-EC84DAEB29E8</arc>
 <identifying>false</identifying>
-<nameOnSource>dawać</nameOnSource>
-<nameOnTarget>zależeć</nameOnTarget>
+<nameOnSource>zapewnia</nameOnSource>
+<nameOnTarget>realizowana przez</nameOnTarget>
 <optionalSource>true</optionalSource>
 <optionalTarget>false</optionalTarget>
 <sourceCardinality>1</sourceCardinality>

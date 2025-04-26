@@ -8,8 +8,8 @@
 </engineerTo>
 <sourcePk>FCB3E841-C688-0012-C4B6-B1D8E0C584C9</sourcePk>
 <identifying>false</identifying>
-<nameOnSource>być sprzedanym</nameOnSource>
-<nameOnTarget>dotyczyć</nameOnTarget>
+<nameOnSource>jest elementem</nameOnSource>
+<nameOnTarget>dotyczy</nameOnTarget>
 <optionalSource>true</optionalSource>
 <optionalTarget>false</optionalTarget>
 <sourceCardinality>1</sourceCardinality>
