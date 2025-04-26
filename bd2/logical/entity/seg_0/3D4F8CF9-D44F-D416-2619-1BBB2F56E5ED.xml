@@ -1,0 +1,72 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Entity class="oracle.dbtools.crest.model.design.logical.Entity" directorySegmentName="seg_0" id="3D4F8CF9-D44F-D416-2619-1BBB2F56E5ED" name="TOWAR">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 08:14:05 UTC</createdTime>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<adequatelyNormalized>NO</adequatelyNormalized>
+<expectedVolumes>0</expectedVolumes>
+<fwdEngineeringStrategyName>Single Table</fwdEngineeringStrategyName>
+<growthPercent>0</growthPercent>
+<growthType>Year</growthType>
+<maxVolumes>9999999</maxVolumes>
+<minVolumes>0</minVolumes>
+<normalForm>Third</normalForm>
+<attributes itemClass="oracle.dbtools.crest.model.design.logical.Attribute">
+<Attribute name="Id" id="B3C88417-CF7A-109A-0F98-58793DAAE73D">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 08:16:11 UTC</createdTime>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT011</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="Nazwa" id="1AE80218-2182-244C-09BD-A1066DFA3A8D">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 08:14:35 UTC</createdTime>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT025</logicalDatatype>
+<dataTypeSize>50 CHAR</dataTypeSize>
+<ownDataTypeParameters>50 CHAR,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="Id1" id="D86A2C92-025B-9FA9-715E-D77B48C1F096">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 08:20:14 UTC</createdTime>
+<generatorID>629ADEB2-D5A2-0EE5-3EB7-1A7584431801</generatorID>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<referedAttribute>E69E8AB7-1886-B8FB-40EE-EB4D12ED5474</referedAttribute>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT011</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+</attributes>
+<identifiers itemClass="oracle.dbtools.crest.model.design.logical.CandidateKey">
+<identifier id="FCB3E841-C688-0012-C4B6-B1D8E0C584C9" name="TOWAR PK">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 08:16:50 UTC</createdTime>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<pk>true</pk>
+<usedAttributes>
+<attributeRef>B3C88417-CF7A-109A-0F98-58793DAAE73D</attributeRef>
+</usedAttributes>
+</identifier>
+</identifiers>
+</Entity>

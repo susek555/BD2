@@ -1,0 +1,21 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Relation class="oracle.dbtools.crest.model.design.logical.Relation" name="Rodzaj_Towar" directorySegmentName="seg_0" id="629ADEB2-D5A2-0EE5-3EB7-1A7584431801">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 08:20:14 UTC</createdTime>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<sourcePk>5136E9F4-15B7-A203-AD24-DADF0C6CDE61</sourcePk>
+<identifying>false</identifying>
+<nameOnSource>być</nameOnSource>
+<nameOnTarget>mieć</nameOnTarget>
+<optionalSource>true</optionalSource>
+<optionalTarget>false</optionalTarget>
+<sourceCardinality>1</sourceCardinality>
+<sourceEntity>E338A226-7396-F6D3-D988-249752727F37</sourceEntity>
+<targetCardinalityString>*</targetCardinalityString>
+<targetEntity>3D4F8CF9-D44F-D416-2619-1BBB2F56E5ED</targetEntity>
+<transferable>true</transferable>
+<deleteRule>NO ACTION</deleteRule>
+</Relation>

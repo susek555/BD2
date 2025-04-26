@@ -1,0 +1,17 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Entity class="oracle.dbtools.crest.model.design.logical.Entity" directorySegmentName="seg_0" id="49255D57-AB6B-57FD-D022-03DD8B7DF763" name="Promocja">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 09:45:29 UTC</createdTime>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<adequatelyNormalized>NO</adequatelyNormalized>
+<expectedVolumes>0</expectedVolumes>
+<fwdEngineeringStrategyName>Single Table</fwdEngineeringStrategyName>
+<growthPercent>0</growthPercent>
+<growthType>Year</growthType>
+<maxVolumes>9999999</maxVolumes>
+<minVolumes>0</minVolumes>
+<normalForm>Third</normalForm>
+</Entity>

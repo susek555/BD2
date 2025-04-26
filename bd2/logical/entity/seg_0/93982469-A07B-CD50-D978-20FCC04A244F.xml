@@ -1,0 +1,86 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Entity class="oracle.dbtools.crest.model.design.logical.Entity" directorySegmentName="seg_0" id="93982469-A07B-CD50-D978-20FCC04A244F" name="Dokument">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 08:30:45 UTC</createdTime>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<adequatelyNormalized>NO</adequatelyNormalized>
+<expectedVolumes>0</expectedVolumes>
+<fwdEngineeringStrategyName>Single Table</fwdEngineeringStrategyName>
+<growthPercent>0</growthPercent>
+<growthType>Year</growthType>
+<maxVolumes>9999999</maxVolumes>
+<minVolumes>0</minVolumes>
+<normalForm>Third</normalForm>
+<attributeInherType>All atributes</attributeInherType>
+<attributes itemClass="oracle.dbtools.crest.model.design.logical.Attribute">
+<Attribute name="Id" id="166B1C00-2B63-F187-4E01-F5D24E8163BF">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 08:31:22 UTC</createdTime>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT011</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="Data wystawienia" id="49A99E69-6D6C-73C9-F929-3B054D14121E">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 08:31:51 UTC</createdTime>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT007</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="Id1" id="7353906E-A315-1443-979D-4C565C1EF331">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 08:33:00 UTC</createdTime>
+<generatorID>B403817D-5823-A1F3-9408-8F24D544C718</generatorID>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<referedAttribute>52EF5C91-C758-7434-7449-0201C18402D3</referedAttribute>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT011</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="Id2" id="900D1937-A347-F481-D071-958F04073ECB">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 09:06:42 UTC</createdTime>
+<generatorID>2D96E108-8BAE-83D3-8596-5512DC1D3BA8</generatorID>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<referedAttribute>5EE0FD19-AD08-9EC6-7542-7237172BF1DD</referedAttribute>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT011</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+</attributes>
+<identifiers itemClass="oracle.dbtools.crest.model.design.logical.CandidateKey">
+<identifier id="CF937945-7411-AC6E-CF6B-3CCB9FA8C1DA" name="Faktura zakupu PK">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 08:31:48 UTC</createdTime>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<pk>true</pk>
+<usedAttributes>
+<attributeRef>166B1C00-2B63-F187-4E01-F5D24E8163BF</attributeRef>
+</usedAttributes>
+</identifier>
+</identifiers>
+</Entity>

@@ -1,0 +1,20 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Relation class="oracle.dbtools.crest.model.design.logical.Relation" name="Dokument_pozycje" directorySegmentName="seg_0" id="240AE7D6-5FE8-98DC-FC5E-1C5A82645142">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 09:11:20 UTC</createdTime>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<sourcePk>CF937945-7411-AC6E-CF6B-3CCB9FA8C1DA</sourcePk>
+<arc>B779168D-6B0A-80F7-5064-4A54F3C6F2FF</arc>
+<identifying>false</identifying>
+<optionalSource>true</optionalSource>
+<optionalTarget>false</optionalTarget>
+<sourceCardinality>1</sourceCardinality>
+<sourceEntity>93982469-A07B-CD50-D978-20FCC04A244F</sourceEntity>
+<targetCardinalityString>*</targetCardinalityString>
+<targetEntity>DBBD0989-799E-C1D8-E3C6-2ABE8D4AF761</targetEntity>
+<transferable>true</transferable>
+<deleteRule>NO ACTION</deleteRule>
+</Relation>

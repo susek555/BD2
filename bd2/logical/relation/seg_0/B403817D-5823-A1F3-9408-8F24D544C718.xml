@@ -1,0 +1,21 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Relation class="oracle.dbtools.crest.model.design.logical.Relation" name="Faktura_Dostawa" directorySegmentName="seg_0" id="B403817D-5823-A1F3-9408-8F24D544C718">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 08:33:00 UTC</createdTime>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<sourcePk>31350A17-D8F7-7638-3F34-77711DF29F00</sourcePk>
+<identifying>false</identifying>
+<nameOnSource>mieć</nameOnSource>
+<nameOnTarget>opisywać</nameOnTarget>
+<optionalSource>true</optionalSource>
+<optionalTarget>false</optionalTarget>
+<sourceCardinality>1</sourceCardinality>
+<sourceEntity>257DB4E7-7824-9465-7ED4-66223902370A</sourceEntity>
+<targetCardinalityString>*</targetCardinalityString>
+<targetEntity>93982469-A07B-CD50-D978-20FCC04A244F</targetEntity>
+<transferable>true</transferable>
+<deleteRule>NO ACTION</deleteRule>
+</Relation>
