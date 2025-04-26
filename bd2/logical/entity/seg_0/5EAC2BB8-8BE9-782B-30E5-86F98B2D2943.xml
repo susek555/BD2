@@ -1,7 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<Entity class="oracle.dbtools.crest.model.design.logical.Entity" directorySegmentName="seg_0" id="CB97F0F8-5411-CC92-C6B4-F7DDB39C665A" name="Rodzaj dokumentu">
+<Entity class="oracle.dbtools.crest.model.design.logical.Entity" directorySegmentName="seg_0" id="5EAC2BB8-8BE9-782B-30E5-86F98B2D2943" name="Rodzaj paliwa">
 <createdBy>kamil</createdBy>
-<createdTime>2025-04-26 09:04:57 UTC</createdTime>
+<createdTime>2025-04-26 11:33:07 UTC</createdTime>
 <ownerDesignName>bd2</ownerDesignName>
 <engineerTo>
 <item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
@@ -15,9 +15,9 @@
 <minVolumes>0</minVolumes>
 <normalForm>Third</normalForm>
 <attributes itemClass="oracle.dbtools.crest.model.design.logical.Attribute">
-<Attribute name="Id" id="5EE0FD19-AD08-9EC6-7542-7237172BF1DD">
+<Attribute name="Id" id="49AE69AA-9923-23C5-77F8-435DC20326AA">
 <createdBy>kamil</createdBy>
-<createdTime>2025-04-26 09:05:07 UTC</createdTime>
+<createdTime>2025-04-26 11:33:17 UTC</createdTime>
 <ownerDesignName>bd2</ownerDesignName>
 <engineerTo>
 <item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
@@ -27,9 +27,9 @@
 <logicalDatatype>LOGDT011</logicalDatatype>
 <ownDataTypeParameters>,,</ownDataTypeParameters>
 </Attribute>
-<Attribute name="Typ" id="91BF8C5B-61A8-ACA6-C532-8B56DCA70825">
+<Attribute name="Nazwa" id="85CC2AF1-532C-3EFC-89CF-16381F277F02">
 <createdBy>kamil</createdBy>
-<createdTime>2025-04-26 11:51:02 UTC</createdTime>
+<createdTime>2025-04-26 11:33:31 UTC</createdTime>
 <ownerDesignName>bd2</ownerDesignName>
 <engineerTo>
 <item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
@@ -37,21 +37,20 @@
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
 <logicalDatatype>LOGDT025</logicalDatatype>
-<dataTypeSize>30 CHAR</dataTypeSize>
-<ownDataTypeParameters>30 CHAR,,</ownDataTypeParameters>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
 </Attribute>
 </attributes>
 <identifiers itemClass="oracle.dbtools.crest.model.design.logical.CandidateKey">
-<identifier id="53C56F2B-CBE9-94B6-60DF-ADF315623F1A" name="Rodzaj dokumentu PK">
+<identifier id="B0FDC0BC-FBF6-51EA-16E2-B84AF7079C8C" name="Rodzaj paliwa PK">
 <createdBy>kamil</createdBy>
-<createdTime>2025-04-26 09:05:21 UTC</createdTime>
+<createdTime>2025-04-26 11:33:28 UTC</createdTime>
 <ownerDesignName>bd2</ownerDesignName>
 <engineerTo>
 <item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
 </engineerTo>
 <pk>true</pk>
 <usedAttributes>
-<attributeRef>5EE0FD19-AD08-9EC6-7542-7237172BF1DD</attributeRef>
+<attributeRef>49AE69AA-9923-23C5-77F8-435DC20326AA</attributeRef>
 </usedAttributes>
 </identifier>
 </identifiers>

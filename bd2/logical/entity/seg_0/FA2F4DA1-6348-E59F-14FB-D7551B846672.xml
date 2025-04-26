@@ -14,4 +14,32 @@
 <maxVolumes>9999999</maxVolumes>
 <minVolumes>0</minVolumes>
 <normalForm>Third</normalForm>
+<attributes itemClass="oracle.dbtools.crest.model.design.logical.Attribute">
+<Attribute name="Id" id="36084928-AA8D-9865-2E4E-E54AFB85D96D">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 11:43:22 UTC</createdTime>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT011</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+</attributes>
+<identifiers itemClass="oracle.dbtools.crest.model.design.logical.CandidateKey">
+<identifier id="24A1CC4D-C14C-971E-37C2-D2892677FD0A" name="Klient PK">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 11:43:26 UTC</createdTime>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<pk>true</pk>
+<usedAttributes>
+<attributeRef>36084928-AA8D-9865-2E4E-E54AFB85D96D</attributeRef>
+</usedAttributes>
+</identifier>
+</identifiers>
 </Entity>

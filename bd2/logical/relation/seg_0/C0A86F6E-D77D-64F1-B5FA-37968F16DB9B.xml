@@ -6,7 +6,10 @@
 <engineerTo>
 <item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
 </engineerTo>
+<sourcePk>297876F0-4052-5FD8-5743-326738430093</sourcePk>
 <identifying>false</identifying>
+<nameOnSource>być na dokumencie</nameOnSource>
+<nameOnTarget>być wystawiony przez</nameOnTarget>
 <optionalSource>true</optionalSource>
 <optionalTarget>false</optionalTarget>
 <sourceCardinality>1</sourceCardinality>

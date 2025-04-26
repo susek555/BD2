@@ -1,5 +1,5 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<Entity class="oracle.dbtools.crest.model.design.logical.Entity" directorySegmentName="seg_0" id="E338A226-7396-F6D3-D988-249752727F37" name="RODZAJ TOWARU">
+<Entity class="oracle.dbtools.crest.model.design.logical.Entity" directorySegmentName="seg_0" id="E338A226-7396-F6D3-D988-249752727F37" name="Producent">
 <createdBy>kamil</createdBy>
 <createdTime>2025-04-26 08:17:29 UTC</createdTime>
 <ownerDesignName>bd2</ownerDesignName>
@@ -27,7 +27,7 @@
 <logicalDatatype>LOGDT011</logicalDatatype>
 <ownDataTypeParameters>,,</ownDataTypeParameters>
 </Attribute>
-<Attribute name="Rodzaj" id="9DE98396-7109-BF1E-2FF2-200426AF07C7">
+<Attribute name="Nazwa" id="9DE98396-7109-BF1E-2FF2-200426AF07C7">
 <createdBy>kamil</createdBy>
 <createdTime>2025-04-26 08:18:22 UTC</createdTime>
 <ownerDesignName>bd2</ownerDesignName>

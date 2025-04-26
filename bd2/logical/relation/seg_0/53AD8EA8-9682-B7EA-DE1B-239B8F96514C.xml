@@ -1,20 +1,19 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<Relation class="oracle.dbtools.crest.model.design.logical.Relation" name="Relation_17" directorySegmentName="seg_0" id="8A7BFB2D-A29E-6474-10D7-7E6EA99B080C">
+<Relation class="oracle.dbtools.crest.model.design.logical.Relation" name="Relation_28" directorySegmentName="seg_0" id="53AD8EA8-9682-B7EA-DE1B-239B8F96514C">
 <createdBy>kamil</createdBy>
-<createdTime>2025-04-26 09:48:55 UTC</createdTime>
+<createdTime>2025-04-26 11:58:26 UTC</createdTime>
 <ownerDesignName>bd2</ownerDesignName>
 <engineerTo>
 <item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
 </engineerTo>
-<sourcePk>61AB3A73-4DB2-822F-C385-62D6B78AAC8E</sourcePk>
-<arc>4F106731-FA70-2ECE-4D56-EC84DAEB29E8</arc>
+<sourcePk>AB85CC48-E3D7-C1B1-719C-3CA175BA098B</sourcePk>
 <identifying>false</identifying>
-<nameOnSource>dawać</nameOnSource>
-<nameOnTarget>zależeć</nameOnTarget>
+<nameOnSource>być posiadany</nameOnSource>
+<nameOnTarget>posiadać</nameOnTarget>
 <optionalSource>true</optionalSource>
 <optionalTarget>false</optionalTarget>
 <sourceCardinality>1</sourceCardinality>
-<sourceEntity>095332E6-A762-8612-C4F8-23B55980FBEE</sourceEntity>
+<sourceEntity>24670EA8-EF96-2B58-4398-FE5B73B4876C</sourceEntity>
 <targetCardinalityString>*</targetCardinalityString>
 <targetEntity>78D2EC80-1BD7-3DDD-D2BB-F94DCADD9C96</targetEntity>
 <transferable>true</transferable>

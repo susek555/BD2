@@ -29,5 +29,85 @@
 <logicalDatatype>LOGDT011</logicalDatatype>
 <ownDataTypeParameters>,,</ownDataTypeParameters>
 </Attribute>
+<Attribute name="Id_1" id="1C3640B6-5150-99C9-9F93-38E894260DBB">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 11:53:22 UTC</createdTime>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT011</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="Id1" id="CBCBCF43-7A5B-BC39-2C7E-827872815921">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 11:58:26 UTC</createdTime>
+<generatorID>53AD8EA8-9682-B7EA-DE1B-239B8F96514C</generatorID>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<referedAttribute>964EAC67-5771-F510-BE32-3C020D272B63</referedAttribute>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT011</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="Wielkość" id="89C0DBA3-CCD8-73B8-0466-81A7D39FCB6E">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 11:58:42 UTC</createdTime>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT020</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="Id2" id="C719A4AB-2E3D-4353-B565-AE869EE38BCD">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 11:59:39 UTC</createdTime>
+<generatorID>94A678A7-5145-C524-F5B7-C85F8A406433</generatorID>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<referedAttribute>E45E84BF-F8A8-802F-E9C2-57EBFD1618D4</referedAttribute>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT011</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="Id_11" id="600F2D22-6458-E8B4-E1BB-3049D1C54D37">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 12:00:22 UTC</createdTime>
+<generatorID>8A7BFB2D-A29E-6474-10D7-7E6EA99B080C</generatorID>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<referedAttribute>679B3A32-6322-3EFF-C6F6-A115F5B12418</referedAttribute>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT011</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
 </attributes>
+<identifiers itemClass="oracle.dbtools.crest.model.design.logical.CandidateKey">
+<identifier id="BD199650-FD2F-0DA2-5DC9-A8AB545D9A23" name="Zniżka PK">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 11:53:31 UTC</createdTime>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<pk>true</pk>
+<usedAttributes>
+<attributeRef>1C3640B6-5150-99C9-9F93-38E894260DBB</attributeRef>
+</usedAttributes>
+</identifier>
+</identifiers>
 </Entity>

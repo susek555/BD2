@@ -6,8 +6,11 @@
 <engineerTo>
 <item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
 </engineerTo>
+<sourcePk>5147795D-9D6F-B21F-4258-93883C61B007</sourcePk>
 <arc>4F106731-FA70-2ECE-4D56-EC84DAEB29E8</arc>
 <identifying>false</identifying>
+<nameOnSource>dawać</nameOnSource>
+<nameOnTarget>realizować</nameOnTarget>
 <optionalSource>true</optionalSource>
 <optionalTarget>false</optionalTarget>
 <sourceCardinality>1</sourceCardinality>

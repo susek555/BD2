@@ -14,4 +14,59 @@
 <maxVolumes>9999999</maxVolumes>
 <minVolumes>0</minVolumes>
 <normalForm>Third</normalForm>
+<attributes itemClass="oracle.dbtools.crest.model.design.logical.Attribute">
+<Attribute name="Id" id="558BF25B-270D-B02A-0DBB-B60CD2B17A65">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 11:43:34 UTC</createdTime>
+<generatorID>B01DB338-B576-F426-4F05-3E7BE1D3E69C</generatorID>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<referedAttribute>36084928-AA8D-9865-2E4E-E54AFB85D96D</referedAttribute>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT011</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="Id_1" id="9ACD752A-5589-0762-862B-AC9399F4BB2B">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 11:45:37 UTC</createdTime>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT011</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="Token" id="C76A4F73-B849-808A-67A8-ECD7DF869DA0">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 11:45:53 UTC</createdTime>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT025</logicalDatatype>
+<dataTypeSize>64 CHAR</dataTypeSize>
+<ownDataTypeParameters>64 CHAR,,</ownDataTypeParameters>
+</Attribute>
+</attributes>
+<identifiers itemClass="oracle.dbtools.crest.model.design.logical.CandidateKey">
+<identifier id="1C6E2570-65FD-3F4C-F9F8-2C81739BD2B4" name="Token odświeżający PK">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 11:45:52 UTC</createdTime>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<pk>true</pk>
+<usedAttributes>
+<attributeRef>9ACD752A-5589-0762-862B-AC9399F4BB2B</attributeRef>
+</usedAttributes>
+</identifier>
+</identifiers>
 </Entity>

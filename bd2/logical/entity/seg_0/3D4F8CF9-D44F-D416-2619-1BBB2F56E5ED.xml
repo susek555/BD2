@@ -1,5 +1,5 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<Entity class="oracle.dbtools.crest.model.design.logical.Entity" directorySegmentName="seg_0" id="3D4F8CF9-D44F-D416-2619-1BBB2F56E5ED" name="TOWAR">
+<Entity class="oracle.dbtools.crest.model.design.logical.Entity" directorySegmentName="seg_0" id="3D4F8CF9-D44F-D416-2619-1BBB2F56E5ED" name="Samochód">
 <createdBy>kamil</createdBy>
 <createdTime>2025-04-26 08:14:05 UTC</createdTime>
 <ownerDesignName>bd2</ownerDesignName>
@@ -27,7 +27,7 @@
 <logicalDatatype>LOGDT011</logicalDatatype>
 <ownDataTypeParameters>,,</ownDataTypeParameters>
 </Attribute>
-<Attribute name="Nazwa" id="1AE80218-2182-244C-09BD-A1066DFA3A8D">
+<Attribute name="Rok produkcji" id="1AE80218-2182-244C-09BD-A1066DFA3A8D">
 <createdBy>kamil</createdBy>
 <createdTime>2025-04-26 08:14:35 UTC</createdTime>
 <ownerDesignName>bd2</ownerDesignName>
@@ -36,9 +36,8 @@
 </engineerTo>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
-<logicalDatatype>LOGDT025</logicalDatatype>
-<dataTypeSize>50 CHAR</dataTypeSize>
-<ownDataTypeParameters>50 CHAR,,</ownDataTypeParameters>
+<logicalDatatype>LOGDT011</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
 </Attribute>
 <Attribute name="Id1" id="D86A2C92-025B-9FA9-715E-D77B48C1F096">
 <createdBy>kamil</createdBy>
@@ -49,6 +48,70 @@
 <item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
 </engineerTo>
 <referedAttribute>E69E8AB7-1886-B8FB-40EE-EB4D12ED5474</referedAttribute>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT011</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="Przebieg" id="959A9F22-282A-F739-4072-00B2C0CD1986">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 11:30:46 UTC</createdTime>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT011</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="Marża" id="FDA19266-9E04-E26C-2BB8-ED54ABD167D3">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 11:31:26 UTC</createdTime>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT020</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="Id2" id="3492F32C-40B0-607F-390E-16FF43DC2926">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 11:34:04 UTC</createdTime>
+<generatorID>4827CA23-F758-C4F0-4D20-5369345DBE8C</generatorID>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<referedAttribute>49AE69AA-9923-23C5-77F8-435DC20326AA</referedAttribute>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT011</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="Id3" id="B638926C-C29B-7EFE-2E02-DA8EF1FBDEEC">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 11:36:09 UTC</createdTime>
+<generatorID>4A206995-BB5A-D802-BFFF-7D71EA2B8843</generatorID>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<referedAttribute>DF5DEC37-2663-F4F5-C2A7-423BC07B1D6A</referedAttribute>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT011</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="Ilość właścicieli" id="943FFD72-F5C0-1D0E-87B8-0ED127C6D7B8">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 11:37:24 UTC</createdTime>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
 <logicalDatatype>LOGDT011</logicalDatatype>

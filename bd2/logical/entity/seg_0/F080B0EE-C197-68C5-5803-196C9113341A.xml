@@ -1,7 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<Entity class="oracle.dbtools.crest.model.design.logical.Entity" directorySegmentName="seg_0" id="CB97F0F8-5411-CC92-C6B4-F7DDB39C665A" name="Rodzaj dokumentu">
+<Entity class="oracle.dbtools.crest.model.design.logical.Entity" directorySegmentName="seg_0" id="F080B0EE-C197-68C5-5803-196C9113341A" name="Status dostawy">
 <createdBy>kamil</createdBy>
-<createdTime>2025-04-26 09:04:57 UTC</createdTime>
+<createdTime>2025-04-26 11:47:03 UTC</createdTime>
 <ownerDesignName>bd2</ownerDesignName>
 <engineerTo>
 <item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
@@ -15,44 +15,31 @@
 <minVolumes>0</minVolumes>
 <normalForm>Third</normalForm>
 <attributes itemClass="oracle.dbtools.crest.model.design.logical.Attribute">
-<Attribute name="Id" id="5EE0FD19-AD08-9EC6-7542-7237172BF1DD">
+<Attribute name="Id" id="ABC00480-0E4B-DE7B-2E64-3ED914FC84BC">
 <createdBy>kamil</createdBy>
-<createdTime>2025-04-26 09:05:07 UTC</createdTime>
+<createdTime>2025-04-26 11:47:17 UTC</createdTime>
 <ownerDesignName>bd2</ownerDesignName>
 <engineerTo>
 <item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
 </engineerTo>
+<nullsAllowed>true</nullsAllowed>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
 <logicalDatatype>LOGDT011</logicalDatatype>
 <ownDataTypeParameters>,,</ownDataTypeParameters>
 </Attribute>
-<Attribute name="Typ" id="91BF8C5B-61A8-ACA6-C532-8B56DCA70825">
+<Attribute name="Nazwa" id="6CB07F91-9F75-1140-557C-CF2D9E79FA78">
 <createdBy>kamil</createdBy>
-<createdTime>2025-04-26 11:51:02 UTC</createdTime>
+<createdTime>2025-04-26 11:47:36 UTC</createdTime>
 <ownerDesignName>bd2</ownerDesignName>
 <engineerTo>
 <item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
 </engineerTo>
+<nullsAllowed>true</nullsAllowed>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
-<logicalDatatype>LOGDT025</logicalDatatype>
-<dataTypeSize>30 CHAR</dataTypeSize>
-<ownDataTypeParameters>30 CHAR,,</ownDataTypeParameters>
+<logicalDatatype>LOGDT011</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
 </Attribute>
 </attributes>
-<identifiers itemClass="oracle.dbtools.crest.model.design.logical.CandidateKey">
-<identifier id="53C56F2B-CBE9-94B6-60DF-ADF315623F1A" name="Rodzaj dokumentu PK">
-<createdBy>kamil</createdBy>
-<createdTime>2025-04-26 09:05:21 UTC</createdTime>
-<ownerDesignName>bd2</ownerDesignName>
-<engineerTo>
-<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
-</engineerTo>
-<pk>true</pk>
-<usedAttributes>
-<attributeRef>5EE0FD19-AD08-9EC6-7542-7237172BF1DD</attributeRef>
-</usedAttributes>
-</identifier>
-</identifiers>
 </Entity>

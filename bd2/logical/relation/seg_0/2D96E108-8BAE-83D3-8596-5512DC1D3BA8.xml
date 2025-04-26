@@ -8,6 +8,8 @@
 </engineerTo>
 <sourcePk>53C56F2B-CBE9-94B6-60DF-ADF315623F1A</sourcePk>
 <identifying>false</identifying>
+<nameOnSource>być na dokumencie</nameOnSource>
+<nameOnTarget>być rodzaju</nameOnTarget>
 <optionalSource>true</optionalSource>
 <optionalTarget>false</optionalTarget>
 <sourceCardinality>1</sourceCardinality>

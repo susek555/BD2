@@ -43,5 +43,55 @@
 <logicalDatatype>LOGDT011</logicalDatatype>
 <ownDataTypeParameters>,,</ownDataTypeParameters>
 </Attribute>
+<Attribute name="Id_1" id="B8371B49-7388-15DE-96DE-10F31B5DB4FE">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 11:51:29 UTC</createdTime>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT011</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="Cena" id="48F34190-973C-9A73-CA35-171FECC507E5">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 11:52:02 UTC</createdTime>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT011</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="Ilość" id="5DE2D18C-836F-C7CE-F109-49BDFDF75C3A">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 11:52:18 UTC</createdTime>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT011</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
 </attributes>
+<identifiers itemClass="oracle.dbtools.crest.model.design.logical.CandidateKey">
+<identifier id="AC6A7F9A-6D31-2FBD-4147-571B1A9A6DD5" name="Pozycje PK">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 11:51:54 UTC</createdTime>
+<ownerDesignName>bd2</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<pk>true</pk>
+<usedAttributes>
+<attributeRef>B8371B49-7388-15DE-96DE-10F31B5DB4FE</attributeRef>
+</usedAttributes>
+</identifier>
+</identifiers>
 </Entity>
