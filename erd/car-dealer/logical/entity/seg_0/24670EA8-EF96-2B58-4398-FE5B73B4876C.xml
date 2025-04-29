@@ -1,0 +1,57 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Entity class="oracle.dbtools.crest.model.design.logical.Entity" directorySegmentName="seg_0" id="24670EA8-EF96-2B58-4398-FE5B73B4876C" name="Rodzaj zniżki">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 11:57:20 UTC</createdTime>
+<ownerDesignName>car-dealer</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<adequatelyNormalized>NO</adequatelyNormalized>
+<expectedVolumes>0</expectedVolumes>
+<fwdEngineeringStrategyName>Single Table</fwdEngineeringStrategyName>
+<growthPercent>0</growthPercent>
+<growthType>Year</growthType>
+<maxVolumes>9999999</maxVolumes>
+<minVolumes>0</minVolumes>
+<normalForm>Third</normalForm>
+<attributes itemClass="oracle.dbtools.crest.model.design.logical.Attribute">
+<Attribute name="Id" id="964EAC67-5771-F510-BE32-3C020D272B63">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 11:57:36 UTC</createdTime>
+<ownerDesignName>car-dealer</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT011</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="Typ" id="2A91BC53-EBC7-4F83-EAE8-6DFFD9C2A0BE">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 11:57:48 UTC</createdTime>
+<ownerDesignName>car-dealer</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT011</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+</attributes>
+<identifiers itemClass="oracle.dbtools.crest.model.design.logical.CandidateKey">
+<identifier id="AB85CC48-E3D7-C1B1-719C-3CA175BA098B" name="Rodzaj zniżki PK">
+<createdBy>kamil</createdBy>
+<createdTime>2025-04-26 11:57:46 UTC</createdTime>
+<ownerDesignName>car-dealer</ownerDesignName>
+<engineerTo>
+<item key="56513487-C06C-A91E-3315-77E0CE8E4610" value="true"/>
+</engineerTo>
+<pk>true</pk>
+<usedAttributes>
+<attributeRef>964EAC67-5771-F510-BE32-3C020D272B63</attributeRef>
+</usedAttributes>
+</identifier>
+</identifiers>
+</Entity>
