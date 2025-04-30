@@ -1,6 +1,14 @@
 package main
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	"github.com/susek555/BD2/car-dealer-api/internal/initializers"
+)
+
+func init() {
+	initializers.LoadEnvVariables()
+	initializers.ConnectToDatabase()
+}
 
 func main() {
 	router := gin.Default()
