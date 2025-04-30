@@ -3,3 +3,6 @@ build:
 
 run:
 	go run cmd/car-dealer-api/main.go
+
+live-server:
+	 CompileDaemon  -build="make build"  -command="./bin/main" -color=true
