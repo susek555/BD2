@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/susek555/BD2/car-dealer-api/middleware"
-	"github.com/susek555/BD2/car-dealer-api/utils"
+	"github.com/susek555/BD2/car-dealer-api/pkg/middleware"
+	"github.com/susek555/BD2/car-dealer-api/pkg/utils"
 	"log"
 	"net/http"
 	"os"
@@ -36,11 +36,11 @@ func setupRouter(verifier *utils.JWTVerifier) *gin.Engine {
 	r := gin.Default()
 
 	// PUBLIC
-	auth := r.Group("/auth")
-	{
-		auth.POST("/register", register)
-		auth.POST("/login", login)
-	}
+	//auth := r.Group("/auth")
+	//{
+	//	auth.POST("/register", register)
+	//	auth.POST("/login", login)
+	//}
 
 	// PRIVATE
 	api := r.Group("/")
