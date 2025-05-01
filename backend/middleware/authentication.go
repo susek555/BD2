@@ -16,7 +16,7 @@ type ctxKey string
 
 const userIDKey ctxKey = "userID"
 
-func Authenticate(verify utils.JWTVerifier) gin.HandlerFunc {
+func Authenticate(verify *utils.JWTVerifier) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		rawHeader := c.GetHeader(authorizationHeader)
 		if rawHeader == "" {
