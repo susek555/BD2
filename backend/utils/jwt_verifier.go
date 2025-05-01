@@ -10,8 +10,8 @@ type JWTVerifier struct {
 	secret []byte
 }
 
-func NewJWTVerifier(secret string) JWTVerifier {
-	return JWTVerifier{secret: []byte(secret)}
+func NewJWTVerifier(secret string) *JWTVerifier {
+	return &JWTVerifier{secret: []byte(secret)}
 }
 
 func (j *JWTVerifier) VerifyToken(token string) (int64, error) {
