@@ -19,11 +19,37 @@ func init() {
 }
 
 func main() {
-	verifier := utils.NewJWTVerifier(os.Getenv("JWT_SECRET"))
-	router := gin.Default()
-	router.Use(middleware.Authenticate(verifier))
-	router.GET("/users/all", getUsers)
-	router.Run() // listen and serve on 0.0.0.0:8080
+	secret := os.Getenv("JWT_SECRET")
+	if secret == "" {
+		log.Fatal("JWT_SECRET not set")
+	}
+
+	verifier := utils.NewJWTVerifier(secret)
+	router := setupRouter(verifier)
+
+	if err := router.Run(":8080"); err != nil {
+		log.Fatalf("server error: %v", err)
+	}
+}
+
+func setupRouter(verifier *utils.JWTVerifier) *gin.Engine {
+	r := gin.Default()
+
+	// PUBLIC
+	auth := r.Group("/auth")
+	{
+		auth.POST("/register", register)
+		auth.POST("/login", login)
+	}
+
+	// PRIVATE
+	api := r.Group("/")
+	api.Use(middleware.Authenticate(verifier))
+	{
+		api.GET("/users", getUsers)
+	}
+
+	return r
 }
 
 // This code will be in UserController
