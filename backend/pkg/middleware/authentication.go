@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/susek555/BD2/car-dealer-api/utils"
+	"github.com/susek555/BD2/car-dealer-api/pkg/utils"
 	"net/http"
 	"strings"
 )
