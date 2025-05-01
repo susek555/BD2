@@ -10,7 +10,7 @@ type UserRepositoryInterface interface {
 	GetAllUsers() ([]User, error)
 	GetUserById(id uint) (User, error)
 	UpdateUser(user User) error
-	DeleteUser(id uint)
+	DeleteUser(id uint) error
 	GetUserByEmail(email string) (User, error)
 }
 
