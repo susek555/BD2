@@ -11,6 +11,7 @@ type UserRepositoryInterface interface {
 	GetUserById(id uint) (User, error)
 	UpdateUser(user User) error
 	DeleteUser(id uint)
+	GetUserByEmail(email string) (User, error)
 }
 
 type UserRepository struct {
@@ -39,4 +40,10 @@ func (userRepository *UserRepository) UpdateUser(user User) error {
 
 func (userRepository *UserRepository) DeleteUser(id uint) error {
 	return userRepository.gormRepository.Delete(id)
+}
+
+func (userRepository *UserRepository) GetUserByEmail(email string) (User, error) {
+	var u User
+	err := userRepository.gormRepository.DB.Where("email = ?", email).First(&u).Error
+	return u, err
 }
