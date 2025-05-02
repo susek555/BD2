@@ -16,7 +16,7 @@ type RefreshTokenRepository struct {
 	repository *generic.GormRepository[RefreshToken]
 }
 
-func GetRefreshTokenRepository[T any](dbHandle *gorm.DB) *RefreshTokenRepository {
+func GetRefreshTokenRepository(dbHandle *gorm.DB) *RefreshTokenRepository {
 	return &RefreshTokenRepository{repository: generic.GetGormRepository[RefreshToken](dbHandle)}
 }
 
