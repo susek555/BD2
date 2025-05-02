@@ -7,7 +7,7 @@ type GenericService[T CRUDRepository[T]] struct {
 type CRUDService[T any] interface {
 	Create(entity T) error
 	Update(entity T) error
-	Delete(entity T) error
+	Delete(id uint) error
 	GetByID(id uint) (T, error)
 	GetAll() ([]T, error)
 }
