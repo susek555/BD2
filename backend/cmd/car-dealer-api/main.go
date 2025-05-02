@@ -1,9 +1,10 @@
 package main
 
 import (
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/auth"
 	"log"
 	"os"
+
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/auth"
 
 	"github.com/gin-gonic/gin"
 
@@ -43,7 +44,7 @@ func main() {
 	api.Use(middleware.Authenticate(verifier))
 	{
 		api.GET("/users/all", func(c *gin.Context) {
-			users, err := userRepo.GetAllUsers()
+			users, err := userRepo.GetAll()
 			if err != nil {
 				c.JSON(500, gin.H{"error": "internal"})
 				return
