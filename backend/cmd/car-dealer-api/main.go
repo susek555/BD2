@@ -31,7 +31,7 @@ func main() {
 	db := initializers.DB
 	userRepo := user.GetUserRepository(db)
 
-	authSvc := auth.NewService(userRepo, jwtKey)
+	authSvc := auth.NewService(db, jwtKey)
 	authH := auth.NewHandler(authSvc)
 
 	router := gin.Default()
@@ -39,6 +39,7 @@ func main() {
 	authGroup := router.Group("/auth")
 	authGroup.POST("/register", authH.Register)
 	authGroup.POST("/login", authH.Login)
+	authGroup.POST("/refresh", authH.Refresh)
 
 	api := router.Group("/")
 	api.Use(middleware.Authenticate(verifier))
@@ -51,6 +52,7 @@ func main() {
 			}
 			c.JSON(200, users)
 		})
+		api.POST("/logout", authH.Logout)
 	}
 
 	if err := router.Run(":8080"); err != nil {
