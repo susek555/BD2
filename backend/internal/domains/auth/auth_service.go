@@ -31,7 +31,7 @@ func NewService(repo user.UserRepositoryInterface, jwtKey []byte) Service {
 }
 
 func (s *service) Register(ctx context.Context, in dto.RegisterInput) (string, error) {
-	u, err := s.repo.GetUserByEmail(in.Email)
+	u, err := s.repo.GetByEmail(in.Email)
 	if err == nil && u.ID != 0 {
 		return "", ErrEmailTaken
 	}
@@ -54,7 +54,7 @@ func (s *service) Register(ctx context.Context, in dto.RegisterInput) (string, e
 }
 
 func (s *service) Login(ctx context.Context, in dto.LoginInput) (string, error) {
-	u, err := s.repo.GetUserByEmail(in.Email)
+	u, err := s.repo.GetByEmail(in.Email)
 	if err != nil || u.ID == 0 {
 		return "", ErrInvalidCredentials
 	}
