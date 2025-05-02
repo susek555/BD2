@@ -1,26 +1,26 @@
 package generic
 
-type GenericService[T any, R CRUDRepository[T]] struct {
-	Repo R
+type GenericService[T CRUDRepository[T]] struct {
+	Repo CRUDRepository[T]
 }
 
-func (service GenericService[T, R]) Create(entity T) error {
+func (service GenericService[T]) Create(entity T) error {
 	err := service.Repo.Create(entity)
 	return err
 }
 
-func (service GenericService[T, R]) GetAll() ([]T, error) {
+func (service GenericService[T]) GetAll() ([]T, error) {
 	return service.Repo.GetAll()
 }
 
-func (service GenericService[T, R]) GetByID(id uint) (T, error) {
+func (service GenericService[T]) GetByID(id uint) (T, error) {
 	return service.Repo.GetByID(id)
 }
 
-func (service GenericService[T, R]) Update(entity T) error {
+func (service GenericService[T]) Update(entity T) error {
 	return service.Repo.Update(entity)
 }
 
-func (service GenericService[T, R]) Delete(id uint) error {
+func (service GenericService[T]) Delete(id uint) error {
 	return service.Repo.Delete(id)
 }
