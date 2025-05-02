@@ -10,8 +10,8 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/service"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
 	"github.com/susek555/BD2/car-dealer-api/internal/initializers"
+	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
 	"github.com/susek555/BD2/car-dealer-api/pkg/middleware"
-	"github.com/susek555/BD2/car-dealer-api/pkg/utils"
 )
 
 func init() {
@@ -26,7 +26,7 @@ func main() {
 		log.Fatal("JWT_SECRET not set")
 	}
 	jwtKey := []byte(secret)
-	verifier := utils.NewJWTVerifier(secret)
+	verifier := jwt.NewJWTVerifier(secret)
 
 	db := initializers.DB
 	userRepo := user.GetUserRepository(db)

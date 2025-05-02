@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/susek555/BD2/car-dealer-api/pkg/utils"
+	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
 	"net/http"
 	"strings"
 )
@@ -16,7 +16,7 @@ type ctxKey string
 
 const userIDKey ctxKey = "userID"
 
-func Authenticate(verify *utils.JWTVerifier) gin.HandlerFunc {
+func Authenticate(verify *jwt.JWTVerifier) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		rawHeader := c.GetHeader(authorizationHeader)
 		if rawHeader == "" {

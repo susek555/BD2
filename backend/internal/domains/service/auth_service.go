@@ -6,8 +6,8 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/dto"
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
+	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
 	"github.com/susek555/BD2/car-dealer-api/pkg/passwords"
-	"github.com/susek555/BD2/car-dealer-api/pkg/utils"
 )
 
 var (
@@ -49,7 +49,7 @@ func (s *service) Register(ctx context.Context, in dto.RegisterInput) (string, e
 		return "", err
 	}
 
-	return utils.GenerateToken(in.Email, int64(userModel.ID), s.jwtKey)
+	return jwt.GenerateToken(in.Email, int64(userModel.ID), s.jwtKey)
 }
 
 func (s *service) Login(ctx context.Context, in dto.LoginInput) (string, error) {
@@ -62,5 +62,5 @@ func (s *service) Login(ctx context.Context, in dto.LoginInput) (string, error) 
 		return "", ErrInvalidCredentials
 	}
 
-	return utils.GenerateToken(u.Email, int64(u.ID), s.jwtKey)
+	return jwt.GenerateToken(u.Email, int64(u.ID), s.jwtKey)
 }
