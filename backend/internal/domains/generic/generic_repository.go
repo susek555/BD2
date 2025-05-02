@@ -6,6 +6,14 @@ type GormRepository[T any] struct {
 	DB *gorm.DB
 }
 
+type CRUDRepository[T any] interface {
+	Create(entity T) error
+	GetAll() ([]T, error)
+	GetByID(id uint) (T, error)
+	Update(entity T) error
+	Delete(id uint) error
+}
+
 func GetGormRepository[T any](dbHandle *gorm.DB) *GormRepository[T] {
 	return &GormRepository[T]{DB: dbHandle}
 }
