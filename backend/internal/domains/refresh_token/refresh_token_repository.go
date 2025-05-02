@@ -9,6 +9,7 @@ type RefreshTokenRepositoryInterface interface {
 	generic.CRUDRepository[RefreshToken]
 	FindByToken(token string) (RefreshToken, error)
 	FindByUserEmail(email string) (RefreshToken, error)
+	DeleteByUserId(id uint) error
 }
 
 type RefreshTokenRepository struct {
@@ -56,4 +57,13 @@ func (repo *RefreshTokenRepository) FindByToken(token string) (RefreshToken, err
 		Where("token = ?", token).
 		First(&t).Error
 	return t, err
+}
+
+func (repo *RefreshTokenRepository) DeleteByUserId(id uint) error {
+	err := repo.repository.
+		DB.
+		Where("user_id = ?", id).
+		Delete(&RefreshToken{}).
+		Error
+	return err
 }
