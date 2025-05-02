@@ -15,7 +15,7 @@ func GenerateToken(email string, userID int64, secret []byte) (string, error) {
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			NotBefore: jwt.NewNumericDate(time.Now()),
 			Subject:   fmt.Sprintf("%d", userID),
-			Issuer:    "example-api",
+			Issuer:    "car-dealer-api",
 		},
 	}
 
