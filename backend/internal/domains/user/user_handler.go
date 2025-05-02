@@ -17,7 +17,7 @@ func NewHandler(s UserServiceInterface) *Handler {
 }
 
 func (h *Handler) CreateUser(c *gin.Context) {
-	var userDTO UserDTO
+	var userDTO CreateUserDTO
 	if err := c.ShouldBindJSON(&userDTO); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid body"})
 		return
@@ -35,7 +35,7 @@ func (h *Handler) CreateUser(c *gin.Context) {
 }
 
 func (h *Handler) UpdateUser(c *gin.Context) {
-	var userDTO UserDTO
+	var userDTO UpdateUserDTO
 	if err := c.ShouldBindJSON(&userDTO); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid body"})
 	}
