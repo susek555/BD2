@@ -25,14 +25,14 @@ func (c *Company) SetUserID(id uint) {
 	c.UserID = id
 }
 
-func (c *Company) SaveSubtype(db *gorm.DB) error {
-	return db.Save(c).Error
+func (c *Company) SaveSubtype(tx *gorm.DB) error {
+	return tx.Save(c).Error
 }
 
 func (p *Person) SetUserID(id uint) {
 	p.UserID = id
 }
 
-func (p *Person) SaveSubtype(db *gorm.DB) error {
-	return db.Create(p).Error
+func (p *Person) SaveSubtype(tx *gorm.DB) error {
+	return tx.Save(p).Error
 }
