@@ -14,7 +14,7 @@ type UserRepository struct {
 	DB *gorm.DB
 }
 
-func GetUserRepository(db *gorm.DB) *UserRepository {
+func GetUserRepository(db *gorm.DB) UserRepositoryInterface {
 	return &UserRepository{DB: db}
 }
 
