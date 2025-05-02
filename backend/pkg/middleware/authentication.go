@@ -37,7 +37,7 @@ func Authenticate(verify *jwt.JWTVerifier) gin.HandlerFunc {
 			return
 		}
 
-		c.Set(string(userIDKey), userID)
+		c.Set(string(userIDKey), uint(userID))
 		c.Next()
 	}
 }
