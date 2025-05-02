@@ -6,16 +6,16 @@ import (
 	"time"
 )
 
-func GenerateToken(email string, userID int64, secret []byte, expiryTime time.Time) (string, error) {
+func GenerateToken(email string, userID int64, secret []byte) (string, error) {
 	claims := CustomClaims{
 		Email:  email,
 		UserID: userID,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(expiryTime),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(2 * time.Hour)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			NotBefore: jwt.NewNumericDate(time.Now()),
 			Subject:   fmt.Sprintf("%d", userID),
-			Issuer:    "car-dealer-api",
+			Issuer:    "example-api",
 		},
 	}
 
