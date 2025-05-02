@@ -32,13 +32,19 @@ func (r *UserRepository) Create(user User) error {
 func (r *UserRepository) GetAll() ([]User, error) {
 	var users []User
 	err := r.DB.Preload("Company").Preload("Person").Find(&users).Error
+	if err != nil {
+		return nil, err
+	}
 	return users, err
 }
 
 func (r *UserRepository) GetById(id uint) (User, error) {
 	var user User
-	err := r.DB.Preload("Company").Preload("Person").Find(&user, id).Error
-	return user, err
+	err := r.DB.Preload("Company").Preload("Person").First(&user, id).Error
+	if err != nil {
+		return User{}, err
+	}
+	return user, nil
 }
 
 func (r *UserRepository) Update(user User) error {
@@ -60,6 +66,9 @@ func (r *UserRepository) Delete(id uint) error {
 
 func (r *UserRepository) GetByEmail(email string) (User, error) {
 	var u User
-	err := r.DB.Preload("Comapny").Preload("Person").Where("email = ?", email).First(&u).Error
-	return u, err
+	err := r.DB.Preload("Company").Preload("Person").Where("email = ?", email).First(&u).Error
+	if err != nil {
+		return User{}, err
+	}
+	return u, nil
 }
