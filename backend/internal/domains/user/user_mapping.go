@@ -1,27 +1,34 @@
 package user
 
-import "errors"
+import (
+	"errors"
 
-var ErrInvalidSelector error = errors.New("User selector has to be P (person) or C (company)")
+	"github.com/susek555/BD2/car-dealer-api/pkg/passwords"
+)
 
-func (dto *UserDTO) MapToUser() (User, error) {
+var (
+	ErrInvalidSelector error = errors.New("user selector has to be P (person) or C (company)")
+	ErrHashPassword    error = errors.New("error occured while hashing password")
+)
+
+func (dto *CreateUserDTO) MapToUser() (User, error) {
 	switch dto.Selector {
 	case "P":
 		return User{
-				ID:       dto.ID,
 				Username: dto.Username,
 				Password: dto.Password,
 				Email:    dto.Email,
-				Person:   &Person{Name: dto.PersonName, Surname: dto.PersonSurname},
+				Selector: dto.Selector,
+				Person:   &Person{Name: *dto.PersonName, Surname: *dto.PersonSurname},
 			},
 			nil
 	case "C":
 		return User{
-				ID:       dto.ID,
 				Username: dto.Username,
 				Password: dto.Password,
 				Email:    dto.Email,
-				Company:  &Company{Name: dto.CompanyName, NIP: dto.CompanyNIP},
+				Selector: dto.Selector,
+				Company:  &Company{Name: *dto.CompanyName, NIP: *dto.CompanyNIP},
 			},
 			nil
 	default:
@@ -29,30 +36,43 @@ func (dto *UserDTO) MapToUser() (User, error) {
 	}
 }
 
-func (user *User) MapToDTO() (UserDTO, error) {
+func (user *User) MapToDTO() (RetrieveUserDTO, error) {
 	switch user.Selector {
 	case "P":
-		return UserDTO{
-				ID:            user.ID,
+		return RetrieveUserDTO{
 				Username:      user.Username,
-				Password:      user.Password,
 				Email:         user.Email,
-				PersonName:    user.Person.Name,
-				PersonSurname: user.Person.Surname,
+				PersonName:    &user.Person.Name,
+				PersonSurname: &user.Person.Surname,
 			},
 			nil
 	case "C":
-		return UserDTO{
-				ID:          user.ID,
+		return RetrieveUserDTO{
 				Username:    user.Username,
-				Password:    user.Password,
 				Email:       user.Email,
-				CompanyName: user.Company.Name,
-				CompanyNIP:  user.Company.NIP,
+				CompanyName: &user.Company.Name,
+				CompanyNIP:  &user.Company.NIP,
 			},
 			nil
 	default:
-		return UserDTO{}, ErrInvalidSelector
+		return RetrieveUserDTO{}, ErrInvalidSelector
 	}
 
+}
+
+func (dto *UpdateUserDTO) UpdateUserFromDTO(user *User) (*User, error) {
+	if dto.Email != nil {
+		user.Email = *dto.Email
+	}
+	if dto.Password != nil {
+		newPassword, err := passwords.Hash(*dto.Password)
+		if err != nil {
+			return &User{}, ErrHashPassword
+		}
+		user.Password = newPassword
+	}
+	if dto.Username != nil {
+		user.Username = *dto.Username
+	}
+	return user, nil
 }
