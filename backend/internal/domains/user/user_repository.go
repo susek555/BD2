@@ -24,10 +24,7 @@ func (r *UserRepository) Create(user User) error {
 	}
 	if subtype := user.GetSubtype(); subtype != nil {
 		subtype.SetUserID(user.ID)
-		err := subtype.SaveSubtype(r.DB)
-		if err != nil {
-			return err
-		}
+		return subtype.SaveSubtype(r.DB)
 	}
 	return nil
 }
