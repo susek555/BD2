@@ -61,7 +61,7 @@ func (s *service) Register(ctx context.Context, in dto.RegisterInput) (string, s
 		return "", "", err
 	}
 
-	access, err := jwt.GenerateToken(in.Email, int64(userModel.ID), s.jwtKey)
+	access, err := jwt.GenerateToken(in.Email, int64(userModel.ID), s.jwtKey, time.Now().Add(2*time.Hour))
 	if err != nil {
 		return "", "", err
 	}
@@ -82,7 +82,7 @@ func (s *service) Login(ctx context.Context, in dto.LoginInput) (string, string,
 	if !passwords.Match(in.Password, u.Password) {
 		return "", "", ErrInvalidCredentials
 	}
-	access, err := jwt.GenerateToken(u.Email, int64(u.ID), s.jwtKey)
+	access, err := jwt.GenerateToken(u.Email, int64(u.ID), s.jwtKey, time.Now().Add(2*time.Hour))
 	if err != nil {
 		return "", "", err
 	}
@@ -105,7 +105,7 @@ func (s *service) Refresh(ctx context.Context, provided string) (string, string,
 		return "", "", err
 	}
 
-	access, err := jwt.GenerateToken(refresh.User.Email, int64(refresh.User.ID), s.jwtKey)
+	access, err := jwt.GenerateToken(refresh.User.Email, int64(refresh.User.ID), s.jwtKey, time.Now().Add(2*time.Hour))
 	if err != nil {
 		return "", "", err
 	}
@@ -134,7 +134,7 @@ func (s *service) Logout(ctx context.Context, userID uint, provided string, allD
 }
 
 func (s *service) newRefreshToken(ctx context.Context, userId uint, userEmail string) (string, error) {
-	token, err := jwt.GenerateToken(userEmail, int64(userId), s.jwtKey)
+	token, err := jwt.GenerateToken(userEmail, int64(userId), s.jwtKey, time.Now().Add(30*24*time.Hour))
 	refresh := refresh_token.RefreshToken{
 		Token:      token,
 		UserId:     userId,
