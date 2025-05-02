@@ -35,10 +35,10 @@ func (r *UserRepository) GetAll() ([]User, error) {
 	return users, err
 }
 
-func (r *UserRepository) GetByID(id uint) error {
+func (r *UserRepository) GetById(id uint) (User, error) {
 	var user User
 	err := r.DB.Find(&user, id).Error
-	return err
+	return user, err
 }
 
 func (r *UserRepository) Update(user User) error {
@@ -53,4 +53,10 @@ func (r *UserRepository) Update(user User) error {
 
 func (r *UserRepository) Delete(id uint) error {
 	return r.DB.Delete(&User{}, id).Error
+}
+
+func (r *UserRepository) GetByEmail(email string) (User, error) {
+	var u User
+	err := r.DB.Where("email = ?", email).First(&u).Error
+	return u, err
 }
