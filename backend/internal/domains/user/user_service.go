@@ -8,7 +8,11 @@ type UserServiceInterface interface {
 }
 
 type UserService struct {
-	repo *UserRepository
+	repo UserRepositoryInterface
+}
+
+func NewService(userRepository UserRepositoryInterface) UserServiceInterface {
+	return &UserService{repo: userRepository}
 }
 
 func (s *UserService) Create(in UserDTO) error {
@@ -34,10 +38,7 @@ func (s *UserService) GetAll() ([]UserDTO, error) {
 	}
 	userDTOs := make([]UserDTO, len(users))
 	for _, user := range users {
-		dto, err := user.MapToDTO()
-		if err != nil {
-			return nil, err
-		}
+		dto, _ := user.MapToDTO()
 		userDTOs = append(userDTOs, dto)
 	}
 	return userDTOs, nil
@@ -48,11 +49,8 @@ func (s *UserService) GetById(id uint) (UserDTO, error) {
 	if err != nil {
 		return UserDTO{}, err
 	}
-	userDTO, err := user.MapToDTO()
-	if err != nil {
-		return UserDTO{}, err
-	}
-	return userDTO, err
+	userDTO, _ := user.MapToDTO()
+	return userDTO, nil
 }
 
 func (s *UserService) GetByEmail(email string) (UserDTO, error) {
@@ -60,10 +58,7 @@ func (s *UserService) GetByEmail(email string) (UserDTO, error) {
 	if err != nil {
 		return UserDTO{}, err
 	}
-	userDTO, err := user.MapToDTO()
-	if err != nil {
-		return UserDTO{}, err
-	}
+	userDTO, _ := user.MapToDTO()
 	return userDTO, nil
 }
 
