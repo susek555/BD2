@@ -9,7 +9,7 @@ type GormRepository[T any] struct {
 type CRUDRepository[T any] interface {
 	Create(entity T) error
 	GetAll() ([]T, error)
-	GetByID(id uint) (T, error)
+	GetById(id uint) (T, error)
 	Update(entity T) error
 	Delete(id uint) error
 }
