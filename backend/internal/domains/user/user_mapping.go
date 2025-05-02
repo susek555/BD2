@@ -12,11 +12,15 @@ var (
 )
 
 func (dto *CreateUserDTO) MapToUser() (User, error) {
+	hashed, err := passwords.Hash(dto.Password)
+	if err != nil {
+		return User{}, ErrHashPassword
+	}
 	switch dto.Selector {
 	case "P":
 		return User{
 				Username: dto.Username,
-				Password: dto.Password,
+				Password: hashed,
 				Email:    dto.Email,
 				Selector: dto.Selector,
 				Person:   &Person{Name: *dto.PersonName, Surname: *dto.PersonSurname},
@@ -25,7 +29,7 @@ func (dto *CreateUserDTO) MapToUser() (User, error) {
 	case "C":
 		return User{
 				Username: dto.Username,
-				Password: dto.Password,
+				Password: hashed,
 				Email:    dto.Email,
 				Selector: dto.Selector,
 				Company:  &Company{Name: *dto.CompanyName, NIP: *dto.CompanyNIP},
@@ -42,6 +46,7 @@ func (user *User) MapToDTO() (RetrieveUserDTO, error) {
 		return RetrieveUserDTO{
 				Username:      user.Username,
 				Email:         user.Email,
+				Selector:      user.Selector,
 				PersonName:    &user.Person.Name,
 				PersonSurname: &user.Person.Surname,
 			},
@@ -50,6 +55,7 @@ func (user *User) MapToDTO() (RetrieveUserDTO, error) {
 		return RetrieveUserDTO{
 				Username:    user.Username,
 				Email:       user.Email,
+				Selector:    user.Selector,
 				CompanyName: &user.Company.Name,
 				CompanyNIP:  &user.Company.NIP,
 			},
