@@ -1,13 +1,12 @@
 package main
 
 import (
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/auth"
 	"log"
 	"os"
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/handler"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/service"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
 	"github.com/susek555/BD2/car-dealer-api/internal/initializers"
 	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
@@ -31,8 +30,8 @@ func main() {
 	db := initializers.DB
 	userRepo := user.GetUserRepository(db)
 
-	authSvc := service.NewService(userRepo, jwtKey)
-	authH := handler.NewHandler(authSvc)
+	authSvc := auth.NewService(userRepo, jwtKey)
+	authH := auth.NewHandler(authSvc)
 
 	router := gin.Default()
 

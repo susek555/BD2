@@ -2,17 +2,16 @@ package auth
 
 import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/dto"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/service/auth"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 type Handler struct {
-	svc auth.Service
+	svc Service
 }
 
-func NewHandler(svc auth.Service) *Handler { return &Handler{svc: svc} }
+func NewHandler(svc Service) *Handler { return &Handler{svc: svc} }
 
 func (h *Handler) Register(c *gin.Context) {
 	var req dto.RegisterInput
@@ -24,7 +23,7 @@ func (h *Handler) Register(c *gin.Context) {
 	token, err := h.svc.Register(c, req)
 	if err != nil {
 		switch err {
-		case auth.ErrEmailTaken:
+		case ErrEmailTaken:
 			c.JSON(http.StatusConflict, gin.H{"error": "email taken"})
 		default:
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "internal"})
