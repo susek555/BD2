@@ -4,6 +4,14 @@ type GenericService[T CRUDRepository[T]] struct {
 	Repo CRUDRepository[T]
 }
 
+type CRUDService[T any] interface {
+	Create(entity T) error
+	Update(entity T) error
+	Delete(entity T) error
+	GetByID(id uint) (T, error)
+	GetAll() ([]T, error)
+}
+
 func (service GenericService[T]) Create(entity T) error {
 	err := service.Repo.Create(entity)
 	return err
