@@ -19,44 +19,47 @@ func GetUserRepository(db *gorm.DB) *UserRepository {
 }
 
 func (r *UserRepository) Create(user User) error {
-	if err := r.DB.Create(&user).Error; err != nil {
-		return err
-	}
-	if subtype := user.GetSubtype(); subtype != nil {
+	return r.DB.Transaction(func(tx *gorm.DB) error {
+		if err := r.DB.Create(&user).Error; err != nil {
+			return err
+		}
+		subtype := user.GetSubtype()
 		subtype.SetUserID(user.ID)
 		return subtype.SaveSubtype(r.DB)
-	}
-	return nil
+	})
 }
 
 func (r *UserRepository) GetAll() ([]User, error) {
 	var users []User
-	err := r.DB.Find(&users).Error
+	err := r.DB.Preload("Company").Preload("Person").Find(&users).Error
 	return users, err
 }
 
 func (r *UserRepository) GetById(id uint) (User, error) {
 	var user User
-	err := r.DB.Find(&user, id).Error
+	err := r.DB.Preload("Company").Preload("Person").Find(&user, id).Error
 	return user, err
 }
 
 func (r *UserRepository) Update(user User) error {
-	if err := r.DB.Save(user).Error; err != nil {
-		return err
-	}
-	if subtype := user.GetSubtype(); subtype != nil {
+	return r.DB.Transaction(func(tx *gorm.DB) error {
+		if err := r.DB.Save(user).Error; err != nil {
+			return err
+		}
+		subtype := user.GetSubtype()
 		return subtype.SaveSubtype(r.DB)
-	}
-	return nil
+	})
 }
 
 func (r *UserRepository) Delete(id uint) error {
-	return r.DB.Delete(&User{}, id).Error
+	return r.DB.Transaction(func(tx *gorm.DB) error {
+		return r.DB.Delete(&User{}, id).Error
+	})
+
 }
 
 func (r *UserRepository) GetByEmail(email string) (User, error) {
 	var u User
-	err := r.DB.Where("email = ?", email).First(&u).Error
+	err := r.DB.Preload("Comapny").Preload("Person").Where("email = ?", email).First(&u).Error
 	return u, err
 }
