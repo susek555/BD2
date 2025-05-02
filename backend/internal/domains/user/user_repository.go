@@ -20,12 +20,12 @@ func GetUserRepository(db *gorm.DB) UserRepositoryInterface {
 
 func (r *UserRepository) Create(user User) error {
 	return r.DB.Transaction(func(tx *gorm.DB) error {
-		if err := r.DB.Create(&user).Error; err != nil {
+		if err := tx.Create(&user).Error; err != nil {
 			return err
 		}
 		subtype := user.GetSubtype()
 		subtype.SetUserID(user.ID)
-		return subtype.SaveSubtype(r.DB)
+		return subtype.SaveSubtype(tx)
 	})
 }
 
@@ -43,11 +43,11 @@ func (r *UserRepository) GetById(id uint) (User, error) {
 
 func (r *UserRepository) Update(user User) error {
 	return r.DB.Transaction(func(tx *gorm.DB) error {
-		if err := r.DB.Save(user).Error; err != nil {
+		if err := tx.Save(user).Error; err != nil {
 			return err
 		}
 		subtype := user.GetSubtype()
-		return subtype.SaveSubtype(r.DB)
+		return subtype.SaveSubtype(tx)
 	})
 }
 
