@@ -1,7 +1,7 @@
 package generic
 
 type GenericHandler[T any, S CRUDService[T]] struct {
-	Service CRUDService[T]
+	Service S
 }
 
 func (handler GenericHandler[T, S]) Create(entity T) error {
@@ -10,7 +10,7 @@ func (handler GenericHandler[T, S]) Create(entity T) error {
 }
 
 func (handler GenericHandler[T, S]) GetByID(id uint) (T, error) {
-	return handler.Service.GetByID(id)
+	return handler.Service.GetById(id)
 }
 
 func (handler GenericHandler[T, S]) GetAll() ([]T, error) {
