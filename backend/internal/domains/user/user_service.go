@@ -42,7 +42,7 @@ func (s *UserService) GetAll() ([]RetrieveUserDTO, error) {
 	if err != nil {
 		return nil, err
 	}
-	userDTOs := make([]RetrieveUserDTO, len(users))
+	userDTOs := make([]RetrieveUserDTO, 0, len(users))
 	for _, user := range users {
 		dto, _ := user.MapToDTO()
 		userDTOs = append(userDTOs, dto)
