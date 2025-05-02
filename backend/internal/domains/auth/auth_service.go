@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	"errors"
+
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/dto"
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
@@ -45,7 +46,7 @@ func (s *service) Register(ctx context.Context, in dto.RegisterInput) (string, e
 		Email:    in.Email,
 		Password: hash,
 	}
-	if err := s.repo.CreateUser(userModel); err != nil {
+	if err := s.repo.Create(userModel); err != nil {
 		return "", err
 	}
 
