@@ -95,5 +95,5 @@ func (h *Handler) getStatusCode(err error) int {
 
 func (h *Handler) handleError(c *gin.Context, err error) {
 	code := h.getStatusCode(err)
-	c.JSON(code, err.Error())
+	c.JSON(code, gin.H{"error": err.Error()})
 }
