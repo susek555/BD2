@@ -8,6 +8,7 @@ import (
 	"time"
 )
 
+//go:generate mockery --name=RefreshTokenServiceInterface --output=../../test/mocks --case=snake --with-expecter
 type RefreshTokenServiceInterface interface {
 	generic.CRUDService[RefreshToken]
 
