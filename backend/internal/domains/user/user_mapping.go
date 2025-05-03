@@ -9,6 +9,8 @@ import (
 var (
 	ErrInvalidSelector error = errors.New("user selector has to be P (person) or C (company)")
 	ErrHashPassword    error = errors.New("error occured while hashing password")
+	ErrCreateCompany   error = errors.New("company_name and company_nip must be provided")
+	ErrCreatePerson    error = errors.New("person_name and person_surname must be provided")
 )
 
 func (dto *CreateUserDTO) MapToUser() (User, error) {
@@ -18,6 +20,9 @@ func (dto *CreateUserDTO) MapToUser() (User, error) {
 	}
 	switch dto.Selector {
 	case "P":
+		if err := dto.validateP(); err != nil {
+			return User{}, err
+		}
 		return User{
 				Username: dto.Username,
 				Password: hashed,
@@ -27,6 +32,9 @@ func (dto *CreateUserDTO) MapToUser() (User, error) {
 			},
 			nil
 	case "C":
+		if err := dto.validateC(); err != nil {
+			return User{}, err
+		}
 		return User{
 				Username: dto.Username,
 				Password: hashed,
@@ -38,6 +46,20 @@ func (dto *CreateUserDTO) MapToUser() (User, error) {
 	default:
 		return User{}, ErrInvalidSelector
 	}
+}
+
+func (dto *CreateUserDTO) validateP() error {
+	if dto.PersonName == nil || dto.PersonSurname == nil {
+		return ErrCreatePerson
+	}
+	return nil
+}
+
+func (dto *CreateUserDTO) validateC() error {
+	if dto.CompanyName == nil || dto.CompanyNIP == nil {
+		return ErrCreateCompany
+	}
+	return nil
 }
 
 func (user *User) MapToDTO() (RetrieveUserDTO, error) {
