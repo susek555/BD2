@@ -21,7 +21,7 @@ var (
 )
 
 type Service interface {
-	Register(ctx context.Context, in dto.RegisterInput) (access, refresh string, err error)
+	Register(ctx context.Context, in user.CreateUserDTO) (access, refresh string, err error)
 	Login(ctx context.Context, in dto.LoginInput) (access, refresh string, err error)
 	Refresh(ctx context.Context, refreshToken string) (access string, refresh string, err error)
 	Logout(ctx context.Context, userID uint, refreshToken string, allDevices bool) error
@@ -43,21 +43,14 @@ func NewService(db *gorm.DB, jwtKey []byte) Service {
 	}
 }
 
-func (s *service) Register(ctx context.Context, in dto.RegisterInput) (string, string, error) {
+func (s *service) Register(ctx context.Context, in user.CreateUserDTO) (string, string, error) {
 	u, err := s.repo.GetByEmail(in.Email)
 	if err == nil && u.ID != 0 {
 		return "", "", ErrEmailTaken
 	}
-
-	hash, err := passwords.Hash(in.Password)
+	userModel, err := in.MapToUser()
 	if err != nil {
 		return "", "", err
-	}
-
-	userModel := user.User{
-		Username: in.Username,
-		Email:    in.Email,
-		Password: hash,
 	}
 	if err := s.repo.Create(userModel); err != nil {
 		return "", "", err
