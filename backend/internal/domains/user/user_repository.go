@@ -5,6 +5,7 @@ import (
 	"gorm.io/gorm"
 )
 
+//go:generate mockery --name=UserRepositoryInterface --output=../../test/mocks --case=snake --with-expecter
 type UserRepositoryInterface interface {
 	generic.CRUDRepository[User]
 	GetByEmail(email string) (User, error)
