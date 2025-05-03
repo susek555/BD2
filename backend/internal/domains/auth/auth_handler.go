@@ -2,7 +2,6 @@ package auth
 
 import (
 	"errors"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/dto"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
 	"net/http"
 
@@ -40,7 +39,7 @@ func (h *Handler) Register(ctx *gin.Context) {
 }
 
 func (h *Handler) Login(c *gin.Context) {
-	var req dto.LoginInput
+	var req LoginInput
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid body"})
 		return
@@ -59,7 +58,7 @@ func (h *Handler) Login(c *gin.Context) {
 }
 
 func (h *Handler) Refresh(c *gin.Context) {
-	var req dto.RefreshInput
+	var req RefreshInput
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid body"})
 		return
@@ -76,7 +75,7 @@ func (h *Handler) Refresh(c *gin.Context) {
 }
 
 func (h *Handler) Logout(c *gin.Context) {
-	var req dto.LogoutInput
+	var req LogoutInput
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid body"})
 		return
