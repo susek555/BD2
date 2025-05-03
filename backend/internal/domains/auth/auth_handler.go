@@ -3,6 +3,7 @@ package auth
 import (
 	"errors"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/dto"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -15,7 +16,7 @@ type Handler struct {
 func NewHandler(service Service) *Handler { return &Handler{service: service} }
 
 func (h *Handler) Register(ctx *gin.Context) {
-	var request dto.RegisterInput
+	var request user.CreateUserDTO
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "invalid body"})
 		return
