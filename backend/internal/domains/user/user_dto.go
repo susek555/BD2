@@ -13,7 +13,6 @@ type CreateUserDTO struct {
 
 type RetrieveUserDTO struct {
 	Username      string  `json:"username"`
-	Selector      string  `json:"selector"`
 	Email         string  `json:"email"`
 	CompanyName   *string `json:"company_name,omitempty"`
 	CompanyNIP    *string `json:"company_nip,omitempty"`

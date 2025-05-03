@@ -46,7 +46,6 @@ func (user *User) MapToDTO() (RetrieveUserDTO, error) {
 		return RetrieveUserDTO{
 				Username:      user.Username,
 				Email:         user.Email,
-				Selector:      user.Selector,
 				PersonName:    &user.Person.Name,
 				PersonSurname: &user.Person.Surname,
 			},
@@ -55,7 +54,6 @@ func (user *User) MapToDTO() (RetrieveUserDTO, error) {
 		return RetrieveUserDTO{
 				Username:    user.Username,
 				Email:       user.Email,
-				Selector:    user.Selector,
 				CompanyName: &user.Company.Name,
 				CompanyNIP:  &user.Company.NIP,
 			},
