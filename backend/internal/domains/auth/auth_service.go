@@ -6,7 +6,6 @@ import (
 
 	"time"
 
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/dto"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/refresh_token"
 	"gorm.io/gorm"
 
@@ -22,7 +21,7 @@ var (
 
 type Service interface {
 	Register(ctx context.Context, in user.CreateUserDTO) (access, refresh string, err error)
-	Login(ctx context.Context, in dto.LoginInput) (access, refresh string, err error)
+	Login(ctx context.Context, in LoginInput) (access, refresh string, err error)
 	Refresh(ctx context.Context, refreshToken string) (access string, refresh string, err error)
 	Logout(ctx context.Context, userID uint, refreshToken string, allDevices bool) error
 }
@@ -68,7 +67,7 @@ func (s *service) Register(ctx context.Context, in user.CreateUserDTO) (string, 
 	return access, refresh, nil
 }
 
-func (s *service) Login(ctx context.Context, in dto.LoginInput) (string, string, error) {
+func (s *service) Login(ctx context.Context, in LoginInput) (string, string, error) {
 	u, err := s.repo.GetByEmail(in.Email)
 	if err != nil || u.ID == 0 {
 		return "", "", ErrInvalidCredentials
