@@ -37,9 +37,9 @@ export const SignupFormSchema = z.object({
         business_name: z.string().min(1, { message: 'Business name is required' }),
         business_nip: z
           .string()
-          .min(10, { message: 'NIP must be 10 characters long' })
-          .max(10, { message: 'NIP must be 10 characters long' })
-          .regex(/^\d+$/, { message: 'NIP must contain only digits' }),
+          .min(10, { message: 'Be 10 characters long' })
+          .max(10, { message: 'Be 10 characters long' })
+          .regex(/^\d+$/, { message: 'Contain only digits' }),
       })
     ])
   )
