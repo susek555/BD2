@@ -47,6 +47,15 @@ func (r *UserRepository) GetById(id uint) (User, error) {
 	return user, nil
 }
 
+func (r *UserRepository) GetByEmail(email string) (User, error) {
+	var u User
+	err := r.DB.Preload("Company").Preload("Person").Where("email = ?", email).First(&u).Error
+	if err != nil {
+		return User{}, err
+	}
+	return u, nil
+}
+
 func (r *UserRepository) Update(user User) error {
 	return r.DB.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Save(user).Error; err != nil {
@@ -55,15 +64,6 @@ func (r *UserRepository) Update(user User) error {
 		subtype := user.GetSubtype()
 		return subtype.SaveSubtype(tx)
 	})
-}
-
-func (r *UserRepository) GetByEmail(email string) (User, error) {
-	var u User
-	err := r.DB.Preload("Company").Preload("Person").Where("email = ?", email).First(&u).Error
-	if err != nil {
-		return User{}, err
-	}
-	return u, nil
 }
 
 func (r *UserRepository) Delete(id uint) error {
