@@ -10,7 +10,7 @@ import {
   UserCircleIcon,
   UserIcon
 } from '@heroicons/react/24/outline';
-import { useActionState, useState } from 'react';
+import { useActionState, useEffect, useState } from 'react';
 import { SignupFormState } from '../lib/definitions';
 import { Button } from './button';
 
@@ -21,13 +21,29 @@ export default function SignupForm() {
   };
 
   const [state, action] = useActionState(signup, initialState);
+  const [accountType, setAccountType] = useState('personal');
 
-  const [accountType, setAccountType] = useState(
-    state?.values?.selector || 'personal'
-  );
+  useEffect(() => {
+    if (state?.values?.selector) {
+      setAccountType(state.values.selector);
+    }
+  }, [state]);
 
+  const handleSubmit = (formData: FormData) => {
+    formData.append('selector', accountType);
+    return action(formData);
+  };
+
+  /*
+    TODO: fix selector value when returning to form
+    when action returns failure and selector was business
+    selector in form will be set back to personal even though
+    accountType === 'business'
+
+    temporary fix: add hidden input that will submit the actual value
+  */
   return (
-    <form className="space-y-3" action={action}>
+    <form className="space-y-3" action={handleSubmit}>
       <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
         <h1 className="mb-3 text-2xl">
           Sign up
@@ -42,7 +58,6 @@ export default function SignupForm() {
                 <input
                   id="personal"
                   type="radio"
-                  name="selector"
                   value="personal"
                   checked={accountType === 'personal'}
                   onChange={() => setAccountType('personal')}
@@ -56,7 +71,6 @@ export default function SignupForm() {
                 <input
                   id="business"
                   type="radio"
-                  name="selector"
                   value="business"
                   checked={accountType === 'business'}
                   onChange={() => setAccountType('business')}
@@ -67,6 +81,7 @@ export default function SignupForm() {
                 </label>
               </div>
             </div>
+            <input type="hidden" name="selector" value={accountType} />
           </div>
 
           <div className="mb-4">
