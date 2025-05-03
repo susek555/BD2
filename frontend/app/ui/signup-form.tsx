@@ -14,12 +14,6 @@ import { useActionState, useState } from 'react';
 import { SignupFormState } from '../lib/definitions';
 import { Button } from './button';
 
-const initialState: SignupFormState = {
-  errors: {},
-  values: {},
-};
-
-
 export default function SignupForm() {
   const initialState: SignupFormState = {
     errors: {},
