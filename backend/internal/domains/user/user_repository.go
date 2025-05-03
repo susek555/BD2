@@ -14,7 +14,7 @@ type UserRepository struct {
 	DB *gorm.DB
 }
 
-func GetUserRepository(db *gorm.DB) UserRepositoryInterface {
+func NewUserRepository(db *gorm.DB) UserRepositoryInterface {
 	return &UserRepository{DB: db}
 }
 
@@ -57,13 +57,6 @@ func (r *UserRepository) Update(user User) error {
 	})
 }
 
-func (r *UserRepository) Delete(id uint) error {
-	return r.DB.Transaction(func(tx *gorm.DB) error {
-		return r.DB.Delete(&User{}, id).Error
-	})
-
-}
-
 func (r *UserRepository) GetByEmail(email string) (User, error) {
 	var u User
 	err := r.DB.Preload("Company").Preload("Person").Where("email = ?", email).First(&u).Error
@@ -71,4 +64,11 @@ func (r *UserRepository) GetByEmail(email string) (User, error) {
 		return User{}, err
 	}
 	return u, nil
+}
+
+func (r *UserRepository) Delete(id uint) error {
+	return r.DB.Transaction(func(tx *gorm.DB) error {
+		return r.DB.Delete(&User{}, id).Error
+	})
+
 }

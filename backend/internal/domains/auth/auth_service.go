@@ -34,7 +34,7 @@ type service struct {
 }
 
 func NewService(db *gorm.DB, jwtKey []byte) Service {
-	userRepo := user.GetUserRepository(db)
+	userRepo := user.NewUserRepository(db)
 	refreshTokenService := refresh_token.NewRefreshTokenService(db)
 	return &service{
 		repo:                userRepo,

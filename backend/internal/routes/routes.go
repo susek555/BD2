@@ -11,7 +11,7 @@ func RegisterRoutes(router *gin.Engine) {
 }
 
 func registerUserRoutes(router *gin.Engine) {
-	userRepo := user.GetUserRepository(initializers.DB)
+	userRepo := user.NewUserRepository(initializers.DB)
 	userService := user.NewService(userRepo)
 	userHandler := user.NewHandler(userService)
 	userRoutes := router.Group("/users")
