@@ -15,7 +15,9 @@ export async function signup(
     console.log("Validation errors:", validatedFields.error.flatten().fieldErrors);
     return {
       errors: validatedFields.error.flatten().fieldErrors,
-      values: formDataObj as SignupFormState['values']
+      values: Object.fromEntries(
+        Object.entries(formDataObj).filter(([key]) => !key.includes('password'))
+      ) as SignupFormState['values']
     };
   }
 
