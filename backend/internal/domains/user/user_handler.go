@@ -31,7 +31,36 @@ func (h *Handler) CreateUser(c *gin.Context) {
 		}
 		return
 	}
-	c.JSON(http.StatusCreated, gin.H{"user": userDTO})
+	c.JSON(http.StatusCreated, userDTO)
+}
+
+func (h *Handler) GetAllUsers(c *gin.Context) {
+	userDTOs, err := h.service.GetAll()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch users"})
+		return
+	}
+	c.JSON(http.StatusOK, userDTOs)
+}
+
+func (h *Handler) GetUserById(c *gin.Context) {
+	id, _ := strconv.ParseUint(c.Param("id"), 10, 32)
+	userDTO, err := h.service.GetById(uint(id))
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "user with given id not found"})
+		return
+	}
+	c.JSON(http.StatusOK, userDTO)
+}
+
+func (h *Handler) GetUserByEmail(c *gin.Context) {
+	email := c.Param("email")
+	userDTO, err := h.service.GetByEmail(email)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "user with given email not found"})
+		return
+	}
+	c.JSON(http.StatusOK, userDTO)
 }
 
 func (h *Handler) UpdateUser(c *gin.Context) {
@@ -48,36 +77,7 @@ func (h *Handler) UpdateUser(c *gin.Context) {
 		}
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"user": userDTO})
-}
-
-func (h *Handler) GetAllUsers(c *gin.Context) {
-	users, err := h.service.GetAll()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch users"})
-		return
-	}
-	c.JSON(http.StatusOK, users)
-}
-
-func (h *Handler) GetUserById(c *gin.Context) {
-	id, _ := strconv.ParseUint(c.Param("id"), 10, 32)
-	user, err := h.service.GetById(uint(id))
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "user with given id not found"})
-		return
-	}
-	c.JSON(http.StatusOK, user)
-}
-
-func (h *Handler) GetUserByEmail(c *gin.Context) {
-	email := c.Param("email")
-	user, err := h.service.GetByEmail(email)
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "user with given email not found"})
-		return
-	}
-	c.JSON(http.StatusOK, user)
+	c.JSON(http.StatusOK, userDTO)
 }
 
 func (h *Handler) DeleteUser(c *gin.Context) {

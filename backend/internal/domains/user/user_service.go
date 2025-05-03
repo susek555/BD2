@@ -2,11 +2,11 @@ package user
 
 type UserServiceInterface interface {
 	Create(CreateUserDTO) error
-	Delete(id uint) error
-	Update(UpdateUserDTO) error
 	GetAll() ([]RetrieveUserDTO, error)
 	GetById(id uint) (RetrieveUserDTO, error)
 	GetByEmail(email string) (RetrieveUserDTO, error)
+	Update(UpdateUserDTO) error
+	Delete(id uint) error
 }
 
 type UserService struct {
@@ -23,18 +23,6 @@ func (s *UserService) Create(in CreateUserDTO) error {
 		return err
 	}
 	return s.repo.Create(user)
-}
-
-func (s *UserService) Update(in UpdateUserDTO) error {
-	user, err := s.repo.GetById(in.ID)
-	if err != nil {
-		return err
-	}
-	updatedUser, err := in.UpdateUserFromDTO(&user)
-	if err != nil {
-		return nil
-	}
-	return s.repo.Update(*updatedUser)
 }
 
 func (s *UserService) GetAll() ([]RetrieveUserDTO, error) {
@@ -66,6 +54,18 @@ func (s *UserService) GetByEmail(email string) (RetrieveUserDTO, error) {
 	}
 	userDTO, _ := user.MapToDTO()
 	return userDTO, nil
+}
+
+func (s *UserService) Update(in UpdateUserDTO) error {
+	user, err := s.repo.GetById(in.ID)
+	if err != nil {
+		return err
+	}
+	updatedUser, err := in.UpdateUserFromDTO(&user)
+	if err != nil {
+		return nil
+	}
+	return s.repo.Update(*updatedUser)
 }
 
 func (s *UserService) Delete(id uint) error {
