@@ -14,7 +14,7 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/initializers"
 	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
 	"github.com/susek555/BD2/car-dealer-api/pkg/middleware"
-	"github.com/swaggo/files"
+	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
@@ -25,12 +25,12 @@ func init() {
 }
 
 // @title			Car‑Dealer API
-// @version		1.0
-// @description	Car-Dealer API
+// @version			1.0
+// @description		Car-Dealer API
 // @contact.name	BD2
 // @license.name	MIT
 // @host			localhost:8080
-// @schemes		http
+// @schemes			http
 func main() {
 	secret := os.Getenv("JWT_SECRET")
 	if secret == "" {
