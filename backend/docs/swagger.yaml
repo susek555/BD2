@@ -124,40 +124,6 @@ paths:
       summary: Login user
       tags:
       - auth
-  /auth/logout:
-    post:
-      consumes:
-      - application/json
-      description: Logout user and invalidate refresh token
-      parameters:
-      - description: Logout form
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/auth.LogoutInput'
-      produces:
-      - application/json
-      responses:
-        "204":
-          description: No content
-          schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
-        "400":
-          description: Invalid input data
-          schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
-      summary: Logout user
-      tags:
-      - auth
   /auth/refresh:
     post:
       consumes:
@@ -224,6 +190,40 @@ paths:
           schema:
             $ref: '#/definitions/custom_errors.HTTPError'
       summary: Register new user
+      tags:
+      - auth
+  /logout:
+    post:
+      consumes:
+      - application/json
+      description: Logout user and invalidate refresh token
+      parameters:
+      - description: Logout form
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/auth.LogoutInput'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No content
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "400":
+          description: Invalid input data
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Logout user
       tags:
       - auth
   /users:
