@@ -17,7 +17,7 @@ var jwtKey = []byte("test-secret")
 func hashPass(t *testing.T, raw string) string {
 	hashed, err := passwords.Hash(raw)
 	if err != nil {
-		t.Fatalf("nie udało się zahaszować hasła: %v", err)
+		t.Fatalf("cannot hash password: %v", err)
 	}
 	return hashed
 }
