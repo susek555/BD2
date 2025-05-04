@@ -5,8 +5,7 @@ run:
 	go run cmd/car-dealer-api/main.go
 
 live-server:
-	 CompileDaemon  -build="make build"  -command="./bin/main" -color=true
-
+	CompileDaemon  -build="make build"  -command="./bin/main" -color=true
 
 docs:
 	swag init -g cmd/car-dealer-api/main.go
