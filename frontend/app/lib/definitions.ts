@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const SignupFormSchema = z.object({
-  selector: z.enum(['P', 'B']),
+  selector: z.enum(['P', 'C']),
   username: z
     .string()
     .min(2, { message: 'Username must be at least 2 characters long.' })
@@ -33,9 +33,9 @@ export const SignupFormSchema = z.object({
         person_surname: z.string().min(1, { message: 'Surname is required' }),
       }),
       z.object({
-        selector: z.literal('B'),
-        business_name: z.string().min(1, { message: 'Business name is required' }),
-        business_nip: z
+        selector: z.literal('C'),
+        company_name: z.string().min(1, { message: 'Business name is required' }),
+        company_nip: z
           .string()
           .min(10, { message: 'Be 10 characters long' })
           .max(10, { message: 'Be 10 characters long' })
@@ -61,8 +61,8 @@ export type SignupFormState = {
     person_name?: string[]
     person_surname?: string[]
 
-    business_name?: string[]
-    business_nip?: string[]
+    company_name?: string[]
+    company_nip?: string[]
   }
   values?: {
     selector?: string
@@ -72,7 +72,7 @@ export type SignupFormState = {
     person_name?: string
     person_surname?: string
 
-    business_name?: string
-    business_nip?: string
+    company_name?: string
+    company_nip?: string
   }
 }
