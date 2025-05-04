@@ -17,28 +17,34 @@ func RegisterRoutes(router *gin.Engine) {
 	registerUserRoutes(router)
 }
 
+func initializeVerifier() (*jwt.JWTVerifier, []byte) {
+	secret := os.Getenv("JWT_SECRET")
+	if secret == "" {
+		log.Fatal("JWT_SECRET environment variable not set")
+	}
+	verifier := jwt.NewJWTVerifier(secret)
+	jwtKey := []byte(secret)
+	return verifier, jwtKey
+}
+
 func registerUserRoutes(router *gin.Engine) {
 	userRepo := user.NewUserRepository(initializers.DB)
 	userService := user.NewService(userRepo)
 	userHandler := user.NewHandler(userService)
+	verifier, _ := initializeVerifier()
 	userRoutes := router.Group("/users")
 	{
-		userRoutes.POST("/", userHandler.CreateUser)
-		userRoutes.PUT("/", userHandler.UpdateUser)
+		userRoutes.POST("/", middleware.Authenticate(verifier), userHandler.CreateUser)
+		userRoutes.PUT("/", middleware.Authenticate(verifier), userHandler.UpdateUser)
 		userRoutes.GET("/", userHandler.GetAllUsers)
 		userRoutes.GET("/id/:id", userHandler.GetUserById)
 		userRoutes.GET("/email/:email", userHandler.GetUserByEmail)
-		userRoutes.DELETE("/:id", userHandler.DeleteUser)
+		userRoutes.DELETE("/:id", middleware.Authenticate(verifier), userHandler.DeleteUser)
 	}
 }
 
 func registerAuthRoutes(router *gin.Engine) {
-	secret := os.Getenv("JWT_SECRET")
-	if secret == "" {
-		log.Fatal("JWT_SECRET not set")
-	}
-	jwtKey := []byte(secret)
-	verifier := jwt.NewJWTVerifier(secret)
+	verifier, jwtKey := initializeVerifier()
 	authService := auth.NewService(initializers.DB, jwtKey)
 	authHandler := auth.NewHandler(authService)
 	authRoutes := router.Group("/auth")
