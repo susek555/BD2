@@ -1,5 +1,5 @@
 definitions:
-  errors.HTTPError:
+  custom_errors.HTTPError:
     properties:
       code:
         type: integer
@@ -25,6 +25,32 @@ definitions:
       username:
         type: string
     type: object
+  user.RetrieveUserDTO:
+    properties:
+      company_name:
+        type: string
+      company_nip:
+        type: string
+      email:
+        type: string
+      person_name:
+        type: string
+      person_surname:
+        type: string
+      username:
+        type: string
+    type: object
+  user.UpdateUserDTO:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      password:
+        type: string
+      username:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact:
@@ -36,10 +62,34 @@ info:
   version: "1.0"
 paths:
   /users:
+    get:
+      consumes:
+      - application/json
+      description: Get all users from database and return them as a list of DTOs.
+        If user's subtype is person the company related fields will be ommitted and
+        vice versa.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of users
+          schema:
+            items:
+              $ref: '#/definitions/user.RetrieveUserDTO'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Get all users
+      tags:
+      - users
     post:
       consumes:
       - application/json
-      description: creates user from DTO and inserts its data to database
+      description: Creates user from DTO and inserts its data to database. Whenever
+        you want to create user you have to specifiy subtype (selector, P or C), fullfil
+        only respective fields, they are required.
       parameters:
       - description: Creation form
         in: body
@@ -55,14 +105,144 @@ paths:
           schema:
             $ref: '#/definitions/user.CreateUserDTO'
         "400":
-          description: Invalid input data
+          description: Invalid input dat(a, propably wrong selector (only "P" or "C"
+            accepted)
           schema:
-            $ref: '#/definitions/errors.HTTPError'
+            $ref: '#/definitions/custom_errors.HTTPError'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/errors.HTTPError'
-      summary: create user
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Create user
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      description: Update user in database from DTO. Currently you can only change
+        basic fields (email, username, password), not the subtype.
+      parameters:
+      - description: Update form
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/user.UpdateUserDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User updated
+          schema:
+            $ref: '#/definitions/user.UpdateUserDTO'
+        "400":
+          description: Invalid input data
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Update user
+      tags:
+      - users
+  /users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete user from database by id.
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: User sucessfully deleted
+        "400":
+          description: Id is not a number
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Delete user
+      tags:
+      - users
+  /users/email/{email}:
+    get:
+      consumes:
+      - application/json
+      description: Get user by email from database and return it as a DTO. If user's
+        subtype is person the company related fields will be ommitted and vice versa.
+      parameters:
+      - description: User email
+        in: path
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User found
+          schema:
+            $ref: '#/definitions/user.RetrieveUserDTO'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Get user by email
+      tags:
+      - users
+  /users/id/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get user by id from database and return it as a DTO. If user's
+        subtype is person the company related fields will be ommitted and vice versa.
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User
+          schema:
+            $ref: '#/definitions/user.RetrieveUserDTO'
+        "400":
+          description: Id is not a number
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Get user by id
       tags:
       - users
 schemes:
