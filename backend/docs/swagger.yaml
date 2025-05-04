@@ -1,0 +1,70 @@
+definitions:
+  errors.HTTPError:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+    type: object
+  user.CreateUserDTO:
+    properties:
+      company_name:
+        type: string
+      company_nip:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+      person_name:
+        type: string
+      person_surname:
+        type: string
+      selector:
+        type: string
+      username:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    name: BD2
+  description: Car-Dealer API
+  license:
+    name: MIT
+  title: Car‑Dealer API
+  version: "1.0"
+paths:
+  /users:
+    post:
+      consumes:
+      - application/json
+      description: creates user from DTO and inserts its data to database
+      parameters:
+      - description: Creation form
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/user.CreateUserDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User created
+          schema:
+            $ref: '#/definitions/user.CreateUserDTO'
+        "400":
+          description: Invalid input data
+          schema:
+            $ref: '#/definitions/errors.HTTPError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/errors.HTTPError'
+      summary: create user
+      tags:
+      - users
+schemes:
+- http
+swagger: "2.0"
