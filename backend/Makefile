@@ -6,3 +6,7 @@ run:
 
 live-server:
 	 CompileDaemon  -build="make build"  -command="./bin/main" -color=true
+
+
+docs:
+	swag init --parseDependency --parseInternal -g cmd/car-dealer-api/main.go
