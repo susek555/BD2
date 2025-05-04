@@ -34,7 +34,6 @@ func registerUserRoutes(router *gin.Engine) {
 	verifier, _ := initializeVerifier()
 	userRoutes := router.Group("/users")
 	{
-		userRoutes.POST("/", middleware.Authenticate(verifier), userHandler.CreateUser)
 		userRoutes.PUT("/", middleware.Authenticate(verifier), userHandler.UpdateUser)
 		userRoutes.GET("/", userHandler.GetAllUsers)
 		userRoutes.GET("/id/:id", userHandler.GetUserById)
