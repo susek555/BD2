@@ -7,7 +7,7 @@ export default function TopBar() {
     return (
       <div className="flex w-full flex-row">
         <Link
-          className="mb-2 flex w-20 items-end justify-start rounded-br-lg bg-blue-600 md:w-60 md:h-12"
+          className="mb-2 flex w-20 items-end justify-start rounded-br-lg bg-blue-600 md:w-80 md:h-12"
           href="/"
         >
             <div className="flex h-full w-full items-center justify-center rounded-md bg-blue-600 p-0 text-white">
