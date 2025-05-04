@@ -230,7 +230,7 @@ const docTemplate = `{
         },
         "/users": {
             "get": {
-                "description": "Get all users from database and return them as a list of DTOs. If user's subtype is person the company related fields will be ommitted and vice versa.",
+                "description": "Get all users from database and return them as a list of DTOs. If user's subtype is person the company related fields will be omitted and vice versa.",
                 "consumes": [
                     "application/json"
                 ],
@@ -308,55 +308,11 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
-            "post": {
-                "description": "Creates user from DTO and inserts its data to database. Whenever you want to create user you have to specifiy subtype (selector, P or C), fullfil only respective fields, they are required.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "users"
-                ],
-                "summary": "Create user",
-                "parameters": [
-                    {
-                        "description": "Creation form",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/user.CreateUserDTO"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "User created",
-                        "schema": {
-                            "$ref": "#/definitions/user.CreateUserDTO"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid input dat(a, propably wrong selector (only \"P\" or \"C\" accepted)",
-                        "schema": {
-                            "$ref": "#/definitions/custom_errors.HTTPError"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/custom_errors.HTTPError"
-                        }
-                    }
-                }
             }
         },
         "/users/email/{email}": {
             "get": {
-                "description": "Get user by email from database and return it as a DTO. If user's subtype is person the company related fields will be ommitted and vice versa.",
+                "description": "Get user by email from database and return it as a DTO. If user's subtype is person the company related fields will be omitted and vice versa.",
                 "consumes": [
                     "application/json"
                 ],
@@ -400,7 +356,7 @@ const docTemplate = `{
         },
         "/users/id/{id}": {
             "get": {
-                "description": "Get user by id from database and return it as a DTO. If user's subtype is person the company related fields will be ommitted and vice versa.",
+                "description": "Get user by id from database and return it as a DTO. If user's subtype is person the company related fields will be omitted and vice versa.",
                 "consumes": [
                     "application/json"
                 ],
