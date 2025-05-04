@@ -7,8 +7,11 @@ import (
 )
 
 type HTTPError struct {
-	Code    int    `json:"code"`
-	Message string `json:"message"`
+	Description string `json:"error_description"`
+}
+
+func NewHTTPError(description string) *HTTPError {
+	return &HTTPError{Description: description}
 }
 
 func GetStatusCode(err error, errorMap map[error]int) int {
@@ -20,6 +23,6 @@ func GetStatusCode(err error, errorMap map[error]int) int {
 
 func HandleError(c *gin.Context, err error, errorMap map[error]int) {
 	code := GetStatusCode(err, errorMap)
-	httpError := HTTPError{Code: code, Message: err.Error()}
+	httpError := HTTPError{Description: err.Error()}
 	c.JSON(code, httpError)
 }
