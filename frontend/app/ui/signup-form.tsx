@@ -75,15 +75,15 @@ export default function SignupForm({
               </div>
               <div className="flex items-center">
                 <input
-                  id="business"
+                  id="company"
                   type="radio"
-                  value="B"
-                  checked={accountType === 'B'}
-                  onChange={() => changeAccountType('B')}
+                  value="C"
+                  checked={accountType === 'C'}
+                  onChange={() => changeAccountType('C')}
                   className="h-4 w-4 text-blue-500 focus:ring-blue-400"
                 />
                 <label htmlFor="business" className="ml-2 text-sm font-medium text-gray-900">
-                  Business
+                  Company
                 </label>
               </div>
             </div>
@@ -210,30 +210,30 @@ export default function SignupForm({
             </>
           )}
 
-          {accountType === 'B' && (
+          {accountType === 'C' && (
             <>
               <div className="mb-4">
                 <label
                   className="mb-3 block text-xs font-medium text-gray-900"
-                  htmlFor="business_name"
+                  htmlFor="company_name"
                 >
-                  Business Name
+                  Company Name
                 </label>
                 <div className="relative">
                   <input
                     className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
-                    id="business_name"
+                    id="company_name"
                     type="text"
-                    name="business_name"
-                    placeholder="Enter your business name"
-                    defaultValue={state?.values?.business_name}
+                    name="company_name"
+                    placeholder="Enter your company name"
+                    defaultValue={state?.values?.company_name}
                     required
                   />
                   <BuildingOfficeIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
                 </div>
                 <div id="business-name-error" aria-live="polite" aria-atomic="true">
-                  {state?.errors?.business_name &&
-                    state.errors.business_name.map((error: string) => (
+                  {state?.errors?.company_name &&
+                    state.errors.company_name.map((error: string) => (
                       <p className="mt-2 text-sm text-red-500" key={error}>
                         {error}
                       </p>
@@ -244,25 +244,25 @@ export default function SignupForm({
               <div className="mb-4">
                 <label
                   className="mb-3 block text-xs font-medium text-gray-900"
-                  htmlFor="business_nip"
+                  htmlFor="company_nip"
                 >
                   NIP (Tax ID)
                 </label>
                 <div className="relative">
                   <input
                     className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
-                    id="business_nip"
+                    id="company_nip"
                     type="text"
-                    name="business_nip"
+                    name="company_nip"
                     placeholder="Enter your NIP"
-                    defaultValue={state?.values?.business_nip}
+                    defaultValue={state?.values?.company_nip}
                     required
                   />
                   <BuildingOfficeIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
                 </div>
                 <div id="business-nip-error" aria-live="polite" aria-atomic="true">
-                  {state?.errors?.business_nip &&
-                    state.errors.business_nip.map((error: string) => (
+                  {state?.errors?.company_nip &&
+                    state.errors.company_nip.map((error: string) => (
                       <p className="mt-2 text-sm text-red-500" key={error}>
                         {error}
                       </p>
