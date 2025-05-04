@@ -24,14 +24,14 @@ func NewHandler(s UserServiceInterface) *Handler {
 
 // CreateUser godoc
 //
-//	@Summary		create user
-//	@Description	creates user from DTO and inserts its data to database
+//	@Summary		Create user
+//	@Description	Creates user from DTO and inserts its data to database. Whenever you want to create user you have to specifiy subtype (selector, P or C), fullfil only respective fields.
 //	@Tags			users
 //	@Accept			json
 //	@Produce		json
 //	@Param			body	body		CreateUserDTO		true	"Creation form"
 //	@Success		201		{object}	CreateUserDTO		"User created"
-//	@Failure		400		{object}	errors.HTTPError	"Invalid input data"
+//	@Failure		400		{object}	errors.HTTPError	"Invalid input dat(a, propably wrong selector (only "P" or "C" accepted)"
 //	@Failure		500		{object}	errors.HTTPError	"Internal server error"
 //	@Router			/users [post]
 func (h *Handler) CreateUser(c *gin.Context) {
