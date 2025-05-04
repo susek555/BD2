@@ -9,4 +9,4 @@ live-server:
 
 
 docs:
-	swag init --parseDependency --parseInternal -g cmd/car-dealer-api/main.go
+	swag init -g cmd/car-dealer-api/main.go
