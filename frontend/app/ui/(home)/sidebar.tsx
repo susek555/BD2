@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import Filters from '@/app/ui/[main]/filters';
+import Filters from '@/app/ui/(home)/filters';
 
 export default function SideBar() {
     return (
