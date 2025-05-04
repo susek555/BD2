@@ -268,3 +268,74 @@ func TestService_Refresh(t *testing.T) {
 		assert.EqualError(t, err, "db down")
 	})
 }
+
+func TestService_Logout(t *testing.T) {
+	ctx := context.Background()
+	userID := uint(8)
+	rt := refresh_token.RefreshToken{ID: 42, Token: "r1"}
+
+	t.Run("allDevices=true – deleteByUserID", func(t *testing.T) {
+		uRepo := mocks.NewUserRepositoryInterface(t)
+		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
+
+		rtSvc.EXPECT().
+			DeleteByUserID(ctx, userID).
+			Return(nil)
+
+		svc := &service{repo: uRepo, refreshTokenService: rtSvc}
+
+		err := svc.Logout(ctx, userID, "", true)
+		assert.NoError(t, err)
+	})
+
+	t.Run("single device – valid token", func(t *testing.T) {
+		uRepo := mocks.NewUserRepositoryInterface(t)
+		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
+
+		rtSvc.EXPECT().FindByToken(ctx, rt.Token).Return(rt, nil)
+		rtSvc.EXPECT().Delete(rt.ID).Return(nil)
+
+		svc := &service{repo: uRepo, refreshTokenService: rtSvc}
+
+		err := svc.Logout(ctx, userID, rt.Token, false)
+		assert.NoError(t, err)
+	})
+
+	t.Run("single device – no token found", func(t *testing.T) {
+		uRepo := mocks.NewUserRepositoryInterface(t)
+		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
+
+		svc := &service{repo: uRepo, refreshTokenService: rtSvc}
+
+		err := svc.Logout(ctx, userID, "", false)
+		assert.EqualError(t, err, "refresh token required")
+	})
+
+	t.Run("single device – FindByToken returns error", func(t *testing.T) {
+		uRepo := mocks.NewUserRepositoryInterface(t)
+		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
+
+		rtSvc.EXPECT().
+			FindByToken(ctx, rt.Token).
+			Return(refresh_token.RefreshToken{}, errors.New("not found"))
+
+		svc := &service{repo: uRepo, refreshTokenService: rtSvc}
+
+		err := svc.Logout(ctx, userID, rt.Token, false)
+		assert.EqualError(t, err, "not found")
+	})
+
+	t.Run("allDevices – DeleteByUserID returns error", func(t *testing.T) {
+		uRepo := mocks.NewUserRepositoryInterface(t)
+		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
+
+		rtSvc.EXPECT().
+			DeleteByUserID(ctx, userID).
+			Return(errors.New("db down"))
+
+		svc := &service{repo: uRepo, refreshTokenService: rtSvc}
+
+		err := svc.Logout(ctx, userID, "", true)
+		assert.EqualError(t, err, "db down")
+	})
+}
