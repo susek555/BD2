@@ -1,0 +1,13 @@
+host: localhost:8080
+info:
+  contact:
+    name: BD2
+  description: Car-Dealer API
+  license:
+    name: MIT
+  title: Car‑Dealer API
+  version: "1.0"
+paths: {}
+schemes:
+- http
+swagger: "2.0"
