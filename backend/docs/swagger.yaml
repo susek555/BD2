@@ -1,9 +1,38 @@
 definitions:
+  auth.LoginInput:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  auth.LogoutInput:
+    properties:
+      all_devices:
+        type: boolean
+      refresh_token:
+        type: string
+    type: object
+  auth.RefreshInput:
+    properties:
+      refresh_token:
+        type: string
+    required:
+    - refresh_token
+    type: object
+  auth.TokenResponse:
+    properties:
+      access_token:
+        type: string
+      refresh_token:
+        type: string
+    type: object
   custom_errors.HTTPError:
     properties:
-      code:
-        type: integer
-      message:
+      error_description:
         type: string
     type: object
   user.CreateUserDTO:
@@ -61,6 +90,142 @@ info:
   title: Car‑Dealer API
   version: "1.0"
 paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user and return a pair of tokens
+      parameters:
+      - description: Login form
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/auth.LoginInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK - returns tokens
+          schema:
+            $ref: '#/definitions/auth.TokenResponse'
+        "400":
+          description: Invalid input data
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Login user
+      tags:
+      - auth
+  /auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: Logout user and invalidate refresh token
+      parameters:
+      - description: Logout form
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/auth.LogoutInput'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No content
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "400":
+          description: Invalid input data
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Logout user
+      tags:
+      - auth
+  /auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Refresh access and refresh tokens
+      parameters:
+      - description: Refresh token form
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/auth.RefreshInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK - returns tokens
+          schema:
+            $ref: '#/definitions/auth.TokenResponse'
+        "400":
+          description: Invalid input data
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Refresh tokens
+      tags:
+      - auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Set up account and return a pair of tokens
+      parameters:
+      - description: Registration form
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/user.CreateUserDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created - returns tokens
+          schema:
+            $ref: '#/definitions/auth.TokenResponse'
+        "400":
+          description: Invalid input data
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "409":
+          description: Email taken
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Register new user
+      tags:
+      - auth
   /users:
     get:
       consumes:
