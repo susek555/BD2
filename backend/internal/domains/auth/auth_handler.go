@@ -56,11 +56,11 @@ func (h *Handler) Register(ctx *gin.Context) {
 //	@Tags			auth
 //	@Accept			json
 //	@Produce		json
-//	@Param			body	body		LoginInput		true	"Login form"
+//	@Param			body	body		LoginInput				true	"Login form"
 //	@Success		200		{object}	TokenResponse			"OK - returns tokens"
-//	@Failure		400		{object}	custom_errors.HTTPError "Invalid input data"
-//	@Failure		401		{object}	custom_errors.HTTPError "Unauthorized"
-//	@Failure		500		{object}	custom_errors.HTTPError "Internal server error"
+//	@Failure		400		{object}	custom_errors.HTTPError	"Invalid input data"
+//	@Failure		401		{object}	custom_errors.HTTPError	"Unauthorized"
+//	@Failure		500		{object}	custom_errors.HTTPError	"Internal server error"
 //	@Router			/auth/login [post]
 func (h *Handler) Login(c *gin.Context) {
 	var req LoginInput
@@ -85,11 +85,11 @@ func (h *Handler) Login(c *gin.Context) {
 //	@Tags			auth
 //	@Accept			json
 //	@Produce		json
-//	@Param			body	body		RefreshInput	true	"Refresh token form"
+//	@Param			body	body		RefreshInput			true	"Refresh token form"
 //	@Success		200		{object}	TokenResponse			"OK - returns tokens"
-//	@Failure		400		{object}	custom_errors.HTTPError "Invalid input data"
-//	@Failure		401		{object}	custom_errors.HTTPError "Unauthorized"
-//	@Failure		500		{object}	custom_errors.HTTPError "Internal server error"
+//	@Failure		400		{object}	custom_errors.HTTPError	"Invalid input data"
+//	@Failure		401		{object}	custom_errors.HTTPError	"Unauthorized"
+//	@Failure		500		{object}	custom_errors.HTTPError	"Internal server error"
 //	@Router			/auth/refresh [post]
 func (h *Handler) Refresh(c *gin.Context) {
 	var req RefreshInput
@@ -113,12 +113,12 @@ func (h *Handler) Refresh(c *gin.Context) {
 //	@Tags			auth
 //	@Accept			json
 //	@Produce		json
-//	@Param			body	body		LogoutInput	true	"Logout form"
-//	@Success		204		{object}	custom_errors.HTTPError "No content"
-//	@Failure		400		{object}	custom_errors.HTTPError "Invalid input data"
-//	@Failure		401		{object}	custom_errors.HTTPError "Unauthorized"
-//	@Failure		500		{object}	custom_errors.HTTPError "Internal server error"
-//	@Router			/auth/logout [post]
+//	@Param			body	body		LogoutInput				true	"Logout form"
+//	@Success		204		{object}	custom_errors.HTTPError	"No content"
+//	@Failure		400		{object}	custom_errors.HTTPError	"Invalid input data"
+//	@Failure		401		{object}	custom_errors.HTTPError	"Unauthorized"
+//	@Failure		500		{object}	custom_errors.HTTPError	"Internal server error"
+//	@Router			/logout [post]
 func (h *Handler) Logout(c *gin.Context) {
 	var req LogoutInput
 	if err := c.ShouldBindJSON(&req); err != nil {
