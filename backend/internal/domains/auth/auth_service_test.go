@@ -5,10 +5,12 @@ import (
 	"errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/refresh_token"
 	"github.com/susek555/BD2/car-dealer-api/internal/test/mocks"
 	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
 	"gorm.io/gorm"
 	"testing"
+	"time"
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
 	"github.com/susek555/BD2/car-dealer-api/pkg/passwords"
@@ -31,7 +33,7 @@ func TestService_Register_Person(t *testing.T) {
 		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
 		person := user.Person{Name: "John", Surname: "Doe"}
 
-		in := user.CreateUserDTO{Email: "john@example.com", Password: "sekret", Username: "john", PersonName: &person.Name, PersonSurname: &person.Surname, Selector: "P"}
+		in := user.CreateUserDTO{Email: "john@example.com", Password: "secret", Username: "john", PersonName: &person.Name, PersonSurname: &person.Surname, Selector: "P"}
 
 		uRepo.On("GetByEmail", in.Email).Return(user.User{}, gorm.ErrRecordNotFound)
 		uRepo.On("Create", mock.Anything).Return(nil)
@@ -75,7 +77,7 @@ func TestService_Register_Company(t *testing.T) {
 
 		in := user.CreateUserDTO{
 			Email:       "john@example.com",
-			Password:    "sekret",
+			Password:    "secret",
 			Username:    "john",
 			CompanyName: &company.Name,
 			CompanyNIP:  &company.NIP,
@@ -117,7 +119,7 @@ func TestService_Register_Company(t *testing.T) {
 
 func TestService_Login(t *testing.T) {
 	ctx := context.Background()
-	validIn := LoginInput{Email: "john@example.com", Password: "sekret"}
+	validIn := LoginInput{Email: "john@example.com", Password: "secret"}
 
 	t.Run("valid credentials – returns access & refresh", func(t *testing.T) {
 		uRepo := mocks.NewUserRepositoryInterface(t)
@@ -182,6 +184,87 @@ func TestService_Login(t *testing.T) {
 		svc := &service{repo: uRepo, refreshTokenService: rtSvc, jwtKey: jwtKey}
 
 		_, _, err := svc.Login(ctx, validIn)
+		assert.EqualError(t, err, "db down")
+	})
+}
+
+func TestService_Refresh(t *testing.T) {
+	ctx := context.Background()
+	oldToken := "old_refresh"
+
+	baseRT := refresh_token.RefreshToken{
+		ID:         101,
+		Token:      oldToken,
+		UserId:     1,
+		ExpiryDate: time.Now().Add(24 * time.Hour),
+		User:       user.User{ID: 1, Email: "john@example.com"},
+	}
+
+	t.Run("happy‑path – returns new access & refresh", func(t *testing.T) {
+		uRepo := mocks.NewUserRepositoryInterface(t)
+		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
+
+		rtSvc.EXPECT().FindByToken(ctx, oldToken).Return(baseRT, nil)
+		rtSvc.EXPECT().VerifyExpiration(ctx, baseRT).Return(baseRT, nil)
+		rtSvc.EXPECT().Delete(baseRT.ID).Return(nil)
+		rtSvc.EXPECT().Create(mock.AnythingOfType("refresh_token.RefreshToken")).Return(nil)
+
+		svc := &service{repo: uRepo, refreshTokenService: rtSvc, jwtKey: jwtKey}
+
+		access, newRefresh, err := svc.Refresh(ctx, oldToken)
+
+		assert.NoError(t, err)
+		assert.NotEmpty(t, access)
+		assert.NotEqual(t, oldToken, newRefresh)
+
+		uid, err := jwt.NewJWTVerifier(string(jwtKey)).VerifyToken(access)
+		assert.NoError(t, err)
+		assert.Equal(t, int64(baseRT.User.ID), uid)
+	})
+
+	t.Run("invalid refresh token", func(t *testing.T) {
+		uRepo := mocks.NewUserRepositoryInterface(t)
+		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
+
+		rtSvc.EXPECT().
+			FindByToken(ctx, oldToken).
+			Return(refresh_token.RefreshToken{}, errors.New("sql: no rows"))
+
+		svc := &service{repo: uRepo, refreshTokenService: rtSvc, jwtKey: jwtKey}
+
+		_, _, err := svc.Refresh(ctx, oldToken)
+		assert.EqualError(t, err, "invalid refresh token")
+	})
+
+	t.Run("token expired", func(t *testing.T) {
+		uRepo := mocks.NewUserRepositoryInterface(t)
+		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
+
+		expired := errors.New("token expired")
+
+		rtSvc.EXPECT().FindByToken(ctx, oldToken).Return(baseRT, nil)
+		rtSvc.EXPECT().VerifyExpiration(ctx, baseRT).Return(refresh_token.RefreshToken{}, expired)
+
+		svc := &service{repo: uRepo, refreshTokenService: rtSvc, jwtKey: jwtKey}
+
+		_, _, err := svc.Refresh(ctx, oldToken)
+		assert.ErrorIs(t, err, expired)
+	})
+
+	t.Run("error during save", func(t *testing.T) {
+		uRepo := mocks.NewUserRepositoryInterface(t)
+		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
+
+		rtSvc.EXPECT().FindByToken(ctx, oldToken).Return(baseRT, nil)
+		rtSvc.EXPECT().VerifyExpiration(ctx, baseRT).Return(baseRT, nil)
+		rtSvc.EXPECT().Delete(baseRT.ID).Return(nil)
+		rtSvc.EXPECT().
+			Create(mock.AnythingOfType("refresh_token.RefreshToken")).
+			Return(errors.New("db down"))
+
+		svc := &service{repo: uRepo, refreshTokenService: rtSvc, jwtKey: jwtKey}
+
+		_, _, err := svc.Refresh(ctx, oldToken)
 		assert.EqualError(t, err, "db down")
 	})
 }
