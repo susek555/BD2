@@ -1,4 +1,6 @@
+import { registerResult, registerUser } from "@/app/lib/api/auth";
 import { SignupFormSchema, SignupFormState } from "@/app/lib/definitions";
+import { permanentRedirect } from "next/navigation";
 
 export async function signup(
   state: SignupFormState,
@@ -9,6 +11,7 @@ export async function signup(
   const formDataObj = Object.fromEntries(formData.entries());
 
   const validatedFields = SignupFormSchema.safeParse(formDataObj);
+
   console.log("Validation result:", validatedFields);
 
   if (!validatedFields.success) {
@@ -21,5 +24,16 @@ export async function signup(
     };
   }
 
-  return {}
+  const signupResult: registerResult = await registerUser(validatedFields.data);
+
+  if (signupResult.success) {
+    permanentRedirect("/")
+  } else {
+    return {
+      errors: signupResult.errors,
+      values: Object.fromEntries(
+        Object.entries(formDataObj).filter(([key]) => !key.includes('password'))
+      ) as SignupFormState['values']
+    }
+  }
 }
