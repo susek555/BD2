@@ -1,6 +1,6 @@
 import Link from "next/link";
-import SearchField from "@/app/ui/[main]/search-field";
-import LoginButtons from "@/app/ui/[main]/login-buttons";
+import SearchField from "@/app/ui/(home)/search-field";
+import LoginButtons from "@/app/ui/(home)/login-buttons";
 
 
 export default function TopBar() {
