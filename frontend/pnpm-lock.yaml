@@ -32,6 +32,9 @@ importers:
       react-dom:
         specifier: ^19.0.0
         version: 19.1.0(react@19.1.0)
+      use-debounce:
+        specifier: ^10.0.4
+        version: 10.0.4(react@19.1.0)
       zod:
         specifier: ^3.24.3
         version: 3.24.3
@@ -1999,6 +2002,12 @@ packages:
   uuid@8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
     hasBin: true
+
+  use-debounce@10.0.4:
+    resolution: {integrity: sha512-6Cf7Yr7Wk7Kdv77nnJMf6de4HuDE4dTxKij+RqE9rufDsI6zsbjyAxcH5y2ueJCQAnfgKbzXbZHYlkFwmBlWkw==}
+    engines: {node: '>= 16.0.0'}
+    peerDependencies:
+      react: '*'
 
   vary@1.1.2:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}
@@ -4211,6 +4220,10 @@ snapshots:
       punycode: 2.3.1
 
   uuid@8.3.2: {}
+
+  use-debounce@10.0.4(react@19.1.0):
+    dependencies:
+      react: 19.1.0
 
   vary@1.1.2: {}
 
