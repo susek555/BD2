@@ -1,6 +1,7 @@
 "use client";
 
 import { signup } from '@/app/actions/auth';
+import { SignupFormState } from '@/app/lib/definitions';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import {
   AtSymbolIcon,
@@ -10,11 +11,9 @@ import {
   UserCircleIcon,
   UserIcon
 } from '@heroicons/react/24/outline';
-import { useActionState, useEffect, useState } from 'react';
-import { SignupFormState } from '../lib/definitions';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useActionState, useState } from 'react';
 import { Button } from './button';
-import { usePathname, useSearchParams, useRouter } from 'next/navigation';
-import {  } from 'next/navigation';
 
 export default function SignupForm({
   baseAccountType,
@@ -65,9 +64,9 @@ export default function SignupForm({
                 <input
                   id="personal"
                   type="radio"
-                  value="personal"
-                  checked={accountType === 'personal'}
-                  onChange={() => changeAccountType('personal')}
+                  value="P"
+                  checked={accountType === 'P'}
+                  onChange={() => changeAccountType('P')}
                   className="h-4 w-4 text-blue-500 focus:ring-blue-400"
                 />
                 <label htmlFor="personal" className="ml-2 text-sm font-medium text-gray-900">
@@ -78,9 +77,9 @@ export default function SignupForm({
                 <input
                   id="business"
                   type="radio"
-                  value="business"
-                  checked={accountType === 'business'}
-                  onChange={() => changeAccountType('business')}
+                  value="B"
+                  checked={accountType === 'B'}
+                  onChange={() => changeAccountType('B')}
                   className="h-4 w-4 text-blue-500 focus:ring-blue-400"
                 />
                 <label htmlFor="business" className="ml-2 text-sm font-medium text-gray-900">
@@ -88,7 +87,7 @@ export default function SignupForm({
                 </label>
               </div>
             </div>
-          {/* <input type="hidden" name="selector" value={accountType} />  Wartość selector */}
+            {/* <input type="hidden" name="selector" value={accountType} />  Wartość selector */}
           </div>
 
           <div className="mb-4">
@@ -149,7 +148,7 @@ export default function SignupForm({
             </div>
           </div>
 
-          {accountType === 'personal' && (
+          {accountType === 'P' && (
             <>
               <div className="mb-4">
                 <label
@@ -211,7 +210,7 @@ export default function SignupForm({
             </>
           )}
 
-          {accountType === 'business' && (
+          {accountType === 'B' && (
             <>
               <div className="mb-4">
                 <label
