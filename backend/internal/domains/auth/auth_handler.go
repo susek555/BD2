@@ -14,6 +14,19 @@ type Handler struct {
 
 func NewHandler(service Service) *Handler { return &Handler{service: service} }
 
+// Register godoc
+//
+//	@Summary		Register new user
+//	@Description	Set up account and return a pair of tokens
+//	@Tags			auth
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body		user.CreateUserDTO	true	"Registration form"
+//	@Success		201		{object}	auth.TokenResponse	"Created - returns tokens"
+//	@Failure		400		{object}	api.ErrorResponse	"Invalid input data"
+//	@Failure		409		{object}	api.ErrorResponse	"Email taken"
+//	@Failure		500		{object}	api.ErrorResponse	"Internal server error"
+//	@Router			/auth/register [post]
 func (h *Handler) Register(ctx *gin.Context) {
 	var request user.CreateUserDTO
 	if err := ctx.ShouldBindJSON(&request); err != nil {
