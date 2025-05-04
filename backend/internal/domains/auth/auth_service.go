@@ -128,13 +128,13 @@ func (s *service) Logout(ctx context.Context, userID uint, provided string, allD
 }
 
 func (s *service) newRefreshToken(ctx context.Context, userId uint, userEmail string) (string, error) {
-	token, err := jwt.GenerateToken(userEmail, int64(userId), s.jwtKey, time.Now().Add(30*24*time.Hour))
+	token, _ := jwt.GenerateToken(userEmail, int64(userId), s.jwtKey, time.Now().Add(30*24*time.Hour))
 	refresh := refresh_token.RefreshToken{
 		Token:      token,
 		UserId:     userId,
 		ExpiryDate: time.Now().Add(30 * 24 * time.Hour),
 	}
-	err = s.refreshTokenService.Create(refresh)
+	err := s.refreshTokenService.Create(refresh)
 	if err != nil {
 		return "", err
 	}
