@@ -6,17 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/susek555/BD2/car-dealer-api/pkg/custom_errors"
-	"gorm.io/gorm"
 )
-
-var ErrorMap = map[error]int{
-	ErrInvalidSelector:     http.StatusBadRequest,
-	ErrCreateCompany:       http.StatusBadRequest,
-	ErrCreatePerson:        http.StatusBadRequest,
-	ErrHashPassword:        http.StatusInternalServerError,
-	strconv.ErrSyntax:      http.StatusBadRequest, // for parsing uint
-	gorm.ErrRecordNotFound: http.StatusNotFound,
-}
 
 type Handler struct {
 	service UserServiceInterface
