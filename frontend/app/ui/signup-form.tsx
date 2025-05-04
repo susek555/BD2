@@ -13,41 +13,48 @@ import {
 import { useActionState, useEffect, useState } from 'react';
 import { SignupFormState } from '../lib/definitions';
 import { Button } from './button';
+import { usePathname, useSearchParams, useRouter } from 'next/navigation';
+import {  } from 'next/navigation';
 
-export default function SignupForm() {
+export default function SignupForm({
+  baseAccountType,
+}: {
+  baseAccountType: string;
+}) {
   const initialState: SignupFormState = {
     errors: {},
     values: {},
   };
 
-  const [state, action] = useActionState(signup, initialState);
-  const [accountType, setAccountType] = useState('personal');
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
-  useEffect(() => {
-    if (state?.values?.selector) {
-      setAccountType(state.values.selector);
-    }
-  }, [state]);
+  const [backupAccountType, setBackupAccountType] = useState<string | null>(null);
+
+  const [accountType, setAccountType] = useState<string>(
+    searchParams.get('accountType') || backupAccountType || baseAccountType
+  );
+
+  function changeAccountType(newAccountType: string) {
+    const params = new URLSearchParams(searchParams);
+    setAccountType(newAccountType);
+    params.set('accountType', newAccountType.toString());
+    router.replace(`${pathname}?${params.toString()}`);
+  }
+
+  const [state, action] = useActionState(signup, initialState);
 
   const handleSubmit = (formData: FormData) => {
     formData.append('selector', accountType);
+    setBackupAccountType(accountType);
     return action(formData);
   };
 
-  /*
-    TODO: fix selector value when returning to form
-    when action returns failure and selector was business
-    selector in form will be set back to personal even though
-    accountType === 'business'
-
-    temporary fix: add hidden input that will submit the actual value
-  */
   return (
-    <form className="space-y-3" action={handleSubmit}>
+    <form className="space-y-3" action={handleSubmit} key={accountType}>
       <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
-        <h1 className="mb-3 text-2xl">
-          Sign up
-        </h1>
+        <h1 className="mb-3 text-2xl">Sign up</h1>
         <div className="w-full">
           <div className="mb-4">
             <label className="mb-3 block text-xs font-medium text-gray-900">
@@ -60,7 +67,7 @@ export default function SignupForm() {
                   type="radio"
                   value="personal"
                   checked={accountType === 'personal'}
-                  onChange={() => setAccountType('personal')}
+                  onChange={() => changeAccountType('personal')}
                   className="h-4 w-4 text-blue-500 focus:ring-blue-400"
                 />
                 <label htmlFor="personal" className="ml-2 text-sm font-medium text-gray-900">
@@ -73,7 +80,7 @@ export default function SignupForm() {
                   type="radio"
                   value="business"
                   checked={accountType === 'business'}
-                  onChange={() => setAccountType('business')}
+                  onChange={() => changeAccountType('business')}
                   className="h-4 w-4 text-blue-500 focus:ring-blue-400"
                 />
                 <label htmlFor="business" className="ml-2 text-sm font-medium text-gray-900">
@@ -81,7 +88,7 @@ export default function SignupForm() {
                 </label>
               </div>
             </div>
-            <input type="hidden" name="selector" value={accountType} />
+          {/* <input type="hidden" name="selector" value={accountType} />  Wartość selector */}
           </div>
 
           <div className="mb-4">
