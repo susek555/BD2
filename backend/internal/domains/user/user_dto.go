@@ -21,7 +21,7 @@ type RetrieveUserDTO struct {
 }
 
 type UpdateUserDTO struct {
-	ID       uint    `json:"id"`
+	ID       uint    `json:"id" `
 	Username *string `json:"username"`
 	Password *string `json:"password"`
 	Email    *string `json:"email"`

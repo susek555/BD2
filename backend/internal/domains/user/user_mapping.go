@@ -9,6 +9,9 @@ func (dto *CreateUserDTO) MapToUser() (User, error) {
 	if err != nil {
 		return User{}, ErrHashPassword
 	}
+	if err := dto.validate(); err != nil {
+		return User{}, err
+	}
 	switch dto.Selector {
 	case "P":
 		if err := dto.validateP(); err != nil {
@@ -38,7 +41,12 @@ func (dto *CreateUserDTO) MapToUser() (User, error) {
 		return User{}, ErrInvalidSelector
 	}
 }
-
+func (dto *CreateUserDTO) validate() error {
+	if dto.Username == "" || dto.Password == "" || dto.Email == "" || dto.Selector == "" {
+		return ErrCreateUser
+	}
+	return nil
+}
 func (dto *CreateUserDTO) validateP() error {
 	if dto.PersonName == nil || dto.PersonSurname == nil {
 		return ErrCreatePerson
