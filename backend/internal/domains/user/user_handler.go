@@ -29,7 +29,7 @@ func NewHandler(s UserServiceInterface) *Handler {
 // GetAllUsers godoc
 //
 //	@Summary		Get all users
-//	@Description	Get all users from database and return them as a list of DTOs. If user's subtype is person the company related fields will be ommitted and vice versa.
+//	@Description	Get all users from database and return them as a list of DTOs. If user's subtype is person the company related fields will be omitted and vice versa.
 //	@Tags			users
 //	@Accept			json
 //	@Produce		json
@@ -48,7 +48,7 @@ func (h *Handler) GetAllUsers(c *gin.Context) {
 // GetUserById godoc
 //
 //	@Summary		Get user by id
-//	@Description	Get user by id from database and return it as a DTO. If user's subtype is person the company related fields will be ommitted and vice versa.
+//	@Description	Get user by id from database and return it as a DTO. If user's subtype is person the company related fields will be omitted and vice versa.
 //	@Tags			users
 //	@Accept			json
 //	@Produce		json
@@ -75,7 +75,7 @@ func (h *Handler) GetUserById(c *gin.Context) {
 // GetUserByEmail godoc
 //
 //	@Summary		Get user by email
-//	@Description	Get user by email from database and return it as a DTO. If user's subtype is person the company related fields will be ommitted and vice versa.
+//	@Description	Get user by email from database and return it as a DTO. If user's subtype is person the company related fields will be omitted and vice versa.
 //	@Tags			users
 //	@Accept			json
 //	@Produce		json
