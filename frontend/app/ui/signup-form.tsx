@@ -11,6 +11,7 @@ import {
   UserCircleIcon,
   UserIcon
 } from '@heroicons/react/24/outline';
+import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useActionState, useState } from 'react';
 import { Button } from './button';
@@ -336,6 +337,10 @@ export default function SignupForm({
         <Button type="submit" className="mt-6 w-full">
           Sign up <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
         </Button>
+
+        <Link href="/login" className="mt-2 block text-xs font-medium">
+          Already have an account? Log in
+        </Link>
       </div>
     </form>
   );
