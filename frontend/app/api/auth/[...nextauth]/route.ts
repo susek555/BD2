@@ -27,13 +27,8 @@ const handler = NextAuth({
         });
         const user = await res.json();
         console.log(user);
-        console.log(JSON.stringify({
-          email: credentials?.login,
-          password: credentials?.password,
-        }));
 
-
-        if (user) {
+        if (!user.error) {
           // Any object returned will be saved in `user` property of the JWT
           return user;
         } else {
