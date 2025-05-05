@@ -20,7 +20,7 @@ var (
 )
 
 type Service interface {
-	Register(ctx context.Context, in user.CreateUserDTO) (access, refresh string, err error)
+	Register(ctx context.Context, in user.CreateUserDTO) error
 	Login(ctx context.Context, in LoginInput) (access, refresh string, err error)
 	Refresh(ctx context.Context, refreshToken string) (access string, refresh string, err error)
 	Logout(ctx context.Context, userID uint, refreshToken string, allDevices bool) error
@@ -42,29 +42,19 @@ func NewService(db *gorm.DB, jwtKey []byte) Service {
 	}
 }
 
-func (s *service) Register(ctx context.Context, in user.CreateUserDTO) (string, string, error) {
+func (s *service) Register(ctx context.Context, in user.CreateUserDTO) error {
 	u, err := s.repo.GetByEmail(in.Email)
 	if err == nil && u.ID != 0 {
-		return "", "", ErrEmailTaken
+		return ErrEmailTaken
 	}
 	userModel, err := in.MapToUser()
 	if err != nil {
-		return "", "", err
+		return err
 	}
 	if err := s.repo.Create(userModel); err != nil {
-		return "", "", err
+		return err
 	}
-
-	access, err := jwt.GenerateToken(in.Email, int64(userModel.ID), s.jwtKey, time.Now().Add(2*time.Hour))
-	if err != nil {
-		return "", "", err
-	}
-	refresh, err := s.newRefreshToken(ctx, userModel.ID, userModel.Email)
-	if err != nil {
-		return "", "", err
-	}
-
-	return access, refresh, nil
+	return nil
 }
 
 func (s *service) Login(ctx context.Context, in LoginInput) (string, string, error) {
