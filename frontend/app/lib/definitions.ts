@@ -76,3 +76,10 @@ export type SignupFormState = {
     business_nip?: string
   }
 }
+
+// Filters
+
+export type FilterFieldData = {
+  name: string;
+  options: string[];
+}
