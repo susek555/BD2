@@ -2,6 +2,7 @@ package auth
 
 import (
 	"errors"
+	"github.com/go-playground/validator/v10"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -12,6 +13,8 @@ import (
 type Handler struct {
 	service Service
 }
+
+var validate = validator.New()
 
 func NewHandler(service Service) *Handler { return &Handler{service: service} }
 
@@ -35,6 +38,12 @@ func (h *Handler) Register(ctx *gin.Context) {
 	var request user.CreateUserDTO
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		response.Errors["other"] = []string{"invalid body"}
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
+		return
+	}
+	if err := validate.Struct(request); err != nil {
+		response.Errors["email"] = []string{"invalid email format"}
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
 		return
 	}
 
