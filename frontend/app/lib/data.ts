@@ -26,7 +26,7 @@ export async function fetchFuelTypes() {
     // TODO connect API
 
     const data: FilterFieldData = {
-        name: "Fuel type",
+        name: "Fuel",
         options: ["Diesel", "Electric", "Gasoline"]
     };
 
