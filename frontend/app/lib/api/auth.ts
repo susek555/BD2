@@ -23,22 +23,6 @@ export type registerResult = {
   }
 }
 
-type loginResponse = {
-  access_token?: string
-  refresh_token?: string
-  errors?: {
-    credentials?: string[]
-  }
-}
-
-export type loginResult = {
-  success: boolean
-  errors?: {
-    credentials?: string[]
-    other?: string[]
-  }
-}
-
 /**
  * Sends registration data to the backend and stores tokens if successful
  * @param userData Registration data in the required format
