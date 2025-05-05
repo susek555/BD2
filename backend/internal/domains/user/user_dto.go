@@ -3,7 +3,7 @@ package user
 type CreateUserDTO struct {
 	Username      string  `json:"username"`
 	Password      string  `json:"password"`
-	Email         string  `json:"email"`
+	Email         string  `json:"email" validate:"required,email"`
 	Selector      string  `json:"selector"`
 	CompanyName   *string `json:"company_name"`
 	CompanyNIP    *string `json:"company_nip"`
