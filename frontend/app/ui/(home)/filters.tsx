@@ -1,6 +1,7 @@
 "use client";
 
 import { BaseFilterTemplate } from "@/app/ui/(home)/base-filter-template/base-filter-template";
+import { BaseRangeTemplate } from "./base-filter-template/base-range-template";
 import { fetchFilterFields } from "@/app/lib/data";
 import { useEffect, useState } from "react";
 
@@ -19,6 +20,10 @@ export default function Filters() {
         // TODO implement
     }
 
+    function handleRangeChange(range: { min: number; max: number }) {
+        // TODO implement
+    }
+
     return (
         <>
             <p className="px-2">Filters</p>
@@ -30,6 +35,7 @@ export default function Filters() {
                     onChange={handleFilterChange}
                 />
             ))}
+            <BaseRangeTemplate name="Production year" onChange={handleRangeChange}></BaseRangeTemplate>
         </>
     );
 }
