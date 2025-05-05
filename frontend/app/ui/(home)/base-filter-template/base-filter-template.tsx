@@ -24,7 +24,7 @@ export function BaseFilterTemplate({ name, options, onChange }: BaseFilterTempla
     };
 
     return (
-        <div className="base-filter-template border border-gray-300 rounded px-2 py-1">
+        <div className="base-filter-template border border-black-300 rounded px-2 py-1">
             <button
             className="flex justify-between items-center w-full"
             onClick={toggleDropdown}

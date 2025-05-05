@@ -81,3 +81,10 @@ export type LoginError = {
   credentials?: string[]
   server?: string[]
 }
+
+// Filters
+
+export type FilterFieldData = {
+  name: string;
+  options: string[];
+}
