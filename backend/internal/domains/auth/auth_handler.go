@@ -29,24 +29,31 @@ func NewHandler(service Service) *Handler { return &Handler{service: service} }
 //	@Failure		500		{object}	custom_errors.HTTPError	"Internal server error"
 //	@Router			/auth/register [post]
 func (h *Handler) Register(ctx *gin.Context) {
+	response := RegisterResponse{
+		Errors: make(map[string][]string),
+	}
 	var request user.CreateUserDTO
 	if err := ctx.ShouldBindJSON(&request); err != nil {
-		ctx.JSON(http.StatusBadRequest, custom_errors.NewHTTPError("invalid body"))
+		response.Errors["other"] = []string{"invalid body"}
 		return
 	}
 
-	access, refresh, err := h.service.Register(ctx, request)
+	err := h.service.Register(ctx, request)
 	if err != nil {
 		switch {
 		case errors.Is(err, ErrEmailTaken):
-			ctx.JSON(http.StatusConflict, custom_errors.NewHTTPError("email taken"))
+			response.Errors["email"] = []string{"email already taken"}
 		default:
-			ctx.JSON(http.StatusInternalServerError, custom_errors.NewHTTPError("internal server error"))
+			response.Errors["other"] = []string{"internal server error"}
 		}
-		return
 	}
-	response := TokenResponse{AccessToken: access, RefreshToken: refresh}
-	ctx.JSON(http.StatusCreated, response)
+	if len(response.Errors) == 0 {
+		ctx.JSON(http.StatusCreated, response)
+	} else if _, exists := response.Errors["email"]; exists {
+		ctx.JSON(http.StatusConflict, response)
+	} else {
+		ctx.JSON(http.StatusInternalServerError, response)
+	}
 }
 
 // Login godoc
