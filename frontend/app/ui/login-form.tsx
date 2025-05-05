@@ -4,7 +4,9 @@ import {
   AtSymbolIcon,
   KeyIcon
 } from '@heroicons/react/24/outline';
+import { ArrowRightIcon } from '@heroicons/react/24/solid';
 import { signIn } from 'next-auth/react';
+import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from './button';
 
@@ -99,8 +101,11 @@ export default function LoginForm() {
           className="mt-4 w-full"
           type="submit"
         >
-          Log in
+          Log in <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
         </Button>
+        <Link href="/signup" className="mt-2 block text-xs font-medium">
+          Need an account? Sign up
+        </Link>
         <div className="flex h-8 items-end space-x-1 mt-4">
           {/* Error message */}
         </div>
