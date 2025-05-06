@@ -162,7 +162,7 @@ const docTemplate = `{
                         }
                     },
                     "409": {
-                        "description": "Email taken",
+                        "description": "Login taken",
                         "schema": {
                             "$ref": "#/definitions/custom_errors.HTTPError"
                         }
