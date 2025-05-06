@@ -119,14 +119,14 @@ func TestService_Register_Company(t *testing.T) {
 
 func TestService_Login(t *testing.T) {
 	ctx := context.Background()
-	validIn := LoginInput{Email: "john@example.com", Password: "secret"}
+	validIn := LoginInput{Login: "john@example.com", Password: "secret"}
 
 	t.Run("valid credentials – returns access & refresh", func(t *testing.T) {
 		uRepo := mocks.NewUserRepositoryInterface(t)
 		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
 
-		existing := user.User{ID: 1, Email: validIn.Email, Password: hashPass(t, validIn.Password)}
-		uRepo.EXPECT().GetByEmail(validIn.Email).Return(existing, nil)
+		existing := user.User{ID: 1, Email: validIn.Login, Password: hashPass(t, validIn.Password)}
+		uRepo.EXPECT().GetByEmail(validIn.Login).Return(existing, nil)
 
 		rtSvc.EXPECT().Create(mock.AnythingOfType("refresh_token.RefreshToken")).Return(nil)
 
@@ -147,7 +147,7 @@ func TestService_Login(t *testing.T) {
 		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
 
 		uRepo.EXPECT().
-			GetByEmail(validIn.Email).
+			GetByEmail(validIn.Login).
 			Return(user.User{}, gorm.ErrRecordNotFound)
 
 		svc := &service{repo: uRepo, refreshTokenService: rtSvc, jwtKey: jwtKey}
@@ -160,8 +160,8 @@ func TestService_Login(t *testing.T) {
 		uRepo := mocks.NewUserRepositoryInterface(t)
 		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
 
-		badPassUser := user.User{ID: 2, Email: validIn.Email, Password: hashPass(t, "invalidPass")}
-		uRepo.EXPECT().GetByEmail(validIn.Email).Return(badPassUser, nil)
+		badPassUser := user.User{ID: 2, Email: validIn.Login, Password: hashPass(t, "invalidPass")}
+		uRepo.EXPECT().GetByEmail(validIn.Login).Return(badPassUser, nil)
 
 		svc := &service{repo: uRepo, refreshTokenService: rtSvc, jwtKey: jwtKey}
 
@@ -173,8 +173,8 @@ func TestService_Login(t *testing.T) {
 		uRepo := mocks.NewUserRepositoryInterface(t)
 		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
 
-		existing := user.User{ID: 3, Email: validIn.Email, Password: hashPass(t, validIn.Password)}
-		uRepo.EXPECT().GetByEmail(validIn.Email).Return(existing, nil)
+		existing := user.User{ID: 3, Email: validIn.Login, Password: hashPass(t, validIn.Password)}
+		uRepo.EXPECT().GetByEmail(validIn.Login).Return(existing, nil)
 
 		rtSvc.
 			EXPECT().

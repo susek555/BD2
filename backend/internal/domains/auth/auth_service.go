@@ -54,7 +54,7 @@ func (s *service) Register(ctx context.Context, in user.CreateUserDTO) map[strin
 	}
 	_, noEmail := s.repo.GetByEmail(in.Email)
 	if noEmail == nil {
-		errs["email"] = []string{"Email already taken"}
+		errs["email"] = []string{"Login already taken"}
 	}
 	if in.Selector == "C" {
 		_, noNip := s.repo.GetByCompanyNip(*in.CompanyNIP)
@@ -72,7 +72,7 @@ func (s *service) Register(ctx context.Context, in user.CreateUserDTO) map[strin
 }
 
 func (s *service) Login(ctx context.Context, in LoginInput) (string, string, error) {
-	u, err := s.repo.GetByEmail(in.Email)
+	u, err := s.repo.GetByEmail(in.Login)
 	if err != nil || u.ID == 0 {
 		return "", "", ErrInvalidCredentials
 	}
