@@ -21,7 +21,7 @@ var (
 
 type Service interface {
 	Register(ctx context.Context, in user.CreateUserDTO) map[string][]string
-	Login(ctx context.Context, in LoginInput) (access, refresh string, err error)
+	Login(ctx context.Context, in LoginInput) (access, refresh string, err error, user *user.User)
 	Refresh(ctx context.Context, refreshToken string) (access string, refresh string, err error)
 	Logout(ctx context.Context, userID uint, refreshToken string, allDevices bool) error
 }
@@ -71,26 +71,25 @@ func (s *service) Register(ctx context.Context, in user.CreateUserDTO) map[strin
 	return errs
 }
 
-func (s *service) Login(ctx context.Context, in LoginInput) (string, string, error) {
+func (s *service) Login(ctx context.Context, in LoginInput) (string, string, error, *user.User) {
 	u, err := s.repo.GetByEmail(in.Login)
 	if err != nil || u.ID == 0 {
-		return "", "", ErrInvalidCredentials
+		return "", "", ErrInvalidCredentials, &user.User{}
 	}
 
 	if !passwords.Match(in.Password, u.Password) {
-		return "", "", ErrInvalidCredentials
+		return "", "", ErrInvalidCredentials, &user.User{}
 	}
 	access, err := jwt.GenerateToken(u.Email, int64(u.ID), s.jwtKey, time.Now().Add(2*time.Hour))
 	if err != nil {
-		return "", "", err
+		return "", "", err, &user.User{}
 	}
 
 	refresh, err := s.newRefreshToken(ctx, u.ID, u.Email)
 	if err != nil {
-		return "", "", err
+		return "", "", err, &user.User{}
 	}
-
-	return access, refresh, nil
+	return access, refresh, nil, &u
 }
 
 func (s *service) Refresh(ctx context.Context, provided string) (string, string, error) {
