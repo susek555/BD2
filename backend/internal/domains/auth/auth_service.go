@@ -43,10 +43,6 @@ func NewService(db *gorm.DB, jwtKey []byte) Service {
 }
 
 func (s *service) Register(ctx context.Context, in user.CreateUserDTO) error {
-	u, err := s.repo.GetByEmail(in.Email)
-	if err == nil && u.ID != 0 {
-		return ErrEmailTaken
-	}
 	userModel, err := in.MapToUser()
 	if err != nil {
 		return err
