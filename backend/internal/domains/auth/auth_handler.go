@@ -71,17 +71,35 @@ func (h *Handler) Register(ctx *gin.Context) {
 func (h *Handler) Login(c *gin.Context) {
 	var req LoginInput
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError("invalid body"))
+		c.JSON(http.StatusBadRequest, LoginResponse{Errors: map[string][]string{"server": {"invalid body"}}})
 		return
 	}
 
-	access, refresh, err := h.service.Login(c, req)
+	access, refresh, err, user := h.service.Login(c, req)
+	loginResponse := prepareLoginResponse(access, refresh, *user)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, custom_errors.NewHTTPError("unauthorized"))
+		c.JSON(http.StatusUnauthorized, LoginResponse{Errors: map[string][]string{"credentials": {"invalid credentials"}}})
 		return
 	}
-	response := TokenResponse{RefreshToken: refresh, AccessToken: access}
-	c.JSON(http.StatusOK, response)
+	c.JSON(http.StatusOK, loginResponse)
+}
+
+func prepareLoginResponse(access, refresh string, user user.User) *LoginResponse {
+	loginResponse := LoginResponse{
+		RefreshToken: refresh,
+		AccessToken:  access,
+		Selector:     user.Selector,
+		Username:     user.Username,
+		Email:        user.Email,
+	}
+	if user.Selector == "C" {
+		loginResponse.CompanyName = user.Company.Name
+		loginResponse.CompanyNip = user.Company.NIP
+	} else if user.Selector == "P" {
+		loginResponse.PersonName = user.Person.Name
+		loginResponse.PersonSurname = user.Person.Surname
+	}
+	return &loginResponse
 }
 
 // Refresh godoc
@@ -108,7 +126,7 @@ func (h *Handler) Refresh(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, custom_errors.NewHTTPError("unauthorized"))
 		return
 	}
-	response := TokenResponse{AccessToken: access, RefreshToken: refresh}
+	response := LoginResponse{AccessToken: access, RefreshToken: refresh}
 	c.JSON(http.StatusOK, response)
 }
 
