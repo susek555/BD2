@@ -30,35 +30,29 @@ func NewHandler(service Service) *Handler { return &Handler{service: service} }
 //	@Failure		500		{object}	custom_errors.HTTPError	"Internal server error"
 //	@Router			/auth/register [post]
 func (h *Handler) Register(ctx *gin.Context) {
-	response := RegisterResponse{
-		Errors: make(map[string][]string),
-	}
 	var request user.CreateUserDTO
 	if err := ctx.ShouldBindJSON(&request); err != nil {
-		response.Errors["other"] = []string{"invalid body"}
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
+		ctx.JSON(http.StatusBadRequest, RegisterResponse{
+			Errors: map[string][]string{"other": {"invalid body"}},
+		})
 		return
 	}
-	if err := validate.Struct(request); err != nil {
-		response.Errors["email"] = []string{"invalid email format"}
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
-		return
-	}
-	err := h.service.Register(ctx, request)
-	response.Errors = err
-	if len(response.Errors) == 0 {
-		ctx.JSON(http.StatusCreated, response)
-		return
-	}
-	_, emailClash := response.Errors["email"]
-	_, userClash := response.Errors["username"]
-	_, companyNipDup := response.Errors["companies_nip"]
 
-	if emailClash || userClash || companyNipDup {
-		ctx.JSON(http.StatusConflict, response)
+	if err := validate.Struct(request); err != nil {
+		errs := make(map[string][]string)
+		for _, fe := range err.(validator.ValidationErrors) {
+			errs[fe.Field()] = []string{fe.Error()}
+		}
+		ctx.JSON(http.StatusBadRequest, RegisterResponse{Errors: errs})
 		return
 	}
-	ctx.JSON(http.StatusInternalServerError, response)
+
+	err := h.service.Register(ctx, request)
+	if len(err) > 0 {
+		ctx.JSON(http.StatusConflict, RegisterResponse{Errors: err})
+		return
+	}
+	ctx.JSON(http.StatusCreated, RegisterResponse{})
 }
 
 // Login godoc
