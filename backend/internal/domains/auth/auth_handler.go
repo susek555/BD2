@@ -26,7 +26,7 @@ func NewHandler(service Service) *Handler { return &Handler{service: service} }
 //	@Param			body	body		user.CreateUserDTO		true	"Registration form"
 //	@Success		201		{object}	TokenResponse			"Created - returns tokens"
 //	@Failure		400		{object}	custom_errors.HTTPError	"Invalid input data"
-//	@Failure		409		{object}	custom_errors.HTTPError	"Email taken"
+//	@Failure		409		{object}	custom_errors.HTTPError	"Login taken"
 //	@Failure		500		{object}	custom_errors.HTTPError	"Internal server error"
 //	@Router			/auth/register [post]
 func (h *Handler) Register(ctx *gin.Context) {
