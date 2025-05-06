@@ -5,6 +5,8 @@ type UserServiceInterface interface {
 	GetAll() ([]RetrieveUserDTO, error)
 	GetById(id uint) (RetrieveUserDTO, error)
 	GetByEmail(email string) (RetrieveUserDTO, error)
+	GetByCompanyNip(email string) (RetrieveUserDTO, error)
+	GetByUsername(username string) (RetrieveUserDTO, error)
 	Update(UpdateUserDTO) error
 	Delete(id uint) error
 }
@@ -49,6 +51,24 @@ func (s *UserService) GetById(id uint) (RetrieveUserDTO, error) {
 
 func (s *UserService) GetByEmail(email string) (RetrieveUserDTO, error) {
 	user, err := s.repo.GetByEmail(email)
+	if err != nil {
+		return RetrieveUserDTO{}, err
+	}
+	userDTO, _ := user.MapToDTO()
+	return userDTO, nil
+}
+
+func (s *UserService) GetByUsername(username string) (RetrieveUserDTO, error) {
+	user, err := s.repo.GetByUsername(username)
+	if err != nil {
+		return RetrieveUserDTO{}, err
+	}
+	userDTO, _ := user.MapToDTO()
+	return userDTO, nil
+}
+
+func (s *UserService) GetByCompanyNip(nip string) (RetrieveUserDTO, error) {
+	user, err := s.repo.GetByCompanyNip(nip)
 	if err != nil {
 		return RetrieveUserDTO{}, err
 	}
