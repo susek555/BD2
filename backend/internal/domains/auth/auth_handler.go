@@ -1,13 +1,11 @@
 package auth
 
 import (
-	"github.com/go-playground/validator/v10"
-	"net/http"
-	"strings"
-
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
 	"github.com/susek555/BD2/car-dealer-api/pkg/custom_errors"
+	"net/http"
 )
 
 type Handler struct {
@@ -15,20 +13,6 @@ type Handler struct {
 }
 
 var validate = validator.New()
-
-func addErrorToMap(errorMap map[string][]string, err error) {
-	if strings.Contains(err.Error(), "UNIQUE constraint") {
-		if strings.Contains(err.Error(), "companies.n_ip") {
-			errorMap["companies_nip"] = []string{"NIP already taken"}
-		} else if strings.Contains(err.Error(), "users.email") {
-			errorMap["email"] = []string{"Email already taken"}
-		} else if strings.Contains(err.Error(), "users.username") {
-			errorMap["email"] = []string{"Username already taken"}
-		} else {
-			errorMap["other"] = []string{"Something went wrong"}
-		}
-	}
-}
 
 func NewHandler(service Service) *Handler { return &Handler{service: service} }
 
@@ -60,11 +44,8 @@ func (h *Handler) Register(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
 		return
 	}
-
 	err := h.service.Register(ctx, request)
-	if err != nil {
-		addErrorToMap(response.Errors, err)
-	}
+	response.Errors = err
 	if len(response.Errors) == 0 {
 		ctx.JSON(http.StatusCreated, response)
 		return
