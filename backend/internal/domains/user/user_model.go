@@ -2,7 +2,7 @@ package user
 
 type User struct {
 	ID       uint   `json:"id" gorm:"primaryKey;autoIncrement"`
-	Username string `json:"username"`
+	Username string `json:"username" gorm:"unique"`
 	Password string `json:"password"`
 	Email    string `json:"email" gorm:"unique"`
 	Selector string `json:"selector" gorm:"check:selector IN ('P', 'C')"`
