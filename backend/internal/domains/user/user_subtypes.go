@@ -4,7 +4,7 @@ import "gorm.io/gorm"
 
 type Company struct {
 	UserID uint   `json:"id" gorm:"primaryKey"`
-	NIP    string `json:"nip"`
+	NIP    string `json:"nip" gorm:"unique"`
 	Name   string `json:"name"`
 	User   User   `gorm:"foreignKey:UserID;references:ID;constraint:OnDelete:CASCADE"`
 }
