@@ -1,9 +1,9 @@
 package auth
 
 import (
-	"errors"
 	"github.com/go-playground/validator/v10"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
@@ -15,6 +15,20 @@ type Handler struct {
 }
 
 var validate = validator.New()
+
+func addErrorToMap(errorMap map[string][]string, err error) {
+	if strings.Contains(err.Error(), "UNIQUE constraint") {
+		if strings.Contains(err.Error(), "companies.n_ip") {
+			errorMap["companies_nip"] = []string{"NIP already taken"}
+		} else if strings.Contains(err.Error(), "users.email") {
+			errorMap["email"] = []string{"Email already taken"}
+		} else if strings.Contains(err.Error(), "users.username") {
+			errorMap["email"] = []string{"Username already taken"}
+		} else {
+			errorMap["other"] = []string{"Something went wrong"}
+		}
+	}
+}
 
 func NewHandler(service Service) *Handler { return &Handler{service: service} }
 
@@ -49,20 +63,21 @@ func (h *Handler) Register(ctx *gin.Context) {
 
 	err := h.service.Register(ctx, request)
 	if err != nil {
-		switch {
-		case errors.Is(err, ErrEmailTaken):
-			response.Errors["email"] = []string{"email already taken"}
-		default:
-			response.Errors["other"] = []string{"internal server error"}
-		}
+		addErrorToMap(response.Errors, err)
 	}
 	if len(response.Errors) == 0 {
 		ctx.JSON(http.StatusCreated, response)
-	} else if _, exists := response.Errors["email"]; exists {
-		ctx.JSON(http.StatusConflict, response)
-	} else {
-		ctx.JSON(http.StatusInternalServerError, response)
+		return
 	}
+	_, emailClash := response.Errors["email"]
+	_, userClash := response.Errors["username"]
+	_, companyNipDup := response.Errors["companies_nip"]
+
+	if emailClash || userClash || companyNipDup {
+		ctx.JSON(http.StatusConflict, response)
+		return
+	}
+	ctx.JSON(http.StatusInternalServerError, response)
 }
 
 // Login godoc
