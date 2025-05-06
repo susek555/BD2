@@ -20,7 +20,7 @@ var (
 )
 
 type Service interface {
-	Register(ctx context.Context, in user.CreateUserDTO) error
+	Register(ctx context.Context, in user.CreateUserDTO) map[string][]string
 	Login(ctx context.Context, in LoginInput) (access, refresh string, err error)
 	Refresh(ctx context.Context, refreshToken string) (access string, refresh string, err error)
 	Logout(ctx context.Context, userID uint, refreshToken string, allDevices bool) error
@@ -42,15 +42,33 @@ func NewService(db *gorm.DB, jwtKey []byte) Service {
 	}
 }
 
-func (s *service) Register(ctx context.Context, in user.CreateUserDTO) error {
+func (s *service) Register(ctx context.Context, in user.CreateUserDTO) map[string][]string {
 	userModel, err := in.MapToUser()
+	var errs = make(map[string][]string)
 	if err != nil {
-		return err
+		errs["other"] = []string{err.Error()}
+	}
+	_, noUsername := s.repo.GetByUsername(in.Username)
+	if noUsername == nil {
+		errs["username"] = []string{"Username already taken"}
+	}
+	_, noEmail := s.repo.GetByEmail(in.Email)
+	if noEmail == nil {
+		errs["email"] = []string{"Email already taken"}
+	}
+	if in.Selector == "C" {
+		_, noNip := s.repo.GetByCompanyNip(*in.CompanyNIP)
+		if noNip == nil {
+			errs["companies_nip"] = []string{"NIP already taken"}
+		}
+	}
+	if len(errs) > 0 {
+		return errs
 	}
 	if err := s.repo.Create(userModel); err != nil {
-		return err
+		errs["other"] = []string{err.Error()}
 	}
-	return nil
+	return errs
 }
 
 func (s *service) Login(ctx context.Context, in LoginInput) (string, string, error) {
