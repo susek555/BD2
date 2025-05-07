@@ -2,10 +2,12 @@ import SideBar from "@/app/ui/(home)/sidebar";
 import { Suspense } from "react";
 import { OffersFoundSkeleton, OffersTableSkeleton } from "../ui/skeletons";
 import Pagination from "../ui/(home)/pagination";
+import OffersFoundInfo from "../ui/(home)/offers-found-info";
 
 
 export default async function Home() {
   const totalPages = 10;
+  const totalOffers = 100;
   // TODO fetch available offers here and pass them to the table
 
   return (
@@ -17,8 +19,8 @@ export default async function Home() {
         </Suspense>
       </div>
       <div className="flex-grow p-6 md:overflow-y-auto md:px-12 md:py-8">
-        <Suspense>
-          <OffersFoundSkeleton />
+        <Suspense key={totalOffers} fallback={<OffersFoundSkeleton />}>
+          <OffersFoundInfo totalOffers={totalOffers} />
         </Suspense>
         <div className="my-4" />
         <Suspense>
