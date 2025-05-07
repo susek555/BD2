@@ -5,6 +5,7 @@ import { BaseRangeTemplate } from "./base-filter-template/base-range-template";
 import { fetchFilterFields, prepareRangeFields } from "@/app/lib/data";
 import { useEffect, useState } from "react";
 import { FilterFieldData, RangeFieldData } from "@/app/lib/definitions";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
 
 export default function Filters() {
     const [filters, setFilters] = useState<FilterFieldData[]>([]);
@@ -19,12 +20,42 @@ export default function Filters() {
         fetchData();
     }, []);
 
+    const searchParams = useSearchParams();
+    const pathname = usePathname();
+    const { replace } = useRouter();
+
     function handleFilterChange(name: string, selected: string[]) {
-        // TODO implement
+        const params = new URLSearchParams(searchParams);
+
+        params.set('page', '1'); // Reset to the first page
+        params.delete('query'); // Reset the search query
+        if (selected.length > 0) {
+            params.set(name, selected.join(","));
+        } else {
+            params.delete(name);
+        }
+
+        replace(`${pathname}?${params.toString()}`);
     }
 
     function handleRangeChange(name: string, range: { min: number; max: number }) {
-        // TODO implement
+        const params = new URLSearchParams(searchParams);
+
+        params.set('page', '1'); // Reset to the first page
+        params.delete('query'); // Reset the search query
+        if (range.min !== 0) {
+            params.set(`${name}_min`, range.min.toString());
+        } else {
+            params.delete(`${name}_min`);
+        }
+
+        if (range.max !== 0) {
+            params.set(`${name}_max`, range.max.toString());
+        } else {
+            params.delete(`${name}_max`);
+        }
+
+        replace(`${pathname}?${params.toString()}`);
     }
 
     return (
@@ -33,7 +64,7 @@ export default function Filters() {
             {filters.map((filter, index) => (
                 <BaseFilterTemplate
                     key={index}
-                    name={filter.name}
+                    name={filter.fieldName}
                     options={filter.options}
                     onChange={handleFilterChange}
                 />
@@ -41,7 +72,7 @@ export default function Filters() {
             {ranges.map((range, index) => (
                 <BaseRangeTemplate
                     key={index}
-                    name={range.name}
+                    fieldName={range.fieldName}
                     onChange={handleRangeChange}
                 />
             ))}

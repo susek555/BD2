@@ -1,10 +1,5 @@
-export default async function OffersTable({
-    query,
-    
-    currentPage
-}: {
-    query: string;
-    currentPage: number;
-}) {
+import { useSearchParams } from "next/navigation";
 
+export default async function OffersTable() {
+    const searchParams = useSearchParams();
 }

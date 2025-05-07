@@ -2,7 +2,7 @@ import SideBar from "@/app/ui/(home)/sidebar";
 import { Suspense } from "react";
 
 
-export default function Home() {
+export default async function Home() {
   return (
   <main>
     <div className="flex flex-col md:flex-row flex-grow">
