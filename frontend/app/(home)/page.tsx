@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { OffersFoundSkeleton, OffersTableSkeleton } from "../ui/skeletons";
 import Pagination from "../ui/(home)/pagination";
 import OffersFoundInfo from "../ui/(home)/offers-found-info";
+import OffersTable from "../ui/(home)/table";
 
 
 export default async function Home() {
@@ -23,8 +24,8 @@ export default async function Home() {
           <OffersFoundInfo totalOffers={totalOffers} />
         </Suspense>
         <div className="my-4" />
-        <Suspense>
-          <OffersTableSkeleton />
+        <Suspense fallback={<OffersTableSkeleton />}>
+          <OffersTable />
         </Suspense>
         <div className="mt-5 flex w-full justify-center pr-20">
           <Pagination totalPages={totalPages} />
