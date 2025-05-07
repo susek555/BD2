@@ -1,9 +1,13 @@
 import SideBar from "@/app/ui/(home)/sidebar";
 import { Suspense } from "react";
 import { OffersFoundSkeleton, OffersTableSkeleton } from "../ui/skeletons";
+import Pagination from "../ui/(home)/pagination";
 
 
 export default async function Home() {
+  const totalPages = 10;
+  // TODO fetch available offers here and pass them to the table
+
   return (
   <main>
     <div className="flex flex-col md:flex-row flex-grow">
@@ -20,6 +24,9 @@ export default async function Home() {
         <Suspense>
           <OffersTableSkeleton />
         </Suspense>
+        <div className="mt-5 flex w-full justify-center pr-20">
+          <Pagination totalPages={totalPages} />
+        </div>
       </div>
     </div>
   </main>
