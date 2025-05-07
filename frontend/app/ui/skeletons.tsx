@@ -17,3 +17,9 @@ export function OffersFoundSkeleton() {
         </div>
     )
 }
+
+export function CarImageSkeleton() {
+    return (
+        <img src="/(home)/car_placeholder.png" alt="Car placeholder" className="h-35 w-70 object-cover rounded" />
+    )
+}
