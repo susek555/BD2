@@ -1,5 +1,6 @@
 import SideBar from "@/app/ui/(home)/sidebar";
 import { Suspense } from "react";
+import { OffersFoundSkeleton, OffersTableSkeleton } from "../ui/skeletons";
 
 
 export default async function Home() {
@@ -11,9 +12,13 @@ export default async function Home() {
           <SideBar />
         </Suspense>
       </div>
-      <div className="flex-grow p-6 md:overflow-y-auto md:p-12">
+      <div className="flex-grow p-6 md:overflow-y-auto md:px-12 md:py-8">
         <Suspense>
-          <p>Main Page</p>
+          <OffersFoundSkeleton />
+        </Suspense>
+        <div className="my-4" />
+        <Suspense>
+          <OffersTableSkeleton />
         </Suspense>
       </div>
     </div>
