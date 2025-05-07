@@ -42,7 +42,6 @@ export default function Filters() {
         const params = new URLSearchParams(searchParams);
 
         params.set('page', '1'); // Reset to the first page
-        params.delete('query'); // Reset the search query
         if (selected.length > 0) {
             params.set(name, selected.join(","));
         } else {
@@ -56,7 +55,6 @@ export default function Filters() {
         const params = new URLSearchParams(searchParams);
 
         params.set('page', '1'); // Reset to the first page
-        params.delete('query'); // Reset the search query
         if (range.min !== 0) {
             params.set(`${name}_min`, range.min.toString());
         } else {
