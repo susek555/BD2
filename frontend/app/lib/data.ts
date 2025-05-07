@@ -6,7 +6,7 @@ export async function fetchProducers() {
     // TODO connect API
 
     const data: FilterFieldData = {
-        name: "Producer",
+        fieldName: "Producer",
         options: ["Audi", "Volksvagen", "Porsche", "Toyota", "Honda", "Mercedes", "Renault"]
     };
 
@@ -17,7 +17,7 @@ export async function fetchGearboxes() {
     // TODO connect API
 
     const data: FilterFieldData = {
-        name: "Gearbox",
+        fieldName: "Gearbox",
         options: ["Manual", "Sequential Manual", "Automatic"]
     };
 
@@ -28,7 +28,7 @@ export async function fetchFuelTypes() {
     // TODO connect API
 
     const data: FilterFieldData = {
-        name: "Fuel",
+        fieldName: "Fuel",
         options: ["Diesel", "Electric", "Gasoline"]
     };
 
@@ -60,21 +60,21 @@ export function prepareRangeFields() {
     const data: RangeFieldData[] =
     [
         {
-            name: "Production year",
+            fieldName: "Production year",
             range: {
                 min: null,
                 max: null
             }
         },
         {
-            name: "Mileage",
+            fieldName: "Mileage",
             range: {
                 min: null,
                 max: null
             }
         },
         {
-            name: "Price",
+            fieldName: "Price",
             range: {
                 min: null,
                 max: null

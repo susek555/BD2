@@ -80,14 +80,14 @@ export type SignupFormState = {
 // Filters
 
 export type FilterFieldData = {
-  name: string;
+  fieldName: string;
   options: string[];
 }
 
 // Ranges
 
 export type RangeFieldData = {
-  name: string;
+  fieldName: string;
   range: {
     min: number | null;
     max: number | null;

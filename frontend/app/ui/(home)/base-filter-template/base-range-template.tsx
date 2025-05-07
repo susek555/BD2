@@ -3,11 +3,11 @@
 import React, { useState } from 'react';
 
 interface BaseRangeTemplateProps {
-    name: string;
-    onChange: (name:string, range: { min: number; max: number }) => void;
+    fieldName: string;
+    onChange: (name: string, range: { min: number; max: number }) => void;
 }
 
-export function BaseRangeTemplate({ name, onChange }: BaseRangeTemplateProps) {
+export function BaseRangeTemplate({ fieldName, onChange }: BaseRangeTemplateProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [range, setRange] = useState<{ min: number; max: number }>({ min: 0, max: 0 });
 
@@ -17,7 +17,7 @@ export function BaseRangeTemplate({ name, onChange }: BaseRangeTemplateProps) {
         const { name, value } = e.target;
         const updatedRange = { ...range, [name]: Number(value) };
         setRange(updatedRange);
-        onChange(name, updatedRange);
+        onChange(fieldName, updatedRange);
     };
 
     return (
@@ -26,7 +26,7 @@ export function BaseRangeTemplate({ name, onChange }: BaseRangeTemplateProps) {
             className="flex justify-between items-center w-full"
             onClick={toggleDropdown}
             >
-            <span>{name}</span>
+            <span>{fieldName}</span>
             <span>{isOpen ? '▲' : '▼'}</span>
             </button>
             {isOpen && (
