@@ -83,3 +83,35 @@ export type FilterFieldData = {
   name: string;
   options: string[];
 }
+
+// Ranges
+
+export type RangeFieldData = {
+  name: string;
+  range: {
+    min: number | null;
+    max: number | null;
+  };
+}
+
+// SearchParams
+
+export type SearchParams = {
+  query: string;
+  page: number;
+  producers: string[];
+  gearboxes: string[];
+  fuelTypes: string[];
+  price: {
+    min: number;
+    max: number;
+  };
+  mileage: {
+    min: number;
+    max: number;
+  };
+  year: {
+    min: number;
+    max: number;
+  };
+}

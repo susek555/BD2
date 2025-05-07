@@ -2,25 +2,28 @@
 
 import { BaseFilterTemplate } from "@/app/ui/(home)/base-filter-template/base-filter-template";
 import { BaseRangeTemplate } from "./base-filter-template/base-range-template";
-import { fetchFilterFields } from "@/app/lib/data";
+import { fetchFilterFields, prepareRangeFields } from "@/app/lib/data";
 import { useEffect, useState } from "react";
+import { FilterFieldData, RangeFieldData } from "@/app/lib/definitions";
 
 export default function Filters() {
-    const [filters, setFilters] = useState<{ name: string; options: string[] }[]>([]);
+    const [filters, setFilters] = useState<FilterFieldData[]>([]);
+    const [ranges, setRanges] = useState<RangeFieldData[]>([]);
 
     useEffect(() => {
         async function fetchData() {
             const data = await fetchFilterFields();
             setFilters(data);
+            setRanges(prepareRangeFields());
         }
         fetchData();
     }, []);
 
-    function handleFilterChange(selected: string[]) {
+    function handleFilterChange(name: string, selected: string[]) {
         // TODO implement
     }
 
-    function handleRangeChange(range: { min: number; max: number }) {
+    function handleRangeChange(name: string, range: { min: number; max: number }) {
         // TODO implement
     }
 
@@ -35,7 +38,13 @@ export default function Filters() {
                     onChange={handleFilterChange}
                 />
             ))}
-            <BaseRangeTemplate name="Production year" onChange={handleRangeChange}></BaseRangeTemplate>
+            {ranges.map((range, index) => (
+                <BaseRangeTemplate
+                    key={index}
+                    name={range.name}
+                    onChange={handleRangeChange}
+                />
+            ))}
         </>
     );
 }

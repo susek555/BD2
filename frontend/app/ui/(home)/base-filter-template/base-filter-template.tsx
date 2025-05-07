@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 interface BaseFilterTemplateProps {
     name: string;
     options: string[];
-    onChange: (selected: string[]) => void;
+    onChange: (name: string, selected: string[]) => void;
 }
 
 export function BaseFilterTemplate({ name, options, onChange }: BaseFilterTemplateProps) {
@@ -20,7 +20,7 @@ export function BaseFilterTemplate({ name, options, onChange }: BaseFilterTempla
             : [...selectedOptions, option];
 
         setSelectedOptions(updatedSelectedOptions);
-        onChange(updatedSelectedOptions);
+        onChange(name, updatedSelectedOptions);
     };
 
     return (
