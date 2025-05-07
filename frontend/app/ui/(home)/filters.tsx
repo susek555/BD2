@@ -6,23 +6,37 @@ import { fetchFilterFields, prepareRangeFields } from "@/app/lib/data";
 import { useEffect, useState } from "react";
 import { FilterFieldData, RangeFieldData } from "@/app/lib/definitions";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import { syncFiltersWithParams, syncRangesWithParams } from "@/app/lib/(home)/syncWIthParams";
 
 export default function Filters() {
     const [filters, setFilters] = useState<FilterFieldData[]>([]);
     const [ranges, setRanges] = useState<RangeFieldData[]>([]);
 
-    useEffect(() => {
-        async function fetchData() {
-            const data = await fetchFilterFields();
-            setFilters(data);
-            setRanges(prepareRangeFields());
-        }
-        fetchData();
-    }, []);
-
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const { replace } = useRouter();
+
+    useEffect(() => {
+        async function fetchData() {
+            const data = await fetchFilterFields();
+            const rangeData = prepareRangeFields();
+
+            // make sure that data is not undefined
+            if (!searchParams) return;
+
+            // Synchronize filters and ranges with URL parameters
+            const syncedFilters = syncFiltersWithParams(data, searchParams);
+            const syncedRanges = syncRangesWithParams(rangeData, searchParams);
+
+            // console.log("Synced Filters:", syncedFilters);
+            // console.log("Synced Ranges:", syncedRanges);
+
+            setFilters(syncedFilters);
+            setRanges(syncedRanges);
+        }
+
+        fetchData();
+    }, [searchParams]);
 
     function handleFilterChange(name: string, selected: string[]) {
         const params = new URLSearchParams(searchParams);
@@ -66,6 +80,7 @@ export default function Filters() {
                     key={index}
                     name={filter.fieldName}
                     options={filter.options}
+                    selected={filter.selected}
                     onChange={handleFilterChange}
                 />
             ))}
@@ -73,6 +88,7 @@ export default function Filters() {
                 <BaseRangeTemplate
                     key={index}
                     fieldName={range.fieldName}
+                    rangeBase={range.range}
                     onChange={handleRangeChange}
                 />
             ))}

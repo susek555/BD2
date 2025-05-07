@@ -4,12 +4,16 @@ import React, { useState } from 'react';
 
 interface BaseRangeTemplateProps {
     fieldName: string;
+    rangeBase: {
+        min: number | null;
+        max: number | null;
+    };
     onChange: (name: string, range: { min: number; max: number }) => void;
 }
 
-export function BaseRangeTemplate({ fieldName, onChange }: BaseRangeTemplateProps) {
+export function BaseRangeTemplate({ fieldName, rangeBase, onChange }: BaseRangeTemplateProps) {
     const [isOpen, setIsOpen] = useState(false);
-    const [range, setRange] = useState<{ min: number; max: number }>({ min: 0, max: 0 });
+    const [range, setRange] = useState<{ min: number; max: number }>({ min: rangeBase.min || 0, max: rangeBase.max || 0 });
 
     const toggleDropdown = () => setIsOpen(!isOpen);
 

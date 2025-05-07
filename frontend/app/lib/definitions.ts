@@ -87,6 +87,7 @@ export type LoginError = {
 export type FilterFieldData = {
   fieldName: string;
   options: string[];
+  selected?: string[];
 }
 
 // Ranges
