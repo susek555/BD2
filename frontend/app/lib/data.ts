@@ -1,4 +1,6 @@
-import { FilterFieldData } from "./definitions";
+import { FilterFieldData, RangeFieldData } from "./definitions";
+
+// Filters
 
 export async function fetchProducers() {
     // TODO connect API
@@ -50,4 +52,35 @@ export async function fetchFilterFields() {
         console.error("Api error:", error);
         throw new Error('Failed to fetch filters data.');
     }
+}
+
+// Ranges
+
+export function prepareRangeFields() {
+    const data: RangeFieldData[] =
+    [
+        {
+            name: "Production year",
+            range: {
+                min: null,
+                max: null
+            }
+        },
+        {
+            name: "Mileage",
+            range: {
+                min: null,
+                max: null
+            }
+        },
+        {
+            name: "Price",
+            range: {
+                min: null,
+                max: null
+            }
+        }
+    ];
+
+    return data;
 }

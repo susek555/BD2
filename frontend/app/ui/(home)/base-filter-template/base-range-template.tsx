@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 
 interface BaseRangeTemplateProps {
     name: string;
-    onChange: (range: { min: number; max: number }) => void;
+    onChange: (name:string, range: { min: number; max: number }) => void;
 }
 
 export function BaseRangeTemplate({ name, onChange }: BaseRangeTemplateProps) {
@@ -17,7 +17,7 @@ export function BaseRangeTemplate({ name, onChange }: BaseRangeTemplateProps) {
         const { name, value } = e.target;
         const updatedRange = { ...range, [name]: Number(value) };
         setRange(updatedRange);
-        onChange(updatedRange);
+        onChange(name, updatedRange);
     };
 
     return (
