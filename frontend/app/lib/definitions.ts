@@ -98,22 +98,22 @@ export type RangeFieldData = {
 // SearchParams
 
 export type SearchParams = {
-  query: string;
-  page: number;
-  producers: string[];
-  gearboxes: string[];
-  fuelTypes: string[];
+  query: string | null;
+  page: number | null;
+  producers: string[] | null;
+  gearboxes: string[] | null;
+  fuelTypes: string[] | null;
   price: {
-    min: number;
-    max: number;
+    min: number | null;
+    max: number | null;
   };
   mileage: {
-    min: number;
-    max: number;
+    min: number | null;
+    max: number | null;
   };
   year: {
-    min: number;
-    max: number;
+    min: number | null;
+    max: number | null;
   };
 }
 
