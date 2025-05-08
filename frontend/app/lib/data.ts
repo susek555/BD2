@@ -100,6 +100,7 @@ async function fetchOffers(params: SearchParams) : Promise<SaleOffer[]> {
     // TODO connect API
     const data: SaleOffer[] = [
         {
+            id: "1",
             name: "Audi A4",
             productionYear: 2000,
             mileage: 150000,
@@ -108,6 +109,7 @@ async function fetchOffers(params: SearchParams) : Promise<SaleOffer[]> {
             isAuction: true,
         },
         {
+            id: "2",
             name: "Volkswagen Golf",
             productionYear: 2005,
             mileage: 120000,
@@ -116,6 +118,7 @@ async function fetchOffers(params: SearchParams) : Promise<SaleOffer[]> {
             isAuction: false,
         },
         {
+            id: "3",
             name: "Porsche 911",
             productionYear: 2010,
             mileage: 80000,

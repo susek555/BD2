@@ -125,6 +125,7 @@ export type SearchParams = {
 // SaleOffer
 
 export type SaleOffer = {
+  id: string;
   name: string; // producer and model
   productionYear: number;
   mileage: number;
