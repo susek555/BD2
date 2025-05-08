@@ -1,8 +1,8 @@
-import { FilterFieldData, RangeFieldData } from "./definitions";
+import { FilterFieldData, RangeFieldData, SaleOffer, SearchParams } from "./definitions";
 
 // Filters
 
-export async function fetchProducers() {
+async function fetchProducers() : Promise<FilterFieldData> {
     // TODO connect API
 
     const data: FilterFieldData = {
@@ -13,7 +13,7 @@ export async function fetchProducers() {
     return data;
 }
 
-export async function fetchGearboxes() {
+async function fetchGearboxes() : Promise<FilterFieldData> {
     // TODO connect API
 
     const data: FilterFieldData = {
@@ -24,7 +24,7 @@ export async function fetchGearboxes() {
     return data;
 }
 
-export async function fetchFuelTypes() {
+async function fetchFuelTypes() : Promise<FilterFieldData> {
     // TODO connect API
 
     const data: FilterFieldData = {
@@ -35,7 +35,7 @@ export async function fetchFuelTypes() {
     return data;
 }
 
-export async function fetchFilterFields() {
+export async function fetchFilterFields() : Promise<FilterFieldData[]> {
     try{
         const producersData = fetchProducers();
         const gearboxesData = fetchGearboxes();
@@ -56,7 +56,7 @@ export async function fetchFilterFields() {
 
 // Ranges
 
-export function prepareRangeFields() {
+export function prepareRangeFields() : RangeFieldData[] {
     const data: RangeFieldData[] =
     [
         {
@@ -83,4 +83,69 @@ export function prepareRangeFields() {
     ];
 
     return data;
+}
+
+// Home page
+async function fetchTotalPages() : Promise<number> {
+    // TODO connect API
+    return 10;
+}
+
+async function fetchTotalOffers() : Promise<number> {
+    // TODO connect API
+    return 100;
+}
+
+async function fetchOffers(params: SearchParams) : Promise<SaleOffer[]> {
+    // TODO connect API
+    const data: SaleOffer[] = [
+        {
+            name: "Audi A4",
+            productionYear: 2000,
+            mileage: 150000,
+            color: "Green",
+            price: 10000,
+            isAuction: true,
+        },
+        {
+            name: "Volkswagen Golf",
+            productionYear: 2005,
+            mileage: 120000,
+            color: "Blue",
+            price: 15000,
+            isAuction: false,
+        },
+        {
+            name: "Porsche 911",
+            productionYear: 2010,
+            mileage: 80000,
+            color: "Red",
+            price: 50000,
+            isAuction: true,
+        }
+    ];
+    return data;
+}
+
+export async function fetchHomePageData(params: SearchParams) : Promise<{totalPages: number, totalOffers: number, offers: SaleOffer[]}> {
+    try{
+        const totalPages = await fetchTotalPages();
+        const totalOffers = await fetchTotalOffers();
+        const offers = await fetchOffers(params);
+
+        const [totalPagesResult, totalOffersResult, offersResult] = await Promise.all([
+            totalPages,
+            totalOffers,
+            offers
+        ]);
+        return {
+            totalPages: totalPagesResult,
+            totalOffers: totalOffersResult,
+            offers: offersResult
+        };
+        
+    } catch (error) {
+        console.error("Api error:", error);
+        throw new Error('Failed to fetch home page data.');
+    }
 }
