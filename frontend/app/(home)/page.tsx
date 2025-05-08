@@ -1,7 +1,7 @@
 'use client';
 
 import SideBar from "@/app/ui/(home)/sidebar";
-import { Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { OffersFoundSkeleton, OffersTableSkeleton } from "../ui/skeletons";
 import Pagination from "../ui/(home)/pagination";
 import OffersFoundInfo from "../ui/(home)/offers-found-info";
@@ -9,10 +9,14 @@ import OffersTable from "../ui/(home)/table";
 import { fetchHomePageData } from "../lib/data";
 import { useSearchParams } from "next/navigation";
 import { SearchParams } from "../lib/definitions";
+import { SaleOffer } from "../lib/definitions";
 
 
-export default async function Home() {
+export default function Home() {
   const searchParams = useSearchParams();
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalOffers, setTotalOffers] = useState(0);
+  const [offers, setOffers] = useState<SaleOffer[]>([]);
 
   const params: SearchParams = {
     query: searchParams.get("query") || null,
@@ -34,7 +38,21 @@ export default async function Home() {
     },
   };
 
-  const { totalPages, totalOffers, offers } = await fetchHomePageData(params);
+  useEffect(() => {
+    async function fetchData() {
+      try
+      {
+        const { totalPages, totalOffers, offers } = await fetchHomePageData(params);
+        setTotalPages(totalPages);
+        setTotalOffers(totalOffers);
+        setOffers(offers);
+      }
+      catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+    fetchData();
+  }, [searchParams]);
 
   return (
     <main>
@@ -48,10 +66,14 @@ export default async function Home() {
           <Suspense key={totalOffers} fallback={<OffersFoundSkeleton />}>
             <OffersFoundInfo totalOffers={totalOffers} />
           </Suspense>
-          <div className="my-4" />
-          <Suspense fallback={<OffersTableSkeleton />}>
-            <OffersTable />
-          </Suspense>
+          <div className="my-4 " />
+          <div className="flex flex-col gap-4">
+            {offers.map((offer) => (
+            <Suspense key={offer.name} fallback={<OffersTableSkeleton />}>
+              <OffersTable {...offer} />
+            </Suspense>
+            ))}
+          </div>
           <div className="mt-5 flex w-full justify-center pr-20">
             <Pagination totalPages={totalPages} />
           </div>

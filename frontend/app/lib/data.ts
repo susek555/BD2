@@ -129,6 +129,9 @@ async function fetchOffers(params: SearchParams) : Promise<SaleOffer[]> {
 
 export async function fetchHomePageData(params: SearchParams) : Promise<{totalPages: number, totalOffers: number, offers: SaleOffer[]}> {
     try{
+        // const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+        // await delay(1000); // Adding 1 second delay for testing
+
         const totalPages = await fetchTotalPages();
         const totalOffers = await fetchTotalOffers();
         const offers = await fetchOffers(params);
@@ -143,7 +146,7 @@ export async function fetchHomePageData(params: SearchParams) : Promise<{totalPa
             totalOffers: totalOffersResult,
             offers: offersResult
         };
-        
+
     } catch (error) {
         console.error("Api error:", error);
         throw new Error('Failed to fetch home page data.');

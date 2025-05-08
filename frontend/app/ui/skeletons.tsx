@@ -1,6 +1,6 @@
 export function OffersTableSkeleton() {
     return (
-        <div className="flex flex-col gap-4">
+        <div>
         <div className="h-10 md:h-40 bg-gray-200 rounded animate-pulse w-15/16" />
         <div className="h-10 md:h-40 bg-gray-200 rounded animate-pulse w-15/16" />
         <div className="h-10 md:h-40 bg-gray-200 rounded animate-pulse w-15/16" />
