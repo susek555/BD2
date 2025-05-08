@@ -3,18 +3,7 @@
 
 const API_URL = process.env.API_URL;
 
-type registerResponse = {
-  access_token?: string
-  refresh_token?: string
-  errors?: {
-    username?: string[]
-    email?: string[]
-    nip?: string[]
-  }
-}
-
 export type registerResult = {
-  success: boolean
   errors?: {
     username?: string[]
     email?: string[]
@@ -49,24 +38,21 @@ export async function registerUser(userData: {
       body: JSON.stringify(userData),
     });
 
-    const data: registerResponse = await response.json();
+    const data: registerResult = await response.json();
 
     console.log("Registration response: ", data);
 
     if (!response.ok) {
       return {
-        success: false,
         errors: data.errors || {},
       };
     }
 
-    return {
-      success: true,
-    };
+    return {};
+
   } catch (error: any) {
     console.error('Registration error:', error);
     return {
-      success: false,
       errors: {
         other: error.message || 'An unexpected error occurred during registration'
       },
