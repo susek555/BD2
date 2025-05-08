@@ -9,6 +9,7 @@ import OffersTable from "../ui/(home)/table";
 export default async function Home() {
   const totalPages = 10;
   const totalOffers = 100;
+  
   // TODO fetch available offers here and pass them to the table
 
   return (

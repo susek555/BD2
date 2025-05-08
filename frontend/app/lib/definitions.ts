@@ -118,3 +118,12 @@ export type SearchParams = {
 }
 
 // SaleOffer
+
+export type SaleOffer = {
+  name: string; // producer and model
+  productionYear: number;
+  mileage: number;
+  color: string;
+  price: number;
+  isAuction: boolean;
+}
