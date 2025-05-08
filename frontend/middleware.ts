@@ -1,11 +1,12 @@
-import { getSession } from "next-auth/react";
+import { getToken } from "next-auth/jwt";
 import { NextRequest } from "next/server";
 import { LOGIN, PROTECTED_ROUTES, PUBLIC_ROUTES } from "./app/lib/routes";
 
+
 export async function middleware(reqest: NextRequest) {
   const { nextUrl } = reqest;
-  const session = await getSession();
-  const isAuthenticated = !!session?.user;
+  const token = await getToken({ req: reqest });
+  const isAuthenticated = !!token;
 
   console.log("Is authenticated:", isAuthenticated);
 
@@ -19,7 +20,7 @@ export async function middleware(reqest: NextRequest) {
     return Response.redirect(new URL(LOGIN, nextUrl));
   }
 
-  if (session && nextUrl.pathname === '/login') {
+  if (token && nextUrl.pathname === '/login') {
     return Response.redirect(new URL('/', nextUrl))
   }
 }
