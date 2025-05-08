@@ -1,3 +1,4 @@
+import camelcaseKeys from 'camelcase-keys';
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
@@ -21,14 +22,15 @@ const handler = NextAuth({
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            email: credentials?.login,
+            login: credentials?.login,
             password: credentials?.password,
           }),
         });
-        const user = await res.json();
-        console.log(user);
+        const rawUser = await res.json();
+        console.log(rawUser);
 
-        if (!user.error) {
+        if (!rawUser.errors) {
+          const user = camelcaseKeys(rawUser, { deep: true });
           // Any object returned will be saved in `user` property of the JWT
           return user;
         } else {
