@@ -26,14 +26,14 @@ export async function signup(
 
   const signupResult: registerResult = await registerUser(validatedFields.data);
 
-  if (signupResult.success) {
-    permanentRedirect("/")
-  } else {
+  if (signupResult.errors) {
     return {
       errors: signupResult.errors,
       values: Object.fromEntries(
         Object.entries(formDataObj).filter(([key]) => !key.includes('password'))
       ) as SignupFormState['values']
     }
+  } else {
+    permanentRedirect("/")
   }
 }
