@@ -21,11 +21,11 @@ export default function OffersTable(offer : SaleOffer) {
                         )}
                     </div>
                     <div className="px-4 py-3 flex flex-row gap-10">
-                        <p className="text-bg">Production year: {offer.productionYear.toString()}</p>
-                        <p className="text-bg">Mileage: {offer.mileage.toString()}</p>
+                        <p className="text-bg">Production year: <span className="font-bold">{offer.productionYear.toString()}</span></p>
+                        <p className="text-bg">Mileage: <span className="font-bold">{offer.mileage.toString()} km</span></p>
                     </div>
                     <div className="px-4 flex flex-row gap-10">
-                        <p className="text-bg">Color: {offer.color}</p>
+                        <p className="text-bg">Color: <span className="font-bold">{offer.color}</span></p>
                     </div>
                     <div className="flex justify-end items-end h-full self-end">
                         <p className="px-3 font-bold text-2xl">{offer.price.toString()} zł</p>
