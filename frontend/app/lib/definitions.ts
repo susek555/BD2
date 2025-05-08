@@ -116,3 +116,5 @@ export type SearchParams = {
     max: number;
   };
 }
+
+// SaleOffer
