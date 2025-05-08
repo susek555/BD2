@@ -13,13 +13,18 @@ export default async function OffersTable() {
                         </Suspense>
                     </div>
                     <div className="flex py-2.5 h-40 flex-col w-full">
-                        <p className="font-bold text-2xl">Car name</p>
+                        <div className="flex flex-row gap-10 items-center">
+                            <p className="font-bold text-2xl whitespace-nowrap">Car name</p>
+                            <div className="flex justify-end w-full">
+                                <p className="font-bold text-2xl whitespace-nowrap px-3">Auction</p>
+                            </div>
+                        </div>
                         <div className="px-4 py-3 flex flex-row gap-10">
                             <p className="text-bg">Production year: 2000</p>
                             <p className="text-bg">Mileage: 150000 km</p>
                         </div>
                         <div className="px-4 flex flex-row gap-10">
-                            <p className="text-bg">First owner</p>
+                            <p className="text-bg">Color: Green</p>
                         </div>
                         <div className="flex justify-end items-end h-full self-end">
                             <p className="px-3 font-bold text-2xl">10000 zł</p>
