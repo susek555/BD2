@@ -7,10 +7,10 @@ type GormRepository[T any] struct {
 }
 
 type CRUDRepository[T any] interface {
-	Create(entity T) error
+	Create(entity *T) error
 	GetAll() ([]T, error)
 	GetById(id uint) (T, error)
-	Update(entity T) error
+	Update(entity *T) error
 	Delete(id uint) error
 }
 
@@ -18,7 +18,7 @@ func GetGormRepository[T any](dbHandle *gorm.DB) *GormRepository[T] {
 	return &GormRepository[T]{DB: dbHandle}
 }
 
-func (repo *GormRepository[T]) Create(entity T) error {
+func (repo *GormRepository[T]) Create(entity *T) error {
 	err := repo.DB.Create(&entity).Error
 	return err
 }
@@ -35,7 +35,7 @@ func (repo *GormRepository[T]) GetById(id uint) (T, error) {
 	return entity, err
 }
 
-func (repo *GormRepository[T]) Update(entity T) error {
+func (repo *GormRepository[T]) Update(entity *T) error {
 	err := repo.DB.Save(&entity).Error
 	return err
 }
