@@ -1,8 +1,6 @@
 package model
 
-import (
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/manufacturer"
-)
+import "github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
 
 type Model struct {
 	ID             uint                      `json:"id" gorm:"primaryKey"`
