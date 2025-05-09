@@ -3,8 +3,8 @@ package model
 import "gorm.io/gorm"
 
 type ModelRepositoryInterface interface {
-	GetByManufactuerID(id uint) ([]Model, error)
-	GetByManufacuterName(name string) ([]Model, error)
+	GetByManufacturerID(id uint) ([]Model, error)       // Corrected spelling
+	GetByManufacturerName(name string) ([]Model, error) // Corrected spelling
 }
 
 type ModelRepository struct {
@@ -15,17 +15,18 @@ func NewModelRepository(db *gorm.DB) ModelRepositoryInterface {
 	return &ModelRepository{DB: db}
 }
 
-func (r *ModelRepository) GetByManufactuerID(id uint) ([]Model, error) {
-	var Models []Model
-	err := r.DB.Where("manufacturer_id = ?", id).Find(&Models).Error
-	return Models, err
+func (r *ModelRepository) GetByManufacturerID(id uint) ([]Model, error) { // Corrected spelling
+	var models []Model
+	err := r.DB.Where("manufacturer_id = ?", id).Find(&models).Error
+	return models, err
 }
 
-func (r *ModelRepository) GetByManufacuterName(name string) ([]Model, error) {
-	var Models []Model
-	err := r.DB.Preload("Manufacturer").
-		Joins("JOIN manufacturers ON manufacturers.id = Models.manufacturer_id").
+func (r *ModelRepository) GetByManufacturerName(name string) ([]Model, error) { // Corrected spelling
+	var models []Model
+	err := r.DB.
+		Preload("Manufacturer").
+		Joins("JOIN manufacturers ON manufacturers.id = models.manufacturer_id").
 		Where("manufacturers.name = ?", name).
-		Find(&Models).Error
-	return Models, err
+		Find(&models).Error
+	return models, err
 }

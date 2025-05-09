@@ -1,8 +1,8 @@
 package model
 
 type ModelServiceInterace interface {
-	GetByManufactuerID(id uint) ([]RetrieveModelDTO, error)
-	GetByManufacuterName(name string) ([]RetrieveModelDTO, error)
+	GetByManufacturerID(id uint) ([]RetrieveModelDTO, error)
+	GetByManufacturerName(name string) ([]RetrieveModelDTO, error)
 }
 
 type ModelService struct {
@@ -13,16 +13,16 @@ func NewModelService(modelRepository ModelRepositoryInterface) ModelServiceInter
 	return &ModelService{repo: modelRepository}
 }
 
-func (s *ModelService) GetByManufactuerID(id uint) ([]RetrieveModelDTO, error) {
-	models, err := s.repo.GetByManufactuerID(id)
+func (s *ModelService) GetByManufacturerID(id uint) ([]RetrieveModelDTO, error) {
+	models, err := s.repo.GetByManufacturerID(id)
 	if err != nil {
 		return nil, err
 	}
 	return MapModelListToDTO(models), nil
 }
 
-func (s *ModelService) GetByManufacuterName(name string) ([]RetrieveModelDTO, error) {
-	models, err := s.repo.GetByManufacuterName(name)
+func (s *ModelService) GetByManufacturerName(name string) ([]RetrieveModelDTO, error) {
+	models, err := s.repo.GetByManufacturerName(name)
 	if err != nil {
 		return nil, err
 	}
