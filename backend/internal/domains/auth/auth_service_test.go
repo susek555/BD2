@@ -36,16 +36,14 @@ func TestService_Register_Person(t *testing.T) {
 		in := user.CreateUserDTO{Email: "john@example.com", Password: "secret", Username: "john", PersonName: &person.Name, PersonSurname: &person.Surname, Selector: "P"}
 
 		uRepo.On("GetByEmail", in.Email).Return(user.User{}, gorm.ErrRecordNotFound)
+		uRepo.On("GetByUsername", in.Username).Return(user.User{}, gorm.ErrRecordNotFound)
 		uRepo.On("Create", mock.Anything).Return(nil)
-		rtSvc.On("Create", mock.Anything).Return(nil)
 
 		svc := &service{repo: uRepo, refreshTokenService: rtSvc, jwtKey: jwtKey}
 
-		access, refresh, err := svc.Register(ctx, in)
+		err := svc.Register(ctx, in)
 
-		assert.NoError(t, err)
-		assert.NotEmpty(t, access)
-		assert.NotEmpty(t, refresh)
+		assert.Empty(t, err)
 
 		uRepo.AssertExpectations(t)
 		rtSvc.AssertExpectations(t)
@@ -58,12 +56,13 @@ func TestService_Register_Person(t *testing.T) {
 
 		existing := user.User{ID: 1, Email: "marta@example.com"}
 		uRepo.On("GetByEmail", existing.Email).Return(existing, nil)
+		uRepo.On("GetByUsername", existing.Username).Return(existing, nil)
 
 		svc := &service{repo: uRepo, refreshTokenService: rtSvc, jwtKey: jwtKey}
 
-		_, _, err := svc.Register(ctx, user.CreateUserDTO{Email: existing.Email})
+		err := svc.Register(ctx, user.CreateUserDTO{Email: existing.Email})
 
-		assert.ErrorIs(t, err, ErrEmailTaken)
+		assert.NotEmpty(t, err, ErrEmailTaken)
 		uRepo.AssertExpectations(t)
 	})
 }
@@ -85,16 +84,15 @@ func TestService_Register_Company(t *testing.T) {
 		}
 
 		uRepo.On("GetByEmail", in.Email).Return(user.User{}, errors.New("not found"))
+		uRepo.On("GetByUsername", in.Username).Return(user.User{}, errors.New("not found"))
+		uRepo.On("GetByCompanyNip", *in.CompanyNIP).Return(user.User{}, errors.New("not found"))
 		uRepo.On("Create", mock.Anything).Return(nil)
-		rtSvc.On("Create", mock.Anything).Return(nil)
 
 		svc := &service{repo: uRepo, refreshTokenService: rtSvc, jwtKey: jwtKey}
 
-		access, refresh, err := svc.Register(ctx, in)
+		err := svc.Register(ctx, in)
 
-		assert.NoError(t, err)
-		assert.NotEmpty(t, access)
-		assert.NotEmpty(t, refresh)
+		assert.Empty(t, err)
 
 		uRepo.AssertExpectations(t)
 		rtSvc.AssertExpectations(t)
@@ -107,12 +105,13 @@ func TestService_Register_Company(t *testing.T) {
 
 		existing := user.User{ID: 1, Email: "john@example.com"}
 		uRepo.On("GetByEmail", existing.Email).Return(existing, nil)
+		uRepo.On("GetByUsername", existing.Username).Return(existing, nil)
 
 		svc := &service{repo: uRepo, refreshTokenService: rtSvc, jwtKey: jwtKey}
 
-		_, _, err := svc.Register(ctx, user.CreateUserDTO{Email: existing.Email})
+		err := svc.Register(ctx, user.CreateUserDTO{Email: existing.Email})
 
-		assert.ErrorIs(t, err, ErrEmailTaken)
+		assert.NotEmpty(t, err, ErrEmailTaken)
 		uRepo.AssertExpectations(t)
 	})
 }
@@ -132,13 +131,14 @@ func TestService_Login(t *testing.T) {
 
 		svc := &service{repo: uRepo, refreshTokenService: rtSvc, jwtKey: jwtKey}
 
-		access, refresh, err := svc.Login(ctx, validIn)
+		access, refresh, err, user_ := svc.Login(ctx, validIn)
 		assert.NoError(t, err)
 		assert.NotEmpty(t, access)
 		assert.NotEmpty(t, refresh)
 
 		uid, err := jwt.NewJWTVerifier(string(jwtKey)).VerifyToken(access)
 		assert.NoError(t, err)
+		assert.Equal(t, *user_, existing)
 		assert.Equal(t, int64(existing.ID), uid)
 	})
 
@@ -152,7 +152,7 @@ func TestService_Login(t *testing.T) {
 
 		svc := &service{repo: uRepo, refreshTokenService: rtSvc, jwtKey: jwtKey}
 
-		_, _, err := svc.Login(ctx, validIn)
+		_, _, err, _ := svc.Login(ctx, validIn)
 		assert.ErrorIs(t, err, ErrInvalidCredentials)
 	})
 
@@ -165,7 +165,7 @@ func TestService_Login(t *testing.T) {
 
 		svc := &service{repo: uRepo, refreshTokenService: rtSvc, jwtKey: jwtKey}
 
-		_, _, err := svc.Login(ctx, validIn)
+		_, _, err, _ := svc.Login(ctx, validIn)
 		assert.ErrorIs(t, err, ErrInvalidCredentials)
 	})
 
@@ -183,7 +183,7 @@ func TestService_Login(t *testing.T) {
 
 		svc := &service{repo: uRepo, refreshTokenService: rtSvc, jwtKey: jwtKey}
 
-		_, _, err := svc.Login(ctx, validIn)
+		_, _, err, _ := svc.Login(ctx, validIn)
 		assert.EqualError(t, err, "db down")
 	})
 }
