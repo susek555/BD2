@@ -62,7 +62,20 @@ func (repo *ReviewRepository) GetById(id uint) (Review, error) {
 }
 
 func (repo *ReviewRepository) Update(review *Review) error {
-	return repo.repository.Update(review)
+	db := repo.repository.DB
+	err := db.Save(review).Error
+	if err != nil {
+		return err
+	}
+	err = db.
+		Preload("Reviewer").
+		Preload("Reviewee").
+		First(review, review.ID).
+		Error
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (repo *ReviewRepository) Delete(id uint) error {
