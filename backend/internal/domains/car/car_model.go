@@ -3,8 +3,8 @@ package car
 import (
 	"time"
 
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_entities"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/model"
 )
 
 type Car struct {
@@ -24,5 +24,5 @@ type Car struct {
 	NumberOfGears      uint                    `json:"number_of_gears"`
 	Drive              car_params.Drive        `json:"drive"`
 	ModelID            uint                    `json:"model_id"`
-	Model              *car_entities.Model     `gorm:"foreignKey:ModelID;references:ID;OnDelete:SET NULL"`
+	Model              *model.Model            `gorm:"foreignKey:ModelID;references:ID;OnDelete:SET NULL"`
 }
