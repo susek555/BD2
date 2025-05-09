@@ -169,6 +169,62 @@ func (_c *UserRepositoryInterface_GetAll_Call) RunAndReturn(run func() ([]user.U
 	return _c
 }
 
+// GetByCompanyNip provides a mock function with given fields: nip
+func (_m *UserRepositoryInterface) GetByCompanyNip(nip string) (user.User, error) {
+	ret := _m.Called(nip)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetByCompanyNip")
+	}
+
+	var r0 user.User
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string) (user.User, error)); ok {
+		return rf(nip)
+	}
+	if rf, ok := ret.Get(0).(func(string) user.User); ok {
+		r0 = rf(nip)
+	} else {
+		r0 = ret.Get(0).(user.User)
+	}
+
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(nip)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// UserRepositoryInterface_GetByCompanyNip_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetByCompanyNip'
+type UserRepositoryInterface_GetByCompanyNip_Call struct {
+	*mock.Call
+}
+
+// GetByCompanyNip is a helper method to define mock.On call
+//   - nip string
+func (_e *UserRepositoryInterface_Expecter) GetByCompanyNip(nip interface{}) *UserRepositoryInterface_GetByCompanyNip_Call {
+	return &UserRepositoryInterface_GetByCompanyNip_Call{Call: _e.mock.On("GetByCompanyNip", nip)}
+}
+
+func (_c *UserRepositoryInterface_GetByCompanyNip_Call) Run(run func(nip string)) *UserRepositoryInterface_GetByCompanyNip_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(string))
+	})
+	return _c
+}
+
+func (_c *UserRepositoryInterface_GetByCompanyNip_Call) Return(_a0 user.User, _a1 error) *UserRepositoryInterface_GetByCompanyNip_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *UserRepositoryInterface_GetByCompanyNip_Call) RunAndReturn(run func(string) (user.User, error)) *UserRepositoryInterface_GetByCompanyNip_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // GetByEmail provides a mock function with given fields: email
 func (_m *UserRepositoryInterface) GetByEmail(email string) (user.User, error) {
 	ret := _m.Called(email)
@@ -277,6 +333,62 @@ func (_c *UserRepositoryInterface_GetById_Call) Return(_a0 user.User, _a1 error)
 }
 
 func (_c *UserRepositoryInterface_GetById_Call) RunAndReturn(run func(uint) (user.User, error)) *UserRepositoryInterface_GetById_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// GetByUsername provides a mock function with given fields: username
+func (_m *UserRepositoryInterface) GetByUsername(username string) (user.User, error) {
+	ret := _m.Called(username)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetByUsername")
+	}
+
+	var r0 user.User
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string) (user.User, error)); ok {
+		return rf(username)
+	}
+	if rf, ok := ret.Get(0).(func(string) user.User); ok {
+		r0 = rf(username)
+	} else {
+		r0 = ret.Get(0).(user.User)
+	}
+
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(username)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// UserRepositoryInterface_GetByUsername_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetByUsername'
+type UserRepositoryInterface_GetByUsername_Call struct {
+	*mock.Call
+}
+
+// GetByUsername is a helper method to define mock.On call
+//   - username string
+func (_e *UserRepositoryInterface_Expecter) GetByUsername(username interface{}) *UserRepositoryInterface_GetByUsername_Call {
+	return &UserRepositoryInterface_GetByUsername_Call{Call: _e.mock.On("GetByUsername", username)}
+}
+
+func (_c *UserRepositoryInterface_GetByUsername_Call) Run(run func(username string)) *UserRepositoryInterface_GetByUsername_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(string))
+	})
+	return _c
+}
+
+func (_c *UserRepositoryInterface_GetByUsername_Call) Return(_a0 user.User, _a1 error) *UserRepositoryInterface_GetByUsername_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *UserRepositoryInterface_GetByUsername_Call) RunAndReturn(run func(string) (user.User, error)) *UserRepositoryInterface_GetByUsername_Call {
 	_c.Call.Return(run)
 	return _c
 }
