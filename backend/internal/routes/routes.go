@@ -67,4 +67,5 @@ func registerReviewRoutes(router *gin.Engine) {
 	reviewRoutes.PUT("/", reviewHandler.UpdateReview)
 	reviewRoutes.DELETE("/:id", reviewHandler.DeleteReview)
 	reviewRoutes.GET("/reviewer/:id", reviewHandler.GetReviewsByReviewerId)
+	reviewRoutes.GET("/reviewee/:id", reviewHandler.GetReviewsByRevieweeId)
 }
