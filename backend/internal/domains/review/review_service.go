@@ -16,7 +16,7 @@ type ReviewService struct {
 	generic.GenericService[Review, *ReviewRepository]
 }
 
-func NewReviewService(db *gorm.DB) *ReviewService {
+func NewReviewService(db *gorm.DB) ReviewServiceInterface {
 	repo := NewReviewRepository(db)
 	return &ReviewService{
 		GenericService: generic.GenericService[Review, *ReviewRepository]{
@@ -33,6 +33,6 @@ func (service *ReviewService) GetByReviewedId(reviewedId uint) ([]Review, error)
 	return service.Repo.GetByReviewedId(reviewedId)
 }
 
-func (service *ReviewService) GetByReviewerAndReviewedId(reviewerId uint, reviewedId uint) (Review, error) {
-	return service.GetByReviewerAndReviewedId(reviewerId, reviewedId)
+func (service *ReviewService) GetByReviewerIdAndReviewedId(reviewerId uint, reviewedId uint) (Review, error) {
+	return service.GetByReviewerIdAndReviewedId(reviewerId, reviewedId)
 }
