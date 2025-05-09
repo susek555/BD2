@@ -5,6 +5,7 @@ import (
 	"gorm.io/gorm"
 )
 
+//go:generate mockery --name=ReviewRepositoryInterface --output=../../test/mocks --case=snake --with-expecter
 type ReviewRepositoryInterface interface {
 	generic.CRUDRepository[Review]
 	GetByReviewerId(reviewerId uint) ([]Review, error)
