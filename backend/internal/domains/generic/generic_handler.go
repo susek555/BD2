@@ -5,7 +5,7 @@ type GenericHandler[T any, S CRUDService[T]] struct {
 }
 
 func (handler GenericHandler[T, S]) Create(entity T) error {
-	err := handler.Service.Create(entity)
+	err := handler.Service.Create(&entity)
 	return err
 }
 
@@ -18,7 +18,7 @@ func (handler GenericHandler[T, S]) GetAll() ([]T, error) {
 }
 
 func (handler GenericHandler[T, S]) Update(entity T) error {
-	return handler.Service.Update(entity)
+	return handler.Service.Update(&entity)
 }
 
 func (handler GenericHandler[T, S]) Delete(id uint) error {
