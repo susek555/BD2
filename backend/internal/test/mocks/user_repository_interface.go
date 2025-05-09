@@ -21,7 +21,7 @@ func (_m *UserRepositoryInterface) EXPECT() *UserRepositoryInterface_Expecter {
 }
 
 // Create provides a mock function with given fields: entity
-func (_m *UserRepositoryInterface) Create(entity user.User) error {
+func (_m *UserRepositoryInterface) Create(entity *user.User) error {
 	ret := _m.Called(entity)
 
 	if len(ret) == 0 {
@@ -29,7 +29,7 @@ func (_m *UserRepositoryInterface) Create(entity user.User) error {
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(user.User) error); ok {
+	if rf, ok := ret.Get(0).(func(*user.User) error); ok {
 		r0 = rf(entity)
 	} else {
 		r0 = ret.Error(0)
@@ -44,14 +44,14 @@ type UserRepositoryInterface_Create_Call struct {
 }
 
 // Create is a helper method to define mock.On call
-//   - entity user.User
+//   - entity *user.User
 func (_e *UserRepositoryInterface_Expecter) Create(entity interface{}) *UserRepositoryInterface_Create_Call {
 	return &UserRepositoryInterface_Create_Call{Call: _e.mock.On("Create", entity)}
 }
 
-func (_c *UserRepositoryInterface_Create_Call) Run(run func(entity user.User)) *UserRepositoryInterface_Create_Call {
+func (_c *UserRepositoryInterface_Create_Call) Run(run func(entity *user.User)) *UserRepositoryInterface_Create_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(user.User))
+		run(args[0].(*user.User))
 	})
 	return _c
 }
@@ -61,7 +61,7 @@ func (_c *UserRepositoryInterface_Create_Call) Return(_a0 error) *UserRepository
 	return _c
 }
 
-func (_c *UserRepositoryInterface_Create_Call) RunAndReturn(run func(user.User) error) *UserRepositoryInterface_Create_Call {
+func (_c *UserRepositoryInterface_Create_Call) RunAndReturn(run func(*user.User) error) *UserRepositoryInterface_Create_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -394,7 +394,7 @@ func (_c *UserRepositoryInterface_GetByUsername_Call) RunAndReturn(run func(stri
 }
 
 // Update provides a mock function with given fields: entity
-func (_m *UserRepositoryInterface) Update(entity user.User) error {
+func (_m *UserRepositoryInterface) Update(entity *user.User) error {
 	ret := _m.Called(entity)
 
 	if len(ret) == 0 {
@@ -402,7 +402,7 @@ func (_m *UserRepositoryInterface) Update(entity user.User) error {
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(user.User) error); ok {
+	if rf, ok := ret.Get(0).(func(*user.User) error); ok {
 		r0 = rf(entity)
 	} else {
 		r0 = ret.Error(0)
@@ -417,14 +417,14 @@ type UserRepositoryInterface_Update_Call struct {
 }
 
 // Update is a helper method to define mock.On call
-//   - entity user.User
+//   - entity *user.User
 func (_e *UserRepositoryInterface_Expecter) Update(entity interface{}) *UserRepositoryInterface_Update_Call {
 	return &UserRepositoryInterface_Update_Call{Call: _e.mock.On("Update", entity)}
 }
 
-func (_c *UserRepositoryInterface_Update_Call) Run(run func(entity user.User)) *UserRepositoryInterface_Update_Call {
+func (_c *UserRepositoryInterface_Update_Call) Run(run func(entity *user.User)) *UserRepositoryInterface_Update_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(user.User))
+		run(args[0].(*user.User))
 	})
 	return _c
 }
@@ -434,7 +434,7 @@ func (_c *UserRepositoryInterface_Update_Call) Return(_a0 error) *UserRepository
 	return _c
 }
 
-func (_c *UserRepositoryInterface_Update_Call) RunAndReturn(run func(user.User) error) *UserRepositoryInterface_Update_Call {
+func (_c *UserRepositoryInterface_Update_Call) RunAndReturn(run func(*user.User) error) *UserRepositoryInterface_Update_Call {
 	_c.Call.Return(run)
 	return _c
 }
