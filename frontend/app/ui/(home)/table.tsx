@@ -4,7 +4,7 @@ import { SaleOffer } from "@/app/lib/definitions"
 
 export default function OffersTable(offer : SaleOffer) {
     return (
-        <div className="h-10 md:h-40 bg-gray-200 rounded w-15/16">
+        <a href={`/${offer.id}`} className="h-10 md:h-40 bg-gray-200 rounded w-15/16">
             <div className="flex flex-row gap-4">
                 <div className="p-2.5">
                     <Suspense>
@@ -32,6 +32,6 @@ export default function OffersTable(offer : SaleOffer) {
                     </div>
                 </div>
             </div>
-        </div>
+        </a>
     )
 }

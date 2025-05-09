@@ -3,9 +3,9 @@ import { FilterFieldData, RangeFieldData, SaleOffer, SearchParams } from "./defi
 // Sorting
 
 export async function fetchSortingOptions() : Promise<string[]> {
-    // TODO connect API
+    // TODO connect API and add Suspense
     const data: string[] = ["Base", "name", "date", "price"];
-    
+
     return data;
 }
 
