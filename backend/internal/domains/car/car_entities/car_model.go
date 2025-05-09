@@ -1,4 +1,4 @@
-package car_params
+package car_entities
 
 type Model struct {
 	ID             uint         `json:"id" gorm:"primaryKey"`
