@@ -72,7 +72,7 @@ export default function Filters() {
 
     return (
         <>
-            <p className="px-2">Filters</p>
+            <p className="px-2">Filters:</p>
             {filters.map((filter, index) => (
                 <BaseFilterTemplate
                     key={index}
