@@ -8,7 +8,7 @@ import (
 type ReviewRepositoryInterface interface {
 	generic.CRUDRepository[Review]
 	GetByReviewerId(reviewerId uint) ([]Review, error)
-	GetByReviewedId(reviewedId uint) ([]Review, error)
+	GetByRevieweeId(reviewedId uint) ([]Review, error)
 	GetByReviewerIdAndReviewedId(reviewerId uint, reviewedId uint) (Review, error)
 }
 
@@ -94,7 +94,7 @@ func (repo *ReviewRepository) GetByReviewerId(reviewerId uint) ([]Review, error)
 	return reviews, err
 }
 
-func (repo *ReviewRepository) GetByReviewedId(reviewedId uint) ([]Review, error) {
+func (repo *ReviewRepository) GetByRevieweeId(reviewedId uint) ([]Review, error) {
 	var reviews []Review
 	err := repo.repository.
 		DB.
