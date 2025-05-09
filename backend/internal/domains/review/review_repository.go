@@ -21,7 +21,16 @@ func NewReviewRepository(dbHandle *gorm.DB) *ReviewRepository {
 }
 
 func (repo *ReviewRepository) Create(review *Review) error {
-	return repo.repository.Create(review)
+	db := repo.repository.DB
+
+	if err := db.Create(review).Error; err != nil {
+		return err
+	}
+	return db.
+		Preload("Reviewer").
+		Preload("Reviewed").
+		First(review, review.ID).
+		Error
 }
 
 func (repo *ReviewRepository) GetAll() ([]Review, error) {
