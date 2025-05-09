@@ -22,6 +22,19 @@ func NewHandler(s ModelServiceInterace) *Handler {
 	return &Handler{service: s}
 }
 
+// GetAllModelsByManufacturerID godoc
+//
+//	@Summary		Get all models by manufacturer id
+//	@Description	Get all models by manufacturer id from database and return them as a list of DTOs.
+//	@Tags			models
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		int						true	"Manufacturer ID"
+//	@Success		200	{array}		RetrieveModelDTO		"List of models"
+//	@Failure		400	{object}	custom_errors.HTTPError	"Id is not a number"
+//	@Failure		404	{object}	custom_errors.HTTPError	"Models not found"
+//	@Failure		500	{object}	custom_errors.HTTPError	"Internal server error"
+//	@Router			/car/models//id/{id} [get]
 func (h *Handler) GetModelsByManufacturerID(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
@@ -36,6 +49,18 @@ func (h *Handler) GetModelsByManufacturerID(c *gin.Context) {
 	c.JSON(http.StatusOK, models)
 }
 
+// GetModelsByManufacturerName godoc
+//
+//	@Summary		Get all models by manufacturer name
+//	@Description	Get all models by manufacturer name from database and return them as a list of DTOs.
+//	@Tags			models
+//	@Accept			json
+//	@Produce		json
+//	@Param			name	path		string					true	"Manufacturer name"
+//	@Success		200		{array}		RetrieveModelDTO		"List of models"
+//	@Failure		404		{object}	custom_errors.HTTPError	"Models not found"
+//	@Failure		500		{object}	custom_errors.HTTPError	"Internal server error"
+//	@Router			/car/models/name/{name} [get]
 func (h *Handler) GetModelsByManufacturerName(c *gin.Context) {
 	name := c.Param("email")
 	models, err := h.service.GetByManufacuterName(name)
