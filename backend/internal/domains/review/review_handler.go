@@ -68,3 +68,14 @@ func (h *Handler) UpdateReview(c *gin.Context) {
 	reviewDTO := review.MapToDTO()
 	c.JSON(http.StatusOK, reviewDTO)
 }
+
+func (h *Handler) DeleteReview(c *gin.Context) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+	}
+	if err := h.service.Delete(uint(id)); err != nil {
+		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+	}
+	c.JSON(http.StatusNoContent, nil)
+}
