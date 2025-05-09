@@ -3,6 +3,36 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 const API_URL = process.env.API_URL;
+// const ACCEST_TOKEN_LIFETIME = 2 * 60 * 60 * 1000; // 2 hours
+const ACCESS_TOKEN_LIFETIME = 30 * 1000; // 30 seconds
+
+async function updateAccessToken(refreshToken: string): Promise<string> {
+  try {
+    const response = await fetch(`${API_URL}/auth/refresh`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ refresh_token: refreshToken }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Refresh token error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+
+    if (!data.access_token) {
+      throw new Error('No access token returned from refresh endpoint');
+    }
+
+    return data.access_token;
+  } catch (error) {
+    console.error('Error refreshing token:', error);
+    throw error;
+  }
+}
+
 
 // TODO: add error handling
 const handler = NextAuth({
