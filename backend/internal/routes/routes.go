@@ -16,6 +16,7 @@ import (
 func RegisterRoutes(router *gin.Engine) {
 	registerAuthRoutes(router)
 	registerUserRoutes(router)
+	registerReviewRoutes(router)
 }
 
 func initializeVerifier() (*jwt.JWTVerifier, []byte) {
