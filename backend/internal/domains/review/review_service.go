@@ -13,13 +13,13 @@ type ReviewServiceInterface interface {
 }
 
 type ReviewService struct {
-	generic.GenericService[Review, *ReviewRepository]
+	generic.GenericService[Review, ReviewRepositoryInterface]
 }
 
 func NewReviewService(db *gorm.DB) ReviewServiceInterface {
 	repo := NewReviewRepository(db)
 	return &ReviewService{
-		GenericService: generic.GenericService[Review, *ReviewRepository]{
+		GenericService: generic.GenericService[Review, ReviewRepositoryInterface]{
 			Repo: repo,
 		},
 	}
