@@ -40,7 +40,7 @@ export default function Home() {
     },
   };
 
-  console.log("Search Params:", params);
+  // console.log("Search Params:", params);
 
   useEffect(() => {
     async function fetchData() {
