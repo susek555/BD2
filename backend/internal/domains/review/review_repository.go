@@ -28,7 +28,7 @@ func (repo *ReviewRepository) Create(review *Review) error {
 	}
 	return db.
 		Preload("Reviewer").
-		Preload("Reviewed").
+		Preload("Reviewee").
 		First(review, review.ID).
 		Error
 }
@@ -54,7 +54,7 @@ func (repo *ReviewRepository) GetByReviewerId(reviewerId uint) ([]Review, error)
 	err := repo.repository.
 		DB.
 		Where("reviewer_id = ?", reviewerId).
-		Preload("Reviewed").
+		Preload("Reviewee").
 		Preload("Reviewer").
 		Find(&reviews).
 		Error
@@ -66,7 +66,7 @@ func (repo *ReviewRepository) GetByReviewedId(reviewedId uint) ([]Review, error)
 	err := repo.repository.
 		DB.
 		Where("reviewer_id = ?", reviewedId).
-		Preload("Reviewed").
+		Preload("Reviewee").
 		Preload("Reviewer").
 		Find(&reviews).
 		Error
@@ -80,7 +80,7 @@ func (repo *ReviewRepository) GetByReviewerIdAndReviewedId(reviewerId uint, revi
 		Where("reviewer_id = ?", reviewerId).
 		Where("reviewed_id = ?", reviewedId).
 		Preload("Reviewer").
-		Preload("Reviewed").
+		Preload("Reviewee").
 		First(&review).
 		Error
 	return review, err
