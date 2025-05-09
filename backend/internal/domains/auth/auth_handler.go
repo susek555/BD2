@@ -121,12 +121,12 @@ func (h *Handler) Refresh(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError("invalid body"))
 		return
 	}
-	access, refresh, err := h.service.Refresh(c, req.RefreshToken)
+	access, err := h.service.Refresh(c, req.RefreshToken)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, custom_errors.NewHTTPError("unauthorized"))
 		return
 	}
-	response := LoginResponse{AccessToken: access, RefreshToken: refresh}
+	response := LoginResponse{AccessToken: access}
 	c.JSON(http.StatusOK, response)
 }
 
