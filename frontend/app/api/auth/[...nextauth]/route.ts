@@ -1,5 +1,6 @@
+import { ExtendedJWT } from '@/types/next-auth';
 import camelcaseKeys from 'camelcase-keys';
-import NextAuth from "next-auth";
+import NextAuth, { User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 const API_URL = process.env.API_URL;
@@ -57,10 +58,9 @@ const handler = NextAuth({
           }),
         });
         const rawUser = await res.json();
-        console.log(rawUser);
 
         if (!rawUser.errors) {
-          const user = camelcaseKeys(rawUser, { deep: true });
+          const user: User = camelcaseKeys(rawUser, { deep: true });
           // Any object returned will be saved in `user` property of the JWT
           return user;
         } else {
@@ -74,9 +74,37 @@ const handler = NextAuth({
   ],
   callbacks: {
     async jwt({ token, user }) {
-      return { ...token, ...user };
+      console.log("JWT callback");
+      const jwtToken = token as ExtendedJWT
+
+      // If this is the first sign in, add user data to token
+      if (user) {
+        console.log("JWT callback initial login")
+        Object.assign(jwtToken, user);
+        jwtToken.accessTokenExpires = Date.now() + ACCESS_TOKEN_LIFETIME;
+      }
+
+      // Return previous token if the access token has not expired yet
+      if (jwtToken.accessTokenExpires && Date.now() < jwtToken.accessTokenExpires) {
+        console.log("JWT callback still valid")
+        return jwtToken;
+      }
+
+      // Access token has expired, refresh it
+      try {
+        console.log("Token expired, refreshing...");
+        const newAccessToken = await updateAccessToken(jwtToken.refreshToken);
+        jwtToken.accessToken = newAccessToken;
+        jwtToken.accessTokenExpires = Date.now() + ACCESS_TOKEN_LIFETIME;
+        console.log(`${Math.round((jwtToken.accessTokenExpires - Date.now()) / (1000 * 60))} minutes`)
+        return { ...jwtToken };
+      } catch (error) {
+        console.error("Error refreshing token:", error);
+        return { ...token, error: "RefreshTokenError" };
+      }
     },
-    async session({ session, token, user }) {
+
+    async session({ session, token }) {
       session.user = token as any;
       return session;
     },
@@ -86,7 +114,6 @@ const handler = NextAuth({
   },
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 days
   }
 })
 
