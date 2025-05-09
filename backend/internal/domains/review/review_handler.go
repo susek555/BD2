@@ -56,3 +56,15 @@ func (h *Handler) CreateReview(c *gin.Context) {
 	reviewDTO := review.MapToDTO()
 	c.JSON(http.StatusCreated, reviewDTO)
 }
+
+func (h *Handler) UpdateReview(c *gin.Context) {
+	var review Review
+	if err := c.ShouldBindJSON(&review); err != nil {
+		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+	}
+	if err := h.service.Update(&review); err != nil {
+		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+	}
+	reviewDTO := review.MapToDTO()
+	c.JSON(http.StatusOK, reviewDTO)
+}
