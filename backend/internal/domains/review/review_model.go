@@ -8,6 +8,6 @@ type Review struct {
 	Rating      int        `json:"rating" gorm:"not null;check:rating BETWEEN 1 AND 5"`
 	ReviewerID  uint       `json:"reviewer_id"`
 	Reviewer    *user.User `gorm:"foreignKey:ReviewerID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	ReviewedID  uint       `json:"reviewed_id"`
-	Reviewed    *user.User `gorm:"foreignKey:ReviewedID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL"`
+	RevieweeId  uint       `json:"reviewee_id"`
+	Reviewee    *user.User `gorm:"foreignKey:RevieweeId;references:ID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL"`
 }
