@@ -16,7 +16,7 @@ type ReviewRepository struct {
 	repository *generic.GormRepository[Review]
 }
 
-func NewReviewRepository(dbHandle *gorm.DB) ReviewRepositoryInterface {
+func NewReviewRepository(dbHandle *gorm.DB) *ReviewRepository {
 	return &ReviewRepository{repository: generic.GetGormRepository[Review](dbHandle)}
 }
 
