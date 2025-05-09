@@ -1,6 +1,9 @@
 package review
 
-import "github.com/susek555/BD2/car-dealer-api/internal/domains/generic"
+import (
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/generic"
+	"gorm.io/gorm"
+)
 
 type ReviewRepositoryInterface interface {
 	generic.CRUDRepository[Review]
@@ -13,8 +16,8 @@ type ReviewRepository struct {
 	repository *generic.GormRepository[Review]
 }
 
-func NewReviewRepository(repository *generic.GormRepository[Review]) ReviewRepositoryInterface {
-	return &ReviewRepository{repository: repository}
+func NewReviewRepository(dbHandle *gorm.DB) ReviewRepositoryInterface {
+	return &ReviewRepository{repository: generic.GetGormRepository[Review](dbHandle)}
 }
 
 func (repo *ReviewRepository) Create(review Review) error {
