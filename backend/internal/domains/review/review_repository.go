@@ -20,7 +20,7 @@ func NewReviewRepository(dbHandle *gorm.DB) *ReviewRepository {
 	return &ReviewRepository{repository: generic.GetGormRepository[Review](dbHandle)}
 }
 
-func (repo *ReviewRepository) Create(review Review) error {
+func (repo *ReviewRepository) Create(review *Review) error {
 	return repo.repository.Create(review)
 }
 
@@ -32,7 +32,7 @@ func (repo *ReviewRepository) GetById(id uint) (Review, error) {
 	return repo.repository.GetById(id)
 }
 
-func (repo *ReviewRepository) Update(review Review) error {
+func (repo *ReviewRepository) Update(review *Review) error {
 	return repo.repository.Update(review)
 }
 
