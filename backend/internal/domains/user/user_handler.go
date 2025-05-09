@@ -19,7 +19,7 @@ func NewHandler(s UserServiceInterface) *Handler {
 // GetAllUsers godoc
 //
 //	@Summary		Get all users
-//	@Description	Get all users from database and return them as a list of DTOs. If user's subtype is person the company related fields will be omitted and vice versa.
+//	@Description	Return a list of all users stored in database. If user's subtype is person the company related fields will be omitted and vice versa.
 //	@Tags			users
 //	@Accept			json
 //	@Produce		json
@@ -38,7 +38,7 @@ func (h *Handler) GetAllUsers(c *gin.Context) {
 // GetUserById godoc
 //
 //	@Summary		Get user by id
-//	@Description	Get user by id from database and return it as a DTO. If user's subtype is person the company related fields will be omitted and vice versa.
+//	@Description	Returns user who has provided id. If user's subtype is person the company related fields will be omitted and vice versa.
 //	@Tags			users
 //	@Accept			json
 //	@Produce		json
@@ -65,7 +65,7 @@ func (h *Handler) GetUserById(c *gin.Context) {
 // GetUserByEmail godoc
 //
 //	@Summary		Get user by email
-//	@Description	Get user by email from database and return it as a DTO. If user's subtype is person the company related fields will be omitted and vice versa.
+//	@Description	Returns user who has provided email. If user's subtype is person the company related fields will be omitted and vice versa.
 //	@Tags			users
 //	@Accept			json
 //	@Produce		json
@@ -87,7 +87,7 @@ func (h *Handler) GetUserByEmail(c *gin.Context) {
 // UpdateUser godoc
 //
 //	@Summary		Update user
-//	@Description	Update user in database from DTO. Currently you can only change basic fields (email, username, password), not the subtype.
+//	@Description	Updates user's data in database from given form. Currently you can only change basic fields (email, username, password), not the subtype.
 //	@Tags			users
 //	@Accept			json
 //	@Produce		json
@@ -113,7 +113,7 @@ func (h *Handler) UpdateUser(c *gin.Context) {
 // DeleteUser godoc
 //
 //	@Summary		Delete user
-//	@Description	Delete user from database by id.
+//	@Description	Removes user who has provided id from database.
 //	@Tags			users
 //	@Accept			json
 //	@Produce		json

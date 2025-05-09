@@ -14,6 +14,16 @@ func NewHandler(s ManufacturerServiceInterface) *Handler {
 	return &Handler{service: s}
 }
 
+// GetAllManufactures godoc
+//
+//	@Summary		Get all manufacturers
+//	@Description	Returns a list of all manufacturers stored in the database.
+//	@Tags			manufacturers
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{array}		RetrieveManufacturerDTO			"List of manufacturers"
+//	@Failure		500	{object}	custom_errors.HTTPError	"Internal server error"
+//	@Router			/car/manufacturers [get]
 func (h *Handler) GetAllManufactures(c *gin.Context) {
 	manufacturers, err := h.service.GetAll()
 	if err != nil {

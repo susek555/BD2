@@ -25,7 +25,7 @@ func NewHandler(s ModelServiceInterace) *Handler {
 // GetAllModelsByManufacturerID godoc
 //
 //	@Summary		Get all models by manufacturer id
-//	@Description	Get all models by manufacturer id from database and return them as a list of DTOs.
+//	@Description	Returns a list of all models stored in the database for a given manufacturer id.
 //	@Tags			models
 //	@Accept			json
 //	@Produce		json
@@ -52,7 +52,7 @@ func (h *Handler) GetModelsByManufacturerID(c *gin.Context) {
 // GetModelsByManufacturerName godoc
 //
 //	@Summary		Get all models by manufacturer name
-//	@Description	Get all models by manufacturer name from database and return them as a list of DTOs.
+//	@Description	Returns a list of all models stored in the database for a given manufacturer name.
 //	@Tags			models
 //	@Accept			json
 //	@Produce		json
