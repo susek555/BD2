@@ -79,3 +79,20 @@ func (h *Handler) DeleteReview(c *gin.Context) {
 	}
 	c.JSON(http.StatusNoContent, nil)
 }
+
+func (h *Handler) GetReviewsByReviewerId(c *gin.Context) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+	}
+	reviews, err := h.service.GetByReviewerId(uint(id))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+	}
+	var reviewsDTO []ReviewDTO
+	for _, review := range reviews {
+		reviewDTO := review.MapToDTO()
+		reviewsDTO = append(reviewsDTO, reviewDTO)
+	}
+	c.JSON(http.StatusOK, reviewsDTO)
+}
