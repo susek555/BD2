@@ -65,7 +65,7 @@ func (s *service) Register(ctx context.Context, in user.CreateUserDTO) map[strin
 	if len(errs) > 0 {
 		return errs
 	}
-	if err := s.repo.Create(userModel); err != nil {
+	if err := s.repo.Create(&userModel); err != nil {
 		errs["other"] = []string{err.Error()}
 	}
 	return errs
@@ -137,7 +137,7 @@ func (s *service) newRefreshToken(ctx context.Context, userId uint, userEmail st
 		UserId:     userId,
 		ExpiryDate: time.Now().Add(30 * 24 * time.Hour),
 	}
-	err := s.refreshTokenService.Create(refresh)
+	err := s.refreshTokenService.Create(&refresh)
 	if err != nil {
 		return "", err
 	}
