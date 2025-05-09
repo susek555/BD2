@@ -23,6 +23,7 @@ export default function Home() {
     page: searchParams.get("page") ? parseInt(searchParams.get("page") || "1", 10) : null,
     orderKey: searchParams.get("sortKey") || null,
     isOrderDesc: searchParams.get("isSortDesc") === "true" ? true : null,
+    offerType: searchParams.get("offerType") || null,
     producers: searchParams.getAll("Producer") || null,
     gearboxes: searchParams.getAll("Gearbox") || null,
     fuelTypes: searchParams.getAll("Fuel") || null,
@@ -40,7 +41,7 @@ export default function Home() {
     },
   };
 
-  // console.log("Search Params:", params);
+  console.log("Search Params:", params);
 
   useEffect(() => {
     async function fetchData() {
