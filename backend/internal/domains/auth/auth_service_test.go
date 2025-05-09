@@ -1,3 +1,6 @@
+//go:build unit
+// +build unit
+
 package auth
 
 import (
@@ -127,7 +130,7 @@ func TestService_Login(t *testing.T) {
 		existing := user.User{ID: 1, Email: validIn.Login, Password: hashPass(t, validIn.Password)}
 		uRepo.EXPECT().GetByEmail(validIn.Login).Return(existing, nil)
 
-		rtSvc.EXPECT().Create(mock.AnythingOfType("refresh_token.RefreshToken")).Return(nil)
+		rtSvc.EXPECT().Create(mock.AnythingOfType("*refresh_token.RefreshToken")).Return(nil)
 
 		svc := &service{repo: uRepo, refreshTokenService: rtSvc, jwtKey: jwtKey}
 
@@ -178,7 +181,7 @@ func TestService_Login(t *testing.T) {
 
 		rtSvc.
 			EXPECT().
-			Create(mock.AnythingOfType("refresh_token.RefreshToken")).
+			Create(mock.AnythingOfType("*refresh_token.RefreshToken")).
 			Return(errors.New("db down"))
 
 		svc := &service{repo: uRepo, refreshTokenService: rtSvc, jwtKey: jwtKey}
@@ -200,22 +203,19 @@ func TestService_Refresh(t *testing.T) {
 		User:       user.User{ID: 1, Email: "john@example.com"},
 	}
 
-	t.Run("happy‑path – returns new access & refresh", func(t *testing.T) {
+	t.Run("happy‑path – returns new access", func(t *testing.T) {
 		uRepo := mocks.NewUserRepositoryInterface(t)
 		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
 
 		rtSvc.EXPECT().FindByToken(ctx, oldToken).Return(baseRT, nil)
 		rtSvc.EXPECT().VerifyExpiration(ctx, baseRT).Return(baseRT, nil)
-		rtSvc.EXPECT().Delete(baseRT.ID).Return(nil)
-		rtSvc.EXPECT().Create(mock.AnythingOfType("refresh_token.RefreshToken")).Return(nil)
 
 		svc := &service{repo: uRepo, refreshTokenService: rtSvc, jwtKey: jwtKey}
 
-		access, newRefresh, err := svc.Refresh(ctx, oldToken)
+		access, err := svc.Refresh(ctx, oldToken)
 
 		assert.NoError(t, err)
 		assert.NotEmpty(t, access)
-		assert.NotEqual(t, oldToken, newRefresh)
 
 		uid, err := jwt.NewJWTVerifier(string(jwtKey)).VerifyToken(access)
 		assert.NoError(t, err)
@@ -232,7 +232,7 @@ func TestService_Refresh(t *testing.T) {
 
 		svc := &service{repo: uRepo, refreshTokenService: rtSvc, jwtKey: jwtKey}
 
-		_, _, err := svc.Refresh(ctx, oldToken)
+		_, err := svc.Refresh(ctx, oldToken)
 		assert.EqualError(t, err, "invalid refresh token")
 	})
 
@@ -247,25 +247,8 @@ func TestService_Refresh(t *testing.T) {
 
 		svc := &service{repo: uRepo, refreshTokenService: rtSvc, jwtKey: jwtKey}
 
-		_, _, err := svc.Refresh(ctx, oldToken)
+		_, err := svc.Refresh(ctx, oldToken)
 		assert.ErrorIs(t, err, expired)
-	})
-
-	t.Run("error during save", func(t *testing.T) {
-		uRepo := mocks.NewUserRepositoryInterface(t)
-		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
-
-		rtSvc.EXPECT().FindByToken(ctx, oldToken).Return(baseRT, nil)
-		rtSvc.EXPECT().VerifyExpiration(ctx, baseRT).Return(baseRT, nil)
-		rtSvc.EXPECT().Delete(baseRT.ID).Return(nil)
-		rtSvc.EXPECT().
-			Create(mock.AnythingOfType("refresh_token.RefreshToken")).
-			Return(errors.New("db down"))
-
-		svc := &service{repo: uRepo, refreshTokenService: rtSvc, jwtKey: jwtKey}
-
-		_, _, err := svc.Refresh(ctx, oldToken)
-		assert.EqualError(t, err, "db down")
 	})
 }
 
