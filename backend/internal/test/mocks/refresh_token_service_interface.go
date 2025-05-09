@@ -23,7 +23,7 @@ func (_m *RefreshTokenServiceInterface) EXPECT() *RefreshTokenServiceInterface_E
 }
 
 // Create provides a mock function with given fields: entity
-func (_m *RefreshTokenServiceInterface) Create(entity refresh_token.RefreshToken) error {
+func (_m *RefreshTokenServiceInterface) Create(entity *refresh_token.RefreshToken) error {
 	ret := _m.Called(entity)
 
 	if len(ret) == 0 {
@@ -31,7 +31,7 @@ func (_m *RefreshTokenServiceInterface) Create(entity refresh_token.RefreshToken
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(refresh_token.RefreshToken) error); ok {
+	if rf, ok := ret.Get(0).(func(*refresh_token.RefreshToken) error); ok {
 		r0 = rf(entity)
 	} else {
 		r0 = ret.Error(0)
@@ -46,14 +46,14 @@ type RefreshTokenServiceInterface_Create_Call struct {
 }
 
 // Create is a helper method to define mock.On call
-//   - entity refresh_token.RefreshToken
+//   - entity *refresh_token.RefreshToken
 func (_e *RefreshTokenServiceInterface_Expecter) Create(entity interface{}) *RefreshTokenServiceInterface_Create_Call {
 	return &RefreshTokenServiceInterface_Create_Call{Call: _e.mock.On("Create", entity)}
 }
 
-func (_c *RefreshTokenServiceInterface_Create_Call) Run(run func(entity refresh_token.RefreshToken)) *RefreshTokenServiceInterface_Create_Call {
+func (_c *RefreshTokenServiceInterface_Create_Call) Run(run func(entity *refresh_token.RefreshToken)) *RefreshTokenServiceInterface_Create_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(refresh_token.RefreshToken))
+		run(args[0].(*refresh_token.RefreshToken))
 	})
 	return _c
 }
@@ -63,7 +63,7 @@ func (_c *RefreshTokenServiceInterface_Create_Call) Return(_a0 error) *RefreshTo
 	return _c
 }
 
-func (_c *RefreshTokenServiceInterface_Create_Call) RunAndReturn(run func(refresh_token.RefreshToken) error) *RefreshTokenServiceInterface_Create_Call {
+func (_c *RefreshTokenServiceInterface_Create_Call) RunAndReturn(run func(*refresh_token.RefreshToken) error) *RefreshTokenServiceInterface_Create_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -389,7 +389,7 @@ func (_c *RefreshTokenServiceInterface_GetById_Call) RunAndReturn(run func(uint)
 }
 
 // Update provides a mock function with given fields: entity
-func (_m *RefreshTokenServiceInterface) Update(entity refresh_token.RefreshToken) error {
+func (_m *RefreshTokenServiceInterface) Update(entity *refresh_token.RefreshToken) error {
 	ret := _m.Called(entity)
 
 	if len(ret) == 0 {
@@ -397,7 +397,7 @@ func (_m *RefreshTokenServiceInterface) Update(entity refresh_token.RefreshToken
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(refresh_token.RefreshToken) error); ok {
+	if rf, ok := ret.Get(0).(func(*refresh_token.RefreshToken) error); ok {
 		r0 = rf(entity)
 	} else {
 		r0 = ret.Error(0)
@@ -412,14 +412,14 @@ type RefreshTokenServiceInterface_Update_Call struct {
 }
 
 // Update is a helper method to define mock.On call
-//   - entity refresh_token.RefreshToken
+//   - entity *refresh_token.RefreshToken
 func (_e *RefreshTokenServiceInterface_Expecter) Update(entity interface{}) *RefreshTokenServiceInterface_Update_Call {
 	return &RefreshTokenServiceInterface_Update_Call{Call: _e.mock.On("Update", entity)}
 }
 
-func (_c *RefreshTokenServiceInterface_Update_Call) Run(run func(entity refresh_token.RefreshToken)) *RefreshTokenServiceInterface_Update_Call {
+func (_c *RefreshTokenServiceInterface_Update_Call) Run(run func(entity *refresh_token.RefreshToken)) *RefreshTokenServiceInterface_Update_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(refresh_token.RefreshToken))
+		run(args[0].(*refresh_token.RefreshToken))
 	})
 	return _c
 }
@@ -429,7 +429,7 @@ func (_c *RefreshTokenServiceInterface_Update_Call) Return(_a0 error) *RefreshTo
 	return _c
 }
 
-func (_c *RefreshTokenServiceInterface_Update_Call) RunAndReturn(run func(refresh_token.RefreshToken) error) *RefreshTokenServiceInterface_Update_Call {
+func (_c *RefreshTokenServiceInterface_Update_Call) RunAndReturn(run func(*refresh_token.RefreshToken) error) *RefreshTokenServiceInterface_Update_Call {
 	_c.Call.Return(run)
 	return _c
 }
