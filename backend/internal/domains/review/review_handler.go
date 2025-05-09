@@ -33,6 +33,7 @@ func (h *Handler) GetReviewById(c *gin.Context) {
 	review, err := h.service.GetById(uint(id))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+		return
 	}
 	c.JSON(http.StatusOK, review)
 }
@@ -45,6 +46,7 @@ func (h *Handler) CreateReview(c *gin.Context) {
 	}
 	if err := h.service.Create(&review); err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+		return
 	}
 	c.JSON(http.StatusCreated, review)
 }
