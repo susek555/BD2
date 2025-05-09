@@ -21,3 +21,4 @@ export function syncFiltersWithParams(
       return { ...range, range: { min, max } };
     });
   }
+

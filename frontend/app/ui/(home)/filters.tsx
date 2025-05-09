@@ -6,7 +6,7 @@ import { fetchFilterFields, prepareRangeFields } from "@/app/lib/data";
 import { useEffect, useState } from "react";
 import { FilterFieldData, RangeFieldData } from "@/app/lib/definitions";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
-import { syncFiltersWithParams, syncRangesWithParams } from "@/app/lib/(home)/syncWIthParams";
+import { syncFiltersWithParams, syncRangesWithParams } from "@/app/lib/(home)/syncWithParams";
 
 export default function Filters() {
     const [filters, setFilters] = useState<FilterFieldData[]>([]);
