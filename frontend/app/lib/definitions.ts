@@ -107,6 +107,7 @@ export type SearchParams = {
   page: number | null;
   orderKey: string | null;
   isOrderDesc: boolean | null;
+  offerType: string | null;
   producers: string[] | null;
   gearboxes: string[] | null;
   fuelTypes: string[] | null;
