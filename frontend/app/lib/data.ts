@@ -1,5 +1,14 @@
 import { FilterFieldData, RangeFieldData, SaleOffer, SearchParams } from "./definitions";
 
+// Sorting
+
+export async function fetchSortingOptions() : Promise<string[]> {
+    // TODO connect API
+    const data: string[] = ["Base", "name", "date", "price"];
+    
+    return data;
+}
+
 // Filters
 
 async function fetchProducers() : Promise<FilterFieldData> {

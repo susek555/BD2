@@ -1,27 +1,61 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import { fetchSortingOptions } from "@/app/lib/data";
 
 export default function Sorting() {
-    const [isKeyDropdownOpen, setIsKeyDropdownOpen] = React.useState(false);
-    const [isOrderDropdownOpen, setIsOrderDropdownOpen] = React.useState(false);
-    const [selectedKey, setSelectedKey] = React.useState("name");
-    const [selectedOrder, setSelectedOrder] = React.useState("Asc");
+    const searchParams = useSearchParams();
+    const pathname = usePathname();
+    const { replace } = useRouter();
+
+    const [sortingOptions, setSortingOptions] = useState<string[]>([]);
+    const [isKeyDropdownOpen, setIsKeyDropdownOpen] = useState(false);
+    const [isOrderDropdownOpen, setIsOrderDropdownOpen] = useState(false);
+
+    const selectedKey = searchParams.get("sortKey") || "Base";
+    const isDescSelected = searchParams.get("isSortDesc") || false;
+
+    useEffect(() => {
+        async function fetchData() {
+            const options = await fetchSortingOptions();
+
+            setSortingOptions(options);
+        }
+
+        fetchData();
+    }, [searchParams]);
 
     const toggleKeyDropdown = () => setIsKeyDropdownOpen(!isKeyDropdownOpen);
     const toggleOrderDropdown = () => setIsOrderDropdownOpen(!isOrderDropdownOpen);
 
     const handleKeyChange = (key: string) => {
-        setSelectedKey(key);
+        const params = new URLSearchParams(searchParams);
+        if (key === "Base") {
+            params.delete("sortKey");
+        } else {
+            params.set("sortKey", key);
+        }
+        params.set("page", "1"); // Reset to the first page
+        replace(`${pathname}?${params.toString()}`);
         setIsKeyDropdownOpen(false);
     };
 
     const handleOrderChange = (order: string) => {
-        setSelectedOrder(order);
+        const params = new URLSearchParams(searchParams);
+        if (order === "Desc") {
+            params.set("isSortDesc", "true");
+        } else {
+            params.delete("isSortDesc");
+        }
+        params.set("page", "1"); // Reset to the first page
+        replace(`${pathname}?${params.toString()}`);
         setIsOrderDropdownOpen(false);
     };
 
     return (
         <div>
-            <h2 className="text-bg px-2">Sort by:</h2>
+            <h2 className="text-bg px-2">Order by:</h2>
             <div style={{ display: 'flex', gap: '1rem' }}>
                 <div
                     className="base-filter-template border border-black-300 rounded px-2 py-1 relative"
@@ -38,7 +72,7 @@ export default function Sorting() {
                         <div
                             className="filter-options mt-2 absolute bg-white border border-gray-300 rounded shadow-md w-full z-10"
                         >
-                            {["name", "date", "price"].map((key) => (
+                            {sortingOptions.map((key) => (
                                 <div
                                     key={key}
                                     className="filter-option flex justify-between items-center px-2 py-1 hover:bg-gray-100 cursor-pointer"
@@ -58,7 +92,7 @@ export default function Sorting() {
                         className="flex justify-between items-center w-full"
                         onClick={toggleOrderDropdown}
                     >
-                        <span>{selectedOrder}</span>
+                        <span>{isDescSelected === "true" ? "Desc" : "Asc"}</span>
                         <span>{isOrderDropdownOpen ? '▲' : '▼'}</span>
                     </button>
                     {isOrderDropdownOpen && (
