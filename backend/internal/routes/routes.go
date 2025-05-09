@@ -5,6 +5,8 @@ import (
 	"os"
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/review"
 
 	"github.com/gin-gonic/gin"
@@ -75,6 +77,12 @@ func registerReviewRoutes(router *gin.Engine) {
 }
 
 func registerCarRoutes(router *gin.Engine) {
+	modelRepo := model.NewModelRepository(initializers.DB)
+	modelService := model.NewModelService(modelRepo)
+	modelHandler := model.NewHandler(modelService)
+	manufacturerRepo := manufacturer.NewManufacturerRepository(initializers.DB)
+	manufacturerService := manufacturer.NewManufacturerService(manufacturerRepo)
+	manufacrerHandler := manufacturer.NewHandler(manufacturerService)
 	carHandler := car_params.NewHandler()
 	carRoutes := router.Group("/car")
 	{
@@ -82,5 +90,8 @@ func registerCarRoutes(router *gin.Engine) {
 		carRoutes.GET("/transmissions", carHandler.GetPossibleTransmissions)
 		carRoutes.GET("/fuel-types", carHandler.GetPossibleFuelTypes)
 		carRoutes.GET("/drives", carHandler.GetPossibleDrives)
+		carRoutes.GET("/manufactures", manufacrerHandler.GetAllManufactures)
+		carRoutes.GET("/models/id/:id", modelHandler.GetModelsByManufacturerID)
+		carRoutes.GET("/models/name/:name", modelHandler.GetModelsByManufacturerName)
 	}
 }
