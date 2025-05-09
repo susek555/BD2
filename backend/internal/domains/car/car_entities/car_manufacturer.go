@@ -1,4 +1,4 @@
-package car_params
+package car_entities
 
 type Manufacturer struct {
 	ID   uint   `json:"id" gorm:"primaryKey"`
