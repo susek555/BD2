@@ -34,11 +34,31 @@ func (repo *ReviewRepository) Create(review *Review) error {
 }
 
 func (repo *ReviewRepository) GetAll() ([]Review, error) {
-	return repo.repository.GetAll()
+	db := repo.repository.DB
+	var reviews []Review
+	err := db.
+		Preload("Reviewer").
+		Preload("Reviewee").
+		Find(&reviews).
+		Error
+	if err != nil {
+		return nil, err
+	}
+	return reviews, nil
 }
 
 func (repo *ReviewRepository) GetById(id uint) (Review, error) {
-	return repo.repository.GetById(id)
+	db := repo.repository.DB
+	var review Review
+	err := db.
+		Preload("Reviewer").
+		Preload("Reviewee").
+		First(&review, id).
+		Error
+	if err != nil {
+		return Review{}, err
+	}
+	return review, nil
 }
 
 func (repo *ReviewRepository) Update(review *Review) error {
