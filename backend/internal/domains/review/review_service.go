@@ -8,7 +8,7 @@ import (
 type ReviewServiceInterface interface {
 	generic.CRUDService[Review]
 	GetByReviewerId(reviewerId uint) ([]Review, error)
-	GetByReviewedId(reviewedId uint) ([]Review, error)
+	GetByRevieweeId(reviewedId uint) ([]Review, error)
 	GetByReviewerIdAndReviewedId(reviewerId uint, reviewedId uint) (Review, error)
 }
 
@@ -29,8 +29,8 @@ func (service *ReviewService) GetByReviewerId(reviewerId uint) ([]Review, error)
 	return service.Repo.GetByReviewerId(reviewerId)
 }
 
-func (service *ReviewService) GetByReviewedId(reviewedId uint) ([]Review, error) {
-	return service.Repo.GetByReviewedId(reviewedId)
+func (service *ReviewService) GetByRevieweeId(reviewedId uint) ([]Review, error) {
+	return service.Repo.GetByRevieweeId(reviewedId)
 }
 
 func (service *ReviewService) GetByReviewerIdAndReviewedId(reviewerId uint, reviewedId uint) (Review, error) {
