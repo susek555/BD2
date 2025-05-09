@@ -1,3 +1,6 @@
+//go:build unit
+// +build unit
+
 package user
 
 import (
@@ -91,7 +94,7 @@ func TestUpdate_UserNotFound(t *testing.T) {
 func TestUpdate_UserFoundNoChange(t *testing.T) {
 	uRepo := mocks.NewUserRepositoryInterface(t)
 	uRepo.On("GetById", uint(1)).Return(*createUser(), nil)
-	uRepo.On("Update", *createUser()).Return(nil)
+	uRepo.On("Update", createUser()).Return(nil)
 	uService := u.NewService(uRepo)
 	err := uService.Update(u.UpdateUserDTO{ID: 1})
 	assert.NoError(t, err)
@@ -101,7 +104,7 @@ func TestUpdate_UserFoundChange(t *testing.T) {
 	uRepo := mocks.NewUserRepositoryInterface(t)
 	uRepo.On("GetById", uint(1)).Return(*createUser(), nil)
 	uService := u.NewService(uRepo)
-	uRepo.On("Update", mock.AnythingOfType("user.User")).Return(nil)
+	uRepo.On("Update", mock.AnythingOfType("*user.User")).Return(nil)
 	newUsername := "new_username"
 	newEmail := "john_updated@example.com"
 	dto := u.UpdateUserDTO{ID: 1, Username: &newUsername, Email: &newEmail}
