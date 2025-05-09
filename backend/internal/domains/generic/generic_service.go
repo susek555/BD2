@@ -8,7 +8,7 @@ type CRUDService[T any] interface {
 	CRUDRepository[T]
 }
 
-func (service GenericService[T, R]) Create(entity T) error {
+func (service GenericService[T, R]) Create(entity *T) error {
 	err := service.Repo.Create(entity)
 	return err
 }
@@ -21,7 +21,7 @@ func (service GenericService[T, R]) GetById(id uint) (T, error) {
 	return service.Repo.GetById(id)
 }
 
-func (service GenericService[T, R]) Update(entity T) error {
+func (service GenericService[T, R]) Update(entity *T) error {
 	return service.Repo.Update(entity)
 }
 
