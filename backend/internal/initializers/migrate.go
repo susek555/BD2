@@ -14,5 +14,4 @@ func MigrateModels() {
 		&refresh_token.RefreshToken{},
 		&review.Review{},
 	)
-
 }
