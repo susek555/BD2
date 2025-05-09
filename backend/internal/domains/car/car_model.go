@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/model"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
 )
 
 type Car struct {
