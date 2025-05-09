@@ -20,7 +20,7 @@ func GetRefreshTokenRepository(dbHandle *gorm.DB) *RefreshTokenRepository {
 	return &RefreshTokenRepository{repository: generic.GetGormRepository[RefreshToken](dbHandle)}
 }
 
-func (repo *RefreshTokenRepository) Create(token RefreshToken) error {
+func (repo *RefreshTokenRepository) Create(token *RefreshToken) error {
 	return repo.repository.Create(token)
 }
 
@@ -32,7 +32,7 @@ func (repo *RefreshTokenRepository) GetById(id uint) (RefreshToken, error) {
 	return repo.repository.GetById(id)
 }
 
-func (repo *RefreshTokenRepository) Update(token RefreshToken) error {
+func (repo *RefreshTokenRepository) Update(token *RefreshToken) error {
 	return repo.repository.Update(token)
 }
 
