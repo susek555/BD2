@@ -43,7 +43,7 @@ func (h *Handler) CreateReview(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
-	if err := h.service.Create(review); err != nil {
+	if err := h.service.Create(&review); err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
 	c.JSON(http.StatusCreated, review)
