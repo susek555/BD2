@@ -113,3 +113,20 @@ func (h *Handler) GetReviewsByRevieweeId(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, reviewsDTO)
 }
+
+func (h *Handler) GetReviewsByReviewerIdAndRevieweeId(c *gin.Context) {
+	reviewerId, err := strconv.ParseUint(c.Param("reviewerId"), 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+	}
+	revieweeId, err := strconv.ParseUint(c.Param("revieweeId"), 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+	}
+	review, err := h.service.GetByReviewerIdAndRevieweeId(uint(reviewerId), uint(revieweeId))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+	}
+	reviewDTO := review.MapToDTO()
+	c.JSON(http.StatusOK, reviewDTO)
+}
