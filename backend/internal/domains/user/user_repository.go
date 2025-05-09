@@ -21,7 +21,7 @@ func NewUserRepository(db *gorm.DB) UserRepositoryInterface {
 	return &UserRepository{DB: db}
 }
 
-func (r *UserRepository) Create(user User) error {
+func (r *UserRepository) Create(user *User) error {
 	return r.DB.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Create(&user).Error; err != nil {
 			return err
@@ -83,7 +83,7 @@ func (r *UserRepository) GetByCompanyNip(nip string) (User, error) {
 	return u, nil
 }
 
-func (r *UserRepository) Update(user User) error {
+func (r *UserRepository) Update(user *User) error {
 	return r.DB.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Save(user).Error; err != nil {
 			return err
