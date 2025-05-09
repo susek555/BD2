@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/review"
 	"log"
 	"os"
 
@@ -53,4 +54,14 @@ func registerAuthRoutes(router *gin.Engine) {
 		authRoutes.POST("/refresh", authHandler.Refresh)
 	}
 	router.POST("/logout", middleware.Authenticate(verifier), authHandler.Logout)
+}
+
+func registerReviewRoutes(router *gin.Engine) {
+	reviewService := review.NewReviewService(initializers.DB)
+	reviewHandler := review.NewHandler(reviewService)
+	reviewRoutes := router.Group("/review")
+	reviewRoutes.GET("/", reviewHandler.GetAllReviews)
+	reviewRoutes.GET("/:id", reviewHandler.GetReviewById)
+	reviewRoutes.POST("/", reviewHandler.CreateReview)
+
 }
