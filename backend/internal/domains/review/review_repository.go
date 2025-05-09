@@ -98,7 +98,7 @@ func (repo *ReviewRepository) GetByRevieweeId(reviewedId uint) ([]Review, error)
 	var reviews []Review
 	err := repo.repository.
 		DB.
-		Where("reviewer_id = ?", reviewedId).
+		Where("reviewee_id = ?", reviewedId).
 		Preload("Reviewee").
 		Preload("Reviewer").
 		Find(&reviews).
