@@ -4,7 +4,11 @@ import { SaleOffer } from "@/app/lib/definitions"
 
 export default function OffersTable(offer : SaleOffer) {
     return (
-        <a href={`/${offer.id}`} className="h-10 md:h-40 bg-gray-200 rounded w-15/16">
+        <a
+            href={`/${offer.id}`}
+            className={`h-10 md:h-40 bg-gray-200 rounded w-15/16 ${offer.isAuction ? 'border-4 border-blue-500' : ''}`}
+            style={{ borderColor: offer.isAuction ? 'blue' : 'transparent', borderWidth: offer.isAuction ? '2px' : '0' }}
+        >
             <div className="flex flex-row gap-4">
                 <div className="p-2.5">
                     <Suspense>
