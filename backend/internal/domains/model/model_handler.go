@@ -62,7 +62,7 @@ func (h *Handler) GetModelsByManufacturerID(c *gin.Context) {
 //	@Failure		500		{object}	custom_errors.HTTPError	"Internal server error"
 //	@Router			/cars/models/name/{name} [get]
 func (h *Handler) GetModelsByManufacturerName(c *gin.Context) {
-	name := c.Param("email")
+	name := c.Param("name")
 	models, err := h.service.GetByManufacturerName(name)
 	if err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
