@@ -9,7 +9,7 @@ type ReviewServiceInterface interface {
 	generic.CRUDService[Review]
 	GetByReviewerId(reviewerId uint) ([]Review, error)
 	GetByRevieweeId(reviewedId uint) ([]Review, error)
-	GetByReviewerIdAndReviewedId(reviewerId uint, reviewedId uint) (Review, error)
+	GetByReviewerIdAndRevieweeId(reviewerId uint, revieweeId uint) (Review, error)
 }
 
 type ReviewService struct {
@@ -33,6 +33,6 @@ func (service *ReviewService) GetByRevieweeId(reviewedId uint) ([]Review, error)
 	return service.Repo.GetByRevieweeId(reviewedId)
 }
 
-func (service *ReviewService) GetByReviewerIdAndReviewedId(reviewerId uint, reviewedId uint) (Review, error) {
-	return service.GetByReviewerIdAndReviewedId(reviewerId, reviewedId)
+func (service *ReviewService) GetByReviewerIdAndRevieweeId(reviewerId uint, reviewedId uint) (Review, error) {
+	return service.Repo.GetByReviewerIdAndRevieweeId(reviewerId, reviewedId)
 }
