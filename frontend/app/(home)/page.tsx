@@ -21,22 +21,26 @@ export default function Home() {
   const params: SearchParams = {
     query: searchParams.get("query") || null,
     page: searchParams.get("page") ? parseInt(searchParams.get("page") || "1", 10) : null,
-    producers: searchParams.getAll("producers") || null,
-    gearboxes: searchParams.getAll("gearboxes") || null,
-    fuelTypes: searchParams.getAll("fuelTypes") || null,
+    orderKey: searchParams.get("sortKey") || null,
+    isOrderDesc: searchParams.get("isSortDesc") === "true" ? true : null,
+    producers: searchParams.getAll("Producer") || null,
+    gearboxes: searchParams.getAll("Gearbox") || null,
+    fuelTypes: searchParams.getAll("Fuel") || null,
     price: {
-      min: searchParams.get("price[min]") ? parseInt(searchParams.get("price[min]") || "0", 10) : null,
-      max: searchParams.get("price[max]") ? parseInt(searchParams.get("price[max]") || "0", 10) : null,
+      min: searchParams.get("Price_min") ? parseInt(searchParams.get("Price_min") || "0", 10) : null,
+      max: searchParams.get("Price_max") ? parseInt(searchParams.get("Price_max") || "0", 10) : null,
     },
     mileage: {
-      min: searchParams.get("mileage[min]") ? parseInt(searchParams.get("mileage[min]") || "0", 10) : null,
-      max: searchParams.get("mileage[max]") ? parseInt(searchParams.get("mileage[max]") || "0", 10) : null,
+      min: searchParams.get("Mileage_min") ? parseInt(searchParams.get("Mileage_min") || "0", 10) : null,
+      max: searchParams.get("Mileage_max") ? parseInt(searchParams.get("Mileage_max") || "0", 10) : null,
     },
     year: {
-      min: searchParams.get("year[min]") ? parseInt(searchParams.get("year[min]") || "0", 10) : null,
-      max: searchParams.get("year[max]") ? parseInt(searchParams.get("year[max]") || "0", 10) : null,
+      min: searchParams.get("Production year_min") ? parseInt(searchParams.get("Production year_min") || "0", 10) : null,
+      max: searchParams.get("Production year_max") ? parseInt(searchParams.get("Production year_max") || "0", 10) : null,
     },
   };
+
+  console.log("Search Params:", params);
 
   useEffect(() => {
     async function fetchData() {

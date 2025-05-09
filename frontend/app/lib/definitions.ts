@@ -100,6 +100,8 @@ export type RangeFieldData = {
 export type SearchParams = {
   query: string | null;
   page: number | null;
+  orderKey: string | null;
+  isOrderDesc: boolean | null;
   producers: string[] | null;
   gearboxes: string[] | null;
   fuelTypes: string[] | null;
