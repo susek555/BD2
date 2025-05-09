@@ -21,7 +21,11 @@ func (h *Handler) GetAllReviews(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
-	c.JSON(http.StatusOK, reviews)
+	var reviewsDTO []ReviewDTO
+	for _, review := range reviews {
+		reviewsDTO = append(reviewsDTO, review.MapToDTO())
+	}
+	c.JSON(http.StatusOK, reviewsDTO)
 }
 
 func (h *Handler) GetReviewById(c *gin.Context) {
@@ -35,7 +39,8 @@ func (h *Handler) GetReviewById(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
-	c.JSON(http.StatusOK, review)
+	reviewDTO := review.MapToDTO()
+	c.JSON(http.StatusOK, reviewDTO)
 }
 
 func (h *Handler) CreateReview(c *gin.Context) {
@@ -48,5 +53,6 @@ func (h *Handler) CreateReview(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
-	c.JSON(http.StatusCreated, review)
+	reviewDTO := review.MapToDTO()
+	c.JSON(http.StatusCreated, reviewDTO)
 }
