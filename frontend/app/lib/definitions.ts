@@ -123,6 +123,7 @@ export type SearchParams = {
 
 export type SaleOffer = {
   id: string;
+  // image: type to  be determined;
   name: string; // producer and model
   productionYear: number;
   mileage: number;
