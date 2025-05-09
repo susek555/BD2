@@ -1,9 +1,11 @@
 package routes
 
 import (
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/review"
 	"log"
 	"os"
+
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/review"
 
 	"github.com/gin-gonic/gin"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auth"
@@ -17,6 +19,7 @@ func RegisterRoutes(router *gin.Engine) {
 	registerAuthRoutes(router)
 	registerUserRoutes(router)
 	registerReviewRoutes(router)
+	registerCarRoutes(router)
 }
 
 func initializeVerifier() (*jwt.JWTVerifier, []byte) {
@@ -69,4 +72,15 @@ func registerReviewRoutes(router *gin.Engine) {
 	reviewRoutes.GET("/reviewer/:id", reviewHandler.GetReviewsByReviewerId)
 	reviewRoutes.GET("/reviewee/:id", reviewHandler.GetReviewsByRevieweeId)
 	reviewRoutes.GET("/reviewer/reviewee/:reviewerId/:revieweeId", reviewHandler.GetReviewsByReviewerIdAndRevieweeId)
+}
+
+func registerCarRoutes(router *gin.Engine) {
+	carHandler := car_params.NewHandler()
+	carRoutes := router.Group("/car")
+	{
+		carRoutes.GET("/colors", carHandler.GetPossibleColors)
+		carRoutes.GET("/transmissions", carHandler.GetPossibleTransmissions)
+		carRoutes.GET("/fuel-types", carHandler.GetPossibleFuelTypes)
+		carRoutes.GET("/drives", carHandler.GetPossibleDrives)
+	}
 }
