@@ -15,14 +15,14 @@ func NewHandler() *Handler {
 // GetPossibleColors godoc
 //
 //	@Summary		Get all possible colors
-//	@Description	Returns a list of all possible colors that are accepted when creating a new offer. If color of your car is not in the list, chose 'other'.
+//	@Description	Returns a list of all possible colors that are accepted when creating a new offer. If the color of your car is not in the list, choose 'other'.
 //	@Tags			cars
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{array}	string	"List of colors"
+//	@Success		200	{object}	map[string][]string	"List of colors"
 //	@Router			/cars/colors [get]
 func (h *Handler) GetPossibleColors(c *gin.Context) {
-	c.JSON(http.StatusOK, Colors)
+	c.JSON(http.StatusOK, gin.H{"colors": Colors})
 }
 
 // GetPossibleDrives godoc
@@ -32,10 +32,10 @@ func (h *Handler) GetPossibleColors(c *gin.Context) {
 //	@Tags			cars
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{array}	string	"List of drives"
+//	@Success		200	{object}	map[string][]string	"List of drives"
 //	@Router			/cars/drives [get]
 func (h *Handler) GetPossibleDrives(c *gin.Context) {
-	c.JSON(http.StatusOK, Drives)
+	c.JSON(http.StatusOK, gin.H{"drives": Drives})
 }
 
 // GetPossibleFuelTypes godoc
@@ -45,10 +45,10 @@ func (h *Handler) GetPossibleDrives(c *gin.Context) {
 //	@Tags			cars
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{array}	string	"List of fuel types"
+//	@Success		200	{object}	map[string][]string	"List of fuel types"
 //	@Router			/cars/fuel-types [get]
 func (h *Handler) GetPossibleFuelTypes(c *gin.Context) {
-	c.JSON(http.StatusOK, Types)
+	c.JSON(http.StatusOK, gin.H{"fuel-types": Types})
 }
 
 // GetPossibleTransmissions godoc
@@ -58,8 +58,8 @@ func (h *Handler) GetPossibleFuelTypes(c *gin.Context) {
 //	@Tags			cars
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{array}	string	"List of transmissions"
+//	@Success		200	{object}	map[string][]string	"List of transmissions"
 //	@Router			/cars/transmissions [get]
 func (h *Handler) GetPossibleTransmissions(c *gin.Context) {
-	c.JSON(http.StatusOK, Transmissions)
+	c.JSON(http.StatusOK, gin.H{"transmissions": Transmissions})
 }
