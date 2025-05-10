@@ -8,6 +8,7 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/review"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 
 	"github.com/gin-gonic/gin"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auth"
@@ -22,6 +23,7 @@ func RegisterRoutes(router *gin.Engine) {
 	registerUserRoutes(router)
 	registerReviewRoutes(router)
 	registerCarRoutes(router)
+	registerSaleOfferRoutes(router)
 }
 
 func initializeVerifier() (*jwt.JWTVerifier, []byte) {
@@ -93,5 +95,15 @@ func registerCarRoutes(router *gin.Engine) {
 		carRoutes.GET("/manufactures", manufacrerHandler.GetAllManufactures)
 		carRoutes.GET("/models/id/:id", modelHandler.GetModelsByManufacturerID)
 		carRoutes.GET("/models/name/:name", modelHandler.GetModelsByManufacturerName)
+	}
+}
+
+func registerSaleOfferRoutes(router *gin.Engine) {
+	saleOfferRepo := sale_offer.NewSaleOfferRepository(initializers.DB)
+	saleOfferService := sale_offer.NewSaleOfferService(saleOfferRepo)
+	saleOfferHandler := sale_offer.NewHandler(saleOfferService)
+	saleOfferRoutes := router.Group("/sale-offer")
+	{
+		saleOfferRoutes.POST("/", saleOfferHandler.CreateSaleOffer)
 	}
 }
