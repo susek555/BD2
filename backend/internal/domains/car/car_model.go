@@ -21,7 +21,7 @@ type Car struct {
 	Color              car_params.Color        `json:"color"`
 	FuelType           car_params.FuelType     `json:"fuel_type"`
 	Transmission       car_params.Transmission `json:"transmission"`
-	NumberOfGears      uint                    `json:"number_of_gears"`
+	NumberOfGears      uint                    `json:"number_of_gears" gorm:"check:number_of_gears BETWEEN 1 AND 10"`
 	Drive              car_params.Drive        `json:"drive"`
 	ModelID            uint                    `json:"model_id"`
 	Model              *model.Model            `gorm:"foreignKey:ModelID;references:ID;OnDelete:SET NULL"`
