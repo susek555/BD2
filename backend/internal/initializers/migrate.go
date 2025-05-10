@@ -6,6 +6,7 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/refresh_token"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/review"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
 )
 
@@ -19,5 +20,6 @@ func MigrateModels() {
 		&car.Car{},
 		&manufacturer.Manufacturer{},
 		&model.Model{},
+		&sale_offer.SaleOffer{},
 	)
 }
