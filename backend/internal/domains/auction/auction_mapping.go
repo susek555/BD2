@@ -27,7 +27,7 @@ func (dto *CreateAuctionDTO) MapToAuction() (*sale_offer.Auction, error) {
 }
 
 func parseDate(date string) (time.Time, error) {
-	layout := "11:20 02/01/2006"
+	layout := "15:04 02/01/2006"
 	t, err := time.Parse(layout, date)
 	if err != nil {
 		return time.Time{}, err
