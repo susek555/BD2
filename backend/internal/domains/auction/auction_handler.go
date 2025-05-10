@@ -22,12 +22,17 @@ func (h *Handler) CreateAuction(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
-	err := h.service.Create(&in)
+	auction, err := in.MapToAuction()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+	}
+	err = h.service.Create(auction)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
-	c.JSON(http.StatusOK, in)
+	dto := MapToDTO(auction)
+	c.JSON(http.StatusOK, dto)
 }
 
 func (h *Handler) GetAllAuctions(c *gin.Context) {
@@ -35,5 +40,10 @@ func (h *Handler) GetAllAuctions(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
-	c.JSON(http.StatusOK, auctions)
+	var auctionsDTO []RetrieveAuctionDTO
+	for _, auction := range auctions {
+		dto := MapToDTO(&auction)
+		auctionsDTO = append(auctionsDTO, *dto)
+	}
+	c.JSON(http.StatusOK, auctionsDTO)
 }
