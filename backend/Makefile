@@ -9,3 +9,7 @@ live-server:
 
 create-docs:
 	swag init -g ./cmd/car-dealer-api/main.go
+
+reload-database:
+	rm data/test.db
+	touch data/test.db
