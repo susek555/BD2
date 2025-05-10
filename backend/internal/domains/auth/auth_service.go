@@ -65,7 +65,7 @@ func (s *service) Register(ctx context.Context, in user.CreateUserDTO) map[strin
 	if len(errs) > 0 {
 		return errs
 	}
-	if err := s.repo.Create(&userModel); err != nil {
+	if err := s.repo.Create(userModel); err != nil {
 		errs["other"] = []string{err.Error()}
 	}
 	return errs
