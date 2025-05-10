@@ -125,7 +125,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Authenticate user and return a pair of tokens
+      description: Authenticate user and return a pair of tokens and user data
       parameters:
       - description: Login form
         in: body
@@ -159,7 +159,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Refresh access and refresh tokens
+      description: Refresh access tokens
       parameters:
       - description: Refresh token form
         in: body
@@ -171,7 +171,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK - returns tokens
+          description: OK - returns new access token
           schema:
             $ref: '#/definitions/auth.LoginResponse'
         "400":
@@ -193,7 +193,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Set up account and return a pair of tokens
+      description: Set up account and return the status
       parameters:
       - description: Registration form
         in: body
