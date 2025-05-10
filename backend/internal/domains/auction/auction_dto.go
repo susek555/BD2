@@ -9,3 +9,9 @@ type CreateAuctionDTO struct {
 	DateEnd     string `json:"date_end"`
 	BuyNowPrice uint   `json:"buy_now_price"`
 }
+
+type RetrieveAuctionDTO struct {
+	sale_offer.RetrieveSaleOfferDTO
+	DateEnd     string `json:"date_end"`
+	BuyNowPrice uint   `json:"buy_now_price"`
+}
