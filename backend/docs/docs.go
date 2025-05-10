@@ -245,7 +245,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/review.ReviewDTO"
+                                "$ref": "#/definitions/review.ReviewOutput"
                             }
                         }
                     },
@@ -277,7 +277,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/review.Review"
+                            "$ref": "#/definitions/review.ReviewInput"
                         }
                     }
                 ],
@@ -285,7 +285,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK – review updated",
                         "schema": {
-                            "$ref": "#/definitions/review.ReviewDTO"
+                            "$ref": "#/definitions/review.ReviewOutput"
                         }
                     },
                     "400": {
@@ -316,7 +316,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/review.Review"
+                            "$ref": "#/definitions/review.ReviewInput"
                         }
                     }
                 ],
@@ -324,7 +324,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created – review stored",
                         "schema": {
-                            "$ref": "#/definitions/review.ReviewDTO"
+                            "$ref": "#/definitions/review.ReviewOutput"
                         }
                     },
                     "400": {
@@ -362,7 +362,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/review.ReviewDTO"
+                                "$ref": "#/definitions/review.ReviewOutput"
                             }
                         }
                     },
@@ -401,7 +401,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/review.ReviewDTO"
+                                "$ref": "#/definitions/review.ReviewOutput"
                             }
                         }
                     },
@@ -445,7 +445,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK – review found",
                         "schema": {
-                            "$ref": "#/definitions/review.ReviewDTO"
+                            "$ref": "#/definitions/review.ReviewOutput"
                         }
                     },
                     "400": {
@@ -481,7 +481,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK – review with given id",
                         "schema": {
-                            "$ref": "#/definitions/review.ReviewDTO"
+                            "$ref": "#/definitions/review.ReviewOutput"
                         }
                     },
                     "400": {
@@ -849,33 +849,24 @@ const docTemplate = `{
                 }
             }
         },
-        "review.Review": {
+        "review.ReviewInput": {
             "type": "object",
             "properties": {
                 "description": {
                     "type": "string"
                 },
-                "id": {
-                    "type": "integer"
-                },
                 "rating": {
                     "type": "integer"
                 },
-                "reviewee": {
-                    "$ref": "#/definitions/user.User"
-                },
                 "reviewee_id": {
                     "type": "integer"
-                },
-                "reviewer": {
-                    "$ref": "#/definitions/user.User"
                 },
                 "reviewer_id": {
                     "type": "integer"
                 }
             }
         },
-        "review.ReviewDTO": {
+        "review.ReviewOutput": {
             "type": "object",
             "properties": {
                 "description": {
@@ -903,23 +894,6 @@ const docTemplate = `{
                 },
                 "username": {
                     "type": "string"
-                }
-            }
-        },
-        "user.Company": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "nip": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/user.User"
                 }
             }
         },
@@ -952,23 +926,6 @@ const docTemplate = `{
                 },
                 "username": {
                     "type": "string"
-                }
-            }
-        },
-        "user.Person": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "surname": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/user.User"
                 }
             }
         },
@@ -1005,32 +962,6 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "password": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "user.User": {
-            "type": "object",
-            "properties": {
-                "company": {
-                    "$ref": "#/definitions/user.Company"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "password": {
-                    "type": "string"
-                },
-                "person": {
-                    "$ref": "#/definitions/user.Person"
-                },
-                "selector": {
                     "type": "string"
                 },
                 "username": {
