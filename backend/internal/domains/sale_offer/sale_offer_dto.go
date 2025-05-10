@@ -2,6 +2,7 @@ package sale_offer
 
 import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
+	"time"
 )
 
 type CreateSaleOfferDTO struct {
@@ -23,4 +24,6 @@ type CreateSaleOfferDTO struct {
 	NumberOfGears      uint                    `json:"number_of_gears"`
 	Drive              car_params.Drive        `json:"drive"`
 	ModelID            uint                    `json:"model_id"`
+	DateEnd            time.Time               `json:"date_end"`
+	BuyNowPrice        uint                    `json:"buy_now_price"`
 }
