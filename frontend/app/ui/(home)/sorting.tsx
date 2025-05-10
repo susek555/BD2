@@ -1,30 +1,18 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
-import { fetchSortingOptions } from "@/app/lib/data";
 
-export default function Sorting() {
+export default function Sorting( {sortingOptions}: { sortingOptions: string[] }) {
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const { replace } = useRouter();
 
-    const [sortingOptions, setSortingOptions] = useState<string[]>([]);
     const [isKeyDropdownOpen, setIsKeyDropdownOpen] = useState(false);
     const [isOrderDropdownOpen, setIsOrderDropdownOpen] = useState(false);
 
     const selectedKey = searchParams.get("sortKey") || "Base";
     const isDescSelected = searchParams.get("isSortDesc") || false;
-
-    useEffect(() => {
-        async function fetchData() {
-            const options = await fetchSortingOptions();
-
-            setSortingOptions(options);
-        }
-
-        fetchData();
-    }, [searchParams]);
 
     const toggleKeyDropdown = () => setIsKeyDropdownOpen(!isKeyDropdownOpen);
     const toggleOrderDropdown = () => setIsOrderDropdownOpen(!isOrderDropdownOpen);

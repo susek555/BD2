@@ -1,6 +1,7 @@
 import Link from "next/link";
 import SearchField from "@/app/ui/(home)/search-field";
 import LoginButtons from "@/app/ui/(home)/account-buttons";
+import { Suspense } from "react";
 
 
 export default function TopBar() {
@@ -16,7 +17,9 @@ export default function TopBar() {
         </Link>
         <div className="flex grow flex-col justify-between px-2 py-0 md:flex-row md:items-top md:space-x-2">
           <div className="flex grow justify-center">
-            <SearchField placeholder="Search for cars..."/>
+            <Suspense>
+              <SearchField placeholder="Search for cars..."/>
+            </Suspense>
           </div>
           <div className="flex justify-end px-2">
             <LoginButtons />

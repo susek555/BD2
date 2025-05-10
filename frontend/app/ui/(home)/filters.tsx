@@ -2,50 +2,28 @@
 
 import { BaseFilterTemplate } from "@/app/ui/(home)/base-filter-template/base-filter-template";
 import { BaseRangeTemplate } from "./base-filter-template/base-range-template";
-import { fetchFilterFields, prepareRangeFields } from "@/app/lib/data";
-import { useEffect, useState } from "react";
 import { FilterFieldData, RangeFieldData } from "@/app/lib/definitions";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { syncFiltersWithParams, syncRangesWithParams } from "@/app/lib/(home)/syncWithParams";
 
-export default function Filters() {
-    const [filters, setFilters] = useState<FilterFieldData[]>([]);
-    const [ranges, setRanges] = useState<RangeFieldData[]>([]);
+export default function Filters({ filtersData, rangesData }: { filtersData: FilterFieldData[]; rangesData: RangeFieldData[] }) {
 
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const { replace } = useRouter();
 
-    useEffect(() => {
-        async function fetchData() {
-            const data = await fetchFilterFields();
-            const rangeData = prepareRangeFields();
-
-            // make sure that data is not undefined
-            if (!searchParams) return;
-
-            // Synchronize filters and ranges with URL parameters
-            const syncedFilters = syncFiltersWithParams(data, searchParams);
-            const syncedRanges = syncRangesWithParams(rangeData, searchParams);
-
-            // console.log("Synced Filters:", syncedFilters);
-            // console.log("Synced Ranges:", syncedRanges);
-
-            setFilters(syncedFilters);
-            setRanges(syncedRanges);
-        }
-
-        fetchData();
-    }, [searchParams]);
+    const filters = syncFiltersWithParams(filtersData, searchParams);
+    const ranges = syncRangesWithParams(rangesData, searchParams);
 
     function handleFilterChange(name: string, selected: string[]) {
         const params = new URLSearchParams(searchParams);
+        const sanitizedName = name.replace(/\s+/g, ''); // Remove whitespaces from name
 
         params.set('page', '1'); // Reset to the first page
         if (selected.length > 0) {
-            params.set(name, selected.join(","));
+            params.set(sanitizedName, selected.join(","));
         } else {
-            params.delete(name);
+            params.delete(sanitizedName);
         }
 
         replace(`${pathname}?${params.toString()}`);
@@ -53,18 +31,19 @@ export default function Filters() {
 
     function handleRangeChange(name: string, range: { min: number; max: number }) {
         const params = new URLSearchParams(searchParams);
+        const sanitizedName = name.replace(/\s+/g, ''); // Remove whitespaces from name
 
         params.set('page', '1'); // Reset to the first page
         if (range.min !== 0) {
-            params.set(`${name}_min`, range.min.toString());
+            params.set(`${sanitizedName}_min`, range.min.toString());
         } else {
-            params.delete(`${name}_min`);
+            params.delete(`${sanitizedName}_min`);
         }
 
         if (range.max !== 0) {
-            params.set(`${name}_max`, range.max.toString());
+            params.set(`${sanitizedName}_max`, range.max.toString());
         } else {
-            params.delete(`${name}_max`);
+            params.delete(`${sanitizedName}_max`);
         }
 
         replace(`${pathname}?${params.toString()}`);
