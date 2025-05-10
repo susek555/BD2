@@ -15,6 +15,16 @@ func NewHandler(service ReviewServiceInterface) *Handler {
 	return &Handler{service: service}
 }
 
+// GetAllReviews godoc
+//
+// @ID           getAllReviews
+// @Summary      List all reviews
+// @Description  Returns every review in the system as an array of DTOs.
+// @Tags         reviews
+// @Produce      json
+// @Success      200  {array}   ReviewDTO      "OK – list of reviews"
+// @Failure      400  {object}  custom_errors.HTTPError  "Bad Request – query failed"
+// @Router       /review [get]
 func (h *Handler) GetAllReviews(c *gin.Context) {
 	reviews, err := h.service.GetAll()
 	if err != nil {
@@ -28,6 +38,17 @@ func (h *Handler) GetAllReviews(c *gin.Context) {
 	c.JSON(http.StatusOK, reviewsDTO)
 }
 
+// GetReviewById godoc
+//
+// @ID           getReviewById
+// @Summary      Get review by id
+// @Description  Returns review that match given id as an DTO.
+// @Tags         reviews
+// @Produce      json
+// @Param 		 id  path	int	true "Review id"
+// @Success      200  {object}   ReviewDTO      "OK – review with given id"
+// @Failure      400  {object}  custom_errors.HTTPError  "Bad Request – query failed"
+// @Router       /review/{id} [get]
 func (h *Handler) GetReviewById(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
