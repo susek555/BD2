@@ -21,7 +21,7 @@ func NewHandler(s ManufacturerServiceInterface) *Handler {
 //	@Tags			cars
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{array}		Manufacturer "List of manufacturers"
+//	@Success		200	{array}		Manufacturer			"List of manufacturers"
 //	@Failure		500	{object}	custom_errors.HTTPError	"Internal server error"
 //	@Router			/cars/manufacturers [get]
 func (h *Handler) GetAllManufactures(c *gin.Context) {

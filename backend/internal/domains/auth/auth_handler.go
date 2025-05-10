@@ -23,8 +23,8 @@ func NewHandler(service Service) *Handler { return &Handler{service: service} }
 //	@Tags			auth
 //	@Accept			json
 //	@Produce		json
-//	@Param			body	body		user.CreateUserDTO		true	"Registration form"
-//	@Success		201		{object}	RegisterResponse			"Created - returns tokens"
+//	@Param			body	body		user.CreateUserDTO	true	"Registration form"
+//	@Success		201		{object}	RegisterResponse	"Created - returns tokens"
 //	@Failure		400		{object}	RegisterResponse	"Invalid input data"
 //	@Failure		409		{object}	RegisterResponse	"Login taken"
 //	@Failure		500		{object}	RegisterResponse	"Internal server error"
@@ -62,8 +62,8 @@ func (h *Handler) Register(ctx *gin.Context) {
 //	@Tags			auth
 //	@Accept			json
 //	@Produce		json
-//	@Param			body	body		LoginInput				true	"Login form"
-//	@Success		200		{object}	LoginResponse			"OK - returns tokens and data of the user"
+//	@Param			body	body		LoginInput		true	"Login form"
+//	@Success		200		{object}	LoginResponse	"OK - returns tokens and data of the user"
 //	@Failure		400		{object}	LoginResponse	"Invalid input data"
 //	@Failure		401		{object}	LoginResponse	"Unauthorized"
 //	@Failure		500		{object}	LoginResponse	"Internal server error"

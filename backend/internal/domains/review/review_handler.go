@@ -17,14 +17,14 @@ func NewHandler(service ReviewServiceInterface) *Handler {
 
 // GetAllReviews godoc
 //
-// @ID           getAllReviews
-// @Summary      List all reviews
-// @Description  Returns every review in the system as an array of DTOs.
-// @Tags         reviews
-// @Produce      json
-// @Success      200  {array}   ReviewOutput      "OK – list of reviews"
-// @Failure      400  {object}  custom_errors.HTTPError  "Bad Request – query failed"
-// @Router       /review [get]
+//	@ID				getAllReviews
+//	@Summary		List all reviews
+//	@Description	Returns every review in the system as an array of DTOs.
+//	@Tags			reviews
+//	@Produce		json
+//	@Success		200	{array}		ReviewOutput			"OK – list of reviews"
+//	@Failure		400	{object}	custom_errors.HTTPError	"Bad Request – query failed"
+//	@Router			/review [get]
 func (h *Handler) GetAllReviews(c *gin.Context) {
 	reviews, err := h.service.GetAll()
 	if err != nil {
@@ -40,15 +40,15 @@ func (h *Handler) GetAllReviews(c *gin.Context) {
 
 // GetReviewById godoc
 //
-// @ID           getReviewById
-// @Summary      Get review by id
-// @Description  Returns review that match given id as an DTO.
-// @Tags         reviews
-// @Produce      json
-// @Param 		 id  path	int	true "Review id"
-// @Success      200  {object}   ReviewOutput      "OK – review with given id"
-// @Failure      400  {object}  custom_errors.HTTPError  "Bad Request – query failed"
-// @Router       /review/{id} [get]
+//	@ID				getReviewById
+//	@Summary		Get review by id
+//	@Description	Returns review that match given id as an DTO.
+//	@Tags			reviews
+//	@Produce		json
+//	@Param			id	path		int						true	"Review id"
+//	@Success		200	{object}	ReviewOutput			"OK – review with given id"
+//	@Failure		400	{object}	custom_errors.HTTPError	"Bad Request – query failed"
+//	@Router			/review/{id} [get]
 func (h *Handler) GetReviewById(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
@@ -66,16 +66,16 @@ func (h *Handler) GetReviewById(c *gin.Context) {
 
 // CreateReview godoc
 //
-// @ID           createReview
-// @Summary      Create a new review
-// @Description  Persists a new review entity and returns the created review.
-// @Tags         reviews
-// @Accept       json
-// @Produce      json
-// @Param        body  body      ReviewInput       true  "Review payload"
-// @Success      201   {object}  ReviewOutput     "Created – review stored"
-// @Failure      400   {object}  custom_errors.HTTPError "Bad Request – validation or persistence error"
-// @Router       /review [post]
+//	@ID				createReview
+//	@Summary		Create a new review
+//	@Description	Persists a new review entity and returns the created review.
+//	@Tags			reviews
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body		ReviewInput				true	"Review payload"
+//	@Success		201		{object}	ReviewOutput			"Created – review stored"
+//	@Failure		400		{object}	custom_errors.HTTPError	"Bad Request – validation or persistence error"
+//	@Router			/review [post]
 func (h *Handler) CreateReview(c *gin.Context) {
 	var reviewInput ReviewInput
 	review := reviewInput.MapToObject()
@@ -93,16 +93,16 @@ func (h *Handler) CreateReview(c *gin.Context) {
 
 // UpdateReview godoc
 //
-// @ID           updateReview
-// @Summary      Update an existing review
-// @Description  Updates a review and returns the updated entity.
-// @Tags         reviews
-// @Accept       json
-// @Produce      json
-// @Param        body  body      ReviewInput       true  "Review payload"
-// @Success      200   {object}  ReviewOutput     "OK – review updated"
-// @Failure      400   {object}  custom_errors.HTTPError "Bad Request – validation or update error"
-// @Router       /review [put]
+//	@ID				updateReview
+//	@Summary		Update an existing review
+//	@Description	Updates a review and returns the updated entity.
+//	@Tags			reviews
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body		ReviewInput				true	"Review payload"
+//	@Success		200		{object}	ReviewOutput			"OK – review updated"
+//	@Failure		400		{object}	custom_errors.HTTPError	"Bad Request – validation or update error"
+//	@Router			/review [put]
 func (h *Handler) UpdateReview(c *gin.Context) {
 	var reviewInput ReviewInput
 	review := reviewInput.MapToObject()
@@ -118,14 +118,14 @@ func (h *Handler) UpdateReview(c *gin.Context) {
 
 // DeleteReview godoc
 //
-// @ID           deleteReview
-// @Summary      Delete a review
-// @Description  Deletes the review identified by its ID.
-// @Tags         reviews
-// @Param        id   path      int          true  "Review ID"
-// @Success      204  {string}  string        "No Content – review deleted"
-// @Failure      400  {object}  custom_errors.HTTPError  "Bad Request – invalid ID format or delete failed"
-// @Router       /review/{id} [delete]
+//	@ID				deleteReview
+//	@Summary		Delete a review
+//	@Description	Deletes the review identified by its ID.
+//	@Tags			reviews
+//	@Param			id	path		int						true	"Review ID"
+//	@Success		204	{string}	string					"No Content – review deleted"
+//	@Failure		400	{object}	custom_errors.HTTPError	"Bad Request – invalid ID format or delete failed"
+//	@Router			/review/{id} [delete]
 func (h *Handler) DeleteReview(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
@@ -139,15 +139,15 @@ func (h *Handler) DeleteReview(c *gin.Context) {
 
 // GetReviewsByReviewerId godoc
 //
-// @ID           getReviewsByReviewerId
-// @Summary      List reviews written by a reviewer
-// @Description  Returns all reviews authored by the reviewer specified by ID.
-// @Tags         reviews
-// @Produce      json
-// @Param        id   path      int          true  "Reviewer ID"
-// @Success      200  {array}   ReviewOutput     "OK – list of reviews"
-// @Failure      400  {object}  custom_errors.HTTPError "Bad Request – invalid ID format or query failed"
-// @Router       /review/reviewer/{id} [get]
+//	@ID				getReviewsByReviewerId
+//	@Summary		List reviews written by a reviewer
+//	@Description	Returns all reviews authored by the reviewer specified by ID.
+//	@Tags			reviews
+//	@Produce		json
+//	@Param			id	path		int						true	"Reviewer ID"
+//	@Success		200	{array}		ReviewOutput			"OK – list of reviews"
+//	@Failure		400	{object}	custom_errors.HTTPError	"Bad Request – invalid ID format or query failed"
+//	@Router			/review/reviewer/{id} [get]
 func (h *Handler) GetReviewsByReviewerId(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
@@ -167,15 +167,15 @@ func (h *Handler) GetReviewsByReviewerId(c *gin.Context) {
 
 // GetReviewsByRevieweeId godoc
 //
-// @ID           getReviewsByRevieweeId
-// @Summary      List reviews about a reviewee
-// @Description  Returns all reviews where the given user is the reviewee.
-// @Tags         reviews
-// @Produce      json
-// @Param        id   path      int          true  "Reviewee ID"
-// @Success      200  {array}   ReviewOutput     "OK – list of reviews"
-// @Failure      400  {object}  custom_errors.HTTPError "Bad Request – invalid ID format or query failed"
-// @Router       /review/reviewee/{id} [get]
+//	@ID				getReviewsByRevieweeId
+//	@Summary		List reviews about a reviewee
+//	@Description	Returns all reviews where the given user is the reviewee.
+//	@Tags			reviews
+//	@Produce		json
+//	@Param			id	path		int						true	"Reviewee ID"
+//	@Success		200	{array}		ReviewOutput			"OK – list of reviews"
+//	@Failure		400	{object}	custom_errors.HTTPError	"Bad Request – invalid ID format or query failed"
+//	@Router			/review/reviewee/{id} [get]
 func (h *Handler) GetReviewsByRevieweeId(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
@@ -195,16 +195,16 @@ func (h *Handler) GetReviewsByRevieweeId(c *gin.Context) {
 
 // GetReviewsByReviewerIdAndRevieweeId godoc
 //
-// @ID           getReviewByReviewerAndReviewee
-// @Summary      Get review written by one user about another
-// @Description  Returns the review where <reviewerId> is the author and <revieweeId> is the subject.
-// @Tags         reviews
-// @Produce      json
-// @Param        reviewerId  path      int          true  "Reviewer ID"
-// @Param        revieweeId  path      int          true  "Reviewee ID"
-// @Success      200         {object}  ReviewOutput     "OK – review found"
-// @Failure      400         {object}  custom_errors.HTTPError "Bad Request – invalid ID format or query failed"
-// @Router       /review/reviewer/{reviewerId}/reviewee/{revieweeId} [get]
+//	@ID				getReviewByReviewerAndReviewee
+//	@Summary		Get review written by one user about another
+//	@Description	Returns the review where <reviewerId> is the author and <revieweeId> is the subject.
+//	@Tags			reviews
+//	@Produce		json
+//	@Param			reviewerId	path		int						true	"Reviewer ID"
+//	@Param			revieweeId	path		int						true	"Reviewee ID"
+//	@Success		200			{object}	ReviewOutput			"OK – review found"
+//	@Failure		400			{object}	custom_errors.HTTPError	"Bad Request – invalid ID format or query failed"
+//	@Router			/review/reviewer/{reviewerId}/reviewee/{revieweeId} [get]
 func (h *Handler) GetReviewsByReviewerIdAndRevieweeId(c *gin.Context) {
 	reviewerId, err := strconv.ParseUint(c.Param("reviewerId"), 10, 32)
 	if err != nil {
