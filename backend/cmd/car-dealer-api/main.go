@@ -2,6 +2,8 @@
 package main
 
 import (
+	"github.com/gin-contrib/cors"
+	"github.com/susek555/BD2/car-dealer-api/pkg/middleware"
 	"log"
 
 	"github.com/susek555/BD2/car-dealer-api/internal/routes"
@@ -29,6 +31,7 @@ func init() {
 // @schemes		http
 func main() {
 	router := gin.Default()
+	router.Use(cors.New(middleware.CorsConfig))
 	routes.RegisterRoutes(router)
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	if err := router.Run(":8080"); err != nil {
