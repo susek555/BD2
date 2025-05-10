@@ -176,6 +176,242 @@ const docTemplate = `{
                 }
             }
         },
+        "/cars/colors": {
+            "get": {
+                "description": "Returns a list of all possible colors that are accepted when creating a new offer. If color of your car is not in the list, chose 'other'.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cars"
+                ],
+                "summary": "Get all possible colors",
+                "responses": {
+                    "200": {
+                        "description": "List of colors",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/cars/drives": {
+            "get": {
+                "description": "Returns a list of all possible drives that are accepted when creating a new offer.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cars"
+                ],
+                "summary": "Get all possible drives",
+                "responses": {
+                    "200": {
+                        "description": "List of drives",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/cars/fuel-types": {
+            "get": {
+                "description": "Returns a list of all possible fuel types that are accepted when creating a new offer.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cars"
+                ],
+                "summary": "Get all possible fuel types",
+                "responses": {
+                    "200": {
+                        "description": "List of fuel types",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/cars/manufacturers": {
+            "get": {
+                "description": "Returns a list of all manufacturers stored in the database.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cars"
+                ],
+                "summary": "Get all manufacturers",
+                "responses": {
+                    "200": {
+                        "description": "List of manufacturers",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/manufacturer.Manufacturer"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/cars/models/id/{id}": {
+            "get": {
+                "description": "Returns a list of all models stored in the database for a given manufacturer id.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cars"
+                ],
+                "summary": "Get all models by manufacturer id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Manufacturer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of models",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.RetrieveModelDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Id is not a number",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Models not found",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/cars/models/name/{name}": {
+            "get": {
+                "description": "Returns a list of all models stored in the database for a given manufacturer name.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cars"
+                ],
+                "summary": "Get all models by manufacturer name",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Manufacturer name",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of models",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.RetrieveModelDTO"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Models not found",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/cars/transmissions": {
+            "get": {
+                "description": "Returns a list of all possible transmissions that are accepted when creating a new offer.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cars"
+                ],
+                "summary": "Get all possible transmissions",
+                "responses": {
+                    "200": {
+                        "description": "List of transmissions",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/logout": {
             "post": {
                 "description": "Logout user and invalidate refresh token",
@@ -526,7 +762,7 @@ const docTemplate = `{
         },
         "/users": {
             "get": {
-                "description": "Get all users from database and return them as a list of DTOs. If user's subtype is person the company related fields will be omitted and vice versa.",
+                "description": "Return a list of all users stored in database. If user's subtype is person the company related fields will be omitted and vice versa.",
                 "consumes": [
                     "application/json"
                 ],
@@ -556,7 +792,7 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "Update user in database from DTO. Currently you can only change basic fields (email, username, password), not the subtype.",
+                "description": "Updates user's data in database from given form. Currently you can only change basic fields (email, username, password), not the subtype.",
                 "consumes": [
                     "application/json"
                 ],
@@ -608,7 +844,7 @@ const docTemplate = `{
         },
         "/users/email/{email}": {
             "get": {
-                "description": "Get user by email from database and return it as a DTO. If user's subtype is person the company related fields will be omitted and vice versa.",
+                "description": "Returns user who has provided email. If user's subtype is person the company related fields will be omitted and vice versa.",
                 "consumes": [
                     "application/json"
                 ],
@@ -652,7 +888,7 @@ const docTemplate = `{
         },
         "/users/id/{id}": {
             "get": {
-                "description": "Get user by id from database and return it as a DTO. If user's subtype is person the company related fields will be omitted and vice versa.",
+                "description": "Returns user who has provided id. If user's subtype is person the company related fields will be omitted and vice versa.",
                 "consumes": [
                     "application/json"
                 ],
@@ -702,7 +938,7 @@ const docTemplate = `{
         },
         "/users/{id}": {
             "delete": {
-                "description": "Delete user from database by id.",
+                "description": "Removes user who has provided id from database.",
                 "consumes": [
                     "application/json"
                 ],
@@ -849,6 +1085,28 @@ const docTemplate = `{
                 }
             }
         },
+        "manufacturer.Manufacturer": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.RetrieveModelDTO": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "review.ReviewInput": {
             "type": "object",
             "properties": {
@@ -939,6 +1197,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "email": {
+                    "type": "string"
+                },
+                "id": {
                     "type": "string"
                 },
                 "person_name": {
