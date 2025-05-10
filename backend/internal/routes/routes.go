@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/auction"
 	"log"
 	"os"
 
@@ -24,6 +25,7 @@ func RegisterRoutes(router *gin.Engine) {
 	registerReviewRoutes(router)
 	registerCarRoutes(router)
 	registerSaleOfferRoutes(router)
+	registerAuctionRoutes(router)
 }
 
 func initializeVerifier() (*jwt.JWTVerifier, []byte) {
@@ -106,4 +108,13 @@ func registerSaleOfferRoutes(router *gin.Engine) {
 	{
 		saleOfferRoutes.POST("/", saleOfferHandler.CreateSaleOffer)
 	}
+}
+
+func registerAuctionRoutes(router *gin.Engine) {
+	auctionRepo := auction.NewAuctionRepository(initializers.DB)
+	auctionService := auction.NewAuctionService(auctionRepo)
+	auctionHandler := auction.NewHandler(auctionService)
+	auctionRoutes := router.Group("/auction")
+	auctionRoutes.GET("/", auctionHandler.GetAllAuctions)
+	auctionRoutes.POST("/", auctionHandler.CreateAuction)
 }
