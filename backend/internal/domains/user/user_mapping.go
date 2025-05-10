@@ -4,20 +4,20 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/pkg/passwords"
 )
 
-func (dto *CreateUserDTO) MapToUser() (User, error) {
+func (dto *CreateUserDTO) MapToUser() (*User, error) {
 	hashed, err := passwords.Hash(dto.Password)
 	if err != nil {
-		return User{}, ErrHashPassword
+		return nil, ErrHashPassword
 	}
 	if err := dto.validate(); err != nil {
-		return User{}, err
+		return nil, err
 	}
 	switch dto.Selector {
 	case "P":
 		if err := dto.validateP(); err != nil {
-			return User{}, err
+			return nil, err
 		}
-		return User{
+		return &User{
 				Username: dto.Username,
 				Password: hashed,
 				Email:    dto.Email,
@@ -27,9 +27,9 @@ func (dto *CreateUserDTO) MapToUser() (User, error) {
 			nil
 	case "C":
 		if err := dto.validateC(); err != nil {
-			return User{}, err
+			return nil, err
 		}
-		return User{
+		return &User{
 				Username: dto.Username,
 				Password: hashed,
 				Email:    dto.Email,
@@ -38,7 +38,7 @@ func (dto *CreateUserDTO) MapToUser() (User, error) {
 			},
 			nil
 	default:
-		return User{}, ErrInvalidSelector
+		return nil, ErrInvalidSelector
 	}
 }
 func (dto *CreateUserDTO) validate() error {
@@ -94,7 +94,7 @@ func (dto *UpdateUserDTO) UpdateUserFromDTO(user *User) (*User, error) {
 	if dto.Password != nil {
 		newPassword, err := passwords.Hash(*dto.Password)
 		if err != nil {
-			return &User{}, ErrHashPassword
+			return nil, ErrHashPassword
 		}
 		user.Password = newPassword
 	}

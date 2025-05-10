@@ -24,7 +24,7 @@ func (s *UserService) Create(in CreateUserDTO) error {
 	if err != nil {
 		return err
 	}
-	return s.repo.Create(&user)
+	return s.repo.Create(user)
 }
 
 func (s *UserService) GetAll() ([]RetrieveUserDTO, error) {
