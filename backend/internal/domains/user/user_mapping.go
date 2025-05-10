@@ -65,6 +65,7 @@ func (user *User) MapToDTO() (RetrieveUserDTO, error) {
 	switch user.Selector {
 	case "P":
 		return RetrieveUserDTO{
+				ID:            user.ID,
 				Username:      user.Username,
 				Email:         user.Email,
 				PersonName:    &user.Person.Name,
@@ -73,6 +74,7 @@ func (user *User) MapToDTO() (RetrieveUserDTO, error) {
 			nil
 	case "C":
 		return RetrieveUserDTO{
+				ID:          user.ID,
 				Username:    user.Username,
 				Email:       user.Email,
 				CompanyName: &user.Company.Name,
