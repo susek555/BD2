@@ -76,3 +76,8 @@ export type SignupFormState = {
     company_nip?: string
   }
 }
+
+export type LoginError = {
+  credentials?: string[]
+  server?: string[]
+}
