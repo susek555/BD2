@@ -21,5 +21,6 @@ func MigrateModels() {
 		&manufacturer.Manufacturer{},
 		&model.Model{},
 		&sale_offer.SaleOffer{},
+		&sale_offer.Auction{},
 	)
 }
