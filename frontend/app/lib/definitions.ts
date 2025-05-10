@@ -44,7 +44,7 @@ export const SignupFormSchema = z.object({
     ])
   )
   .transform(data => {
-    const {...rest } = data;
+    const { confirm_password: _, ...rest } = data;
     return rest;
   });
 
