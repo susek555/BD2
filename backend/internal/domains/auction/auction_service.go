@@ -3,7 +3,7 @@ package auction
 import "github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 
 type AuctionServiceInterface interface {
-	Create(auctionDTO *CreateAuctionDTO) error
+	Create(auction *sale_offer.Auction) error
 	GetAll() ([]sale_offer.Auction, error)
 	GetByID(id uint) (*sale_offer.Auction, error)
 }
@@ -18,11 +18,7 @@ func NewAuctionService(repo AuctionRepositoryInterface) AuctionServiceInterface 
 	}
 }
 
-func (s *AuctionService) Create(auctionDTO *CreateAuctionDTO) error {
-	auction, err := auctionDTO.MapToAuction()
-	if err != nil {
-		return err
-	}
+func (s *AuctionService) Create(auction *sale_offer.Auction) error {
 	return s.repo.Create(auction)
 }
 
