@@ -11,5 +11,5 @@ type SaleOffer struct {
 	Margin      uint     `json:"margin"`
 	CarID       uint     `json:"car_id"`
 	Car         *car.Car `gorm:"foreignKey:CarID;references:ID"`
-	Auction     *Auction
+	Auction     *Auction `gorm:"foreignKey:OfferID;references:ID;constraint:OnDelete:CASCADE"`
 }
