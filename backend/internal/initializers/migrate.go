@@ -17,7 +17,7 @@ func MigrateModels() {
 		&refresh_token.RefreshToken{},
 		&review.Review{},
 		&car.Car{},
-		&model.Model{},
 		&manufacturer.Manufacturer{},
+		&model.Model{},
 	)
 }
