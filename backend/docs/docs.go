@@ -228,6 +228,72 @@ const docTemplate = `{
                 }
             }
         },
+        "/review": {
+            "get": {
+                "description": "Returns every review in the system as an array of DTOs.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "List all reviews",
+                "operationId": "getAllReviews",
+                "responses": {
+                    "200": {
+                        "description": "OK – list of reviews",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/review.ReviewDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request – query failed",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/review/": {
+            "get": {
+                "description": "Returns review that match given id as an DTO.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "Get review by id",
+                "operationId": "getReviewById",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Review id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK – review with given id",
+                        "schema": {
+                            "$ref": "#/definitions/review.ReviewDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request – query failed",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/users": {
             "get": {
                 "description": "Get all users from database and return them as a list of DTOs. If user's subtype is person the company related fields will be omitted and vice versa.",
@@ -549,6 +615,37 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "error_description": {
+                    "type": "string"
+                }
+            }
+        },
+        "review.ReviewDTO": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "rating": {
+                    "type": "integer"
+                },
+                "reviewee": {
+                    "$ref": "#/definitions/review.UserDTO"
+                },
+                "reviewer": {
+                    "$ref": "#/definitions/review.UserDTO"
+                }
+            }
+        },
+        "review.UserDTO": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "username": {
                     "type": "string"
                 }
             }
