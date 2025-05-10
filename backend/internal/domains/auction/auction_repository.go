@@ -40,6 +40,8 @@ func (a *AuctionRepository) GetAll() ([]sale_offer.Auction, error) {
 	var auctions []sale_offer.Auction
 	err := db.Preload("Offer").
 		Preload("Offer.Car").
+		Preload("Offer.Car.Model").
+		Preload("Offer.Car.Model.Manufacturer").
 		Find(&auctions).Error
 	if err != nil {
 		return nil, err
@@ -52,6 +54,8 @@ func (a *AuctionRepository) GetById(id uint) (*sale_offer.Auction, error) {
 	var auction sale_offer.Auction
 	err := db.Preload("Offer").
 		Preload("Offer.Car").
+		Preload("Offer.Car.Model").
+		Preload("Offer.Car.Model.Manufacturer").
 		First(&auction, id).Error
 	if err != nil {
 		return nil, err
