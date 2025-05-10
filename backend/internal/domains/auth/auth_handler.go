@@ -19,7 +19,7 @@ func NewHandler(service Service) *Handler { return &Handler{service: service} }
 // Register godoc
 //
 //	@Summary		Register new user
-//	@Description	Set up account and return a pair of tokens
+//	@Description	Set up account and return the status
 //	@Tags			auth
 //	@Accept			json
 //	@Produce		json
