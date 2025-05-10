@@ -64,6 +64,23 @@ definitions:
       error_description:
         type: string
     type: object
+  review.Review:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      rating:
+        type: integer
+      reviewee:
+        $ref: '#/definitions/user.User'
+      reviewee_id:
+        type: integer
+      reviewer:
+        $ref: '#/definitions/user.User'
+      reviewer_id:
+        type: integer
+    type: object
   review.ReviewDTO:
     properties:
       description:
@@ -83,6 +100,17 @@ definitions:
         type: integer
       username:
         type: string
+    type: object
+  user.Company:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      nip:
+        type: string
+      user:
+        $ref: '#/definitions/user.User'
     type: object
   user.CreateUserDTO:
     properties:
@@ -104,6 +132,17 @@ definitions:
         type: string
     required:
     - email
+    type: object
+  user.Person:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      surname:
+        type: string
+      user:
+        $ref: '#/definitions/user.User'
     type: object
   user.RetrieveUserDTO:
     properties:
@@ -127,6 +166,23 @@ definitions:
       id:
         type: integer
       password:
+        type: string
+      username:
+        type: string
+    type: object
+  user.User:
+    properties:
+      company:
+        $ref: '#/definitions/user.Company'
+      email:
+        type: string
+      id:
+        type: integer
+      password:
+        type: string
+      person:
+        $ref: '#/definitions/user.Person'
+      selector:
         type: string
       username:
         type: string
@@ -297,7 +353,80 @@ paths:
       summary: List all reviews
       tags:
       - reviews
-  /review/:
+    post:
+      consumes:
+      - application/json
+      description: Persists a new review entity and returns the created review.
+      operationId: createReview
+      parameters:
+      - description: Review payload
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/review.Review'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created – review stored
+          schema:
+            $ref: '#/definitions/review.ReviewDTO'
+        "400":
+          description: Bad Request – validation or persistence error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Create a new review
+      tags:
+      - reviews
+    put:
+      consumes:
+      - application/json
+      description: Updates a review and returns the updated entity.
+      operationId: updateReview
+      parameters:
+      - description: Review payload
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/review.Review'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK – review updated
+          schema:
+            $ref: '#/definitions/review.ReviewDTO'
+        "400":
+          description: Bad Request – validation or update error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Update an existing review
+      tags:
+      - reviews
+  /review/{id}:
+    delete:
+      description: Deletes the review identified by its ID.
+      operationId: deleteReview
+      parameters:
+      - description: Review ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content – review deleted
+          schema:
+            type: string
+        "400":
+          description: Bad Request – invalid ID format or delete failed
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Delete a review
+      tags:
+      - reviews
     get:
       description: Returns review that match given id as an DTO.
       operationId: getReviewById
@@ -319,6 +448,88 @@ paths:
           schema:
             $ref: '#/definitions/custom_errors.HTTPError'
       summary: Get review by id
+      tags:
+      - reviews
+  /review/reviewee/{id}:
+    get:
+      description: Returns all reviews where the given user is the reviewee.
+      operationId: getReviewsByRevieweeId
+      parameters:
+      - description: Reviewee ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK – list of reviews
+          schema:
+            items:
+              $ref: '#/definitions/review.ReviewDTO'
+            type: array
+        "400":
+          description: Bad Request – invalid ID format or query failed
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: List reviews about a reviewee
+      tags:
+      - reviews
+  /review/reviewer/{id}:
+    get:
+      description: Returns all reviews authored by the reviewer specified by ID.
+      operationId: getReviewsByReviewerId
+      parameters:
+      - description: Reviewer ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK – list of reviews
+          schema:
+            items:
+              $ref: '#/definitions/review.ReviewDTO'
+            type: array
+        "400":
+          description: Bad Request – invalid ID format or query failed
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: List reviews written by a reviewer
+      tags:
+      - reviews
+  /review/reviewer/{reviewerId}/reviewee/{revieweeId}:
+    get:
+      description: Returns the review where <reviewerId> is the author and <revieweeId>
+        is the subject.
+      operationId: getReviewByReviewerAndReviewee
+      parameters:
+      - description: Reviewer ID
+        in: path
+        name: reviewerId
+        required: true
+        type: integer
+      - description: Reviewee ID
+        in: path
+        name: revieweeId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK – review found
+          schema:
+            $ref: '#/definitions/review.ReviewDTO'
+        "400":
+          description: Bad Request – invalid ID format or query failed
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Get review written by one user about another
       tags:
       - reviews
   /users:

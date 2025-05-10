@@ -256,9 +256,208 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "put": {
+                "description": "Updates a review and returns the updated entity.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "Update an existing review",
+                "operationId": "updateReview",
+                "parameters": [
+                    {
+                        "description": "Review payload",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/review.Review"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK – review updated",
+                        "schema": {
+                            "$ref": "#/definitions/review.ReviewDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request – validation or update error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Persists a new review entity and returns the created review.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "Create a new review",
+                "operationId": "createReview",
+                "parameters": [
+                    {
+                        "description": "Review payload",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/review.Review"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created – review stored",
+                        "schema": {
+                            "$ref": "#/definitions/review.ReviewDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request – validation or persistence error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
             }
         },
-        "/review/": {
+        "/review/reviewee/{id}": {
+            "get": {
+                "description": "Returns all reviews where the given user is the reviewee.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "List reviews about a reviewee",
+                "operationId": "getReviewsByRevieweeId",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Reviewee ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK – list of reviews",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/review.ReviewDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request – invalid ID format or query failed",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/review/reviewer/{id}": {
+            "get": {
+                "description": "Returns all reviews authored by the reviewer specified by ID.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "List reviews written by a reviewer",
+                "operationId": "getReviewsByReviewerId",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Reviewer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK – list of reviews",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/review.ReviewDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request – invalid ID format or query failed",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/review/reviewer/{reviewerId}/reviewee/{revieweeId}": {
+            "get": {
+                "description": "Returns the review where \u003creviewerId\u003e is the author and \u003crevieweeId\u003e is the subject.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "Get review written by one user about another",
+                "operationId": "getReviewByReviewerAndReviewee",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Reviewer ID",
+                        "name": "reviewerId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Reviewee ID",
+                        "name": "revieweeId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK – review found",
+                        "schema": {
+                            "$ref": "#/definitions/review.ReviewDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request – invalid ID format or query failed",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/review/{id}": {
             "get": {
                 "description": "Returns review that match given id as an DTO.",
                 "produces": [
@@ -287,6 +486,37 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request – query failed",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deletes the review identified by its ID.",
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "Delete a review",
+                "operationId": "deleteReview",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Review ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content – review deleted",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request – invalid ID format or delete failed",
                         "schema": {
                             "$ref": "#/definitions/custom_errors.HTTPError"
                         }
@@ -619,6 +849,32 @@ const docTemplate = `{
                 }
             }
         },
+        "review.Review": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "rating": {
+                    "type": "integer"
+                },
+                "reviewee": {
+                    "$ref": "#/definitions/user.User"
+                },
+                "reviewee_id": {
+                    "type": "integer"
+                },
+                "reviewer": {
+                    "$ref": "#/definitions/user.User"
+                },
+                "reviewer_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "review.ReviewDTO": {
             "type": "object",
             "properties": {
@@ -647,6 +903,23 @@ const docTemplate = `{
                 },
                 "username": {
                     "type": "string"
+                }
+            }
+        },
+        "user.Company": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "nip": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/user.User"
                 }
             }
         },
@@ -679,6 +952,23 @@ const docTemplate = `{
                 },
                 "username": {
                     "type": "string"
+                }
+            }
+        },
+        "user.Person": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "surname": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/user.User"
                 }
             }
         },
@@ -715,6 +1005,32 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "user.User": {
+            "type": "object",
+            "properties": {
+                "company": {
+                    "$ref": "#/definitions/user.Company"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "person": {
+                    "$ref": "#/definitions/user.Person"
+                },
+                "selector": {
                     "type": "string"
                 },
                 "username": {
