@@ -22,7 +22,7 @@ const docTemplate = `{
     "paths": {
         "/auth/login": {
             "post": {
-                "description": "Authenticate user and return a pair of tokens",
+                "description": "Authenticate user and return a pair of tokens and user data",
                 "consumes": [
                     "application/json"
                 ],
@@ -74,7 +74,7 @@ const docTemplate = `{
         },
         "/auth/refresh": {
             "post": {
-                "description": "Refresh access and refresh tokens",
+                "description": "Refresh access tokens",
                 "consumes": [
                     "application/json"
                 ],
@@ -98,7 +98,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK - returns tokens",
+                        "description": "OK - returns new access token",
                         "schema": {
                             "$ref": "#/definitions/auth.LoginResponse"
                         }
@@ -126,7 +126,7 @@ const docTemplate = `{
         },
         "/auth/register": {
             "post": {
-                "description": "Set up account and return a pair of tokens",
+                "description": "Set up account and return the status",
                 "consumes": [
                     "application/json"
                 ],
