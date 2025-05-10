@@ -26,6 +26,15 @@ func (dto *CreateAuctionDTO) MapToAuction() (*sale_offer.Auction, error) {
 	return &auction, nil
 }
 
+func MapToDTO(auction *sale_offer.Auction) *RetrieveAuctionDTO {
+	offerDTO := auction.Offer.MapToDTO()
+	return &RetrieveAuctionDTO{
+		offerDTO,
+		auction.DateEnd.Format("15:04 02/01/2006"),
+		auction.BuyNowPrice,
+	}
+}
+
 func parseDate(date string) (time.Time, error) {
 	layout := "15:04 02/01/2006"
 	t, err := time.Parse(layout, date)
