@@ -53,7 +53,7 @@ func (offer *SaleOffer) MapToDTO() *RetrieveSaleOfferDTO {
 		EnginePower:        offer.Car.EnginePower,
 		EngineCapacity:     offer.Car.EngineCapacity,
 		RegistrationNumber: offer.Car.RegistrationNumber,
-		RegistrationDate:   offer.Car.RegistrationDate.Format(time.RFC3339),
+		RegistrationDate:   offer.Car.RegistrationDate.Format("2006-01-02"),
 		Color:              offer.Car.Color,
 		FuelType:           offer.Car.FuelType,
 		Transmission:       offer.Car.Transmission,
