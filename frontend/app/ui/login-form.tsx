@@ -8,46 +8,46 @@ import { ArrowRightIcon } from '@heroicons/react/24/solid';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useState } from 'react';
+import { LoginError } from '../lib/definitions';
 import { Button } from './button';
 
 export default function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [errors, setErrors] = useState<LoginError>({});
 
   const callbackUrl = searchParams.get('callbackUrl') || '/';
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setErrors({});
 
     const formData = new FormData(e.currentTarget);
     const login = formData.get('login') as string;
     const password = formData.get('password') as string;
 
-    try {
-      console.log("Attempting to sign in with NextAuth...");
+    const result = await signIn('credentials', {
+      redirect: false,
+      login,
+      password,
+      callbackUrl,
+    });
 
-      // Use NextAuth's signIn function
-      const result = await signIn('credentials', {
-        redirect: false,
-        login,
-        password,
-        callbackUrl,
-      });
+    console.log("Login result:", result);
 
-      console.log("SignIn result:", result);
 
-      if (result?.error) {
-        console.error("SignIn error:", result.error);
-
-      } else if (result?.url) {
-        router.push(result.url);
-        router.refresh();
-      } else {
-        router.push(callbackUrl);
-        router.refresh();
+    if (result?.error) {
+      try {
+        setErrors(JSON.parse(result.error));
+      } catch {
+        setErrors({ server: [result.error] });
       }
-    } catch (err) {
-      console.error("Login error:", err);
+      console.log("Parsed login errors:", errors);
+
+    } else {
+      router.push(result?.url || callbackUrl);
+      router.refresh();
     }
   }
 
@@ -107,7 +107,23 @@ export default function LoginForm() {
           Need an account? Sign up
         </Link>
         <div className="flex h-8 items-end space-x-1 mt-4">
-          {/* Error message */}
+          <div id="credentials-error" aria-live="polite" aria-atomic="true">
+            {errors.credentials &&
+              errors.credentials.map((error: string) => (
+                <p className="mt-2 text-sm text-red-500" key={error}>
+                  {error}
+                </p>
+              ))}
+          </div>
+          <div id="server-error" aria-live="polite" aria-atomic="true">
+            {errors.server &&
+              errors.server.map((error: string) => (
+                <p className="mt-2 text-sm text-red-500" key={error}>
+                  {error}
+                </p>
+              ))}
+          </div>
+
         </div>
       </div>
     </form>

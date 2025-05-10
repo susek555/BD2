@@ -57,15 +57,15 @@ const handler = NextAuth({
           }),
         });
         const rawUser = await res.json();
+        console.log("Login errors:", rawUser.errors);
 
         if (!rawUser.errors) {
           const user: User = camelcaseKeys(rawUser, { deep: true });
           // Any object returned will be saved in `user` property of the JWT
           return user;
         } else {
-          // If you return null then an error will be displayed advising the user to check their details.
-          return null;
-
+          throw new Error(JSON.stringify(rawUser.errors))
+          // throw new Error(rawUser.errors);
           // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
         }
       }
