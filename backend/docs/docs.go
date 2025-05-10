@@ -46,27 +46,27 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK - returns tokens",
+                        "description": "OK - returns tokens and data of the user",
                         "schema": {
-                            "$ref": "#/definitions/auth.TokenResponse"
+                            "$ref": "#/definitions/auth.LoginResponse"
                         }
                     },
                     "400": {
                         "description": "Invalid input data",
                         "schema": {
-                            "$ref": "#/definitions/custom_errors.HTTPError"
+                            "$ref": "#/definitions/auth.LoginResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/custom_errors.HTTPError"
+                            "$ref": "#/definitions/auth.LoginResponse"
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "$ref": "#/definitions/custom_errors.HTTPError"
+                            "$ref": "#/definitions/auth.LoginResponse"
                         }
                     }
                 }
@@ -100,7 +100,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK - returns tokens",
                         "schema": {
-                            "$ref": "#/definitions/auth.TokenResponse"
+                            "$ref": "#/definitions/auth.LoginResponse"
                         }
                     },
                     "400": {
@@ -152,25 +152,25 @@ const docTemplate = `{
                     "201": {
                         "description": "Created - returns tokens",
                         "schema": {
-                            "$ref": "#/definitions/auth.TokenResponse"
+                            "$ref": "#/definitions/auth.RegisterResponse"
                         }
                     },
                     "400": {
                         "description": "Invalid input data",
                         "schema": {
-                            "$ref": "#/definitions/custom_errors.HTTPError"
+                            "$ref": "#/definitions/auth.RegisterResponse"
                         }
                     },
                     "409": {
                         "description": "Login taken",
                         "schema": {
-                            "$ref": "#/definitions/custom_errors.HTTPError"
+                            "$ref": "#/definitions/auth.RegisterResponse"
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "$ref": "#/definitions/custom_errors.HTTPError"
+                            "$ref": "#/definitions/auth.RegisterResponse"
                         }
                     }
                 }
@@ -456,14 +456,55 @@ const docTemplate = `{
         "auth.LoginInput": {
             "type": "object",
             "required": [
-                "email",
+                "login",
                 "password"
             ],
             "properties": {
-                "email": {
+                "login": {
                     "type": "string"
                 },
                 "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "auth.LoginResponse": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string"
+                },
+                "company_name": {
+                    "type": "string"
+                },
+                "company_nip": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "errors": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "person_name": {
+                    "type": "string"
+                },
+                "person_surname": {
+                    "type": "string"
+                },
+                "refresh_token": {
+                    "type": "string"
+                },
+                "selector": {
+                    "type": "string"
+                },
+                "username": {
                     "type": "string"
                 }
             }
@@ -490,14 +531,17 @@ const docTemplate = `{
                 }
             }
         },
-        "auth.TokenResponse": {
+        "auth.RegisterResponse": {
             "type": "object",
             "properties": {
-                "access_token": {
-                    "type": "string"
-                },
-                "refresh_token": {
-                    "type": "string"
+                "errors": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
                 }
             }
         },
@@ -511,6 +555,9 @@ const docTemplate = `{
         },
         "user.CreateUserDTO": {
             "type": "object",
+            "required": [
+                "email"
+            ],
             "properties": {
                 "company_name": {
                     "type": "string"

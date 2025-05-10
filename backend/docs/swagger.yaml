@@ -1,13 +1,40 @@
 definitions:
   auth.LoginInput:
     properties:
-      email:
+      login:
         type: string
       password:
         type: string
     required:
-    - email
+    - login
     - password
+    type: object
+  auth.LoginResponse:
+    properties:
+      access_token:
+        type: string
+      company_name:
+        type: string
+      company_nip:
+        type: string
+      email:
+        type: string
+      errors:
+        additionalProperties:
+          items:
+            type: string
+          type: array
+        type: object
+      person_name:
+        type: string
+      person_surname:
+        type: string
+      refresh_token:
+        type: string
+      selector:
+        type: string
+      username:
+        type: string
     type: object
   auth.LogoutInput:
     properties:
@@ -23,12 +50,14 @@ definitions:
     required:
     - refresh_token
     type: object
-  auth.TokenResponse:
+  auth.RegisterResponse:
     properties:
-      access_token:
-        type: string
-      refresh_token:
-        type: string
+      errors:
+        additionalProperties:
+          items:
+            type: string
+          type: array
+        type: object
     type: object
   custom_errors.HTTPError:
     properties:
@@ -53,6 +82,8 @@ definitions:
         type: string
       username:
         type: string
+    required:
+    - email
     type: object
   user.RetrieveUserDTO:
     properties:
@@ -106,21 +137,21 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK - returns tokens
+          description: OK - returns tokens and data of the user
           schema:
-            $ref: '#/definitions/auth.TokenResponse'
+            $ref: '#/definitions/auth.LoginResponse'
         "400":
           description: Invalid input data
           schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
+            $ref: '#/definitions/auth.LoginResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
+            $ref: '#/definitions/auth.LoginResponse'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
+            $ref: '#/definitions/auth.LoginResponse'
       summary: Login user
       tags:
       - auth
@@ -142,7 +173,7 @@ paths:
         "200":
           description: OK - returns tokens
           schema:
-            $ref: '#/definitions/auth.TokenResponse'
+            $ref: '#/definitions/auth.LoginResponse'
         "400":
           description: Invalid input data
           schema:
@@ -176,19 +207,19 @@ paths:
         "201":
           description: Created - returns tokens
           schema:
-            $ref: '#/definitions/auth.TokenResponse'
+            $ref: '#/definitions/auth.RegisterResponse'
         "400":
           description: Invalid input data
           schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
+            $ref: '#/definitions/auth.RegisterResponse'
         "409":
-          description: Email taken
+          description: Login taken
           schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
+            $ref: '#/definitions/auth.RegisterResponse'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
+            $ref: '#/definitions/auth.RegisterResponse'
       summary: Register new user
       tags:
       - auth

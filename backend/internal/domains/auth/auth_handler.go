@@ -24,10 +24,10 @@ func NewHandler(service Service) *Handler { return &Handler{service: service} }
 //	@Accept			json
 //	@Produce		json
 //	@Param			body	body		user.CreateUserDTO		true	"Registration form"
-//	@Success		201		{object}	TokenResponse			"Created - returns tokens"
-//	@Failure		400		{object}	custom_errors.HTTPError	"Invalid input data"
-//	@Failure		409		{object}	custom_errors.HTTPError	"Login taken"
-//	@Failure		500		{object}	custom_errors.HTTPError	"Internal server error"
+//	@Success		201		{object}	RegisterResponse			"Created - returns tokens"
+//	@Failure		400		{object}	RegisterResponse	"Invalid input data"
+//	@Failure		409		{object}	RegisterResponse	"Login taken"
+//	@Failure		500		{object}	RegisterResponse	"Internal server error"
 //	@Router			/auth/register [post]
 func (h *Handler) Register(ctx *gin.Context) {
 	var request user.CreateUserDTO
@@ -63,10 +63,10 @@ func (h *Handler) Register(ctx *gin.Context) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			body	body		LoginInput				true	"Login form"
-//	@Success		200		{object}	TokenResponse			"OK - returns tokens"
-//	@Failure		400		{object}	custom_errors.HTTPError	"Invalid input data"
-//	@Failure		401		{object}	custom_errors.HTTPError	"Unauthorized"
-//	@Failure		500		{object}	custom_errors.HTTPError	"Internal server error"
+//	@Success		200		{object}	LoginResponse			"OK - returns tokens and data of the user"
+//	@Failure		400		{object}	LoginResponse	"Invalid input data"
+//	@Failure		401		{object}	LoginResponse	"Unauthorized"
+//	@Failure		500		{object}	LoginResponse	"Internal server error"
 //	@Router			/auth/login [post]
 func (h *Handler) Login(c *gin.Context) {
 	var req LoginInput
@@ -110,7 +110,7 @@ func prepareLoginResponse(access, refresh string, user user.User) *LoginResponse
 //	@Accept			json
 //	@Produce		json
 //	@Param			body	body		RefreshInput			true	"Refresh token form"
-//	@Success		200		{object}	TokenResponse			"OK - returns tokens"
+//	@Success		200		{object}	LoginResponse			"OK - returns tokens"
 //	@Failure		400		{object}	custom_errors.HTTPError	"Invalid input data"
 //	@Failure		401		{object}	custom_errors.HTTPError	"Unauthorized"
 //	@Failure		500		{object}	custom_errors.HTTPError	"Internal server error"
