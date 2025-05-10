@@ -22,7 +22,7 @@ func NewHandler(s ModelServiceInterace) *Handler {
 	return &Handler{service: s}
 }
 
-// GetAllModelsByManufacturerID godoc
+// GetModelsByManufacturerID godoc
 //
 //	@Summary		Get all models by manufacturer id
 //	@Description	Returns a list of all models stored in the database for a given manufacturer id.
@@ -34,7 +34,7 @@ func NewHandler(s ModelServiceInterace) *Handler {
 //	@Failure		400	{object}	custom_errors.HTTPError	"Id is not a number"
 //	@Failure		404	{object}	custom_errors.HTTPError	"Models not found"
 //	@Failure		500	{object}	custom_errors.HTTPError	"Internal server error"
-//	@Router			/cars/models//id/{id} [get]
+//	@Router			/cars/models/id/{id} [get]
 func (h *Handler) GetModelsByManufacturerID(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
