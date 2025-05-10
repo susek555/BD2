@@ -40,6 +40,30 @@ func (dto *CreateSaleOfferDTO) MapToSaleOffer() (*SaleOffer, error) {
 	}, nil
 }
 
+func (offer *SaleOffer) MapToDTO() *RetrieveSaleOfferDTO {
+	return &RetrieveSaleOfferDTO{
+		Description:        offer.Description,
+		Price:              offer.Price,
+		Margin:             offer.Margin,
+		Vin:                offer.Car.Vin,
+		ProductionYear:     offer.Car.ProductionYear,
+		Mileage:            offer.Car.Mileage,
+		NumberOfDoors:      offer.Car.NumberOfDoors,
+		NumberOfSeats:      offer.Car.NumberOfSeats,
+		EnginePower:        offer.Car.EnginePower,
+		EngineCapacity:     offer.Car.EngineCapacity,
+		RegistrationNumber: offer.Car.RegistrationNumber,
+		RegistrationDate:   offer.Car.RegistrationDate.Format(time.RFC3339),
+		Color:              offer.Car.Color,
+		FuelType:           offer.Car.FuelType,
+		Transmission:       offer.Car.Transmission,
+		NumberOfGears:      offer.Car.NumberOfGears,
+		Drive:              offer.Car.Drive,
+		Brand:              offer.Car.Model.Manufacturer.Name,
+		Model:              offer.Car.Model.Name,
+	}
+}
+
 func parseDate(date string) (time.Time, error) {
 	layout := "02/01/2006"
 	t, err := time.Parse(layout, date)
