@@ -58,7 +58,7 @@ func (h *Handler) Register(ctx *gin.Context) {
 // Login godoc
 //
 //	@Summary		Login user
-//	@Description	Authenticate user and return a pair of tokens
+//	@Description	Authenticate user and return a pair of tokens and user data
 //	@Tags			auth
 //	@Accept			json
 //	@Produce		json
@@ -105,12 +105,12 @@ func prepareLoginResponse(access, refresh string, user user.User) *LoginResponse
 // Refresh godoc
 //
 //	@Summary		Refresh tokens
-//	@Description	Refresh access and refresh tokens
+//	@Description	Refresh access tokens
 //	@Tags			auth
 //	@Accept			json
 //	@Produce		json
 //	@Param			body	body		RefreshInput			true	"Refresh token form"
-//	@Success		200		{object}	LoginResponse			"OK - returns tokens"
+//	@Success		200		{object}	LoginResponse			"OK - returns new access token"
 //	@Failure		400		{object}	custom_errors.HTTPError	"Invalid input data"
 //	@Failure		401		{object}	custom_errors.HTTPError	"Unauthorized"
 //	@Failure		500		{object}	custom_errors.HTTPError	"Internal server error"
