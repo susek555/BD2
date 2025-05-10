@@ -2,10 +2,49 @@
 
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
+import { useState } from "react";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 export default function Home() {
   const { data, status } = useSession();
   const isLoading = status === "loading";
+  const [isSigningOut, setIsSigningOut] = useState(false);
+
+  const handleSignOut = async () => {
+    if (!data?.user?.refreshToken) {
+      console.warn("No refresh token available for logout");
+      signOut();
+      return;
+    }
+
+    setIsSigningOut(true);
+    console.log("Handle sign out");
+
+    try {
+      const response = await fetch(`${API_URL}/logout`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${data.user.accessToken}`
+        },
+        body: JSON.stringify({ refresh_token: data.user.refreshToken }),
+      });
+
+      console.log("Logout response:", response.status);
+
+      if (!response.ok) {
+        console.error(`Logout failed: ${response.status} ${response.statusText}`);
+      }
+    } catch (error) {
+      console.error('Log out error:', error);
+    } finally {
+      signOut();
+      setIsSigningOut(false);
+    }
+  };
+
+
 
   return (
     <div className="flex items-center justify-center min-h-screen p-8 font-[family-name:var(--font-geist-sans)]">
@@ -25,10 +64,19 @@ export default function Home() {
               </button>
             </Link>
             <button
-              onClick={() => signOut()}
-              className="px-4 py-2 mt-4 text-white bg-red-600 rounded-md hover:bg-red-700 transition-colors"
+              onClick={handleSignOut}
+              disabled={isSigningOut}
+              className={`px-4 py-2 mt-4 text-white ${isSigningOut ? "bg-gray-400" : "bg-red-600 hover:bg-red-700"
+                } rounded-md transition-colors flex items-center gap-2`}
             >
-              Sign Out
+              {isSigningOut ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Signing Out...
+                </>
+              ) : (
+                "Sign Out"
+              )}
             </button>
           </>
         ) : (
