@@ -64,6 +64,26 @@ definitions:
       error_description:
         type: string
     type: object
+  review.ReviewDTO:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      rating:
+        type: integer
+      reviewee:
+        $ref: '#/definitions/review.UserDTO'
+      reviewer:
+        $ref: '#/definitions/review.UserDTO'
+    type: object
+  review.UserDTO:
+    properties:
+      id:
+        type: integer
+      username:
+        type: string
+    type: object
   user.CreateUserDTO:
     properties:
       company_name:
@@ -257,6 +277,50 @@ paths:
       summary: Logout user
       tags:
       - auth
+  /review:
+    get:
+      description: Returns every review in the system as an array of DTOs.
+      operationId: getAllReviews
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK – list of reviews
+          schema:
+            items:
+              $ref: '#/definitions/review.ReviewDTO'
+            type: array
+        "400":
+          description: Bad Request – query failed
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: List all reviews
+      tags:
+      - reviews
+  /review/:
+    get:
+      description: Returns review that match given id as an DTO.
+      operationId: getReviewById
+      parameters:
+      - description: Review id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK – review with given id
+          schema:
+            $ref: '#/definitions/review.ReviewDTO'
+        "400":
+          description: Bad Request – query failed
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Get review by id
+      tags:
+      - reviews
   /users:
     get:
       consumes:
