@@ -6,7 +6,7 @@ import { useState } from "react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
-export default function Home() {
+export default function Test() {
   const { data, status } = useSession();
   const isLoading = status === "loading";
   const [isSigningOut, setIsSigningOut] = useState(false);
