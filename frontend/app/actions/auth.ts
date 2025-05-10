@@ -2,20 +2,19 @@ import { registerResult, registerUser } from "@/app/lib/api/auth";
 import { SignupFormSchema, SignupFormState } from "@/app/lib/definitions";
 import { permanentRedirect } from "next/navigation";
 
+
 export async function signup(
   state: SignupFormState,
   formData: FormData
 ): Promise<SignupFormState> {
-  console.log("Form data:", Object.fromEntries(formData.entries()));
+  console.log("Signup form data:", Object.fromEntries(formData.entries()));
 
   const formDataObj = Object.fromEntries(formData.entries());
-
   const validatedFields = SignupFormSchema.safeParse(formDataObj);
-
-  console.log("Validation result:", validatedFields);
+  console.log("Signup validation result:", validatedFields);
 
   if (!validatedFields.success) {
-    console.log("Validation errors:", validatedFields.error.flatten().fieldErrors);
+    console.log("Signup validation errors:", validatedFields.error.flatten().fieldErrors);
     return {
       errors: validatedFields.error.flatten().fieldErrors,
       values: Object.fromEntries(
