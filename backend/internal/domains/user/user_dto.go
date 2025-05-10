@@ -12,7 +12,7 @@ type CreateUserDTO struct {
 }
 
 type RetrieveUserDTO struct {
-	ID            string  `json:"id"`
+	ID            uint    `json:"id"`
 	Username      string  `json:"username"`
 	Email         string  `json:"email"`
 	CompanyName   *string `json:"company_name,omitempty"`
