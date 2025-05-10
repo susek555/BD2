@@ -1,94 +1,97 @@
-'use client';
-
-import { useState, useEffect, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import SideBar from "@/app/ui/(home)/sidebar";
 import { OffersFoundSkeleton, OffersTableSkeleton } from "../ui/skeletons";
 import Pagination from "../ui/(home)/pagination";
 import OffersFoundInfo from "../ui/(home)/offers-found-info";
 import OffersTable from "../ui/(home)/table";
-import { fetchHomePageData } from "../lib/data";
+import { fetchTotalPages } from "../lib/data";
 import { SearchParams } from "../lib/definitions";
-import { SaleOffer } from "@/app/lib/definitions";
 
-export default function Home() {
-  const searchParams = useSearchParams();
-  const [totalPages, setTotalPages] = useState(0);
-  const [totalOffers, setTotalOffers] = useState(0);
-  const [offers, setOffers] = useState<SaleOffer[]>([]);
-  const [loading, setLoading] = useState(true);  // Loading state
+export default async function Home(props: {
+  searchParams?: Promise<{
+    query?: string;
+    page?: string;
+    sortKey?: string;
+    isSortDesc?: string;
+    offerType?: string;
+    Producer?: string[];
+    Gearbox?: string[];
+    Fuel?: string[];
+    Price_min?: string;
+    Price_max?: string;
+    Mileage_min?: string;
+    Mileage_max?: string;
+    Productionyear_min?: string;
+    Productionyear_max?: string;
+  }>;
+  }) {
 
-  const params: SearchParams = {
-    query: searchParams.get("query") || null,
-    page: searchParams.get("page") ? parseInt(searchParams.get("page") || "1", 10) : null,
-    orderKey: searchParams.get("sortKey") || null,
-    isOrderDesc: searchParams.get("isSortDesc") === "true" ? true : null,
-    offerType: searchParams.get("offerType") || null,
-    producers: searchParams.getAll("Producer") || null,
-    gearboxes: searchParams.getAll("Gearbox") || null,
-    fuelTypes: searchParams.getAll("Fuel") || null,
+  const searchParams = await props.searchParams;
+
+  const params: SearchParams = searchParams
+  ? {
+    query: searchParams.query || null,
+    page: searchParams.page ? parseInt(searchParams.page || "1", 10) : null,
+    orderKey: searchParams.sortKey || null,
+    isOrderDesc: searchParams.isSortDesc === "true" ? true : null,
+    offerType: searchParams.offerType || null,
+    producers: searchParams.Producer || null,
+    gearboxes: searchParams.Gearbox || null,
+    fuelTypes: searchParams.Fuel || null,
     price: {
-      min: searchParams.get("Price_min") ? parseInt(searchParams.get("Price_min") || "0", 10) : null,
-      max: searchParams.get("Price_max") ? parseInt(searchParams.get("Price_max") || "0", 10) : null,
+      min: searchParams.Price_min ? parseInt(searchParams.Price_min || "0", 10) : null,
+      max: searchParams.Price_max ? parseInt(searchParams.Price_max || "0", 10) : null,
     },
     mileage: {
-      min: searchParams.get("Mileage_min") ? parseInt(searchParams.get("Mileage_min") || "0", 10) : null,
-      max: searchParams.get("Mileage_max") ? parseInt(searchParams.get("Mileage_max") || "0", 10) : null,
+      min: searchParams.Mileage_min ? parseInt(searchParams.Mileage_min || "0", 10) : null,
+      max: searchParams.Mileage_max ? parseInt(searchParams.Mileage_max || "0", 10) : null,
     },
     year: {
-      min: searchParams.get("Production year_min") ? parseInt(searchParams.get("Production year_min") || "0", 10) : null,
-      max: searchParams.get("Production year_max") ? parseInt(searchParams.get("Production year_max") || "0", 10) : null,
+      min: searchParams.Productionyear_min ? parseInt(searchParams.Productionyear_min || "0", 10) : null,
+      max: searchParams.Productionyear_max ? parseInt(searchParams.Productionyear_max || "0", 10) : null,
     },
-  };
+    }
+  : {
+    query: null,
+    page: null,
+    orderKey: null,
+    isOrderDesc: null,
+    offerType: null,
+    producers: null,
+    gearboxes: null,
+    fuelTypes: null,
+    price: { min: null, max: null },
+    mileage: { min: null, max: null },
+    year: { min: null, max: null },
+    };
 
   console.log("Search Params:", params);
 
-  useEffect(() => {
-    async function fetchData() {
-      setLoading(true);  // Start loading
-      try {
-        const { totalPages, totalOffers, offers } = await fetchHomePageData(params);
-        setTotalPages(totalPages);
-        setTotalOffers(totalOffers);
-        setOffers(offers);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);  // End loading
-      }
-    }
-    fetchData();
-  }, [searchParams]);
+  const totalPages = await fetchTotalPages(params);
 
   return (
-    <main>
-      <div className="flex flex-col md:flex-row flex-grow">
-        <div className="w-full md:w-80 py-4 h-full flex-none">
-          <Suspense >
-            <SideBar />
+  <main>
+    <div className="flex flex-col md:flex-row flex-grow">
+      <div className="w-full md:w-80 py-4 h-full flex-none">
+        <Suspense >
+          <SideBar />
+        </Suspense>
+      </div>
+      <div className="flex-grow p-6 md:overflow-y-auto md:px-12 md:py-8">
+        <Suspense fallback={<OffersFoundSkeleton />}>
+          <OffersFoundInfo params={params} />
+        </Suspense>
+        <div className="my-4 " />
+        <Suspense fallback={<OffersTableSkeleton />}>
+          <OffersTable params={params} />
+        </Suspense>
+        <div className="mt-5 flex w-full justify-center pr-20">
+          <Suspense>
+            <Pagination totalPages={totalPages} />
           </Suspense>
         </div>
-        <div className="flex-grow p-6 md:overflow-y-auto md:px-12 md:py-8">
-          {loading ? (
-            <OffersFoundSkeleton />
-          ) : (
-            <OffersFoundInfo totalOffers={totalOffers} />
-          )}
-          <div className="my-4 " />
-          <div className="flex flex-col gap-4">
-            {loading ? (
-                <OffersTableSkeleton />
-            ) : (
-              offers.map((offer) => (
-                <OffersTable key={offer.name} {...offer} />
-              ))
-            )}
-          </div>
-          <div className="mt-5 flex w-full justify-center pr-20">
-            <Pagination totalPages={totalPages} />
-          </div>
-        </div>
       </div>
-    </main>
+    </div>
+  </main>
   );
 }

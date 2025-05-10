@@ -95,18 +95,19 @@ export function prepareRangeFields() : RangeFieldData[] {
 }
 
 // Home page
-async function fetchTotalPages() : Promise<number> {
+export async function fetchTotalPages(params: SearchParams) : Promise<number> {
     // TODO connect API
     return 10;
 }
 
-async function fetchTotalOffers() : Promise<number> {
+export async function fetchTotalOffers(params: SearchParams) : Promise<number> {
     // TODO connect API
     return 100;
 }
 
-async function fetchOffers(params: SearchParams) : Promise<SaleOffer[]> {
+export async function fetchOffers(params: SearchParams) : Promise<SaleOffer[]> {
     // TODO connect API
+
     const data: SaleOffer[] = [
         {
             id: "1",
@@ -142,8 +143,8 @@ async function fetchOffers(params: SearchParams) : Promise<SaleOffer[]> {
 export async function fetchHomePageData(params: SearchParams) : Promise<{totalPages: number, totalOffers: number, offers: SaleOffer[]}> {
     try{
 
-        const totalPages = await fetchTotalPages();
-        const totalOffers = await fetchTotalOffers();
+        const totalPages = await fetchTotalPages(params);
+        const totalOffers = await fetchTotalOffers(params);
         const offers = await fetchOffers(params);
 
         const [totalPagesResult, totalOffersResult, offersResult] = await Promise.all([
