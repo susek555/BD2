@@ -3,14 +3,14 @@ package user
 import "gorm.io/gorm"
 
 type Company struct {
-	UserID uint   `json:"id" gorm:"column:user_id; primaryKey"`
-	NIP    string `json:"nip" gorm:"column:nip;unique"`
+	UserID uint   `json:"id" gorm:"primaryKey"`
+	NIP    string `json:"nip" gorm:"unique"`
 	Name   string `json:"name"`
 	User   User   `gorm:"foreignKey:UserID;references:ID;constraint:OnDelete:CASCADE"`
 }
 
 type Person struct {
-	UserID  uint   `json:"id" gorm:"column:user_id; primaryKey"`
+	UserID  uint   `json:"id" gorm:"primaryKey"`
 	Name    string `json:"name"`
 	Surname string `json:"surname"`
 	User    User   `gorm:"foreignKey:UserID;references:ID;constraint:OnDelete:CASCADE"`
