@@ -1,6 +1,5 @@
 "use server";
 
-
 const API_URL = process.env.API_URL;
 
 export type registerResult = {
@@ -50,11 +49,11 @@ export async function registerUser(userData: {
 
     return {};
 
-  } catch (error: any) {
+  } catch (error) {
     console.error('Registration error:', error);
     return {
       errors: {
-        other: error.message || 'An unexpected error occurred during registration'
+        other: [error as string]
       },
     };
   }
