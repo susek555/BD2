@@ -22,7 +22,7 @@ func NewHandler(service ReviewServiceInterface) *Handler {
 // @Description  Returns every review in the system as an array of DTOs.
 // @Tags         reviews
 // @Produce      json
-// @Success      200  {array}   ReviewDTO      "OK – list of reviews"
+// @Success      200  {array}   ReviewOutput      "OK – list of reviews"
 // @Failure      400  {object}  custom_errors.HTTPError  "Bad Request – query failed"
 // @Router       /review [get]
 func (h *Handler) GetAllReviews(c *gin.Context) {
@@ -31,7 +31,7 @@ func (h *Handler) GetAllReviews(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
-	var reviewsDTO []ReviewDTO
+	var reviewsDTO []ReviewOutput
 	for _, review := range reviews {
 		reviewsDTO = append(reviewsDTO, review.MapToDTO())
 	}
@@ -46,7 +46,7 @@ func (h *Handler) GetAllReviews(c *gin.Context) {
 // @Tags         reviews
 // @Produce      json
 // @Param 		 id  path	int	true "Review id"
-// @Success      200  {object}   ReviewDTO      "OK – review with given id"
+// @Success      200  {object}   ReviewOutput      "OK – review with given id"
 // @Failure      400  {object}  custom_errors.HTTPError  "Bad Request – query failed"
 // @Router       /review/{id} [get]
 func (h *Handler) GetReviewById(c *gin.Context) {
@@ -72,12 +72,13 @@ func (h *Handler) GetReviewById(c *gin.Context) {
 // @Tags         reviews
 // @Accept       json
 // @Produce      json
-// @Param        body  body      Review       true  "Review payload"
-// @Success      201   {object}  ReviewDTO     "Created – review stored"
+// @Param        body  body      ReviewInput       true  "Review payload"
+// @Success      201   {object}  ReviewOutput     "Created – review stored"
 // @Failure      400   {object}  custom_errors.HTTPError "Bad Request – validation or persistence error"
 // @Router       /review [post]
 func (h *Handler) CreateReview(c *gin.Context) {
-	var review Review
+	var reviewInput ReviewInput
+	review := reviewInput.MapToObject()
 	if err := c.ShouldBindJSON(&review); err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
@@ -98,12 +99,13 @@ func (h *Handler) CreateReview(c *gin.Context) {
 // @Tags         reviews
 // @Accept       json
 // @Produce      json
-// @Param        body  body      Review       true  "Review payload"
-// @Success      200   {object}  ReviewDTO     "OK – review updated"
+// @Param        body  body      ReviewInput       true  "Review payload"
+// @Success      200   {object}  ReviewOutput     "OK – review updated"
 // @Failure      400   {object}  custom_errors.HTTPError "Bad Request – validation or update error"
 // @Router       /review [put]
 func (h *Handler) UpdateReview(c *gin.Context) {
-	var review Review
+	var reviewInput ReviewInput
+	review := reviewInput.MapToObject()
 	if err := c.ShouldBindJSON(&review); err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
@@ -143,7 +145,7 @@ func (h *Handler) DeleteReview(c *gin.Context) {
 // @Tags         reviews
 // @Produce      json
 // @Param        id   path      int          true  "Reviewer ID"
-// @Success      200  {array}   ReviewDTO     "OK – list of reviews"
+// @Success      200  {array}   ReviewOutput     "OK – list of reviews"
 // @Failure      400  {object}  custom_errors.HTTPError "Bad Request – invalid ID format or query failed"
 // @Router       /review/reviewer/{id} [get]
 func (h *Handler) GetReviewsByReviewerId(c *gin.Context) {
@@ -155,7 +157,7 @@ func (h *Handler) GetReviewsByReviewerId(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
-	var reviewsDTO []ReviewDTO
+	var reviewsDTO []ReviewOutput
 	for _, review := range reviews {
 		reviewDTO := review.MapToDTO()
 		reviewsDTO = append(reviewsDTO, reviewDTO)
@@ -171,7 +173,7 @@ func (h *Handler) GetReviewsByReviewerId(c *gin.Context) {
 // @Tags         reviews
 // @Produce      json
 // @Param        id   path      int          true  "Reviewee ID"
-// @Success      200  {array}   ReviewDTO     "OK – list of reviews"
+// @Success      200  {array}   ReviewOutput     "OK – list of reviews"
 // @Failure      400  {object}  custom_errors.HTTPError "Bad Request – invalid ID format or query failed"
 // @Router       /review/reviewee/{id} [get]
 func (h *Handler) GetReviewsByRevieweeId(c *gin.Context) {
@@ -183,7 +185,7 @@ func (h *Handler) GetReviewsByRevieweeId(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
-	var reviewsDTO []ReviewDTO
+	var reviewsDTO []ReviewOutput
 	for _, review := range reviews {
 		reviewDTO := review.MapToDTO()
 		reviewsDTO = append(reviewsDTO, reviewDTO)
@@ -200,7 +202,7 @@ func (h *Handler) GetReviewsByRevieweeId(c *gin.Context) {
 // @Produce      json
 // @Param        reviewerId  path      int          true  "Reviewer ID"
 // @Param        revieweeId  path      int          true  "Reviewee ID"
-// @Success      200         {object}  ReviewDTO     "OK – review found"
+// @Success      200         {object}  ReviewOutput     "OK – review found"
 // @Failure      400         {object}  custom_errors.HTTPError "Bad Request – invalid ID format or query failed"
 // @Router       /review/reviewer/{reviewerId}/reviewee/{revieweeId} [get]
 func (h *Handler) GetReviewsByReviewerIdAndRevieweeId(c *gin.Context) {
