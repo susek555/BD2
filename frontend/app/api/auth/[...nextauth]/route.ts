@@ -1,11 +1,11 @@
+import { API_URL } from '@/app/lib/constants';
 import { ExtendedJWT } from '@/types/next-auth';
 import camelcaseKeys from 'camelcase-keys';
 import NextAuth, { User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
-const API_URL = process.env.API_URL;
-// const ACCEST_TOKEN_LIFETIME = 2 * 60 * 60 * 1000; // 2 hours
-const ACCESS_TOKEN_LIFETIME = 30 * 1000; // 30 seconds
+const ACCESS_TOKEN_LIFETIME = 2 * 60 * 60 * 1000; // 2 hours
+// const ACCESS_TOKEN_LIFETIME = 30 * 1000; // 30 seconds
 
 async function updateAccessToken(refreshToken: string): Promise<string> {
   try {
@@ -34,7 +34,6 @@ async function updateAccessToken(refreshToken: string): Promise<string> {
   }
 }
 
-
 // TODO: add error handling
 const handler = NextAuth({
   providers: [
@@ -44,7 +43,7 @@ const handler = NextAuth({
         login: { label: "Login", type: "text" },
         password: { label: "Password", type: "password" }
       },
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         // Add logic here to look up the user from the credentials supplied
 
         const res = await fetch(`${API_URL}/auth/login`, {
@@ -105,7 +104,7 @@ const handler = NextAuth({
     },
 
     async session({ session, token }) {
-      session.user = token as any;
+      session.user = token as ExtendedJWT;
       return session;
     },
   },
