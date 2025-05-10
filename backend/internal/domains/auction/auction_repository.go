@@ -31,6 +31,11 @@ func (a *AuctionRepository) Create(auction *sale_offer.Auction) error {
 		if err := tx.Create(auction).Error; err != nil {
 			return err
 		}
+		if err := tx.
+			Preload("Offer.Car.Model.Manufacturer").
+			First(auction, "offer_id = ?", auction.OfferID).Error; err != nil {
+			return err
+		}
 		return nil
 	})
 }
