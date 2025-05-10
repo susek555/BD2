@@ -77,6 +77,11 @@ export type SignupFormState = {
   }
 }
 
+export type LoginError = {
+  credentials?: string[]
+  server?: string[]
+}
+
 // Filters
 
 export type FilterFieldData = {
