@@ -1,6 +1,6 @@
-import Link from "next/link";
-import SearchField from "@/app/ui/(home)/search-field";
 import LoginButtons from "@/app/ui/(home)/account-buttons";
+import SearchField from "@/app/ui/(home)/search-field";
+import Link from "next/link";
 import { Suspense } from "react";
 
 
