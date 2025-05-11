@@ -41,13 +41,13 @@ func (r *UserRepository) GetAll() ([]User, error) {
 	return users, err
 }
 
-func (r *UserRepository) GetById(id uint) (User, error) {
+func (r *UserRepository) GetById(id uint) (*User, error) {
 	var user User
 	err := r.DB.Preload("Company").Preload("Person").First(&user, id).Error
 	if err != nil {
-		return User{}, err
+		return nil, err
 	}
-	return user, nil
+	return &user, nil
 }
 
 func (r *UserRepository) GetByEmail(email string) (User, error) {

@@ -48,7 +48,7 @@ func (repo *ReviewRepository) GetAll() ([]Review, error) {
 	return reviews, nil
 }
 
-func (repo *ReviewRepository) GetById(id uint) (Review, error) {
+func (repo *ReviewRepository) GetById(id uint) (*Review, error) {
 	db := repo.repository.DB
 	var review Review
 	err := db.
@@ -57,9 +57,9 @@ func (repo *ReviewRepository) GetById(id uint) (Review, error) {
 		First(&review, id).
 		Error
 	if err != nil {
-		return Review{}, err
+		return nil, err
 	}
-	return review, nil
+	return &review, nil
 }
 
 func (repo *ReviewRepository) Update(review *Review) error {

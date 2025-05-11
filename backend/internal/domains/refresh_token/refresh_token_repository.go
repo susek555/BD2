@@ -28,7 +28,7 @@ func (repo *RefreshTokenRepository) GetAll() ([]RefreshToken, error) {
 	return repo.repository.GetAll()
 }
 
-func (repo *RefreshTokenRepository) GetById(id uint) (RefreshToken, error) {
+func (repo *RefreshTokenRepository) GetById(id uint) (*RefreshToken, error) {
 	return repo.repository.GetById(id)
 }
 
