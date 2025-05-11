@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { CarImageSkeleton } from "../skeletons"
+import { CarImageHomePageSkeleton } from "../skeletons"
 import { SearchParams } from "@/app/lib/definitions"
 import { fetchOffers } from "@/app/lib/data";
 
@@ -19,7 +19,7 @@ export default async function OffersTable({ params } : { params: SearchParams })
                     <div className="flex flex-row gap-4">
                         <div className="p-2.5">
                             <Suspense>
-                                <CarImageSkeleton /> {/* TODO implement fetching image from internet */}
+                                <CarImageHomePageSkeleton /> {/* TODO implement fetching image from internet */}
                             </Suspense>
                         </div>
                         <div className="flex py-2.5 h-40 flex-col w-full">
