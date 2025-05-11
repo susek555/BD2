@@ -29,7 +29,13 @@ func (r *SaleOfferRepository) Create(offer *SaleOffer) error {
 
 func (r *SaleOfferRepository) GetFiltered(filter *OfferFilter) ([]SaleOffer, error) {
 	var saleOffers []SaleOffer
-	query := r.DB.Preload("Car").Preload("Car.Model").Preload("Car.Model.Manufacturer").Joins("JOIN cars ON cars.id = sale_offers.car_id")
+	query := r.DB.
+		Preload("Auction").
+		Preload("Car").
+		Preload("Car.Model").
+		Preload("Car.Model.Manufacturer").
+		Joins("JOIN cars ON cars.id = sale_offers.car_id").
+		Joins("JOIN auctions on auctions.offer_id = sale_offers.id")
 	query, err := filter.ApplyOfferFilters(query)
 	if err != nil {
 		return nil, err
