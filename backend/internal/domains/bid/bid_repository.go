@@ -69,20 +69,26 @@ func (b *BidRepository) GetByAuctionId(auctionID uint) ([]Bid, error) {
 func (b *BidRepository) GetHighestBid(auctionID uint) (*Bid, error) {
 	db := b.DB
 	var bid Bid
-	db.
+	err := db.
 		Where("auction_id = ?", auctionID).
 		Order("amount desc").
-		First(&bid)
+		First(&bid).Error
+	if err != nil {
+		return nil, err
+	}
 	return &bid, nil
 }
 
 func (b *BidRepository) GetHighestBidByUserId(auctionID, userID uint) (*Bid, error) {
 	db := b.DB
 	var bid Bid
-	db.
+	err := db.
 		Where("auction_id = ?", auctionID).
-		Where("user_id = ?", userID).
+		Where("bidder_id = ?", userID).
 		Order("amount desc").
-		First(&bid)
+		First(&bid).Error
+	if err != nil {
+		return nil, err
+	}
 	return &bid, nil
 }
