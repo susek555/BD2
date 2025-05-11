@@ -44,7 +44,9 @@ func (dto *UpdateAuctionDTO) MapToAuction() (*sale_offer.Auction, error) {
 	auction.Offer = offer
 	auction.DateEnd = endDate
 	auction.BuyNowPrice = dto.BuyNowPrice
-	auction.OfferID = dto.id
+	auction.OfferID = dto.Id
+	auction.Offer.ID = dto.Id
+	auction.Offer.Car.ID = dto.Id
 	return &auction, nil
 }
 
