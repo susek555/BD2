@@ -108,6 +108,7 @@ func registerSaleOfferRoutes(router *gin.Engine) {
 	saleOfferRoutes := router.Group("/sale-offer")
 	{
 		saleOfferRoutes.POST("/", saleOfferHandler.CreateSaleOffer)
+		saleOfferRoutes.POST("/filtered", saleOfferHandler.GerFilteredSaleOffers)
 	}
 }
 

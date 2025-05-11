@@ -4,7 +4,7 @@ import "gorm.io/gorm"
 
 type SaleOfferRepositoryInterface interface {
 	Create(offer *SaleOffer) error
-	// GetFiltered() ([]SaleOffer, error)
+	GetFiltered(filter *OfferFilter) ([]SaleOffer, error)
 }
 
 type SaleOfferRepository struct {
@@ -25,4 +25,18 @@ func (r *SaleOfferRepository) Create(offer *SaleOffer) error {
 		}
 		return nil
 	})
+}
+
+func (r *SaleOfferRepository) GetFiltered(filter *OfferFilter) ([]SaleOffer, error) {
+	var saleOffers []SaleOffer
+	query := r.DB.Preload("Car").Preload("Car.Model").Preload("Car.Model.Manufacturer").Joins("JOIN cars ON cars.id = sale_offers.car_id")
+	query, err := filter.ApplyOfferFilters(query)
+	if err != nil {
+		return nil, err
+	}
+	err = query.Find(&saleOffers).Error
+	if err != nil {
+		return nil, err
+	}
+	return saleOffers, nil
 }

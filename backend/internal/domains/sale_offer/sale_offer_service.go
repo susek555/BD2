@@ -2,6 +2,7 @@ package sale_offer
 
 type SaleOfferServiceInterface interface {
 	Create(in CreateSaleOfferDTO) error
+	GetFiltered(filter *OfferFilter) ([]RetrieveSaleOfferDTO, error)
 }
 
 type SaleOfferService struct {
@@ -18,4 +19,17 @@ func (s *SaleOfferService) Create(in CreateSaleOfferDTO) error {
 		return err
 	}
 	return s.repo.Create(offer)
+}
+
+func (s *SaleOfferService) GetFiltered(filter *OfferFilter) ([]RetrieveSaleOfferDTO, error) {
+	offers, err := s.repo.GetFiltered(filter)
+	if err != nil {
+		return nil, err
+	}
+	offersDTOs := make([]RetrieveSaleOfferDTO, 0, len(offers))
+	for _, offer := range offers {
+		dto := offer.MapToDTO()
+		offersDTOs = append(offersDTOs, *dto)
+	}
+	return offersDTOs, nil
 }
