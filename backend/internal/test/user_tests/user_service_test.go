@@ -46,7 +46,7 @@ func TestGetAll_RecordsFound(t *testing.T) {
 
 func TestGetById_UserNotFound(t *testing.T) {
 	uRepo := mocks.NewUserRepositoryInterface(t)
-	uRepo.On("GetById", uint(1)).Return(&u.User{}, gorm.ErrRecordNotFound)
+	uRepo.On("GetById", uint(1)).Return(nil, gorm.ErrRecordNotFound)
 	uService := u.NewService(uRepo)
 	user, err := uService.GetById(1)
 	assert.Error(t, err)
@@ -84,7 +84,7 @@ func TestGetByEmail_UserFound(t *testing.T) {
 
 func TestUpdate_UserNotFound(t *testing.T) {
 	uRepo := mocks.NewUserRepositoryInterface(t)
-	uRepo.On("GetById", uint(1)).Return(&u.User{}, gorm.ErrRecordNotFound)
+	uRepo.On("GetById", uint(1)).Return(nil, gorm.ErrRecordNotFound)
 	uService := u.NewService(uRepo)
 	err := uService.Update(u.UpdateUserDTO{ID: 1})
 	assert.Error(t, err)
