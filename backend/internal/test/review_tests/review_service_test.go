@@ -131,7 +131,7 @@ func TestGet_Success(t *testing.T) {
 	got, err := svc.GetById(7)
 
 	require.NoError(t, err)
-	assert.Equal(t, want, *got)
+	assert.Equal(t, &want, got)
 	repo.AssertExpectations(t)
 }
 
@@ -142,9 +142,10 @@ func TestGet_Error(t *testing.T) {
 	repo.On("GetById", uint(7)).Return(&review.Review{}, repoErr).Once()
 
 	got, err := svc.GetById(7)
+	var want *review.Review = nil
 
 	require.ErrorIs(t, err, repoErr)
-	assert.Equal(t, review.Review{}, *got)
+	assert.Equal(t, want, got)
 	repo.AssertExpectations(t)
 }
 
