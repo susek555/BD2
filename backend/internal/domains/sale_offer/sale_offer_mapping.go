@@ -1,7 +1,6 @@
 package sale_offer
 
 import (
-	"slices"
 	"time"
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car"
@@ -12,7 +11,7 @@ func (dto *CreateSaleOfferDTO) MapToSaleOffer() (*SaleOffer, error) {
 	if err := dto.validateParams(); err != nil {
 		return nil, err
 	}
-	date, err := parseDate(dto.RegistrationDate)
+	date, err := ParseDate(dto.RegistrationDate)
 	if err != nil {
 		return nil, err
 	}
@@ -74,19 +73,6 @@ func (offer *SaleOffer) prepareAuctionValues() (*uint, *time.Time) {
 		return nil, nil
 	}
 	return &offer.Auction.BuyNowPrice, &offer.Auction.DateEnd
-}
-
-func parseDate(date string) (*time.Time, error) {
-	layout := "2006-01-02"
-	t, err := time.Parse(layout, date)
-	if err != nil {
-		return nil, err
-	}
-	return &t, nil
-}
-
-func IsParamValid[T comparable](param T, validParams []T) bool {
-	return slices.Contains(validParams, param)
 }
 
 func (dto *CreateSaleOfferDTO) validateParams() error {
