@@ -15,3 +15,8 @@ type RetrieveAuctionDTO struct {
 	DateEnd     string `json:"date_end"`
 	BuyNowPrice uint   `json:"buy_now_price"`
 }
+
+type UpdateAuctionDTO struct {
+	id uint `json:"id"`
+	CreateAuctionDTO
+}
