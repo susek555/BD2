@@ -46,7 +46,7 @@ func TestGetAll_RecordsFound(t *testing.T) {
 
 func TestGetById_UserNotFound(t *testing.T) {
 	uRepo := mocks.NewUserRepositoryInterface(t)
-	uRepo.On("GetById", uint(1)).Return(u.User{}, gorm.ErrRecordNotFound)
+	uRepo.On("GetById", uint(1)).Return(&u.User{}, gorm.ErrRecordNotFound)
 	uService := u.NewService(uRepo)
 	user, err := uService.GetById(1)
 	assert.Error(t, err)
@@ -56,7 +56,7 @@ func TestGetById_UserNotFound(t *testing.T) {
 
 func TestGetById_UserFound(t *testing.T) {
 	uRepo := mocks.NewUserRepositoryInterface(t)
-	uRepo.On("GetById", uint(1)).Return(*createUser(), nil)
+	uRepo.On("GetById", uint(1)).Return(createUser(), nil)
 	uService := u.NewService(uRepo)
 	user, err := uService.GetById(1)
 	assert.NoError(t, err)
@@ -84,7 +84,7 @@ func TestGetByEmail_UserFound(t *testing.T) {
 
 func TestUpdate_UserNotFound(t *testing.T) {
 	uRepo := mocks.NewUserRepositoryInterface(t)
-	uRepo.On("GetById", uint(1)).Return(u.User{}, gorm.ErrRecordNotFound)
+	uRepo.On("GetById", uint(1)).Return(&u.User{}, gorm.ErrRecordNotFound)
 	uService := u.NewService(uRepo)
 	err := uService.Update(u.UpdateUserDTO{ID: 1})
 	assert.Error(t, err)
@@ -93,7 +93,7 @@ func TestUpdate_UserNotFound(t *testing.T) {
 
 func TestUpdate_UserFoundNoChange(t *testing.T) {
 	uRepo := mocks.NewUserRepositoryInterface(t)
-	uRepo.On("GetById", uint(1)).Return(*createUser(), nil)
+	uRepo.On("GetById", uint(1)).Return(createUser(), nil)
 	uRepo.On("Update", createUser()).Return(nil)
 	uService := u.NewService(uRepo)
 	err := uService.Update(u.UpdateUserDTO{ID: 1})
@@ -102,7 +102,7 @@ func TestUpdate_UserFoundNoChange(t *testing.T) {
 
 func TestUpdate_UserFoundChange(t *testing.T) {
 	uRepo := mocks.NewUserRepositoryInterface(t)
-	uRepo.On("GetById", uint(1)).Return(*createUser(), nil)
+	uRepo.On("GetById", uint(1)).Return(createUser(), nil)
 	uService := u.NewService(uRepo)
 	uRepo.On("Update", mock.AnythingOfType("*user.User")).Return(nil)
 	newUsername := "new_username"

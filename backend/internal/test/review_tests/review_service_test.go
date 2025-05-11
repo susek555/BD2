@@ -5,8 +5,9 @@ package review_tests
 
 import (
 	"errors"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/review"
 	"testing"
+
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/review"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -125,12 +126,12 @@ func TestGet_Success(t *testing.T) {
 	svc, repo := newServiceWithMock()
 
 	want := review.Review{ID: 7, ReviewerID: 1, RevieweeId: 2}
-	repo.On("GetById", uint(7)).Return(want, nil).Once()
+	repo.On("GetById", uint(7)).Return(&want, nil).Once()
 
 	got, err := svc.GetById(7)
 
 	require.NoError(t, err)
-	assert.Equal(t, want, got)
+	assert.Equal(t, want, *got)
 	repo.AssertExpectations(t)
 }
 
@@ -138,12 +139,12 @@ func TestGet_Error(t *testing.T) {
 	svc, repo := newServiceWithMock()
 
 	repoErr := errors.New("not found")
-	repo.On("GetById", uint(7)).Return(review.Review{}, repoErr).Once()
+	repo.On("GetById", uint(7)).Return(&review.Review{}, repoErr).Once()
 
 	got, err := svc.GetById(7)
 
 	require.ErrorIs(t, err, repoErr)
-	assert.Equal(t, review.Review{}, got)
+	assert.Equal(t, review.Review{}, *got)
 	repo.AssertExpectations(t)
 }
 
