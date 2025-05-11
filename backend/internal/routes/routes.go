@@ -1,9 +1,10 @@
 package routes
 
 import (
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/bid"
 	"log"
 	"os"
+
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/bid"
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auction"
 
