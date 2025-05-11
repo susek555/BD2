@@ -333,22 +333,24 @@ func (_c *RefreshTokenServiceInterface_GetAll_Call) RunAndReturn(run func() ([]r
 }
 
 // GetById provides a mock function with given fields: id
-func (_m *RefreshTokenServiceInterface) GetById(id uint) (refresh_token.RefreshToken, error) {
+func (_m *RefreshTokenServiceInterface) GetById(id uint) (*refresh_token.RefreshToken, error) {
 	ret := _m.Called(id)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetById")
 	}
 
-	var r0 refresh_token.RefreshToken
+	var r0 *refresh_token.RefreshToken
 	var r1 error
-	if rf, ok := ret.Get(0).(func(uint) (refresh_token.RefreshToken, error)); ok {
+	if rf, ok := ret.Get(0).(func(uint) (*refresh_token.RefreshToken, error)); ok {
 		return rf(id)
 	}
-	if rf, ok := ret.Get(0).(func(uint) refresh_token.RefreshToken); ok {
+	if rf, ok := ret.Get(0).(func(uint) *refresh_token.RefreshToken); ok {
 		r0 = rf(id)
 	} else {
-		r0 = ret.Get(0).(refresh_token.RefreshToken)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*refresh_token.RefreshToken)
+		}
 	}
 
 	if rf, ok := ret.Get(1).(func(uint) error); ok {
@@ -378,12 +380,12 @@ func (_c *RefreshTokenServiceInterface_GetById_Call) Run(run func(id uint)) *Ref
 	return _c
 }
 
-func (_c *RefreshTokenServiceInterface_GetById_Call) Return(_a0 refresh_token.RefreshToken, _a1 error) *RefreshTokenServiceInterface_GetById_Call {
+func (_c *RefreshTokenServiceInterface_GetById_Call) Return(_a0 *refresh_token.RefreshToken, _a1 error) *RefreshTokenServiceInterface_GetById_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *RefreshTokenServiceInterface_GetById_Call) RunAndReturn(run func(uint) (refresh_token.RefreshToken, error)) *RefreshTokenServiceInterface_GetById_Call {
+func (_c *RefreshTokenServiceInterface_GetById_Call) RunAndReturn(run func(uint) (*refresh_token.RefreshToken, error)) *RefreshTokenServiceInterface_GetById_Call {
 	_c.Call.Return(run)
 	return _c
 }

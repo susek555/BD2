@@ -170,22 +170,24 @@ func (_c *ReviewRepositoryInterface_GetAll_Call) RunAndReturn(run func() ([]revi
 }
 
 // GetById provides a mock function with given fields: id
-func (_m *ReviewRepositoryInterface) GetById(id uint) (review.Review, error) {
+func (_m *ReviewRepositoryInterface) GetById(id uint) (*review.Review, error) {
 	ret := _m.Called(id)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetById")
 	}
 
-	var r0 review.Review
+	var r0 *review.Review
 	var r1 error
-	if rf, ok := ret.Get(0).(func(uint) (review.Review, error)); ok {
+	if rf, ok := ret.Get(0).(func(uint) (*review.Review, error)); ok {
 		return rf(id)
 	}
-	if rf, ok := ret.Get(0).(func(uint) review.Review); ok {
+	if rf, ok := ret.Get(0).(func(uint) *review.Review); ok {
 		r0 = rf(id)
 	} else {
-		r0 = ret.Get(0).(review.Review)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*review.Review)
+		}
 	}
 
 	if rf, ok := ret.Get(1).(func(uint) error); ok {
@@ -215,12 +217,12 @@ func (_c *ReviewRepositoryInterface_GetById_Call) Run(run func(id uint)) *Review
 	return _c
 }
 
-func (_c *ReviewRepositoryInterface_GetById_Call) Return(_a0 review.Review, _a1 error) *ReviewRepositoryInterface_GetById_Call {
+func (_c *ReviewRepositoryInterface_GetById_Call) Return(_a0 *review.Review, _a1 error) *ReviewRepositoryInterface_GetById_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *ReviewRepositoryInterface_GetById_Call) RunAndReturn(run func(uint) (review.Review, error)) *ReviewRepositoryInterface_GetById_Call {
+func (_c *ReviewRepositoryInterface_GetById_Call) RunAndReturn(run func(uint) (*review.Review, error)) *ReviewRepositoryInterface_GetById_Call {
 	_c.Call.Return(run)
 	return _c
 }
