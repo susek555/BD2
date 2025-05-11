@@ -4,9 +4,10 @@ export const ROOT = "/";
 export const PUBLIC_ROUTES = [
   "/",
   "/login",
-  "/signup"
+  "/signup",
+  "/[id]"
 ];
 
 export const PROTECTED_ROUTES = [
-  "/dashboard"
+  "/account"
 ];
