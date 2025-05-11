@@ -35,7 +35,7 @@ func (r *SaleOfferRepository) GetFiltered(filter *OfferFilter) ([]SaleOffer, err
 		Preload("Car.Model").
 		Preload("Car.Model.Manufacturer").
 		Joins("JOIN cars ON cars.id = sale_offers.car_id").
-		Joins("JOIN auctions on auctions.offer_id = sale_offers.id")
+		Joins("LEFT JOIN auctions on auctions.offer_id = sale_offers.id")
 	query, err := filter.ApplyOfferFilters(query)
 	if err != nil {
 		return nil, err
