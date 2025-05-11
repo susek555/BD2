@@ -10,7 +10,6 @@ export default async function Page(props: { params: Promise<{id: string }> }) {
 
     return (
         <div>
-            <h1>Offer ID: {id}</h1>
             <Suspense fallback={<div>Loading photos...</div>}>
                 <Photos imagesURLs={offer.imagesURLs} />
             </Suspense>
