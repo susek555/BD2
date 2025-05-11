@@ -149,7 +149,7 @@ func areParamsValid[T comparable](params *[]T, validParams *[]T) bool {
 
 func (mm *MinMax) isMinMaxValid() bool {
 	if mm.Min != nil && mm.Max != nil {
-		return *mm.Max >= *mm.Min
+		return *mm.Max > *mm.Min
 	}
 	return true
 }
