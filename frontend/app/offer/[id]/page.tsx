@@ -16,11 +16,7 @@ export default async function Page(props: { params: Promise<{id: string }> }) {
                 <div className="mx-10" />
                 <div className="flex flex-col gap-4">
                     <div className="md:h-120 md:w-200 border-0 border-gray-300">
-                        {/* <Suspense fallback={<CarImageOfferPageSkeleton />}>
-                            <Photos imagesURLs={offer.imagesURLs} />
-                        </Suspense> */}
                         <Photos imagesURLs={offer.imagesURLs} />
-                        {/* Add your offer details here */}
                     </div>
                 </div>
             </div>

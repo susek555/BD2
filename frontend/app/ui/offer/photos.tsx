@@ -1,5 +1,7 @@
 'use client';
 
+// To mock images via url, run http-server . --cors in public/offer
+
 import { useState } from "react";
 
 export default function Photos({ imagesURLs }: { imagesURLs: string[] }) {
@@ -21,17 +23,17 @@ export default function Photos({ imagesURLs }: { imagesURLs: string[] }) {
             newSrc[index] = fallbackImage;
             return newSrc;
         });
-        console.error(`Nie udało się załadować obrazu: ${imagesURLs[index]}. Wczytano obraz zastępczy.`);
+        console.log(`Failed to load image: ${imagesURLs[index]}. Placeholder was loaded.`);
     };
 
     return (
         <div className="flex flex-col items-center gap-4">
-            <div className="relative w-full border border-gray-300">
+            <div className="relative w-full md:h-120 border border-gray-300 flex justify-center items-center">
                 <img
                     src={imageSrc[currentIndex]}
                     alt={`Image ${currentIndex + 1}`}
                     onError={() => handleError(currentIndex)}
-                    className="w-full h-auto md:h-120 object-cover"
+                    className="max-w-full max-h-full"
                 />
             </div>
             <div className="flex items-center gap-2">
