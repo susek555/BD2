@@ -10,6 +10,7 @@ var (
 	ErrInvalidFuelType     error = errors.New("invalid fuel type")
 	ErrInvalidTransmission error = errors.New("invalid transmission")
 	ErrInvalidDrive        error = errors.New("invalid drive")
+	ErrInvalidRange        error = errors.New("the min value should be lower than max")
 )
 
 var ErrorMap = map[error]int{
