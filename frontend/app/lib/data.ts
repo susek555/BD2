@@ -1,4 +1,4 @@
-import { FilterFieldData, RangeFieldData, SaleOffer, SearchParams } from "./definitions";
+import { FilterFieldData, RangeFieldData, SaleOffer, SaleOfferDetails, SearchParams } from "./definitions";
 
 // Sorting
 
@@ -162,4 +162,19 @@ export async function fetchHomePageData(params: SearchParams) : Promise<{totalPa
         console.error("Api error:", error);
         throw new Error('Failed to fetch home page data.');
     }
+}
+
+// Offer page
+export async function fetchOfferDetails(id: string) : Promise<SaleOfferDetails> {
+    // TODO connect API
+    const data: SaleOfferDetails = {
+        id: "1",
+        name: "Audi A4",
+        images: [
+            "http://localhost:8080/test_car_image_1.webp",
+            "http://localhost:8080/test_car_image_2.webp",
+            "http://localhost:8080/test_car_image_3.webp",
+        ] // temp mock
+    };
+    return data;
 }
