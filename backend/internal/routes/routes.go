@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/bid"
 	"log"
 	"os"
 
@@ -27,6 +28,7 @@ func RegisterRoutes(router *gin.Engine) {
 	registerCarRoutes(router)
 	registerSaleOfferRoutes(router)
 	registerAuctionRoutes(router)
+	registerBidRoutes(router)
 }
 
 func initializeVerifier() (*jwt.JWTVerifier, []byte) {
@@ -87,7 +89,7 @@ func registerCarRoutes(router *gin.Engine) {
 	modelHandler := model.NewHandler(modelService)
 	manufacturerRepo := manufacturer.NewManufacturerRepository(initializers.DB)
 	manufacturerService := manufacturer.NewManufacturerService(manufacturerRepo)
-	manufacrerHandler := manufacturer.NewHandler(manufacturerService)
+	manufacturerHandler := manufacturer.NewHandler(manufacturerService)
 	carHandler := car_params.NewHandler()
 	carRoutes := router.Group("/car")
 	{
@@ -95,7 +97,7 @@ func registerCarRoutes(router *gin.Engine) {
 		carRoutes.GET("/transmissions", carHandler.GetPossibleTransmissions)
 		carRoutes.GET("/fuel-types", carHandler.GetPossibleFuelTypes)
 		carRoutes.GET("/drives", carHandler.GetPossibleDrives)
-		carRoutes.GET("/manufactures", manufacrerHandler.GetAllManufactures)
+		carRoutes.GET("/manufactures", manufacturerHandler.GetAllManufactures)
 		carRoutes.GET("/models/id/:id", modelHandler.GetModelsByManufacturerID)
 		carRoutes.GET("/models/name/:name", modelHandler.GetModelsByManufacturerName)
 	}
@@ -128,4 +130,12 @@ func registerAuctionRoutes(router *gin.Engine) {
 	auctionRoutes.PUT("/", auctionHandler.UpdateAuction)
 	auctionRoutes.DELETE("/:id", auctionHandler.DeleteAuctionById)
 
+}
+
+func registerBidRoutes(router *gin.Engine) {
+	bidRepo := bid.NewBidRepository(initializers.DB)
+	bidService := bid.NewBidService(bidRepo)
+	bidHandler := bid.NewHandler(bidService)
+	bidRoutes := router.Group("/bid")
+	bidRoutes.POST("/", bidHandler.CreateBid)
 }
