@@ -6,6 +6,7 @@ import (
 	"gorm.io/gorm/clause"
 )
 
+//go:generate mockery --name=BidRepositoryInterface --output=../../test/mocks --case=snake --with-expecter
 type BidRepositoryInterface interface {
 	Create(bid *Bid) error
 	GetById(id uint) (*Bid, error)
