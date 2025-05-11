@@ -282,22 +282,24 @@ func (_c *UserRepositoryInterface_GetByEmail_Call) RunAndReturn(run func(string)
 }
 
 // GetById provides a mock function with given fields: id
-func (_m *UserRepositoryInterface) GetById(id uint) (user.User, error) {
+func (_m *UserRepositoryInterface) GetById(id uint) (*user.User, error) {
 	ret := _m.Called(id)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetById")
 	}
 
-	var r0 user.User
+	var r0 *user.User
 	var r1 error
-	if rf, ok := ret.Get(0).(func(uint) (user.User, error)); ok {
+	if rf, ok := ret.Get(0).(func(uint) (*user.User, error)); ok {
 		return rf(id)
 	}
-	if rf, ok := ret.Get(0).(func(uint) user.User); ok {
+	if rf, ok := ret.Get(0).(func(uint) *user.User); ok {
 		r0 = rf(id)
 	} else {
-		r0 = ret.Get(0).(user.User)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*user.User)
+		}
 	}
 
 	if rf, ok := ret.Get(1).(func(uint) error); ok {
@@ -327,12 +329,12 @@ func (_c *UserRepositoryInterface_GetById_Call) Run(run func(id uint)) *UserRepo
 	return _c
 }
 
-func (_c *UserRepositoryInterface_GetById_Call) Return(_a0 user.User, _a1 error) *UserRepositoryInterface_GetById_Call {
+func (_c *UserRepositoryInterface_GetById_Call) Return(_a0 *user.User, _a1 error) *UserRepositoryInterface_GetById_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *UserRepositoryInterface_GetById_Call) RunAndReturn(run func(uint) (user.User, error)) *UserRepositoryInterface_GetById_Call {
+func (_c *UserRepositoryInterface_GetById_Call) RunAndReturn(run func(uint) (*user.User, error)) *UserRepositoryInterface_GetById_Call {
 	_c.Call.Return(run)
 	return _c
 }
