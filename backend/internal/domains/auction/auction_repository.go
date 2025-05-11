@@ -19,7 +19,7 @@ func NewAuctionRepository(db *gorm.DB) AuctionRepositoryInterface {
 }
 
 func (a *AuctionRepository) Create(auction *sale_offer.Auction) error {
-	return a.DB.Preload("Offer.Car.Model.Manufacturer").
+	return a.DB.
 		Session(&gorm.Session{FullSaveAssociations: true}).
 		Transaction(func(tx *gorm.DB) error {
 			err := tx.Create(auction).Error
