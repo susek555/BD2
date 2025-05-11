@@ -13,3 +13,6 @@ create-docs:
 reload-database:
 	rm data/test.db
 	touch data/test.db
+
+test-unit:
+	go test ./internal/test/... -tags unit
