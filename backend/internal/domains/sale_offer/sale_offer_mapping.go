@@ -41,6 +41,7 @@ func (dto *CreateSaleOfferDTO) MapToSaleOffer() (*SaleOffer, error) {
 }
 
 func (offer *SaleOffer) MapToDTO() *RetrieveSaleOfferDTO {
+	buyNow, endDate := offer.prepareAuctionValues()
 	return &RetrieveSaleOfferDTO{
 		Description:        offer.Description,
 		Price:              offer.Price,
@@ -61,7 +62,16 @@ func (offer *SaleOffer) MapToDTO() *RetrieveSaleOfferDTO {
 		Drive:              offer.Car.Drive,
 		Brand:              offer.Car.Model.Manufacturer.Name,
 		Model:              offer.Car.Model.Name,
+		DateEnd:            endDate,
+		BuyNowPrice:        buyNow,
 	}
+}
+
+func (offer *SaleOffer) prepareAuctionValues() (*uint, *time.Time) {
+	if offer.Auction == nil {
+		return nil, nil
+	}
+	return &offer.Auction.BuyNowPrice, &offer.Auction.DateEnd
 }
 
 func parseDate(date string) (time.Time, error) {

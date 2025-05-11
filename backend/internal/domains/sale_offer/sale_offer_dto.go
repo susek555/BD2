@@ -1,6 +1,8 @@
 package sale_offer
 
 import (
+	"time"
+
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
 )
 
@@ -45,4 +47,6 @@ type RetrieveSaleOfferDTO struct {
 	Drive              car_params.Drive        `json:"drive"`
 	Brand              string                  `json:"brand"`
 	Model              string                  `json:"model"`
+	DateEnd            *time.Time              `json:"date_end,omitempty"`
+	BuyNowPrice        *uint                   `json:"buy_now_price,omitempty"`
 }
