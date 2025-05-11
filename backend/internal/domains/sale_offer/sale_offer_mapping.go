@@ -20,6 +20,7 @@ func (dto *CreateSaleOfferDTO) MapToSaleOffer() (*SaleOffer, error) {
 		Description: dto.Description,
 		Price:       dto.Price,
 		Margin:      dto.Margin,
+		DateOfIssue: dto.DateOfIssue,
 		Car: &car.Car{
 			Vin:                dto.Vin,
 			ProductionYear:     dto.ProductionYear,
@@ -46,6 +47,7 @@ func (offer *SaleOffer) MapToDTO() *RetrieveSaleOfferDTO {
 		Description:        offer.Description,
 		Price:              offer.Price,
 		Margin:             offer.Margin,
+		DateOfIssue:        offer.DateOfIssue,
 		Vin:                offer.Car.Vin,
 		ProductionYear:     offer.Car.ProductionYear,
 		Mileage:            offer.Car.Mileage,
