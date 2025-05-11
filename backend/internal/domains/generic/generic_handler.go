@@ -9,7 +9,7 @@ func (handler GenericHandler[T, S]) Create(entity T) error {
 	return err
 }
 
-func (handler GenericHandler[T, S]) GetByID(id uint) (T, error) {
+func (handler GenericHandler[T, S]) GetByID(id uint) (*T, error) {
 	return handler.Service.GetById(id)
 }
 

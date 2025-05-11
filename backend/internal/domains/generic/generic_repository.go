@@ -9,7 +9,7 @@ type GormRepository[T any] struct {
 type CRUDRepository[T any] interface {
 	Create(entity *T) error
 	GetAll() ([]T, error)
-	GetById(id uint) (T, error)
+	GetById(id uint) (*T, error)
 	Update(entity *T) error
 	Delete(id uint) error
 }
@@ -29,10 +29,10 @@ func (repo *GormRepository[T]) GetAll() ([]T, error) {
 	return entities, err
 }
 
-func (repo *GormRepository[T]) GetById(id uint) (T, error) {
+func (repo *GormRepository[T]) GetById(id uint) (*T, error) {
 	var entity T
 	err := repo.DB.First(&entity, id).Error
-	return entity, err
+	return &entity, err
 }
 
 func (repo *GormRepository[T]) Update(entity *T) error {
