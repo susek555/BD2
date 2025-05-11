@@ -145,6 +145,7 @@ export type SaleOfferDetails = {
   // color: string;
   price: number;
   isAuction: boolean;
+  auctionData?: AuctionData;
   // description: string;
   imagesURLs: string[]; // URLs to images
   // location: string; // city or region
@@ -152,4 +153,9 @@ export type SaleOfferDetails = {
   //   phoneNumber: string;
   //   email: string;
   // };
+}
+
+export type AuctionData = {
+  currentBid: number;
+  endDate: Date;
 }
