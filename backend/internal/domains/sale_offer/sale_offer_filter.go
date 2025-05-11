@@ -1,6 +1,8 @@
 package sale_offer
 
 import (
+	"cmp"
+
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
 	"gorm.io/gorm"
 )
@@ -15,26 +17,27 @@ const (
 
 var OfferTypes = []OfferType{REGULAR_OFFER, AUCTION, BOTH}
 
-type MinMax struct {
-	Min *uint `json:"min"`
-	Max *uint `json:"max"`
+type MinMax[T cmp.Ordered] struct {
+	Min *T `json:"min"`
+	Max *T `json:"max"`
 }
 
 type OfferFilter struct {
-	OrderKeys             *[]string                  `json:"order_keys"`
-	IsOrderDesc           *bool                      `json:"is_order_desc"`
-	OfferType             *OfferType                 `json:"offer_type"`
-	Manufacturers         *[]string                  `json:"manufacturers"`
-	Colors                *[]car_params.Color        `json:"colors"`
-	Drives                *[]car_params.Drive        `json:"drives"`
-	FuelTypes             *[]car_params.FuelType     `json:"fuel_types"`
-	Transmissions         *[]car_params.Transmission `json:"transmissions"`
-	PriceRange            *MinMax                    `json:"price_range"`
-	MileageRange          *MinMax                    `json:"mileage_range"`
-	YearRange             *MinMax                    `json:"year_range"`
-	EnginePowerRange      *MinMax                    `json:"engine_power_range"`
-	EngineCapacityRange   *MinMax                    `json:"engine_capacity_range"`
-	RegistrationDateRagne *MinMax                    `json:"registration_date_range"`
+	OrderKeys                *[]string                  `json:"order_keys"`
+	IsOrderDesc              *bool                      `json:"is_order_desc"`
+	OfferType                *OfferType                 `json:"offer_type"`
+	Manufacturers            *[]string                  `json:"manufacturers"`
+	Colors                   *[]car_params.Color        `json:"colors"`
+	Drives                   *[]car_params.Drive        `json:"drives"`
+	FuelTypes                *[]car_params.FuelType     `json:"fuel_types"`
+	Transmissions            *[]car_params.Transmission `json:"transmissions"`
+	PriceRange               *MinMax[uint]              `json:"price_range"`
+	MileageRange             *MinMax[uint]              `json:"mileage_range"`
+	YearRange                *MinMax[uint]              `json:"year_range"`
+	EnginePowerRange         *MinMax[uint]              `json:"engine_power_range"`
+	EngineCapacityRange      *MinMax[uint]              `json:"engine_capacity_range"`
+	CarRegistrationDateRagne *MinMax[string]            `json:"car_registration_date_range"`
+	OfferCreationDateRange   *MinMax[string]            `json:"offer_creation_date_range"`
 }
 
 func (of *OfferFilter) ApplyOfferFilters(query *gorm.DB) (*gorm.DB, error) {
@@ -51,7 +54,8 @@ func (of *OfferFilter) ApplyOfferFilters(query *gorm.DB) (*gorm.DB, error) {
 	query = applyInRangeFilter(query, "cars.mileage", of.MileageRange)
 	query = applyInRangeFilter(query, "cars.engine_power", of.EnginePowerRange)
 	query = applyInRangeFilter(query, "cars.engine_capacity", of.EngineCapacityRange)
-	query = applyInRangeFilter(query, "cars.registration_date", of.RegistrationDateRagne)
+	query = applyDateInRangeFilter(query, "cars.registration_date", of.CarRegistrationDateRagne)
+	query = applyDateInRangeFilter(query, "date_of_issue", of.OfferCreationDateRange)
 	return query, nil
 }
 
@@ -86,7 +90,7 @@ func applyInSliceFilter[T any](query *gorm.DB, column string, values *[]T) *gorm
 	return query
 }
 
-func applyInRangeFilter(query *gorm.DB, column string, minmax *MinMax) *gorm.DB {
+func applyInRangeFilter[T cmp.Ordered](query *gorm.DB, column string, minmax *MinMax[T]) *gorm.DB {
 	if minmax == nil {
 		return query
 	}
@@ -97,6 +101,11 @@ func applyInRangeFilter(query *gorm.DB, column string, minmax *MinMax) *gorm.DB 
 		query = query.Where(column+" > ?", *minmax.Min)
 	}
 	return query
+}
+
+func applyDateInRangeFilter(query *gorm.DB, column string, minmax *MinMax[string]) *gorm.DB {
+	dates, _ := parseDateRange(minmax)
+	return applyInRangeFilter(query, column, dates)
 }
 
 func (of *OfferFilter) validateParams() error {
@@ -129,13 +138,35 @@ func (of *OfferFilter) validateEnums() error {
 }
 
 func (of *OfferFilter) validateRanges() error {
-	ranges := []*MinMax{of.PriceRange, of.YearRange, of.EnginePowerRange, of.EngineCapacityRange}
+	creationDates, err := parseDateRange(of.OfferCreationDateRange)
+	if err != nil {
+		return err
+	}
+	registrationDates, err := parseDateRange(of.CarRegistrationDateRagne)
+	if err != nil {
+		return err
+	}
+	ranges := []*MinMax[uint]{of.PriceRange, of.YearRange, of.EnginePowerRange, of.EngineCapacityRange, creationDates, registrationDates}
 	for _, r := range ranges {
 		if r != nil && !r.isMinMaxValid() {
 			return ErrInvalidRange
 		}
 	}
 	return nil
+}
+
+func parseDateRange(minmax *MinMax[string]) (*MinMax[uint], error) {
+	min, err := parseDate(*minmax.Min)
+	if err != nil {
+		return nil, err
+	}
+	max, err := parseDate(*minmax.Max)
+	if err != nil {
+		return nil, err
+	}
+	minUint := uint(min.Unix())
+	maxUint := uint(max.Unix())
+	return &MinMax[uint]{Min: &minUint, Max: &maxUint}, nil
 }
 
 func areParamsValid[T comparable](params *[]T, validParams *[]T) bool {
@@ -147,7 +178,7 @@ func areParamsValid[T comparable](params *[]T, validParams *[]T) bool {
 	return true
 }
 
-func (mm *MinMax) isMinMaxValid() bool {
+func (mm *MinMax[T]) isMinMaxValid() bool {
 	if mm.Min != nil && mm.Max != nil {
 		return *mm.Max > *mm.Min
 	}
