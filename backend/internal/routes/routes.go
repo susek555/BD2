@@ -143,5 +143,5 @@ func registerBidRoutes(router *gin.Engine) {
 	bidRoutes.GET("/bidder/:id", bidHandler.GetBidsByBidderId)
 	bidRoutes.GET("/auction/:id", bidHandler.GetBidsByAuctionId)
 	bidRoutes.GET("/highest/:id", bidHandler.GetHighestBid)
-	bidRoutes.GET("/highest/:auctionId/bidder/:bidderId", bidHandler.GetHighestBidByUserId)
+	bidRoutes.GET("/highest/auction/:auctionId/bidder/:bidderId", bidHandler.GetHighestBidByUserId)
 }
