@@ -52,7 +52,7 @@ func (h *Handler) GetBidByID(c *gin.Context) {
 }
 
 func (h *Handler) GetBidsByBidderId(c *gin.Context) {
-	bidderId, err := strconv.ParseUint(c.Param("bidder"), 10, 32)
+	bidderId, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
@@ -64,7 +64,7 @@ func (h *Handler) GetBidsByBidderId(c *gin.Context) {
 }
 
 func (h *Handler) GetBidsByAuctionId(c *gin.Context) {
-	auctionId, err := strconv.ParseUint(c.Param("auctionId"), 10, 32)
+	auctionId, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
@@ -76,7 +76,7 @@ func (h *Handler) GetBidsByAuctionId(c *gin.Context) {
 }
 
 func (h *Handler) GetHighestBid(c *gin.Context) {
-	auctionId, err := strconv.ParseUint(c.Param("auctionId"), 10, 32)
+	auctionId, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
