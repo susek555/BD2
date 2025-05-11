@@ -1,6 +1,6 @@
 "use client"
 
-import { BaseAccountButton } from "@/app/ui/(home)/base-account-buttons/base-account-button";
+import { BaseAccountButton } from "@/app/ui/(topbar)/base-account-buttons/base-account-button";
 import { ArrowLeftIcon } from '@heroicons/react/20/solid';
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";

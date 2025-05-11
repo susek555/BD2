@@ -1,6 +1,6 @@
 import { authConfig } from "@/app/lib/authConfig";
-import { BaseAccountButton } from "@/app/ui/(home)/base-account-buttons/base-account-button";
-import { ClientLogoutButton } from "@/app/ui/(home)/client-logout-button";
+import { BaseAccountButton } from "@/app/ui/(topbar)/base-account-buttons/base-account-button";
+import { ClientLogoutButton } from "@/app/ui/(topbar)/client-logout-button";
 import { ArrowRightIcon, UserCircleIcon } from '@heroicons/react/20/solid';
 import { getServerSession } from "next-auth/next";
 import Link from "next/link";
