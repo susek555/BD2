@@ -170,7 +170,7 @@ export async function fetchOfferDetails(id: string) : Promise<SaleOfferDetails> 
     const data: SaleOfferDetails = {
         name: "Volkswagen Golf",
         imagesURLs: [
-            "http://localhost:808/test_car_image_1.webp",
+            "http://localhost:8081/test_car_image_1.webp",
             "http://localhost:808/test_car_image_2.webp",
             "http://localhost:808/test_car_image_3.webp",
         ] // temp mock
