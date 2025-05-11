@@ -5,9 +5,8 @@ package review_tests
 
 import (
 	"errors"
-	"testing"
-
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/review"
+	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
