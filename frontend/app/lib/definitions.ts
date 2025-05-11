@@ -137,3 +137,20 @@ export type SaleOffer = {
   price: number;
   isAuction: boolean;
 }
+
+export type SaleOfferDetails = {
+  id: string;
+  name: string; // producer and model
+  // productionYear: number;
+  // mileage: number;
+  // color: string;
+  // price: number;
+  // isAuction: boolean;
+  // description: string;
+  images: string[]; // URLs to images
+  // location: string; // city or region
+  // contactInfo: {
+  //   phoneNumber: string;
+  //   email: string;
+  // };
+}
