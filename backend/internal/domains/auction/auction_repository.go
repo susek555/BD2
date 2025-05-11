@@ -7,6 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
+//go:generate mockery --name=AuctionRepositoryInterface --output=../../test/mocks --case=snake --with-expecter
 type AuctionRepositoryInterface interface {
 	generic.CRUDRepository[sale_offer.Auction]
 }
