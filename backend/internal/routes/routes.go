@@ -125,7 +125,7 @@ func registerAuctionRoutes(router *gin.Engine) {
 	auctionRoutes.GET("/", auctionHandler.GetAllAuctions)
 	auctionRoutes.GET("/:id", auctionHandler.GetAuctionById)
 	auctionRoutes.POST("/", auctionHandler.CreateAuction)
-	auctionRoutes.PUT("/:id", auctionHandler.UpdateAuction)
+	auctionRoutes.PUT("/", auctionHandler.UpdateAuction)
 	auctionRoutes.DELETE("/:id", auctionHandler.DeleteAuctionById)
 
 }
