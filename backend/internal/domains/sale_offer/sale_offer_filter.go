@@ -13,6 +13,8 @@ const (
 	BOTH          OfferType = "Both"
 )
 
+var OfferTypes = []OfferType{REGULAR_OFFER, AUCTION, BOTH}
+
 type MinMax struct {
 	Min *uint `json:"min"`
 	Max *uint `json:"max"`
@@ -52,6 +54,8 @@ func (of *OfferFilter) ApplyOfferFilters(query *gorm.DB) (*gorm.DB, error) {
 	return query, nil
 }
 
+// func applyOfferTypeFilter(query *gorm.DB, offerType *string) *gorm.DB {
+// }
 func applyManufacturesrsFilter(query *gorm.DB, values *[]string) *gorm.DB {
 	if values != nil && len(*values) > 0 {
 		query = query.
@@ -63,7 +67,6 @@ func applyManufacturesrsFilter(query *gorm.DB, values *[]string) *gorm.DB {
 }
 
 func applyInSliceFilter[T any](query *gorm.DB, column string, values *[]T) *gorm.DB {
-
 	if values != nil && len(*values) > 0 {
 		query = query.Where(column+" IN ?", *values)
 	}
@@ -94,6 +97,9 @@ func (of *OfferFilter) validateParams() error {
 }
 
 func (of *OfferFilter) validateEnums() error {
+	if !IsParamValid(*of.OfferType, OfferTypes) {
+		return ErrInvalidSaleOfferType
+	}
 	if of.Colors != nil && !areParamsValid(of.Colors, &car_params.Colors) {
 		return ErrInvalidColor
 	}
