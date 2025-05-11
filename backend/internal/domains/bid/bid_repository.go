@@ -1,6 +1,10 @@
 package bid
 
-import "gorm.io/gorm"
+import (
+	"errors"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
+)
 
 type BidRepositoryInterface interface {
 	Create(bid *Bid) error
@@ -16,6 +20,10 @@ type BidRepository struct {
 	DB *gorm.DB
 }
 
+var (
+	ErrBidTooLow = errors.New("bid is lower than current highest")
+)
+
 func NewBidRepository(db *gorm.DB) BidRepositoryInterface {
 	return &BidRepository{
 		DB: db,
@@ -23,10 +31,24 @@ func NewBidRepository(db *gorm.DB) BidRepositoryInterface {
 }
 
 func (b *BidRepository) Create(bid *Bid) error {
-	if err := b.DB.Create(bid).Error; err != nil {
-		return err
-	}
-	return nil
+	return b.DB.Transaction(func(tx *gorm.DB) error {
+		var highest Bid
+
+		err := tx.
+			Clauses(clause.Locking{Strength: "UPDATE"}).
+			Where("auction_id = ?", bid.AuctionID).
+			Order("amount DESC").
+			Limit(1).
+			Take(&highest).Error
+		if err != nil {
+			return err
+		}
+		if highest.Amount >= bid.Amount {
+			return ErrBidTooLow
+		}
+
+		return tx.Create(bid).Error
+	})
 }
 
 func (b *BidRepository) GetAll() ([]Bid, error) {
