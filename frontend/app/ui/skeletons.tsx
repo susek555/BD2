@@ -18,8 +18,36 @@ export function OffersFoundSkeleton() {
     )
 }
 
-export function CarImageSkeleton() {
+export function CarImageHomePageSkeleton() {
     return (
         <img src="/(home)/car_placeholder.png" alt="Car placeholder" className="h-35 w-70 object-cover rounded" />
     )
 }
+
+export function CarImageOfferPageSkeleton() {
+    return (
+        <div className="flex flex-col items-center gap-4">
+            <div className="w-full flex flex-col items-center border border-gray-300" >
+                <div className="relative w-full max-w-lg overflow-hidden">
+                    <img src="/(home)/car_placeholder.png" alt="Car placeholder" className="w-full h-auto md:h-120 object-cover rounded scale-140" />
+                </div>
+            </div>
+            <div className="flex items-center gap-2">
+                <button
+                    className="bg-gray-800 text-white px-2 py-1 rounded"
+                >
+                    &#8592;
+                </button>
+                <p>
+                    0 / 0
+                </p>
+                <button
+                    className="bg-gray-800 text-white px-2 py-1 rounded"
+                >
+                    &#8594;
+                </button>
+            </div>
+        </div>
+    )
+}
+

@@ -15,28 +15,30 @@ export default function Photos({ imagesURLs }: { imagesURLs: string[] }) {
 
     return (
         <div className="flex flex-col items-center gap-4">
-            <div className="relative w-full max-w-lg">
+            <div className="relative w-full">
                 <img
                     src={imagesURLs[currentIndex]}
                     alt={`Image ${currentIndex + 1}`}
-                    className="w-full h-auto object-cover"
+                    className="w-full h-auto md:h-120 object-cover"
                 />
+            </div>
+            <div className="flex items-center gap-2">
                 <button
                     onClick={handlePrev}
-                    className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-2 py-1 rounded"
+                    className="bg-gray-800 text-white px-2 py-1 rounded"
                 >
                     &#8592;
                 </button>
+                <p>
+                    {currentIndex + 1} / {imagesURLs.length}
+                </p>
                 <button
                     onClick={handleNext}
-                    className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-2 py-1 rounded"
+                    className="bg-gray-800 text-white px-2 py-1 rounded"
                 >
                     &#8594;
                 </button>
             </div>
-            <p>
-                {currentIndex + 1} / {imagesURLs.length}
-            </p>
         </div>
     );
 }
