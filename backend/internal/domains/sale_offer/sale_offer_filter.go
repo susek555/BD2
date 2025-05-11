@@ -5,6 +5,14 @@ import (
 	"gorm.io/gorm"
 )
 
+type OfferType string
+
+const (
+	REGULAR_OFFER OfferType = "Reuglar offer"
+	AUCTION       OfferType = "Auction"
+	BOTH          OfferType = "Both"
+)
+
 type MinMax struct {
 	Min *uint `json:"min"`
 	Max *uint `json:"max"`
@@ -13,7 +21,7 @@ type MinMax struct {
 type OfferFilter struct {
 	OrderKeys             *[]string                  `json:"order_keys"`
 	IsOrderDesc           *bool                      `json:"is_order_desc"`
-	OfferType             *string                    `json:"offer_type"`
+	OfferType             *OfferType                 `json:"offer_type"`
 	Manufacturers         *[]string                  `json:"manufacturers"`
 	Colors                *[]car_params.Color        `json:"colors"`
 	Drives                *[]car_params.Drive        `json:"drives"`
@@ -31,6 +39,7 @@ func (of *OfferFilter) ApplyOfferFilters(query *gorm.DB) (*gorm.DB, error) {
 	if err := of.validateParams(); err != nil {
 		return nil, err
 	}
+	query = applyManufacturesrsFilter(query, of.Manufacturers)
 	query = applyInSliceFilter(query, "cars.color", of.Colors)
 	query = applyInSliceFilter(query, "cars.drive", of.Drives)
 	query = applyInSliceFilter(query, "cars.fuel_type", of.FuelTypes)
@@ -41,6 +50,16 @@ func (of *OfferFilter) ApplyOfferFilters(query *gorm.DB) (*gorm.DB, error) {
 	query = applyInRangeFilter(query, "cars.engine_capacity", of.EngineCapacityRange)
 	query = applyInRangeFilter(query, "cars.registration_date", of.RegistrationDateRagne)
 	return query, nil
+}
+
+func applyManufacturesrsFilter(query *gorm.DB, values *[]string) *gorm.DB {
+	if values != nil && len(*values) > 0 {
+		query = query.
+			Joins("JOIN models ON models.id = cars.model_id").
+			Joins("JOIN manufacturers ON manufacturers.id = models.manufacturer_id").
+			Where("manufacturers.name IN ?", *values)
+	}
+	return query
 }
 
 func applyInSliceFilter[T any](query *gorm.DB, column string, values *[]T) *gorm.DB {
