@@ -29,7 +29,7 @@ export function CarImageOfferPageSkeleton() {
         <div className="flex flex-col items-center gap-4">
             <div className="w-full flex flex-col items-center border border-gray-300" >
                 <div className="relative w-full max-w-lg overflow-hidden">
-                    <img src="/(home)/car_placeholder.png" alt="Car placeholder" className="w-full h-auto md:h-120 object-cover rounded scale-140" />
+                    <img src="/(home)/car_placeholder.png" alt="Car placeholder" className="w-full h-auto md:h-130 object-cover rounded scale-140" />
                 </div>
             </div>
             <div className="flex items-center gap-2">

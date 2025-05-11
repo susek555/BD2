@@ -8,7 +8,7 @@ export default function Loading() {
             <div className="flex flex-row">
                 <div className="mx-10" />
                 <div className="flex flex-col gap-4">
-                    <div className="md:h-120 md:w-200 border-0 border-gray-300">
+                    <div className="md:h-130 md:w-230 border-0 border-gray-300">
                         <CarImageOfferPageSkeleton />
                     </div>
                 </div>
