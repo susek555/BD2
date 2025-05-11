@@ -65,7 +65,9 @@ func (a *AuctionRepository) Update(auction *sale_offer.Auction) error {
 		if err := tx.Save(auction).Error; err != nil {
 			return err
 		}
-		return nil
+		return tx.
+			Preload("Offer.Car.Model.Manufacturer").
+			First(auction, "offer_id = ?", auction.OfferID).Error
 	})
 }
 
