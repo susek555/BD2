@@ -1,6 +1,6 @@
 "use client";
 
-import { signup } from '@/app/actions/auth';
+import { signup } from '@/app/actions/signup';
 import { SignupFormState } from '@/app/lib/definitions';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import {
