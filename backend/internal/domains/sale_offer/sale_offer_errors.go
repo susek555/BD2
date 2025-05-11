@@ -12,6 +12,7 @@ var (
 	ErrInvalidDrive         error = errors.New("invalid drive")
 	ErrInvalidSaleOfferType error = errors.New("invalid sale offer type")
 	ErrInvalidRange         error = errors.New("the min value should be lower than max")
+	ErrInvalidDateFromat    error = errors.New("invalid date format, should be YYYY-MM-DD")
 )
 
 var ErrorMap = map[error]int{

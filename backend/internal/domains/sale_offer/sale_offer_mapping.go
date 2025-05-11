@@ -30,7 +30,7 @@ func (dto *CreateSaleOfferDTO) MapToSaleOffer() (*SaleOffer, error) {
 			EnginePower:        dto.EnginePower,
 			EngineCapacity:     dto.EngineCapacity,
 			RegistrationNumber: dto.RegistrationNumber,
-			RegistrationDate:   date,
+			RegistrationDate:   *date,
 			Color:              dto.Color,
 			FuelType:           dto.FuelType,
 			Transmission:       dto.Transmission,
@@ -76,13 +76,13 @@ func (offer *SaleOffer) prepareAuctionValues() (*uint, *time.Time) {
 	return &offer.Auction.BuyNowPrice, &offer.Auction.DateEnd
 }
 
-func parseDate(date string) (time.Time, error) {
+func parseDate(date string) (*time.Time, error) {
 	layout := "2006-01-02"
 	t, err := time.Parse(layout, date)
 	if err != nil {
-		return time.Time{}, err
+		return nil, err
 	}
-	return t, nil
+	return &t, nil
 }
 
 func IsParamValid[T comparable](param T, validParams []T) bool {

@@ -1,7 +1,7 @@
 package sale_offer
 
 import (
-	"cmp"
+	"time"
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
 	"gorm.io/gorm"
@@ -17,7 +17,7 @@ const (
 
 var OfferTypes = []OfferType{REGULAR_OFFER, AUCTION, BOTH}
 
-type MinMax[T cmp.Ordered] struct {
+type MinMax[T uint | string | time.Time] struct {
 	Min *T `json:"min"`
 	Max *T `json:"max"`
 }
@@ -90,7 +90,7 @@ func applyInSliceFilter[T any](query *gorm.DB, column string, values *[]T) *gorm
 	return query
 }
 
-func applyInRangeFilter[T cmp.Ordered](query *gorm.DB, column string, minmax *MinMax[T]) *gorm.DB {
+func applyInRangeFilter[T uint | time.Time](query *gorm.DB, column string, minmax *MinMax[T]) *gorm.DB {
 	if minmax == nil {
 		return query
 	}
@@ -104,12 +104,18 @@ func applyInRangeFilter[T cmp.Ordered](query *gorm.DB, column string, minmax *Mi
 }
 
 func applyDateInRangeFilter(query *gorm.DB, column string, minmax *MinMax[string]) *gorm.DB {
-	dates, _ := parseDateRange(minmax)
-	return applyInRangeFilter(query, column, dates)
+	if minmax != nil {
+		dates, _ := parseDateRange(minmax)
+		return applyInRangeFilter(query, column, dates)
+	}
+	return query
 }
 
 func (of *OfferFilter) validateParams() error {
 	if err := of.validateEnums(); err != nil {
+		return err
+	}
+	if err := of.validateDates(); err != nil {
 		return err
 	}
 	if err := of.validateRanges(); err != nil {
@@ -138,35 +144,55 @@ func (of *OfferFilter) validateEnums() error {
 }
 
 func (of *OfferFilter) validateRanges() error {
-	creationDates, err := parseDateRange(of.OfferCreationDateRange)
-	if err != nil {
-		return err
-	}
-	registrationDates, err := parseDateRange(of.CarRegistrationDateRagne)
-	if err != nil {
-		return err
-	}
-	ranges := []*MinMax[uint]{of.PriceRange, of.YearRange, of.EnginePowerRange, of.EngineCapacityRange, creationDates, registrationDates}
+	ranges := []*MinMax[uint]{of.PriceRange, of.YearRange, of.EnginePowerRange, of.EngineCapacityRange}
 	for _, r := range ranges {
-		if r != nil && !r.isMinMaxValid() {
+		if r != nil && !isMinMaxValidNumbers(*r) {
 			return ErrInvalidRange
 		}
 	}
 	return nil
 }
 
-func parseDateRange(minmax *MinMax[string]) (*MinMax[uint], error) {
-	min, err := parseDate(*minmax.Min)
-	if err != nil {
-		return nil, err
+func (of *OfferFilter) validateDates() error {
+	if err := validateDateRange(of.CarRegistrationDateRagne); err != nil {
+		return err
 	}
-	max, err := parseDate(*minmax.Max)
-	if err != nil {
-		return nil, err
+	if err := validateDateRange(of.OfferCreationDateRange); err != nil {
+		return err
 	}
-	minUint := uint(min.Unix())
-	maxUint := uint(max.Unix())
-	return &MinMax[uint]{Min: &minUint, Max: &maxUint}, nil
+	return nil
+}
+
+func validateDateRange(mm *MinMax[string]) error {
+	if mm == nil {
+		return nil
+	}
+	dates, err := parseDateRange(mm)
+	if err != nil {
+		return err
+	}
+	if !isMinMaxValidDates(*dates) {
+		return ErrInvalidRange
+	}
+	return nil
+}
+
+func parseDateRange(minmax *MinMax[string]) (*MinMax[time.Time], error) {
+	var min, max *time.Time
+	var err error
+	if minmax.Min != nil {
+		min, err = parseDate(*minmax.Min)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if minmax.Max != nil {
+		max, err = parseDate(*minmax.Max)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return &MinMax[time.Time]{Min: min, Max: max}, nil
 }
 
 func areParamsValid[T comparable](params *[]T, validParams *[]T) bool {
@@ -178,9 +204,16 @@ func areParamsValid[T comparable](params *[]T, validParams *[]T) bool {
 	return true
 }
 
-func (mm *MinMax[T]) isMinMaxValid() bool {
+func isMinMaxValidNumbers(mm MinMax[uint]) bool {
 	if mm.Min != nil && mm.Max != nil {
 		return *mm.Max > *mm.Min
+	}
+	return true
+}
+
+func isMinMaxValidDates(mm MinMax[time.Time]) bool {
+	if mm.Min != nil && mm.Max != nil {
+		return (*mm.Max).After(*mm.Min)
 	}
 	return true
 }
