@@ -3,6 +3,10 @@ import { FilterFieldData, RangeFieldData, SaleOffer, SaleOfferDetails, SearchPar
 // Sorting
 
 export async function fetchSortingOptions() : Promise<string[]> {
+
+
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
     // TODO connect API and add Suspense
     const data: string[] = ["Base", "name", "date", "price"];
 
@@ -45,6 +49,9 @@ async function fetchFuelTypes() : Promise<FilterFieldData> {
 }
 
 export async function fetchFilterFields() : Promise<FilterFieldData[]> {
+
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
     try{
         const producersData = fetchProducers();
         const gearboxesData = fetchGearboxes();
@@ -96,16 +103,24 @@ export function prepareRangeFields() : RangeFieldData[] {
 
 // Home page
 export async function fetchTotalPages(params: SearchParams) : Promise<number> {
+
     // TODO connect API
     return 10;
 }
 
 export async function fetchTotalOffers(params: SearchParams) : Promise<number> {
+
+
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
     // TODO connect API
     return 100;
 }
 
 export async function fetchOffers(params: SearchParams) : Promise<SaleOffer[]> {
+
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
     // TODO connect API
 
     const data: SaleOffer[] = [
@@ -141,6 +156,8 @@ export async function fetchOffers(params: SearchParams) : Promise<SaleOffer[]> {
 }
 
 export async function fetchHomePageData(params: SearchParams) : Promise<{totalPages: number, totalOffers: number, offers: SaleOffer[]}> {
+
+
     try{
 
         const totalPages = await fetchTotalPages(params);
@@ -174,7 +191,7 @@ export async function fetchOfferDetails(id: string) : Promise<SaleOfferDetails> 
         name: "Volkswagen Golf",
         imagesURLs: [
             "http://localhost:8081/test_car_image_1.webp",
-            "http://localhost:808/test_car_image_2.webp",
+            "http://localhost:8081/test_car_image_2.webp",
             "http://localhost:808/test_car_image_3.webp",
         ] // temp mock
     };

@@ -28,7 +28,7 @@ export default function Photos({ imagesURLs }: { imagesURLs: string[] }) {
 
     return (
         <div className="flex flex-col items-center gap-4">
-            <div className="relative w-full md:h-120 border border-gray-300 flex justify-center items-center">
+            <div className="relative w-full md:h-130 border border-gray-300 flex justify-center items-center">
                 <img
                     src={imageSrc[currentIndex]}
                     alt={`Image ${currentIndex + 1}`}
