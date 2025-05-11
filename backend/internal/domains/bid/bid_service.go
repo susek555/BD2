@@ -1,5 +1,7 @@
 package bid
 
+import "sync"
+
 type BidServiceInterface interface {
 	BidRepositoryInterface
 }
@@ -14,7 +16,15 @@ func NewBidService(repo BidRepositoryInterface) BidServiceInterface {
 	}
 }
 
+var auctionLocks sync.Map
+
 func (service *BidService) Create(bid *Bid) error {
+	l, _ := auctionLocks.LoadOrStore(bid.AuctionID, &sync.Mutex{})
+	m := l.(*sync.Mutex)
+
+	m.Lock()
+	defer m.Unlock()
+
 	return service.Repo.Create(bid)
 }
 
