@@ -64,9 +64,9 @@ func applyOfferTypeFilter(query *gorm.DB, offerType *OfferType) *gorm.DB {
 		return query
 	}
 	switch *offerType {
-	case "Auction":
+	case AUCTION:
 		return query.Where("auctions.offer_id IS NOT NULL")
-	case "Regular offer":
+	case REGULAR_OFFER:
 		return query.Where("auctions.offer_id IS NULL")
 	default:
 		return query
