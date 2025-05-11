@@ -4,10 +4,10 @@ import "gorm.io/gorm"
 
 type BidRepositoryInterface interface {
 	Create(bid *Bid) error
-	GetByID(id uint) (*Bid, error)
-	GetByBidderID(bidderID uint) ([]Bid, error)
+	GetById(id uint) (*Bid, error)
+	GetByBidderId(bidderID uint) ([]Bid, error)
 	GetAll() ([]Bid, error)
-	GetByAuctionID(auctionID uint) ([]Bid, error)
+	GetByAuctionId(auctionID uint) ([]Bid, error)
 	GetHighestBid(auctionID uint) (*Bid, error)
 	GetHighestBidByUserId(auctionID, userID uint) (*Bid, error)
 }
@@ -39,7 +39,7 @@ func (b *BidRepository) GetAll() ([]Bid, error) {
 	return bids, nil
 }
 
-func (b *BidRepository) GetByID(id uint) (*Bid, error) {
+func (b *BidRepository) GetById(id uint) (*Bid, error) {
 	db := b.DB
 	var bid Bid
 	if err := db.First(&bid, id).Error; err != nil {
@@ -48,7 +48,7 @@ func (b *BidRepository) GetByID(id uint) (*Bid, error) {
 	return &bid, nil
 }
 
-func (b *BidRepository) GetByBidderID(bidderID uint) ([]Bid, error) {
+func (b *BidRepository) GetByBidderId(bidderID uint) ([]Bid, error) {
 	db := b.DB
 	var bids []Bid
 	if err := db.Where("bidder_id = ?", bidderID).Find(&bids).Error; err != nil {
@@ -57,7 +57,7 @@ func (b *BidRepository) GetByBidderID(bidderID uint) ([]Bid, error) {
 	return bids, nil
 }
 
-func (b *BidRepository) GetByAuctionID(auctionID uint) ([]Bid, error) {
+func (b *BidRepository) GetByAuctionId(auctionID uint) ([]Bid, error) {
 	db := b.DB
 	var bids []Bid
 	if err := db.Where("auction_id = ?", auctionID).Find(&bids).Error; err != nil {
