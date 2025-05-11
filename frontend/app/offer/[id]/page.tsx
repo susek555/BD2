@@ -14,11 +14,14 @@ export default async function Page(props: { params: Promise<{id: string }> }) {
             <div className="my-3" />
             <div className="flex flex-row">
                 <div className="mx-10" />
-                <div className="flex flex-col gap-4">
-                    <div className="md:h-130 md:w-230 w-full h-full border-0 border-gray-300">
-                        <Photos imagesURLs={offer.imagesURLs} />
+                <div className="flex flex-col gap-4 w-full md:px-20">
+                    <div className="w-full h-full border-0 border-gray-300">
+                        <div className="w-full static">
+                            <Photos imagesURLs={offer.imagesURLs} />
+                        </div>
                     </div>
                 </div>
+                
             </div>
         </>
     );
