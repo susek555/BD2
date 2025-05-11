@@ -1,15 +1,13 @@
 package auction
 
 import (
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/generic"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 	"gorm.io/gorm"
 )
 
 type AuctionRepositoryInterface interface {
-	//generic.CRUDRepository[sale_offer.Auction]
-	Create(auction *sale_offer.Auction) error
-	GetAll() ([]sale_offer.Auction, error)
-	GetById(id uint) (*sale_offer.Auction, error)
+	generic.CRUDRepository[sale_offer.Auction]
 }
 
 type AuctionRepository struct {
@@ -21,23 +19,17 @@ func NewAuctionRepository(db *gorm.DB) AuctionRepositoryInterface {
 }
 
 func (a *AuctionRepository) Create(auction *sale_offer.Auction) error {
-	return a.DB.Transaction(func(tx *gorm.DB) error {
-		if err := tx.Create(auction.Offer.Car).Error; err != nil {
-			return err
-		}
-		if err := tx.Create(auction.Offer).Error; err != nil {
-			return err
-		}
-		if err := tx.Create(auction).Error; err != nil {
-			return err
-		}
-		if err := tx.
-			Preload("Offer.Car.Model.Manufacturer").
-			First(auction, "offer_id = ?", auction.OfferID).Error; err != nil {
-			return err
-		}
-		return nil
-	})
+	return a.DB.Preload("Offer.Car.Model.Manufacturer").
+		Session(&gorm.Session{FullSaveAssociations: true}).
+		Transaction(func(tx *gorm.DB) error {
+			err := tx.Create(auction).Error
+			if err != nil {
+				return err
+			}
+			return tx.
+				Preload("Offer.Car.Model.Manufacturer").
+				First(auction, "offer_id = ?", auction.OfferID).Error
+		})
 }
 
 func (a *AuctionRepository) GetAll() ([]sale_offer.Auction, error) {
@@ -66,4 +58,22 @@ func (a *AuctionRepository) GetById(id uint) (*sale_offer.Auction, error) {
 		return nil, err
 	}
 	return &auction, nil
+}
+
+func (a *AuctionRepository) Update(auction *sale_offer.Auction) error {
+	return a.DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Save(auction).Error; err != nil {
+			return err
+		}
+		return nil
+	})
+}
+
+func (a *AuctionRepository) Delete(id uint) error {
+	return a.DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Delete(&sale_offer.Auction{}, id).Error; err != nil {
+			return err
+		}
+		return nil
+	})
 }
