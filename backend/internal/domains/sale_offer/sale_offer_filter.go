@@ -128,16 +128,16 @@ func (of *OfferFilter) validateEnums() error {
 	if of.OfferType != nil && !IsParamValid(*of.OfferType, OfferTypes) {
 		return ErrInvalidSaleOfferType
 	}
-	if of.Colors != nil && !areParamsValid(of.Colors, &car_params.Colors) {
+	if of.Colors != nil && !AreParamsValid(of.Colors, &car_params.Colors) {
 		return ErrInvalidColor
 	}
-	if of.Drives != nil && !areParamsValid(of.Drives, &car_params.Drives) {
+	if of.Drives != nil && !AreParamsValid(of.Drives, &car_params.Drives) {
 		return ErrInvalidDrive
 	}
-	if of.FuelTypes != nil && !areParamsValid(of.FuelTypes, &car_params.Types) {
+	if of.FuelTypes != nil && !AreParamsValid(of.FuelTypes, &car_params.Types) {
 		return ErrInvalidFuelType
 	}
-	if of.Transmissions != nil && !areParamsValid(of.Transmissions, &car_params.Transmissions) {
+	if of.Transmissions != nil && !AreParamsValid(of.Transmissions, &car_params.Transmissions) {
 		return ErrInvalidTransmission
 	}
 	return nil
@@ -163,11 +163,11 @@ func (of *OfferFilter) validateDates() error {
 	return nil
 }
 
-func validateDateRange(mm *MinMax[string]) error {
-	if mm == nil {
+func validateDateRange(minmax *MinMax[string]) error {
+	if minmax == nil {
 		return nil
 	}
-	dates, err := parseDateRange(mm)
+	dates, err := parseDateRange(minmax)
 	if err != nil {
 		return err
 	}
@@ -181,13 +181,13 @@ func parseDateRange(minmax *MinMax[string]) (*MinMax[time.Time], error) {
 	var min, max *time.Time
 	var err error
 	if minmax.Min != nil {
-		min, err = parseDate(*minmax.Min)
+		min, err = ParseDate(*minmax.Min)
 		if err != nil {
 			return nil, err
 		}
 	}
 	if minmax.Max != nil {
-		max, err = parseDate(*minmax.Max)
+		max, err = ParseDate(*minmax.Max)
 		if err != nil {
 			return nil, err
 		}
@@ -195,25 +195,16 @@ func parseDateRange(minmax *MinMax[string]) (*MinMax[time.Time], error) {
 	return &MinMax[time.Time]{Min: min, Max: max}, nil
 }
 
-func areParamsValid[T comparable](params *[]T, validParams *[]T) bool {
-	for _, param := range *params {
-		if !IsParamValid(param, *validParams) {
-			return false
-		}
+func isMinMaxValidNumbers(minmax MinMax[uint]) bool {
+	if minmax.Min != nil && minmax.Max != nil {
+		return *minmax.Max > *minmax.Min
 	}
 	return true
 }
 
-func isMinMaxValidNumbers(mm MinMax[uint]) bool {
-	if mm.Min != nil && mm.Max != nil {
-		return *mm.Max > *mm.Min
-	}
-	return true
-}
-
-func isMinMaxValidDates(mm MinMax[time.Time]) bool {
-	if mm.Min != nil && mm.Max != nil {
-		return (*mm.Max).After(*mm.Min)
+func isMinMaxValidDates(minmax MinMax[time.Time]) bool {
+	if minmax.Min != nil && minmax.Max != nil {
+		return (*minmax.Max).After(*minmax.Min)
 	}
 	return true
 }
