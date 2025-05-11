@@ -27,6 +27,27 @@ func (dto *CreateAuctionDTO) MapToAuction() (*sale_offer.Auction, error) {
 	return &auction, nil
 }
 
+func (dto *UpdateAuctionDTO) MapToAuction() (*sale_offer.Auction, error) {
+	var auction sale_offer.Auction
+	offer, err := dto.MapToSaleOffer()
+	if err != nil {
+		return nil, err
+	}
+	endDate, err := parseDate(dto.DateEnd)
+	if err != nil {
+		return nil, err
+	}
+	err = validateDateEnd(endDate)
+	if err != nil {
+		return nil, err
+	}
+	auction.Offer = offer
+	auction.DateEnd = endDate
+	auction.BuyNowPrice = dto.BuyNowPrice
+	auction.OfferID = dto.id
+	return &auction, nil
+}
+
 func MapToDTO(auction *sale_offer.Auction) *RetrieveAuctionDTO {
 	offerDTO := auction.Offer.MapToDTO()
 	return &RetrieveAuctionDTO{
