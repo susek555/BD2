@@ -167,6 +167,9 @@ export async function fetchHomePageData(params: SearchParams) : Promise<{totalPa
 // Offer page
 export async function fetchOfferDetails(id: string) : Promise<SaleOfferDetails> {
     // TODO connect API
+
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
     const data: SaleOfferDetails = {
         name: "Volkswagen Golf",
         imagesURLs: [
