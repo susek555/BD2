@@ -138,4 +138,10 @@ func registerBidRoutes(router *gin.Engine) {
 	bidHandler := bid.NewHandler(bidService)
 	bidRoutes := router.Group("/bid")
 	bidRoutes.POST("/", bidHandler.CreateBid)
+	bidRoutes.GET("/", bidHandler.GetAllBids)
+	bidRoutes.GET("/:id", bidHandler.GetBidByID)
+	bidRoutes.GET("/bidder/:id", bidHandler.GetBidsByBidderId)
+	bidRoutes.GET("/auction/:id", bidHandler.GetBidsByAuctionId)
+	bidRoutes.GET("/highest/:id", bidHandler.GetHighestBid)
+	bidRoutes.GET("/highest/:auctionId/bidder/:bidderId", bidHandler.GetHighestBidByUserId)
 }
