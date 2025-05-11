@@ -89,17 +89,11 @@ func (of *OfferFilter) validateEnums() error {
 }
 
 func (of *OfferFilter) validateRanges() error {
-	if of.PriceRange != nil && !of.PriceRange.isMinMaxValid() {
-		return ErrInvalidRange
-	}
-	if of.YearRange != nil && !of.YearRange.isMinMaxValid() {
-		return ErrInvalidRange
-	}
-	if of.EnginePowerRange != nil && !of.EnginePowerRange.isMinMaxValid() {
-		return ErrInvalidRange
-	}
-	if of.EngineCapacityRange != nil && !of.EngineCapacityRange.isMinMaxValid() {
-		return ErrInvalidRange
+	ranges := []*MinMax{of.PriceRange, of.YearRange, of.EnginePowerRange, of.EngineCapacityRange}
+	for _, r := range ranges {
+		if r != nil && !r.isMinMaxValid() {
+			return ErrInvalidRange
+		}
 	}
 	return nil
 }
@@ -114,5 +108,8 @@ func areParamsValid[T comparable](params *[]T, validParams *[]T) bool {
 }
 
 func (mm *MinMax) isMinMaxValid() bool {
-	return *mm.Max > *mm.Min
+	if mm.Max != nil && mm.Min != nil && mm != nil {
+		return *mm.Max > *mm.Min
+	}
+	return true
 }
