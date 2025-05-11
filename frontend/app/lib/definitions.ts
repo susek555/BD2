@@ -143,8 +143,8 @@ export type SaleOfferDetails = {
   // productionYear: number;
   // mileage: number;
   // color: string;
-  // price: number;
-  // isAuction: boolean;
+  price: number;
+  isAuction: boolean;
   // description: string;
   imagesURLs: string[]; // URLs to images
   // location: string; // city or region
