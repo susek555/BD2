@@ -28,7 +28,7 @@ func (h *Handler) CreateSaleOffer(c *gin.Context) {
 	c.JSON(http.StatusCreated, offerDTO)
 }
 
-func (h *Handler) GerFilteredSaleOffers(c *gin.Context) {
+func (h *Handler) GetFilteredSaleOffers(c *gin.Context) {
 	var filter OfferFilter
 	if err := c.ShouldBindJSON(&filter); err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
@@ -40,4 +40,8 @@ func (h *Handler) GerFilteredSaleOffers(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, saleOffers)
+}
+
+func (h *Handler) GetOfferTypes(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"offer_types": OfferTypes})
 }
