@@ -139,7 +139,6 @@ export type SaleOffer = {
 }
 
 export type SaleOfferDetails = {
-  id: string;
   name: string; // producer and model
   // productionYear: number;
   // mileage: number;
@@ -147,7 +146,7 @@ export type SaleOfferDetails = {
   // price: number;
   // isAuction: boolean;
   // description: string;
-  images: string[]; // URLs to images
+  imagesURLs: string[]; // URLs to images
   // location: string; // city or region
   // contactInfo: {
   //   phoneNumber: string;

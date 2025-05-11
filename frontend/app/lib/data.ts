@@ -168,12 +168,11 @@ export async function fetchHomePageData(params: SearchParams) : Promise<{totalPa
 export async function fetchOfferDetails(id: string) : Promise<SaleOfferDetails> {
     // TODO connect API
     const data: SaleOfferDetails = {
-        id: "1",
-        name: "Audi A4",
-        images: [
-            "http://localhost:8080/test_car_image_1.webp",
-            "http://localhost:8080/test_car_image_2.webp",
-            "http://localhost:8080/test_car_image_3.webp",
+        name: "Volkswagen Golf",
+        imagesURLs: [
+            "http://localhost:8081/test_car_image_1.webp",
+            "http://localhost:8081/test_car_image_2.webp",
+            "http://localhost:8081/test_car_image_3.webp",
         ] // temp mock
     };
     return data;
