@@ -1,7 +1,7 @@
 import { API_URL } from '@/app/lib/constants';
 import { ExtendedJWT } from '@/types/next-auth';
 import camelcaseKeys from 'camelcase-keys';
-import NextAuth, { User } from "next-auth";
+import NextAuth, { NextAuthOptions, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 const ACCESS_TOKEN_LIFETIME = 2 * 60 * 60 * 1000; // 2 hours
@@ -35,7 +35,7 @@ async function updateAccessToken(refreshToken: string): Promise<string> {
 }
 
 // TODO: add error handling
-const handler = NextAuth({
+export const authConfig: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -114,6 +114,7 @@ const handler = NextAuth({
   session: {
     strategy: "jwt",
   }
-})
+}
 
+const handler = NextAuth(authConfig);
 export { handler as GET, handler as POST };
