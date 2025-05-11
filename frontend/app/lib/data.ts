@@ -189,6 +189,8 @@ export async function fetchOfferDetails(id: string) : Promise<SaleOfferDetails> 
 
     const data: SaleOfferDetails = {
         name: "Volkswagen Golf",
+        price: 15000,
+        isAuction: false,
         imagesURLs: [
             "http://localhost:8081/test_car_image_1.webp",
             "http://localhost:8081/test_car_image_2.webp",
