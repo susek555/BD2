@@ -17,6 +17,6 @@ type RetrieveAuctionDTO struct {
 }
 
 type UpdateAuctionDTO struct {
-	id uint `json:"id"`
+	Id uint `json:"id"`
 	CreateAuctionDTO
 }
