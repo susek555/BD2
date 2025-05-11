@@ -1,6 +1,7 @@
 package initializers
 
 import (
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/bid"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/refresh_token"
@@ -21,5 +22,6 @@ func MigrateModels() {
 		&sale_offer.Car{},
 		&sale_offer.SaleOffer{},
 		&sale_offer.Auction{},
+		&bid.Bid{},
 	)
 }
