@@ -8,7 +8,7 @@ import (
 type OfferType string
 
 const (
-	REGULAR_OFFER OfferType = "Reuglar offer"
+	REGULAR_OFFER OfferType = "Regular offer"
 	AUCTION       OfferType = "Auction"
 	BOTH          OfferType = "Both"
 )
@@ -41,6 +41,7 @@ func (of *OfferFilter) ApplyOfferFilters(query *gorm.DB) (*gorm.DB, error) {
 	if err := of.validateParams(); err != nil {
 		return nil, err
 	}
+	query = applyOfferTypeFilter(query, of.OfferType)
 	query = applyManufacturesrsFilter(query, of.Manufacturers)
 	query = applyInSliceFilter(query, "cars.color", of.Colors)
 	query = applyInSliceFilter(query, "cars.drive", of.Drives)
@@ -54,8 +55,20 @@ func (of *OfferFilter) ApplyOfferFilters(query *gorm.DB) (*gorm.DB, error) {
 	return query, nil
 }
 
-// func applyOfferTypeFilter(query *gorm.DB, offerType *string) *gorm.DB {
-// }
+func applyOfferTypeFilter(query *gorm.DB, offerType *OfferType) *gorm.DB {
+	if offerType == nil {
+		return query
+	}
+	switch *offerType {
+	case "Auction":
+		return query.Where("auctions.offer_id IS NOT NULL")
+	case "Regular offer":
+		return query.Where("auctions.offer_id IS NULL")
+	default:
+		return query
+	}
+}
+
 func applyManufacturesrsFilter(query *gorm.DB, values *[]string) *gorm.DB {
 	if values != nil && len(*values) > 0 {
 		query = query.
@@ -97,7 +110,7 @@ func (of *OfferFilter) validateParams() error {
 }
 
 func (of *OfferFilter) validateEnums() error {
-	if !IsParamValid(*of.OfferType, OfferTypes) {
+	if of.OfferType != nil && !IsParamValid(*of.OfferType, OfferTypes) {
 		return ErrInvalidSaleOfferType
 	}
 	if of.Colors != nil && !areParamsValid(of.Colors, &car_params.Colors) {
