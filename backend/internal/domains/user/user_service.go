@@ -81,7 +81,7 @@ func (s *UserService) Update(in UpdateUserDTO) error {
 	if err != nil {
 		return err
 	}
-	updatedUser, err := in.UpdateUserFromDTO(&user)
+	updatedUser, err := in.UpdateUserFromDTO(user)
 	if err != nil {
 		return nil
 	}
