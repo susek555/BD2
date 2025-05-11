@@ -27,3 +27,17 @@ func (h *Handler) CreateSaleOffer(c *gin.Context) {
 	}
 	c.JSON(http.StatusCreated, offerDTO)
 }
+
+func (h *Handler) GerFilteredSaleOffers(c *gin.Context) {
+	var filter OfferFilter
+	if err := c.ShouldBindJSON(&filter); err != nil {
+		custom_errors.HandleError(c, err, ErrorMap)
+		return
+	}
+	saleOffers, err := h.service.GetFiltered(&filter)
+	if err != nil {
+		custom_errors.HandleError(c, err, ErrorMap)
+		return
+	}
+	c.JSON(http.StatusOK, saleOffers)
+}
