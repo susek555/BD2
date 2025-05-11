@@ -61,14 +61,16 @@ func (a *AuctionRepository) GetById(id uint) (*sale_offer.Auction, error) {
 }
 
 func (a *AuctionRepository) Update(auction *sale_offer.Auction) error {
-	return a.DB.Transaction(func(tx *gorm.DB) error {
-		if err := tx.Save(auction).Error; err != nil {
-			return err
-		}
-		return tx.
-			Preload("Offer.Car.Model.Manufacturer").
-			First(auction, "offer_id = ?", auction.OfferID).Error
-	})
+	return a.DB.
+		Session(&gorm.Session{FullSaveAssociations: true}).
+		Transaction(func(tx *gorm.DB) error {
+			if err := tx.Save(auction).Error; err != nil {
+				return err
+			}
+			return tx.
+				Preload("Offer.Car.Model.Manufacturer").
+				First(auction, "offer_id = ?", auction.OfferID).Error
+		})
 }
 
 func (a *AuctionRepository) Delete(id uint) error {
