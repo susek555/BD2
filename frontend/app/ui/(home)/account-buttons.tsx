@@ -1,4 +1,4 @@
-import { authConfig } from "@/app/api/auth/[...nextauth]/route";
+import { authConfig } from "@/app/lib/authConfig";
 import { BaseAccountButton } from "@/app/ui/(home)/base-account-buttons/base-account-button";
 import { ClientLogoutButton } from "@/app/ui/(home)/client-logout-button";
 import { ArrowRightIcon, UserCircleIcon } from '@heroicons/react/20/solid';

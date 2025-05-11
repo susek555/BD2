@@ -1,4 +1,4 @@
-import { authConfig } from "@/app/api/auth/[...nextauth]/route";
+import { authConfig } from "@/app/lib/authConfig";
 import { getServerSession } from "next-auth";
 import { getSession, signIn } from "next-auth/react";
 

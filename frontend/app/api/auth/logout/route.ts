@@ -1,4 +1,4 @@
-import { authConfig } from "@/app/api/auth/[...nextauth]/route"
+import { authConfig } from "@/app/lib/authConfig";
 import { fetchWithRefresh } from "@/app/lib/api/fetchWithRefresh"
 import { getServerSession } from "next-auth/next"
 import { NextResponse } from "next/server"
