@@ -140,7 +140,7 @@ export type SaleOffer = {
 
 export type SaleOfferDetails = {
   name: string; // producer and model
-  price: number;
+  price?: number;
   isAuction: boolean;
   auctionData?: AuctionData;
   isActive: boolean;

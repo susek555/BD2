@@ -39,7 +39,7 @@ export default async function OffersTable({ params } : { params: SearchParams })
                                 <p className="text-bg">Color: <span className="font-bold">{offer.color}</span></p>
                             </div>
                             <div className="flex justify-end items-end h-full self-end">
-                                <p className="px-3 font-bold text-2xl">{offer.price.toString()} zł</p>
+                                <p className="px-3 font-bold text-2xl">{offer.price.toString()} PLN</p>
                             </div>
                         </div>
                     </div>

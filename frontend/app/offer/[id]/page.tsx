@@ -25,7 +25,7 @@ export default async function Page(props: { params: Promise<{id: string }> }) {
                             <h1 className="text-3xl font-bold">{offer.name}</h1>
                         </div>
                         <div className="my-50" />
-                        <Price data={{ price: offer.price, isAuction: offer.isAuction, auction: offer.auctionData,  isActive: offer.isActive }} />
+                        <Price data={{ price: offer.price ?? 0, isAuction: offer.isAuction, auction: offer.auctionData,  isActive: offer.isActive }} />
                     </div>
             </div>
         </>
