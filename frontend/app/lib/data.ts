@@ -193,8 +193,12 @@ export async function fetchOfferDetails(id: string) : Promise<SaleOfferDetails |
         data = {
             name: "Volkswagen Golf",
             price: 15000,
-            isAuction: false,
+            isAuction: true,
             isActive: true,
+            auctionData: {
+                endDate: new Date("2025-11-11T12:00:00Z"),
+                currentBid: 12000
+            },
             imagesURLs: [
                 "http://localhost:8081/test_car_image_1.webp",
                 "http://localhost:8081/test_car_image_2.webp",
