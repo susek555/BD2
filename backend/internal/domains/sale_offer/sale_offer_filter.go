@@ -53,6 +53,7 @@ func (of *OfferFilter) ApplyOfferFilters(query *gorm.DB) (*gorm.DB, error) {
 	query = applyInSliceFilter(query, "cars.transmission", of.Transmissions)
 	query = applyInRangeFilter(query, "price", of.PriceRange)
 	query = applyInRangeFilter(query, "cars.mileage", of.MileageRange)
+	query = applyInRangeFilter(query, "cars.production_year", of.YearRange)
 	query = applyInRangeFilter(query, "cars.engine_power", of.EnginePowerRange)
 	query = applyInRangeFilter(query, "cars.engine_capacity", of.EngineCapacityRange)
 	query = applyDateInRangeFilter(query, "cars.registration_date", of.CarRegistrationDateRagne)
@@ -96,10 +97,10 @@ func applyInRangeFilter[T uint | time.Time](query *gorm.DB, column string, minma
 		return query
 	}
 	if minmax.Max != nil {
-		query = query.Where(column+" < ?", *minmax.Max)
+		query = query.Where(column+" <= ?", *minmax.Max)
 	}
 	if minmax.Min != nil {
-		query = query.Where(column+" > ?", *minmax.Min)
+		query = query.Where(column+" >= ?", *minmax.Min)
 	}
 	return query
 }
@@ -145,7 +146,7 @@ func (of *OfferFilter) validateEnums() error {
 }
 
 func (of *OfferFilter) validateRanges() error {
-	ranges := []*MinMax[uint]{of.PriceRange, of.YearRange, of.EnginePowerRange, of.EngineCapacityRange}
+	ranges := []*MinMax[uint]{of.PriceRange, of.YearRange, of.MileageRange, of.EnginePowerRange, of.EngineCapacityRange}
 	for _, r := range ranges {
 		if r != nil && !isMinMaxValidNumbers(*r) {
 			return ErrInvalidRange
@@ -184,13 +185,13 @@ func parseDateRange(minmax *MinMax[string]) (*MinMax[time.Time], error) {
 	if minmax.Min != nil {
 		min, err = ParseDate(*minmax.Min)
 		if err != nil {
-			return nil, err
+			return nil, ErrInvalidDateFromat
 		}
 	}
 	if minmax.Max != nil {
 		max, err = ParseDate(*minmax.Max)
 		if err != nil {
-			return nil, err
+			return nil, ErrInvalidDateFromat
 		}
 	}
 	return &MinMax[time.Time]{Min: min, Max: max}, nil
