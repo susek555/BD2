@@ -8,6 +8,9 @@ export default async function Page(props: { params: Promise<{id: string }> }) {
     const { id } = await params;
 
     const offer = await fetchOfferDetails(id);
+    if (!offer) {
+        throw new Error("Offer not found");
+    }
 
     return (
         <>
