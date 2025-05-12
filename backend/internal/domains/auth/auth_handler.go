@@ -9,12 +9,12 @@ import (
 )
 
 type Handler struct {
-	service Service
+	service AuthServiceInterface
 }
 
 var validate = validator.New()
 
-func NewHandler(service Service) *Handler { return &Handler{service: service} }
+func NewHandler(service AuthServiceInterface) *Handler { return &Handler{service: service} }
 
 // Register godoc
 //

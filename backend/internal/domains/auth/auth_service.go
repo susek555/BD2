@@ -19,45 +19,45 @@ var (
 	ErrInvalidCredentials = errors.New("invalid email or password")
 )
 
-type Service interface {
+type AuthServiceInterface interface {
 	Register(ctx context.Context, in user.CreateUserDTO) map[string][]string
 	Login(ctx context.Context, in LoginInput) (access, refresh string, err error, user *user.User)
 	Refresh(ctx context.Context, refreshToken string) (access string, err error)
 	Logout(ctx context.Context, userID uint, refreshToken string, allDevices bool) error
 }
 
-type service struct {
-	repo                user.UserRepositoryInterface
-	refreshTokenService refresh_token.RefreshTokenServiceInterface
-	jwtKey              []byte
+type AuthService struct {
+	Repo                user.UserRepositoryInterface
+	RefreshTokenService refresh_token.RefreshTokenServiceInterface
+	JwtKey              []byte
 }
 
-func NewService(db *gorm.DB, jwtKey []byte) Service {
+func NewService(db *gorm.DB, jwtKey []byte) AuthServiceInterface {
 	userRepo := user.NewUserRepository(db)
 	refreshTokenService := refresh_token.NewRefreshTokenService(db)
-	return &service{
-		repo:                userRepo,
-		refreshTokenService: refreshTokenService,
-		jwtKey:              jwtKey,
+	return &AuthService{
+		Repo:                userRepo,
+		RefreshTokenService: refreshTokenService,
+		JwtKey:              jwtKey,
 	}
 }
 
-func (s *service) Register(ctx context.Context, in user.CreateUserDTO) map[string][]string {
+func (s *AuthService) Register(ctx context.Context, in user.CreateUserDTO) map[string][]string {
 	userModel, err := in.MapToUser()
 	var errs = make(map[string][]string)
 	if err != nil {
 		errs["other"] = []string{err.Error()}
 	}
-	_, noUsername := s.repo.GetByUsername(in.Username)
+	_, noUsername := s.Repo.GetByUsername(in.Username)
 	if noUsername == nil {
 		errs["username"] = []string{"Username already taken"}
 	}
-	_, noEmail := s.repo.GetByEmail(in.Email)
+	_, noEmail := s.Repo.GetByEmail(in.Email)
 	if noEmail == nil {
 		errs["email"] = []string{"Email already taken"}
 	}
 	if in.Selector == "C" {
-		_, noNip := s.repo.GetByCompanyNip(*in.CompanyNIP)
+		_, noNip := s.Repo.GetByCompanyNip(*in.CompanyNIP)
 		if noNip == nil {
 			errs["company_nip"] = []string{"NIP already taken"}
 		}
@@ -65,14 +65,14 @@ func (s *service) Register(ctx context.Context, in user.CreateUserDTO) map[strin
 	if len(errs) > 0 {
 		return errs
 	}
-	if err := s.repo.Create(userModel); err != nil {
+	if err := s.Repo.Create(userModel); err != nil {
 		errs["other"] = []string{err.Error()}
 	}
 	return errs
 }
 
-func (s *service) Login(ctx context.Context, in LoginInput) (string, string, error, *user.User) {
-	u, err := s.repo.GetByEmail(in.Login)
+func (s *AuthService) Login(ctx context.Context, in LoginInput) (string, string, error, *user.User) {
+	u, err := s.Repo.GetByEmail(in.Login)
 	if err != nil || u.ID == 0 {
 		return "", "", ErrInvalidCredentials, &user.User{}
 	}
@@ -80,7 +80,7 @@ func (s *service) Login(ctx context.Context, in LoginInput) (string, string, err
 	if !passwords.Match(in.Password, u.Password) {
 		return "", "", ErrInvalidCredentials, &user.User{}
 	}
-	access, err := jwt.GenerateToken(u.Email, int64(u.ID), s.jwtKey, time.Now().Add(2*time.Minute))
+	access, err := jwt.GenerateToken(u.Email, int64(u.ID), s.JwtKey, time.Now().Add(2*time.Minute))
 	if err != nil {
 		return "", "", err, &user.User{}
 	}
@@ -92,17 +92,17 @@ func (s *service) Login(ctx context.Context, in LoginInput) (string, string, err
 	return access, refresh, nil, &u
 }
 
-func (s *service) Refresh(ctx context.Context, provided string) (string, error) {
-	refresh, err := s.refreshTokenService.FindByToken(ctx, provided)
+func (s *AuthService) Refresh(ctx context.Context, provided string) (string, error) {
+	refresh, err := s.RefreshTokenService.FindByToken(ctx, provided)
 	if err != nil {
 		return "", errors.New("invalid refresh token")
 	}
 
-	if _, err := s.refreshTokenService.VerifyExpiration(ctx, refresh); err != nil {
+	if _, err := s.RefreshTokenService.VerifyExpiration(ctx, refresh); err != nil {
 		return "", err
 	}
 
-	access, err := jwt.GenerateToken(refresh.User.Email, int64(refresh.User.ID), s.jwtKey, time.Now().Add(2*time.Hour))
+	access, err := jwt.GenerateToken(refresh.User.Email, int64(refresh.User.ID), s.JwtKey, time.Now().Add(2*time.Hour))
 	if err != nil {
 		return "", err
 	}
@@ -110,29 +110,29 @@ func (s *service) Refresh(ctx context.Context, provided string) (string, error) 
 	return access, nil
 }
 
-func (s *service) Logout(ctx context.Context, userID uint, provided string, allDevices bool) error {
+func (s *AuthService) Logout(ctx context.Context, userID uint, provided string, allDevices bool) error {
 	if allDevices {
-		return s.refreshTokenService.DeleteByUserID(ctx, userID)
+		return s.RefreshTokenService.DeleteByUserID(ctx, userID)
 	}
 	if provided == "" {
 		return errors.New("refresh token required")
 	}
 
-	refresh, err := s.refreshTokenService.FindByToken(ctx, provided)
+	refresh, err := s.RefreshTokenService.FindByToken(ctx, provided)
 	if err != nil {
 		return err
 	}
-	return s.refreshTokenService.Delete(refresh.ID)
+	return s.RefreshTokenService.Delete(refresh.ID)
 }
 
-func (s *service) newRefreshToken(ctx context.Context, userId uint, userEmail string) (string, error) {
-	token, _ := jwt.GenerateToken(userEmail, int64(userId), s.jwtKey, time.Now().Add(30*24*time.Hour))
+func (s *AuthService) newRefreshToken(ctx context.Context, userId uint, userEmail string) (string, error) {
+	token, _ := jwt.GenerateToken(userEmail, int64(userId), s.JwtKey, time.Now().Add(30*24*time.Hour))
 	refresh := refresh_token.RefreshToken{
 		Token:      token,
 		UserId:     userId,
 		ExpiryDate: time.Now().Add(30 * 24 * time.Hour),
 	}
-	err := s.refreshTokenService.Create(&refresh)
+	err := s.RefreshTokenService.Create(&refresh)
 	if err != nil {
 		return "", err
 	}
