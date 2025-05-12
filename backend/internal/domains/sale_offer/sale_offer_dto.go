@@ -3,7 +3,7 @@ package sale_offer
 import (
 	"time"
 
-	paginator "github.com/pilagod/gorm-cursor-paginator"
+	"github.com/pilagod/gorm-cursor-paginator/v2/paginator"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
 )
 

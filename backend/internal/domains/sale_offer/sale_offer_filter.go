@@ -23,7 +23,7 @@ type MinMax[T uint | string | time.Time] struct {
 }
 
 type OfferFilter struct {
-	PagingQuery              *PagingQuery               `json:"query"`
+	PagingQuery              PagingQuery                `json:"query"`
 	OrderKey                 string                     `json:"order_key"`
 	IsOrderDesc              *bool                      `json:"is_order_desc"`
 	OfferType                *OfferType                 `json:"offer_type"`
