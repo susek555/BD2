@@ -22,13 +22,14 @@ func (s *SaleOfferService) Create(in CreateSaleOfferDTO) error {
 }
 
 func (s *SaleOfferService) GetFiltered(filter *OfferFilter) ([]RetrieveSaleOfferDTO, error) {
-	offers, err := s.repo.GetFiltered(filter)
+	offers, cursor, err := s.repo.GetFiltered(filter)
 	if err != nil {
 		return nil, err
 	}
 	offersDTOs := make([]RetrieveSaleOfferDTO, 0, len(offers))
 	for _, offer := range offers {
 		dto := offer.MapToDTO()
+		dto.Cursor = cursor
 		offersDTOs = append(offersDTOs, *dto)
 	}
 	return offersDTOs, nil
