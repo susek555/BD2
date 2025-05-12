@@ -5,7 +5,7 @@ type FuelType string
 const (
 	DIESEL   FuelType = "Diesel"
 	PETROL   FuelType = "Petrol"
-	ELECTIRC FuelType = "Electric"
+	ELECTRIC FuelType = "Electric"
 	ETHANOL  FuelType = "Ethanol"
 	LPG      FuelType = "LPG"
 	BIOFUEL  FuelType = "Biofuel"
@@ -14,5 +14,5 @@ const (
 )
 
 var Types = []FuelType{
-	DIESEL, PETROL, ELECTIRC, ETHANOL,
+	DIESEL, PETROL, ELECTRIC, ETHANOL,
 	LPG, BIOFUEL, HYBRID, HYDROGEN}
