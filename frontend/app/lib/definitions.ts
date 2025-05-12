@@ -1,30 +1,28 @@
 import { z } from 'zod';
 
-export const SignupFormSchema = z.object({
-  selector: z.enum(['P', 'C']),
-  username: z
-    .string()
-    .min(2, { message: 'Username must be at least 2 characters long.' })
-    .trim(),
-  email: z.string().email({ message: 'Please enter a valid email.' }).trim(),
-  password: z
-    .string()
-    .min(2, { message: 'Be at least 2 characters long' })
-    // .regex(/[a-zA-Z]/, { message: 'Contain at least one letter.' })
-    // .regex(/[0-9]/, { message: 'Contain at least one number.' })
-    // .regex(/[^a-zA-Z0-9]/, {
-    //   message: 'Contain at least one special character.',
-    // })
-    .trim(),
-  confirm_password: z.string().trim(),
-})
-  .refine(
-    (data) => data.password === data.confirm_password,
-    {
-      message: "Passwords don't match",
-      path: ["confirm_password"],
-    }
-  )
+export const SignupFormSchema = z
+  .object({
+    selector: z.enum(['P', 'C']),
+    username: z
+      .string()
+      .min(2, { message: 'Username must be at least 2 characters long.' })
+      .trim(),
+    email: z.string().email({ message: 'Please enter a valid email.' }).trim(),
+    password: z
+      .string()
+      .min(2, { message: 'Be at least 2 characters long' })
+      // .regex(/[a-zA-Z]/, { message: 'Contain at least one letter.' })
+      // .regex(/[0-9]/, { message: 'Contain at least one number.' })
+      // .regex(/[^a-zA-Z0-9]/, {
+      //   message: 'Contain at least one special character.',
+      // })
+      .trim(),
+    confirm_password: z.string().trim(),
+  })
+  .refine((data) => data.password === data.confirm_password, {
+    message: "Passwords don't match",
+    path: ['confirm_password'],
+  })
   .and(
     z.discriminatedUnion('selector', [
       z.object({
@@ -34,16 +32,18 @@ export const SignupFormSchema = z.object({
       }),
       z.object({
         selector: z.literal('C'),
-        company_name: z.string().min(1, { message: 'Business name is required' }),
+        company_name: z
+          .string()
+          .min(1, { message: 'Business name is required' }),
         company_nip: z
           .string()
           .min(10, { message: 'Be 10 characters long' })
           .max(10, { message: 'Be 10 characters long' })
           .regex(/^\d+$/, { message: 'Contain only digits' }),
-      })
-    ])
+      }),
+    ]),
   )
-  .transform(data => {
+  .transform((data) => {
     const { confirm_password: _, ...rest } = data;
     return rest;
   });
@@ -52,35 +52,35 @@ export type SignupForm = z.input<typeof SignupFormSchema>;
 
 export type SignupFormState = {
   errors?: {
-    username?: string[]
-    email?: string[]
-    password?: string[]
-    confirm_password?: string[]
-    selector?: string[]
+    username?: string[];
+    email?: string[];
+    password?: string[];
+    confirm_password?: string[];
+    selector?: string[];
 
-    person_name?: string[]
-    person_surname?: string[]
+    person_name?: string[];
+    person_surname?: string[];
 
-    company_name?: string[]
-    company_nip?: string[]
-  }
+    company_name?: string[];
+    company_nip?: string[];
+  };
   values?: {
-    selector?: string
-    username?: string
-    email?: string
+    selector?: string;
+    username?: string;
+    email?: string;
 
-    person_name?: string
-    person_surname?: string
+    person_name?: string;
+    person_surname?: string;
 
-    company_name?: string
-    company_nip?: string
-  }
-}
+    company_name?: string;
+    company_nip?: string;
+  };
+};
 
 export type LoginError = {
-  credentials?: string[]
-  server?: string[]
-}
+  credentials?: string[];
+  server?: string[];
+};
 
 // Filters
 
@@ -88,7 +88,7 @@ export type FilterFieldData = {
   fieldName: string;
   options: string[];
   selected?: string[];
-}
+};
 
 // Ranges
 
@@ -98,7 +98,7 @@ export type RangeFieldData = {
     min: number | null;
     max: number | null;
   };
-}
+};
 
 // SearchParams
 
@@ -123,7 +123,7 @@ export type SearchParams = {
     min: number | null;
     max: number | null;
   };
-}
+};
 
 // SaleOffer
 
@@ -136,4 +136,29 @@ export type SaleOffer = {
   color: string;
   price: number;
   isAuction: boolean;
+};
+
+// Account page definitions
+
+export interface Tab {
+  id: string;
+  label: string;
+  href: string;
+}
+
+export const profileTabs: Tab[] = [
+  { id: 'activity', label: 'Activity', href: '/account/activity' },
+  { id: 'listings', label: 'Listings', href: '/account/listings' },
+  { id: 'favorites', label: 'Favorites', href: '/account/favorites' },
+  { id: 'reviews', label: 'Reviews', href: '/account/reviews' },
+  { id: 'settings', label: 'Settings', href: '/account/settings' },
+];
+
+export interface UserProfile {
+  username: string;
+  email: string;
+  personName?: string;
+  personSurname?: string;
+  companyName?: string;
+  companyNip?: string;
 }
