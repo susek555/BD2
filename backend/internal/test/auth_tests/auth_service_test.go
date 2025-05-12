@@ -1,11 +1,12 @@
 //go:build unit
 // +build unit
 
-package auth
+package auth_tests
 
 import (
 	"context"
 	"errors"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/auth"
 	"testing"
 	"time"
 
@@ -43,7 +44,7 @@ func TestService_Register_Person(t *testing.T) {
 		uRepo.On("GetByUsername", in.Username).Return(user.User{}, gorm.ErrRecordNotFound)
 		uRepo.On("Create", mock.Anything).Return(nil)
 
-		svc := &service{repo: uRepo, refreshTokenService: rtSvc, jwtKey: jwtKey}
+		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
 
 		err := svc.Register(ctx, in)
 
@@ -62,11 +63,11 @@ func TestService_Register_Person(t *testing.T) {
 		uRepo.On("GetByEmail", existing.Email).Return(existing, nil)
 		uRepo.On("GetByUsername", existing.Username).Return(existing, nil)
 
-		svc := &service{repo: uRepo, refreshTokenService: rtSvc, jwtKey: jwtKey}
+		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
 
 		err := svc.Register(ctx, user.CreateUserDTO{Email: existing.Email})
 
-		assert.NotEmpty(t, err, ErrEmailTaken)
+		assert.NotEmpty(t, err, auth.ErrEmailTaken)
 		uRepo.AssertExpectations(t)
 	})
 }
@@ -92,7 +93,7 @@ func TestService_Register_Company(t *testing.T) {
 		uRepo.On("GetByCompanyNip", *in.CompanyNIP).Return(user.User{}, errors.New("not found"))
 		uRepo.On("Create", mock.Anything).Return(nil)
 
-		svc := &service{repo: uRepo, refreshTokenService: rtSvc, jwtKey: jwtKey}
+		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
 
 		err := svc.Register(ctx, in)
 
@@ -111,18 +112,18 @@ func TestService_Register_Company(t *testing.T) {
 		uRepo.On("GetByEmail", existing.Email).Return(existing, nil)
 		uRepo.On("GetByUsername", existing.Username).Return(existing, nil)
 
-		svc := &service{repo: uRepo, refreshTokenService: rtSvc, jwtKey: jwtKey}
+		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
 
 		err := svc.Register(ctx, user.CreateUserDTO{Email: existing.Email})
 
-		assert.NotEmpty(t, err, ErrEmailTaken)
+		assert.NotEmpty(t, err, auth.ErrEmailTaken)
 		uRepo.AssertExpectations(t)
 	})
 }
 
 func TestService_Login(t *testing.T) {
 	ctx := context.Background()
-	validIn := LoginInput{Login: "john@example.com", Password: "secret"}
+	validIn := auth.LoginInput{Login: "john@example.com", Password: "secret"}
 
 	t.Run("valid credentials – returns access & refresh", func(t *testing.T) {
 		uRepo := mocks.NewUserRepositoryInterface(t)
@@ -133,7 +134,7 @@ func TestService_Login(t *testing.T) {
 
 		rtSvc.EXPECT().Create(mock.AnythingOfType("*refresh_token.RefreshToken")).Return(nil)
 
-		svc := &service{repo: uRepo, refreshTokenService: rtSvc, jwtKey: jwtKey}
+		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
 
 		access, refresh, err, user_ := svc.Login(ctx, validIn)
 		assert.NoError(t, err)
@@ -154,10 +155,10 @@ func TestService_Login(t *testing.T) {
 			GetByEmail(validIn.Login).
 			Return(user.User{}, gorm.ErrRecordNotFound)
 
-		svc := &service{repo: uRepo, refreshTokenService: rtSvc, jwtKey: jwtKey}
+		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
 
 		_, _, err, _ := svc.Login(ctx, validIn)
-		assert.ErrorIs(t, err, ErrInvalidCredentials)
+		assert.ErrorIs(t, err, auth.ErrInvalidCredentials)
 	})
 
 	t.Run("wrong password – ErrInvalidCredentials", func(t *testing.T) {
@@ -167,10 +168,10 @@ func TestService_Login(t *testing.T) {
 		badPassUser := user.User{ID: 2, Email: validIn.Login, Password: hashPass(t, "invalidPass")}
 		uRepo.EXPECT().GetByEmail(validIn.Login).Return(badPassUser, nil)
 
-		svc := &service{repo: uRepo, refreshTokenService: rtSvc, jwtKey: jwtKey}
+		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
 
 		_, _, err, _ := svc.Login(ctx, validIn)
-		assert.ErrorIs(t, err, ErrInvalidCredentials)
+		assert.ErrorIs(t, err, auth.ErrInvalidCredentials)
 	})
 
 	t.Run("refresh‑token save fails – propagates error", func(t *testing.T) {
@@ -185,7 +186,7 @@ func TestService_Login(t *testing.T) {
 			Create(mock.AnythingOfType("*refresh_token.RefreshToken")).
 			Return(errors.New("db down"))
 
-		svc := &service{repo: uRepo, refreshTokenService: rtSvc, jwtKey: jwtKey}
+		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
 
 		_, _, err, _ := svc.Login(ctx, validIn)
 		assert.EqualError(t, err, "db down")
@@ -211,7 +212,7 @@ func TestService_Refresh(t *testing.T) {
 		rtSvc.EXPECT().FindByToken(ctx, oldToken).Return(baseRT, nil)
 		rtSvc.EXPECT().VerifyExpiration(ctx, baseRT).Return(baseRT, nil)
 
-		svc := &service{repo: uRepo, refreshTokenService: rtSvc, jwtKey: jwtKey}
+		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
 
 		access, err := svc.Refresh(ctx, oldToken)
 
@@ -231,7 +232,7 @@ func TestService_Refresh(t *testing.T) {
 			FindByToken(ctx, oldToken).
 			Return(refresh_token.RefreshToken{}, errors.New("sql: no rows"))
 
-		svc := &service{repo: uRepo, refreshTokenService: rtSvc, jwtKey: jwtKey}
+		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
 
 		_, err := svc.Refresh(ctx, oldToken)
 		assert.EqualError(t, err, "invalid refresh token")
@@ -246,7 +247,7 @@ func TestService_Refresh(t *testing.T) {
 		rtSvc.EXPECT().FindByToken(ctx, oldToken).Return(baseRT, nil)
 		rtSvc.EXPECT().VerifyExpiration(ctx, baseRT).Return(refresh_token.RefreshToken{}, expired)
 
-		svc := &service{repo: uRepo, refreshTokenService: rtSvc, jwtKey: jwtKey}
+		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
 
 		_, err := svc.Refresh(ctx, oldToken)
 		assert.ErrorIs(t, err, expired)
@@ -266,7 +267,7 @@ func TestService_Logout(t *testing.T) {
 			DeleteByUserID(ctx, userID).
 			Return(nil)
 
-		svc := &service{repo: uRepo, refreshTokenService: rtSvc}
+		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
 
 		err := svc.Logout(ctx, userID, "", true)
 		assert.NoError(t, err)
@@ -279,7 +280,7 @@ func TestService_Logout(t *testing.T) {
 		rtSvc.EXPECT().FindByToken(ctx, rt.Token).Return(rt, nil)
 		rtSvc.EXPECT().Delete(rt.ID).Return(nil)
 
-		svc := &service{repo: uRepo, refreshTokenService: rtSvc}
+		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
 
 		err := svc.Logout(ctx, userID, rt.Token, false)
 		assert.NoError(t, err)
@@ -289,7 +290,7 @@ func TestService_Logout(t *testing.T) {
 		uRepo := mocks.NewUserRepositoryInterface(t)
 		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
 
-		svc := &service{repo: uRepo, refreshTokenService: rtSvc}
+		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
 
 		err := svc.Logout(ctx, userID, "", false)
 		assert.EqualError(t, err, "refresh token required")
@@ -303,7 +304,7 @@ func TestService_Logout(t *testing.T) {
 			FindByToken(ctx, rt.Token).
 			Return(refresh_token.RefreshToken{}, errors.New("not found"))
 
-		svc := &service{repo: uRepo, refreshTokenService: rtSvc}
+		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
 
 		err := svc.Logout(ctx, userID, rt.Token, false)
 		assert.EqualError(t, err, "not found")
@@ -317,7 +318,7 @@ func TestService_Logout(t *testing.T) {
 			DeleteByUserID(ctx, userID).
 			Return(errors.New("db down"))
 
-		svc := &service{repo: uRepo, refreshTokenService: rtSvc}
+		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
 
 		err := svc.Logout(ctx, userID, "", true)
 		assert.EqualError(t, err, "db down")
