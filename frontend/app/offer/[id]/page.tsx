@@ -20,7 +20,7 @@ export default async function Page(props: { params: Promise<{id: string }> }) {
                             </div>
                         </div>
                     </div>
-                    <div className="md:w-120 h-full">
+                    <div className="md:w-120 h-full md:h-130">
                         <div className="p-4">
                             <h1 className="text-3xl font-bold">{offer.name}</h1>
                         </div>
