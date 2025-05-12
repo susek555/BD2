@@ -51,3 +51,17 @@ export function CarImageOfferPageSkeleton() {
     )
 }
 
+export function NameOfferPageSkeleton() {
+    return (
+        <div className="h-10 w-70 bg-gray-200 rounded animate-pulse" />
+    )
+}
+
+export function PriceOfferPageSkeleton() {
+    return (
+        <div className="flex flex-col gap-4 w-full md:w-120 h-full md:h-63 border border-gray-300">
+            <div className="h-full w-full bg-gray-200 animate-pulse" />
+        </div>
+    )
+}
+

@@ -12,21 +12,21 @@ export default async function Page(props: { params: Promise<{id: string }> }) {
     return (
         <>
             <div className="my-3" />
-                <div className="flex flex-row gap-10 md:px-20">
-                    <div className="flex flex-col gap-4 w-full">
-                        <div className="w-full h-full border-0 border-gray-300">
-                            <div className="w-full static">
-                                <Photos imagesURLs={offer.imagesURLs} />
-                            </div>
+            <div className="flex flex-row gap-10 md:px-20">
+                <div className="flex flex-col gap-4 w-full">
+                    <div className="w-full h-full border-0 border-gray-300">
+                        <div className="w-full static">
+                            <Photos imagesURLs={offer.imagesURLs} />
                         </div>
                     </div>
-                    <div className="md:w-120 h-full md:h-130">
-                        <div className="p-4">
-                            <h1 className="text-3xl font-bold">{offer.name}</h1>
-                        </div>
-                        <div className="my-50" />
-                        <Price data={{ price: offer.price ?? 0, isAuction: offer.isAuction, auction: offer.auctionData,  isActive: offer.isActive }} />
+                </div>
+                <div className="md:w-120 h-full md:h-130">
+                    <div className="p-4">
+                        <h1 className="text-3xl font-bold">{offer.name}</h1>
                     </div>
+                    <div className="my-50" />
+                    <Price data={{ price: offer.price ?? 0, isAuction: offer.isAuction, auction: offer.auctionData,  isActive: offer.isActive }} />
+                </div>
             </div>
         </>
     );
