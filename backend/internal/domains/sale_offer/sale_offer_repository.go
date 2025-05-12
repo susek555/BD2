@@ -1,10 +1,13 @@
 package sale_offer
 
-import "gorm.io/gorm"
+import (
+	"github.com/pilagod/gorm-cursor-paginator/v2/paginator"
+	"gorm.io/gorm"
+)
 
 type SaleOfferRepositoryInterface interface {
 	Create(offer *SaleOffer) error
-	GetFiltered(filter *OfferFilter) ([]SaleOffer, error)
+	GetFiltered(filter *OfferFilter) ([]SaleOffer, paginator.Cursor, error)
 }
 
 type SaleOfferRepository struct {
@@ -27,7 +30,7 @@ func (r *SaleOfferRepository) Create(offer *SaleOffer) error {
 	})
 }
 
-func (r *SaleOfferRepository) GetFiltered(filter *OfferFilter) ([]SaleOffer, error) {
+func (r *SaleOfferRepository) GetFiltered(filter *OfferFilter) ([]SaleOffer, paginator.Cursor, error) {
 	var saleOffers []SaleOffer
 	query := r.DB.
 		Preload("Auction").
@@ -38,11 +41,15 @@ func (r *SaleOfferRepository) GetFiltered(filter *OfferFilter) ([]SaleOffer, err
 		Joins("LEFT JOIN auctions on auctions.offer_id = sale_offers.id")
 	query, err := filter.ApplyOfferFilters(query)
 	if err != nil {
-		return nil, err
+		return nil, paginator.Cursor{}, err
 	}
-	err = query.Find(&saleOffers).Error
+	p := GetOfferPaginator(filter.PagingQuery, filter.OrderKey)
+	result, cursor, err := p.Paginate(query, &saleOffers)
 	if err != nil {
-		return nil, err
+		return nil, paginator.Cursor{}, nil
 	}
-	return saleOffers, nil
+	if result.Error != nil {
+		return nil, paginator.Cursor{}, result.Error
+	}
+	return saleOffers, cursor, nil
 }

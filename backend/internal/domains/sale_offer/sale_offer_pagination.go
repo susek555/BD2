@@ -1,34 +1,49 @@
 package sale_offer
 
-import paginator "github.com/pilagod/gorm-cursor-paginator"
+import (
+	"github.com/pilagod/gorm-cursor-paginator/v2/paginator"
+)
 
 type PagingQuery struct {
-	After  *string
-	Before *string
-	Limit  *int
-	Order  *string
+	Cursor paginator.Cursor `json:"cursor"`
+	Order  *paginator.Order `json:"order"`
+	Limit  *int             `json:"limit"`
 }
 
-func GetProductPaginator(q PagingQuery, orderKey string) *paginator.Paginator {
-	p := paginator.New()
+var OrderMap = map[string]string{
+	"Price":            "price",
+	"Mileage":          "cars.mileage",
+	"EnginePower":      "cars.engine_power",
+	"EngineCapacity":   "cars.engine_capacity",
+	"RegistrationDate": "cars.registration_date",
+	"DateOfIssue":      "date_of_issue",
+}
 
-	p.SetKeys(orderKey, "ID")
+func GetOfferPaginator(q PagingQuery, orderKey string) *paginator.Paginator {
+	cfg := paginator.Config{
+		Rules: []paginator.Rule{
+			{Key: orderKey, SQLRepr: OrderMap[orderKey]},
+			{Key: "ID"},
+		},
+		Limit:         8,
+		Order:         paginator.DESC,
+		AllowTupleCmp: paginator.TRUE}
+	p := paginator.New(&cfg)
 
-	if q.After != nil {
-		p.SetAfterCursor(*q.After)
+	if q.Cursor.After != nil {
+		p.SetAfterCursor(*q.Cursor.After)
 	}
 
-	if q.Before != nil {
-		p.SetBeforeCursor(*q.Before)
+	if q.Cursor.Before != nil {
+		p.SetBeforeCursor(*q.Cursor.Before)
 	}
 
 	if q.Limit != nil {
 		p.SetLimit(*q.Limit)
 	}
 
-	if q.Order != nil && *q.Order == "asc" {
-		p.SetOrder(paginator.ASC)
+	if q.Order != nil {
+		p.SetOrder(*q.Order)
 	}
-
 	return p
 }
