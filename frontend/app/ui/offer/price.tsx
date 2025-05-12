@@ -2,6 +2,7 @@ import { AuctionData } from "@/app/lib/definitions";
 import { BasePriceButton } from "./price-buttons/base-price-button";
 import { CurrencyDollarIcon } from "@heroicons/react/20/solid";
 import TimeLeft from "./time-left";
+import Link from "next/link";
 
 type PriceData = {
     price: number;
@@ -33,10 +34,12 @@ export default function Price( data : { data : PriceData}) {
             ) : (
                 <div className="flex justify-center items-center flex-col h-full gap-8">
                     <p className="font-bold text-3xl">{price.toString()} PLN</p>
-                    <BasePriceButton>
-                        <p className="text-bold text-xl">Buy Now</p>
-                        <CurrencyDollarIcon className="ml-auto w-5 text-gray-50" />
-                    </BasePriceButton>
+                    <Link href="/account">
+                        <BasePriceButton>
+                            <p className="text-bold text-xl">Buy Now</p>
+                            <CurrencyDollarIcon className="ml-auto w-5 text-gray-50" />
+                        </BasePriceButton>
+                    </Link>
                 </div>
             )
             ) : (
