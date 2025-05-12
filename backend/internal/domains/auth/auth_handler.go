@@ -123,7 +123,7 @@ func (h *Handler) Refresh(c *gin.Context) {
 	}
 	access, err := h.Service.Refresh(c, req.RefreshToken)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, custom_errors.NewHTTPError("unauthorized"))
+		c.JSON(http.StatusUnauthorized, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
 	response := LoginResponse{AccessToken: access}
