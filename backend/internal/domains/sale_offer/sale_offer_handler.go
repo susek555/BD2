@@ -45,3 +45,11 @@ func (h *Handler) GetFilteredSaleOffers(c *gin.Context) {
 func (h *Handler) GetOfferTypes(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"offer_types": OfferTypes})
 }
+
+func (h *Handler) GetOrderKeys(c *gin.Context) {
+	keys := make([]string, 0, len(OrderMap))
+	for k := range OrderMap {
+		keys = append(keys, k)
+	}
+	c.JSON(http.StatusOK, gin.H{"order_keys": keys})
+}
