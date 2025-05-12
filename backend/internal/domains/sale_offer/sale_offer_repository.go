@@ -33,6 +33,7 @@ func (r *SaleOfferRepository) Create(offer *SaleOffer) error {
 func (r *SaleOfferRepository) GetFiltered(filter *OfferFilter) ([]SaleOffer, paginator.Cursor, error) {
 	var saleOffers []SaleOffer
 	query := r.DB.
+		Joins("JOIN cars on cars.id = sale_offers.car_id").
 		Joins("LEFT JOIN auctions on auctions.offer_id = sale_offers.id").
 		Preload("Auction").
 		Preload("Car").
