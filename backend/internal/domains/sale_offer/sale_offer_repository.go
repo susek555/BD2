@@ -33,12 +33,11 @@ func (r *SaleOfferRepository) Create(offer *SaleOffer) error {
 func (r *SaleOfferRepository) GetFiltered(filter *OfferFilter) ([]SaleOffer, paginator.Cursor, error) {
 	var saleOffers []SaleOffer
 	query := r.DB.
+		Joins("LEFT JOIN auctions on auctions.offer_id = sale_offers.id").
 		Preload("Auction").
 		Preload("Car").
 		Preload("Car.Model").
-		Preload("Car.Model.Manufacturer").
-		Joins("JOIN cars ON cars.id = sale_offers.car_id").
-		Joins("LEFT JOIN auctions on auctions.offer_id = sale_offers.id")
+		Preload("Car.Model.Manufacturer")
 	query, err := filter.ApplyOfferFilters(query)
 	if err != nil {
 		return nil, paginator.Cursor{}, err
@@ -46,7 +45,7 @@ func (r *SaleOfferRepository) GetFiltered(filter *OfferFilter) ([]SaleOffer, pag
 	p := GetOfferPaginator(filter.PagingQuery, filter.OrderKey)
 	result, cursor, err := p.Paginate(query, &saleOffers)
 	if err != nil {
-		return nil, paginator.Cursor{}, nil
+		return nil, paginator.Cursor{}, err
 	}
 	if result.Error != nil {
 		return nil, paginator.Cursor{}, result.Error
