@@ -99,7 +99,7 @@ func (s *AuthService) Refresh(ctx context.Context, provided string) (string, err
 	}
 
 	if _, err := s.RefreshTokenService.VerifyExpiration(ctx, refresh); err != nil {
-		return "", err
+		return "", errors.New("refresh token expired")
 	}
 
 	access, err := jwt.GenerateToken(refresh.User.Email, int64(refresh.User.ID), s.JwtKey, time.Now().Add(2*time.Hour))
