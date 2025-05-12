@@ -1,3 +1,6 @@
+//go:build integration
+// +build integration
+
 package sale_offer_tests
 
 import (

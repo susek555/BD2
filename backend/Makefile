@@ -16,3 +16,6 @@ reload-database:
 
 test-unit:
 	go test ./internal/test/... -tags unit
+
+test-integration:
+	go test ./internal/test/... -tags integration
