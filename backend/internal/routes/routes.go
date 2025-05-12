@@ -110,6 +110,7 @@ func registerSaleOfferRoutes(router *gin.Engine) {
 		saleOfferRoutes.POST("/", saleOfferHandler.CreateSaleOffer)
 		saleOfferRoutes.POST("/filtered", saleOfferHandler.GetFilteredSaleOffers)
 		saleOfferRoutes.GET("/offer-types", saleOfferHandler.GetOfferTypes)
+		saleOfferRoutes.GET("/order-keys", saleOfferHandler.GetOrderKeys)
 	}
 }
 
