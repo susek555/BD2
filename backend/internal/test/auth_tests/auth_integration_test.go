@@ -12,6 +12,7 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auth"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/refresh_token"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
+	"github.com/susek555/BD2/car-dealer-api/pkg/passwords"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -20,7 +21,7 @@ import (
 // Setup
 // ------
 
-func setupDB(users []user.User) (user.UserRepositoryInterface, error) {
+func setupDB(users []user.User) (user.UserRepositoryInterface, refresh_token.RefreshTokenServiceInterface, error) {
 	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
 	db.AutoMigrate(
 		&user.User{},
@@ -29,26 +30,28 @@ func setupDB(users []user.User) (user.UserRepositoryInterface, error) {
 		&refresh_token.RefreshToken{},
 	)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	repo := user.NewUserRepository(db)
 	for _, user := range users {
 		repo.Create(&user)
 	}
-	return repo, nil
+	refreshTokenService := refresh_token.NewRefreshTokenService(db)
+	return repo, refreshTokenService, nil
 }
 
 func newTestServer(seedUsers []user.User) (*gin.Engine, error) {
-	repo, err := setupDB(seedUsers)
+	repo, rtSvc, err := setupDB(seedUsers)
 	if err != nil {
 		return nil, err
 	}
 
-	svc := &auth.AuthService{Repo: repo}
+	svc := &auth.AuthService{Repo: repo, RefreshTokenService: rtSvc, JwtKey: []byte("secret")}
 	h := &auth.Handler{Service: svc}
 
 	r := gin.Default()
 	r.POST("/auth/register", h.Register)
+	r.POST("/auth/login", h.Login)
 	return r, nil
 }
 
@@ -320,4 +323,141 @@ func TestRegisterCompanyNipAlreadyExists(t *testing.T) {
 	body := json.Unmarshal(w.Body.Bytes(), &response)
 	assert.NoError(t, body)
 	assert.Equal(t, "NIP already taken", response["errors"].(map[string]any)["company_nip"].([]any)[0])
+}
+
+func TestLoginSuccess(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	hashedPassword, err := passwords.Hash("PolskaGurom")
+	assert.NoError(t, err)
+	seedUsers := []user.User{
+		{
+			Email:    "herkules@gmail.com",
+			Username: "herkules",
+			Password: hashedPassword,
+			Selector: "P",
+			Person: &user.Person{
+				Name:    "Herakles",
+				Surname: "Wielki",
+			},
+		},
+	}
+	server, err := newTestServer(seedUsers)
+	wantStatus := http.StatusOK
+	assert.NoError(t, err)
+	payload := `
+	{
+		"login": "herkules@gmail.com",
+		"password": "PolskaGurom"
+	}
+	`
+	req := httptest.NewRequest(http.MethodPost, "/auth/login", strings.NewReader(payload))
+	req.Header.Set("Content-Type", "application/json")
+	w := httptest.NewRecorder()
+	server.ServeHTTP(w, req)
+	assert.Equal(t, wantStatus, w.Code)
+	var response map[string]interface{}
+	err = json.Unmarshal(w.Body.Bytes(), &response)
+	assert.NoError(t, err)
+	assert.Equal(t, "herkules", response["username"])
+	assert.Equal(t, "P", response["selector"])
+	assert.Equal(t, "herkules@gmail.com", response["email"])
+	assert.Equal(t, "Herakles", response["person_name"])
+	assert.Equal(t, "Wielki", response["person_surname"])
+	assert.NotEmpty(t, response["access_token"])
+	assert.NotEmpty(t, response["refresh_token"])
+}
+
+func TestLoginInvalidLogin(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	hashedPassword, err := passwords.Hash("PolskaGurom")
+	assert.NoError(t, err)
+	seedUsers := []user.User{
+		{
+			Email:    "herkules@gmail.com",
+			Username: "herkules",
+			Password: hashedPassword,
+			Selector: "P",
+			Person: &user.Person{
+				Name:    "Herakles",
+				Surname: "Wielki",
+			},
+		},
+	}
+	server, err := newTestServer(seedUsers)
+	wantStatus := http.StatusUnauthorized
+	assert.NoError(t, err)
+	payload := `
+	{
+		"login": "invalid@gmail.com",
+		"password": "PolskaGurom"
+	}
+	`
+	req := httptest.NewRequest(http.MethodPost, "/auth/login", strings.NewReader(payload))
+	req.Header.Set("Content-Type", "application/json")
+	w := httptest.NewRecorder()
+	server.ServeHTTP(w, req)
+	assert.Equal(t, wantStatus, w.Code)
+	var response map[string]any
+	err = json.Unmarshal(w.Body.Bytes(), &response)
+	assert.NoError(t, err)
+	assert.Equal(t, "invalid credentials", response["errors"].(map[string]any)["credentials"].([]any)[0])
+}
+
+func TestLoginInvalidPassword(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	hashedPassword, err := passwords.Hash("PolskaGurom")
+	assert.NoError(t, err)
+	seedUsers := []user.User{
+		{
+			Email:    "herkules@gmail.com",
+			Username: "herkules",
+			Password: hashedPassword,
+			Selector: "P",
+			Person: &user.Person{
+				Name:    "Herakles",
+				Surname: "Wielki",
+			},
+		},
+	}
+	server, err := newTestServer(seedUsers)
+	wantStatus := http.StatusUnauthorized
+	assert.NoError(t, err)
+	payload := `
+	{
+		"login": "herkules@gmail.com",
+		"password": "invalid_password"
+	}
+	`
+	req := httptest.NewRequest(http.MethodPost, "/auth/login", strings.NewReader(payload))
+	req.Header.Set("Content-Type", "application/json")
+	w := httptest.NewRecorder()
+	server.ServeHTTP(w, req)
+	assert.Equal(t, wantStatus, w.Code)
+	var response map[string]any
+	err = json.Unmarshal(w.Body.Bytes(), &response)
+	assert.NoError(t, err)
+	assert.Equal(t, "invalid credentials", response["errors"].(map[string]any)["credentials"].([]any)[0])
+}
+
+func TestLoginInvalidBody(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	seedUsers := []user.User{}
+	server, err := newTestServer(seedUsers)
+	wantStatus := http.StatusBadRequest
+	assert.NoError(t, err)
+	payload := `
+	{
+		"login": "invalid",
+		"password": "invalid"
+	}
+	`
+	req := httptest.NewRequest(http.MethodPost, "/auth/login", strings.NewReader(payload))
+	req.Header.Set("Content-Type", "application/json")
+	w := httptest.NewRecorder()
+	server.ServeHTTP(w, req)
+	assert.Equal(t, wantStatus, w.Code)
+	var response map[string]any
+	err = json.Unmarshal(w.Body.Bytes(), &response)
+	assert.NoError(t, err)
+	assert.Equal(t, "invalid body", response["errors"].(map[string]any)["server"].([]any)[0])
 }
