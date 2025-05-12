@@ -8,6 +8,7 @@ import { fetchTotalPages } from "../lib/data";
 import { SearchParams } from "../lib/definitions";
 
 //TODO fix bug with filters not syncing when Home button clicked
+//TODO handle loading errors
 
 export default async function Home(props: {
   searchParams?: Promise<{

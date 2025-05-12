@@ -27,9 +27,9 @@ export function CarImageHomePageSkeleton() {
 export function CarImageOfferPageSkeleton() {
     return (
         <div className="flex flex-col items-center gap-4">
-            <div className="w-full flex flex-col items-center border border-gray-300" >
-                <div className="relative w-full max-w-lg overflow-hidden">
-                    <img src="/(home)/car_placeholder.png" alt="Car placeholder" className="w-full h-auto md:h-130 object-cover rounded scale-140" />
+            <div className="w-full flex flex-col items-center border border-gray-300 relative bg-gray-100">
+                <div className="md:h-130 relative w-full max-w-lg overflow-hidden flex justify-center items-center">
+                    <div className="loader animate-spin rounded-full border-4 border-gray-300 border-t-gray-600 w-12 h-12"></div>
                 </div>
             </div>
             <div className="flex items-center gap-2">
