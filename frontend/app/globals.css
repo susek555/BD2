@@ -1,4 +1,34 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+
+.headroom {
+  transition: transform 200ms ease-in-out;
+}
+
+.headroom--unpinned {
+  transform: translateY(-100%);
+}
+
+.headroom--pinned {
+  transform: translateY(0%);
+}
+
+/* Tab-specific headroom styles */
+.headroom-tabs {
+  transition: all 200ms ease-in-out;
+}
+
+.headroom-tabs.headroom--unfixed {
+  position: relative !important;
+}
+
+.headroom-tabs.headroom--scrolled {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
 
 :root {
   --background: #ffffff;
