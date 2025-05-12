@@ -13,7 +13,7 @@ import (
 
 type OfferOption func(*sale_offer.SaleOffer, *car.Car)
 
-func createOffer(id uint, options ...OfferOption) *sale_offer.SaleOffer {
+func CreateOffer(id uint, options ...OfferOption) *sale_offer.SaleOffer {
 	car := &car.Car{
 		ID:                 id,
 		Vin:                "vin",
@@ -56,7 +56,7 @@ func createOffer(id uint, options ...OfferOption) *sale_offer.SaleOffer {
 	return offer
 }
 
-func withCarField(fieldName string, fieldValue interface{}) OfferOption {
+func WithCarField(fieldName string, fieldValue interface{}) OfferOption {
 	return func(_ *sale_offer.SaleOffer, car *car.Car) {
 		v := reflect.ValueOf(car).Elem()
 		field := v.FieldByName(fieldName)
@@ -64,7 +64,7 @@ func withCarField(fieldName string, fieldValue interface{}) OfferOption {
 	}
 }
 
-func withOfferField(fieldName string, fieldValue interface{}) OfferOption {
+func WithOfferField(fieldName string, fieldValue interface{}) OfferOption {
 	return func(offer *sale_offer.SaleOffer, _ *car.Car) {
 		v := reflect.ValueOf(offer).Elem()
 		field := v.FieldByName(fieldName)
@@ -72,7 +72,7 @@ func withOfferField(fieldName string, fieldValue interface{}) OfferOption {
 	}
 }
 
-func withAuction(dateEnd time.Time, buyNowPrice uint) OfferOption {
+func WithAuction(dateEnd time.Time, buyNowPrice uint) OfferOption {
 	return func(offer *sale_offer.SaleOffer, _ *car.Car) {
 		offer.Auction = &sale_offer.Auction{
 			OfferID:     offer.ID,
