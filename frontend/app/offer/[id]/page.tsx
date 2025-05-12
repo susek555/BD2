@@ -1,7 +1,6 @@
 import { fetchOfferDetails } from "@/app/lib/data";
 import Photos from "@/app/ui/offer/photos";
 import Price from "@/app/ui/offer/price";
-import { CarImageOfferPageSkeleton } from "@/app/ui/skeletons";
 import { Suspense,lazy } from "react";
 
 export default async function Page(props: { params: Promise<{id: string }> }) {
@@ -26,7 +25,7 @@ export default async function Page(props: { params: Promise<{id: string }> }) {
                             <h1 className="text-3xl font-bold">{offer.name}</h1>
                         </div>
                         <div className="my-50" />
-                        <Price data={{ price: offer.price, isAuction: offer.isAuction, auction: offer.auctionData }} />
+                        <Price data={{ price: offer.price, isAuction: offer.isAuction, auction: offer.auctionData,  isActive: offer.isActive }} />
                     </div>
             </div>
         </>

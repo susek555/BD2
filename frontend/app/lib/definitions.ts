@@ -140,14 +140,15 @@ export type SaleOffer = {
 
 export type SaleOfferDetails = {
   name: string; // producer and model
-  // productionYear: number;
-  // mileage: number;
-  // color: string;
   price: number;
   isAuction: boolean;
   auctionData?: AuctionData;
-  // description: string;
+  isActive: boolean;
   imagesURLs: string[]; // URLs to images
+  // productionYear: number;
+  // mileage: number;
+  // color: string;
+  // description: string;
   // location: string; // city or region
   // contactInfo: {
   //   phoneNumber: string;
