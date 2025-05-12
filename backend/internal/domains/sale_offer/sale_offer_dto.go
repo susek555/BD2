@@ -3,6 +3,7 @@ package sale_offer
 import (
 	"time"
 
+	paginator "github.com/pilagod/gorm-cursor-paginator"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
 )
 
@@ -29,6 +30,7 @@ type CreateSaleOfferDTO struct {
 }
 
 type RetrieveSaleOfferDTO struct {
+	Cursor             paginator.Cursor        `json:"cursor"`
 	Description        string                  `json:"description"`
 	Price              uint                    `json:"price"`
 	Margin             uint                    `json:"margin"`
