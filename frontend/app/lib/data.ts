@@ -191,7 +191,7 @@ export async function fetchOfferDetails(id: string) : Promise<SaleOfferDetails> 
         name: "Volkswagen Golf",
         price: 15000,
         isAuction: false,
-        isActive: false,
+        isActive: true,
         imagesURLs: [
             "http://localhost:8081/test_car_image_1.webp",
             "http://localhost:8081/test_car_image_2.webp",
