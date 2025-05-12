@@ -9,12 +9,12 @@ import (
 )
 
 type Handler struct {
-	service AuthServiceInterface
+	Service AuthServiceInterface
 }
 
 var validate = validator.New()
 
-func NewHandler(service AuthServiceInterface) *Handler { return &Handler{service: service} }
+func NewHandler(service AuthServiceInterface) *Handler { return &Handler{Service: service} }
 
 // Register godoc
 //
@@ -47,7 +47,7 @@ func (h *Handler) Register(ctx *gin.Context) {
 		return
 	}
 
-	err := h.service.Register(ctx, request)
+	err := h.Service.Register(ctx, request)
 	if len(err) > 0 {
 		ctx.JSON(http.StatusConflict, RegisterResponse{Errors: err})
 		return
@@ -75,7 +75,7 @@ func (h *Handler) Login(c *gin.Context) {
 		return
 	}
 
-	access, refresh, err, user_ := h.service.Login(c, req)
+	access, refresh, err, user_ := h.Service.Login(c, req)
 	loginResponse := prepareLoginResponse(access, refresh, *user_)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, LoginResponse{Errors: map[string][]string{"credentials": {"invalid credentials"}}})
@@ -121,7 +121,7 @@ func (h *Handler) Refresh(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError("invalid body"))
 		return
 	}
-	access, err := h.service.Refresh(c, req.RefreshToken)
+	access, err := h.Service.Refresh(c, req.RefreshToken)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, custom_errors.NewHTTPError("unauthorized"))
 		return
@@ -156,7 +156,7 @@ func (h *Handler) Logout(c *gin.Context) {
 		return
 	}
 
-	if err := h.service.Logout(c, userId.(uint), req.RefreshToken, req.AllDevices); err != nil {
+	if err := h.Service.Logout(c, userId.(uint), req.RefreshToken, req.AllDevices); err != nil {
 		c.JSON(http.StatusInternalServerError, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
