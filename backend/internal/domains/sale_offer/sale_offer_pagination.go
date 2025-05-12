@@ -29,19 +29,15 @@ func GetOfferPaginator(q PagingQuery, orderKey *string) *paginator.Paginator {
 		AllowTupleCmp: paginator.TRUE,
 	}
 	p := paginator.New(&cfg)
-
 	if q.Cursor.After != nil {
 		p.SetAfterCursor(*q.Cursor.After)
 	}
-
 	if q.Cursor.Before != nil {
 		p.SetBeforeCursor(*q.Cursor.Before)
 	}
-
 	if q.Limit != nil {
 		p.SetLimit(*q.Limit)
 	}
-
 	if q.Order != nil {
 		p.SetOrder(*q.Order)
 	}
