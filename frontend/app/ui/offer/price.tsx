@@ -4,10 +4,11 @@ type PriceData = {
     price: number;
     isAuction: boolean;
     auction?: AuctionData;
+    isActive: boolean;
 }
 
 export default function Price( data : { data : PriceData}) {
-    const { price, isAuction, auction } = data.data;
+    const { price, isAuction, auction, isActive } = data.data;
 
     return (
         <div className="flex flex-col">
