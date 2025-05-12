@@ -11,23 +11,23 @@ type PagingQuery struct {
 }
 
 var OrderMap = map[string]string{
-	"Price":            "price",
-	"Mileage":          "cars.mileage",
-	"EnginePower":      "cars.engine_power",
-	"EngineCapacity":   "cars.engine_capacity",
-	"RegistrationDate": "cars.registration_date",
-	"DateOfIssue":      "date_of_issue",
+	"Price":       "price",
+	"DateOfIssue": "date_of_issue",
 }
 
-func GetOfferPaginator(q PagingQuery, orderKey string) *paginator.Paginator {
+func GetOfferPaginator(q PagingQuery, orderKey *string) *paginator.Paginator {
+	var rules []paginator.Rule
+	if orderKey == nil {
+		rules = []paginator.Rule{{Key: "ID"}}
+	} else {
+		rules = []paginator.Rule{{Key: *orderKey, SQLRepr: OrderMap[*orderKey]}, {Key: "ID"}}
+	}
 	cfg := paginator.Config{
-		Rules: []paginator.Rule{
-			{Key: orderKey, SQLRepr: OrderMap[orderKey]},
-			{Key: "ID"},
-		},
+		Rules:         rules,
 		Limit:         8,
 		Order:         paginator.DESC,
-		AllowTupleCmp: paginator.TRUE}
+		AllowTupleCmp: paginator.TRUE,
+	}
 	p := paginator.New(&cfg)
 
 	if q.Cursor.After != nil {
