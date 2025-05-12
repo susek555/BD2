@@ -13,7 +13,7 @@ declare module "next-auth" {
       personName?: string;
       personSurname?: string;
       companyName?: string;
-      companySurname?: string;
+      companyNip?: string;
       accessTokenExpires: number;
       errors?: string[];
     };
@@ -27,7 +27,7 @@ declare module "next-auth" {
     personName?: string;
     personSurname?: string;
     companyName?: string;
-    companySurname?: string;
+    companyNip?: string;
     errors?: string[];
   }
 }
@@ -41,7 +41,7 @@ interface ExtendedJWT extends JWT {
   personName?: string;
   personSurname?: string;
   companyName?: string;
-  companySurname?: string;
+  companyNip?: string;
   accessTokenExpires: number;
   error?: string;
 }
