@@ -2,6 +2,7 @@ import { fetchOfferDetails } from "@/app/lib/data";
 import Photos from "@/app/ui/offer/photos";
 import Price from "@/app/ui/offer/price";
 import { Suspense,lazy } from "react";
+import OfferDescription from "@/app/ui/offer/description";
 
 export default async function Page(props: { params: Promise<{id: string }> }) {
     const { params } = props;
@@ -22,6 +23,8 @@ export default async function Page(props: { params: Promise<{id: string }> }) {
                             <Photos imagesURLs={offer.imagesURLs} />
                         </div>
                     </div>
+                    <div className="my-3" />
+                    <OfferDescription description={offer.description} />
                 </div>
                 <div className="md:w-120 h-full md:h-130">
                     <div className="p-4">
