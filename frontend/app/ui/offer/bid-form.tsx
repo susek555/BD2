@@ -13,7 +13,7 @@ export default function BidForm({ currentBid }: { currentBid: number }) {
         event.preventDefault();
         setErrors(null);
 
-        if (parseFloat(bidValue) > currentBid) {
+        if (parseInt(bidValue) > currentBid) {
             setShowConfirmDialog(true);
         } else {
             setErrors('Your bid must be higher than the current bid.');
@@ -22,7 +22,8 @@ export default function BidForm({ currentBid }: { currentBid: number }) {
 
     const confirmBid = () => {
         console.log('Bid is valid:', bidValue);
-        // Add logic to process the valid bid
+        //TODO: Add logic to process the valid bid
+
         setShowConfirmDialog(false);
     };
 
