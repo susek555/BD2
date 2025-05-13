@@ -196,7 +196,7 @@ export async function fetchOfferDetails(id: string) : Promise<SaleOfferDetails |
             isAuction: true,
             isActive: true,
             auctionData: {
-                endDate: new Date("2025-11-11T12:00:00Z"),
+                endDate: new Date("2025-07-07T12:00:00Z"),
                 currentBid: 12000
             },
             imagesURLs: [

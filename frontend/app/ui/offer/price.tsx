@@ -1,9 +1,11 @@
 import { AuctionData } from "@/app/lib/definitions";
 import { BasePriceButton } from "./price-buttons/base-price-button";
-import { CurrencyDollarIcon } from "@heroicons/react/20/solid";
+import { CurrencyDollarIcon, ArrowRightIcon } from "@heroicons/react/20/solid";
 import TimeLeft from "./time-left";
 import Link from "next/link";
 import BidForm from "./bid-form";
+import { authConfig } from "@/app/lib/authConfig";
+import { getServerSession } from "next-auth/next";
 
 type PriceData = {
     price: number;
@@ -12,7 +14,9 @@ type PriceData = {
     isActive: boolean;
 }
 
-export default function Price( data : { data : PriceData}) {
+export default async function Price( data : { data : PriceData}) {
+    const session = await getServerSession(authConfig);
+    const loggedIn = !!session;
     const { price, isAuction, auction, isActive } = data.data;
 
     return (
@@ -32,17 +36,35 @@ export default function Price( data : { data : PriceData}) {
                                 <p className="font-bold text-2xl">{auction!.currentBid.toString()} PLN</p>
                             </div>
                         </div>
-                        <BidForm currentBid={auction!.currentBid} />
+                        {loggedIn ? (
+                            <BidForm currentBid={auction!.currentBid} />
+                        ) : (
+                            <Link href="/login">
+                                <BasePriceButton>
+                                    <p className="text-bold text-xl">Log in to Bid</p>
+                                    <ArrowRightIcon className="ml-auto w-5 text-gray-50" />
+                                </BasePriceButton>
+                            </Link>
+                        )}
                     </div>
                 ) : (
                     <div className="flex justify-center items-center flex-col h-full gap-8">
                         <p className="font-bold text-3xl">{price.toString()} PLN</p>
-                        <Link href="/account">
-                            <BasePriceButton>
-                                <p className="text-bold text-xl">Buy Now</p>
-                                <CurrencyDollarIcon className="ml-auto w-5 text-gray-50" />
-                            </BasePriceButton>
-                        </Link>
+                        {loggedIn ? (
+                            <Link href="/account">
+                                <BasePriceButton>
+                                    <p className="text-bold text-xl">Buy Now</p>
+                                    <CurrencyDollarIcon className="ml-auto w-5 text-gray-50" />
+                                </BasePriceButton>
+                            </Link>
+                        ) : (
+                            <Link href="/login">
+                                <BasePriceButton>
+                                    <p className="text-bold text-xl">Log in to Buy</p>
+                                    <ArrowRightIcon className="ml-auto w-5 text-gray-50" />
+                                </BasePriceButton>
+                            </Link>
+                        )}
                     </div>
                 )
                 ) : (
@@ -51,18 +73,28 @@ export default function Price( data : { data : PriceData}) {
                 </div>
                 )}
             </div>
+            {/* If the offer is an auction and has a price, show the buy now button */}
             { isAuction && price ? (
                 <>
                     <div className="mt-4"></div>
                     <div className="flex flex-col gap-4 w-full md:w-120 h-full md:h-63 border-blue-500 border-2">
                         <div className="flex justify-center items-center flex-col h-full gap-8">
                             <p className="font-bold text-3xl">{price.toString()} PLN</p>
-                            <Link href="/account">
-                                <BasePriceButton>
-                                    <p className="text-bold text-xl">Buy Now</p>
-                                    <CurrencyDollarIcon className="ml-auto w-5 text-gray-50" />
-                                </BasePriceButton>
-                            </Link>
+                            {loggedIn ? (
+                                <Link href="/account">
+                                    <BasePriceButton>
+                                        <p className="text-bold text-xl">Buy Now</p>
+                                        <CurrencyDollarIcon className="ml-auto w-5 text-gray-50" />
+                                    </BasePriceButton>
+                                </Link>
+                            ) : (
+                                <Link href="/login">
+                                    <BasePriceButton>
+                                        <p className="text-bold text-xl">Log in to Buy</p>
+                                        <ArrowRightIcon className="ml-auto w-5 text-gray-50" />
+                                    </BasePriceButton>
+                                </Link>
+                            )}
                         </div>
                     </div>
                 </>
