@@ -76,7 +76,7 @@ func (h *Handler) Login(c *gin.Context) {
 		return
 	}
 
-	access, refresh, err, user_ := h.Service.Login(c, req)
+	access, refresh, user_, err := h.Service.Login(c, req)
 	loginResponse := prepareLoginResponse(access, refresh, *user_)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, LoginResponse{Errors: map[string][]string{"credentials": {ErrInvalidCredentials.Error()}}})

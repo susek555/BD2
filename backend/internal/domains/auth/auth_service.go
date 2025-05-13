@@ -14,7 +14,7 @@ import (
 
 type AuthServiceInterface interface {
 	Register(ctx context.Context, in user.CreateUserDTO) map[string][]string
-	Login(ctx context.Context, in LoginInput) (access, refresh string, err error, user *user.User)
+	Login(ctx context.Context, in LoginInput) (access, refresh string, user *user.User, err error)
 	Refresh(ctx context.Context, refreshToken string) (access string, err error)
 	Logout(ctx context.Context, userID uint, refreshToken string, allDevices bool) error
 }
@@ -64,25 +64,25 @@ func (s *AuthService) Register(ctx context.Context, in user.CreateUserDTO) map[s
 	return errs
 }
 
-func (s *AuthService) Login(ctx context.Context, in LoginInput) (string, string, error, *user.User) {
+func (s *AuthService) Login(ctx context.Context, in LoginInput) (string, string, *user.User, error) {
 	u, err := s.Repo.GetByEmail(in.Login)
 	if err != nil || u.ID == 0 {
-		return "", "", ErrInvalidCredentials, &user.User{}
+		return "", "", &user.User{}, ErrInvalidCredentials
 	}
 
 	if !passwords.Match(in.Password, u.Password) {
-		return "", "", ErrInvalidCredentials, &user.User{}
+		return "", "", &user.User{}, ErrInvalidCredentials
 	}
 	access, err := jwt.GenerateToken(u.Email, int64(u.ID), s.JwtKey, time.Now().Add(2*time.Minute))
 	if err != nil {
-		return "", "", err, &user.User{}
+		return "", "", &user.User{}, err
 	}
 
 	refresh, err := s.newRefreshToken(ctx, u.ID, u.Email)
 	if err != nil {
-		return "", "", err, &user.User{}
+		return "", "", &user.User{}, err
 	}
-	return access, refresh, nil, &u
+	return access, refresh, &u, nil
 }
 
 func (s *AuthService) Refresh(ctx context.Context, provided string) (string, error) {
