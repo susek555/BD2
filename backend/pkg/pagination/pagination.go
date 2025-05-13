@@ -37,7 +37,7 @@ func (pr *PaginationRequest) setDefaults(page int, pageSize int) {
 func (pr *PaginationRequest) CalculateTotalPages(totalRecords int64) int64 {
 	pr.setDefaults(DEFAULT_PAGE, DEFAULT_PAGE_SIZE)
 	totalPages := totalRecords / int64(pr.PageSize)
-	if totalPages%int64(pr.PageSize) != 0 {
+	if totalRecords%int64(pr.PageSize) != 0 || totalRecords == 0 {
 		totalPages++
 	}
 	return totalPages
