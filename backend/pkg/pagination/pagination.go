@@ -15,8 +15,8 @@ type PaginationRequest struct {
 }
 
 type PaginationResponse struct {
-	TotalPages   int `json:"total_pages"`
-	TotalRecords int `json:"total_records"`
+	TotalPages   int   `json:"total_pages"`
+	TotalRecords int64 `json:"total_records"`
 }
 
 func (pr *PaginationRequest) setDefaults(page int, pageSize int) {
