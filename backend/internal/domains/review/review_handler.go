@@ -113,10 +113,12 @@ func (h *Handler) UpdateReview(c *gin.Context) {
 	}
 	if err := c.ShouldBindJSON(&reviewInput); err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+		return
 	}
 	reviewOutput, err := h.service.Update(uint(reviewerId), &reviewInput)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+		return
 	}
 	c.JSON(http.StatusOK, reviewOutput)
 }
