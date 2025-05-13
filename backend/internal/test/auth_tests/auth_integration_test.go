@@ -885,3 +885,93 @@ func TestLogoutAllDevicesNonExistingToken(t *testing.T) {
 	assert.Equal(t, uint(1), user1Tokens[0].UserId)
 	assert.Equal(t, time.Now().Add(30*24*time.Hour).Format(time.RFC3339), user1Tokens[0].ExpiryDate.Format(time.RFC3339))
 }
+
+func TestLogoutAllDevicesEmptyToken(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	seedUsers := []user.User{
+		{
+			Email:    "herkules@gmail.com",
+			Username: "herkules",
+			Password: "PolskaGurom",
+			Selector: "P",
+			Person: &user.Person{
+				Name:    "Herakles",
+				Surname: "Wielki",
+			},
+		},
+	}
+	seedRefreshTokens := []refresh_token.RefreshToken{
+		{
+			UserId:     1,
+			Token:      "valid_refresh_token",
+			ExpiryDate: time.Now().Add(30 * 24 * time.Hour),
+		},
+	}
+	server, _, rtSvc, err := newTestServer(seedUsers, seedRefreshTokens)
+	wantStatus := http.StatusNotFound
+	assert.NoError(t, err)
+	payload := `
+	{
+		"refresh_token": "",
+		"all_devices": true
+	}
+	`
+	accessToken, err := getValidToken(1, "herkules@gmail.com")
+	assert.NoError(t, err)
+	req := httptest.NewRequest(http.MethodPost, "/logout", strings.NewReader(payload))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+accessToken)
+	req.Header.Set("Accept", "application/json")
+	w := httptest.NewRecorder()
+	server.ServeHTTP(w, req)
+	assert.Equal(t, wantStatus, w.Code)
+	var response map[string]any
+	err = json.Unmarshal(w.Body.Bytes(), &response)
+	assert.NoError(t, err)
+	assert.Equal(t, "refresh token required", response["error_description"])
+	user1Tokens, err := rtSvc.FindByUserId(&gin.Context{}, 1)
+	assert.NoError(t, err)
+	assert.Len(t, user1Tokens, 1)
+	assert.Equal(t, "valid_refresh_token", user1Tokens[0].Token)
+	assert.Equal(t, uint(1), user1Tokens[0].UserId)
+	assert.Equal(t, time.Now().Add(30*24*time.Hour).Format(time.RFC3339), user1Tokens[0].ExpiryDate.Format(time.RFC3339))
+}
+
+func TestLogoutAllDevicesInvalidBody(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	seedUsers := []user.User{
+		{
+			Email:    "herakles@gmail.com",
+			Username: "herkules",
+			Password: "PolskaGurom",
+			Selector: "P",
+			Person: &user.Person{
+				Name:    "Herakles",
+				Surname: "Wielki",
+			},
+		},
+	}
+	seedRefreshTokens := []refresh_token.RefreshToken{}
+	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
+	wantStatus := http.StatusNotFound
+	assert.NoError(t, err)
+	payload := `
+	{
+		"invalid_field": "invalid",
+		"all_devices": true
+	}
+	`
+	accessToken, err := getValidToken(1, "herakles@gmail.com")
+	assert.NoError(t, err)
+	req := httptest.NewRequest(http.MethodPost, "/logout", strings.NewReader(payload))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+accessToken)
+	req.Header.Set("Accept", "application/json")
+	w := httptest.NewRecorder()
+	server.ServeHTTP(w, req)
+	assert.Equal(t, wantStatus, w.Code)
+	var response map[string]any
+	err = json.Unmarshal(w.Body.Bytes(), &response)
+	assert.NoError(t, err)
+	assert.Equal(t, "refresh token required", response["error_description"])
+}
