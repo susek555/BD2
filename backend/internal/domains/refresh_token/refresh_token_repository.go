@@ -7,8 +7,9 @@ import (
 
 type RefreshTokenRepositoryInterface interface {
 	generic.CRUDRepository[RefreshToken]
-	FindByToken(token string) (RefreshToken, error)
-	FindByUserEmail(email string) (RefreshToken, error)
+	FindByToken(token string) (*RefreshToken, error)
+	FindByUserEmail(email string) ([]RefreshToken, error)
+	FindByUserId(id uint) ([]RefreshToken, error)
 	DeleteByUserId(id uint) error
 }
 
@@ -40,23 +41,32 @@ func (repo *RefreshTokenRepository) Delete(id uint) error {
 	return repo.repository.Delete(id)
 }
 
-func (repo *RefreshTokenRepository) FindByUserEmail(email string) (RefreshToken, error) {
-	var token RefreshToken
+func (repo *RefreshTokenRepository) FindByUserEmail(email string) ([]RefreshToken, error) {
+	var tokens []RefreshToken
 	err := repo.repository.
 		DB.
 		Joins("User").
 		Where("users.email = ?", email).
-		First(&token).Error
-	return token, err
+		Find(&tokens).Error
+	return tokens, err
 }
 
-func (repo *RefreshTokenRepository) FindByToken(token string) (RefreshToken, error) {
+func (repo *RefreshTokenRepository) FindByUserId(id uint) ([]RefreshToken, error) {
+	var tokens []RefreshToken
+	err := repo.repository.
+		DB.
+		Where("user_id = ?", id).
+		Find(&tokens).Error
+	return tokens, err
+}
+
+func (repo *RefreshTokenRepository) FindByToken(token string) (*RefreshToken, error) {
 	var t RefreshToken
 	err := repo.repository.
 		DB.
 		Where("token = ?", token).
 		First(&t).Error
-	return t, err
+	return &t, err
 }
 
 func (repo *RefreshTokenRepository) DeleteByUserId(id uint) error {
