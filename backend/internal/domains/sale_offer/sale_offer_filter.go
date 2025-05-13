@@ -60,6 +60,7 @@ func (of *OfferFilter) ApplyOfferFilters(query *gorm.DB) (*gorm.DB, error) {
 	query = applyInRangeFilter(query, "cars.engine_capacity", of.EngineCapacityRange)
 	query = applyDateInRangeFilter(query, "cars.registration_date", of.CarRegistrationDateRagne)
 	query = applyDateInRangeFilter(query, "date_of_issue", of.OfferCreationDateRange)
+	query = applyOrderFilter(query, of.OrderKey)
 	return query, nil
 }
 
@@ -111,6 +112,13 @@ func applyDateInRangeFilter(query *gorm.DB, column string, minmax *MinMax[string
 	if minmax != nil {
 		dates, _ := parseDateRange(minmax)
 		return applyInRangeFilter(query, column, dates)
+	}
+	return query
+}
+
+func applyOrderFilter(query *gorm.DB, orderKey *string) *gorm.DB {
+	if orderKey != nil {
+		return query.Order(*orderKey)
 	}
 	return query
 }
