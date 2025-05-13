@@ -13,7 +13,6 @@ type RetrieveReviewDTO struct {
 type CreateReviewDTO struct {
 	Description string `json:"description"`
 	Rating      uint   `json:"rating"`
-	ReviewerId  uint   `json:"reviewer_id"`
 	RevieweeId  uint   `json:"reviewee_id"`
 }
 
@@ -22,11 +21,11 @@ type UserDTO struct {
 	Username string `json:"username"`
 }
 
-func (ri *CreateReviewDTO) MapToObject() Review {
+func (ri *CreateReviewDTO) MapToObject(reviewerId uint) Review {
 	return Review{
 		Description: ri.Description,
 		Rating:      ri.Rating,
-		ReviewerID:  ri.ReviewerId,
+		ReviewerID:  reviewerId,
 		RevieweeId:  ri.RevieweeId,
 	}
 }
