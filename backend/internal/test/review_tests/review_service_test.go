@@ -1,16 +1,15 @@
-//go:build unit
-// +build unit
-
 package review_tests
 
 import (
 	"errors"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/review"
 	"testing"
 
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/review"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
+
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/generic"
 	"github.com/susek555/BD2/car-dealer-api/internal/test/mocks"
 )
 
@@ -18,9 +17,7 @@ import (
 func newServiceWithMock() (*review.ReviewService, *mocks.ReviewRepositoryInterface) {
 	repoMock := new(mocks.ReviewRepositoryInterface)
 	svc := &review.ReviewService{
-		GenericService: generic.GenericService[review.Review, review.ReviewRepositoryInterface]{
-			Repo: repoMock,
-		},
+		Repo: repoMock,
 	}
 	return svc, repoMock
 }
@@ -96,28 +93,53 @@ func TestGetByReviewerAndReviewee_Error(t *testing.T) {
 
 // CRUD
 
+// --- Create ---
+
 func TestCreate_Success(t *testing.T) {
 	svc, repo := newServiceWithMock()
+	userID := uint(1)
 
-	in := &review.Review{Description: "ok", ReviewerID: 1, RevieweeId: 2}
-	repo.On("Create", in).Return(nil).Once()
+	in := &review.CreateReviewDTO{Description: "ok", Rating: 1, RevieweeId: 2}
 
-	err := svc.Create(in)
+	repo.
+		On("Create", mock.AnythingOfType("*review.Review")).
+		Run(func(args mock.Arguments) {
+			r := args.Get(0).(*review.Review)
+
+			r.ID = 1
+			r.Reviewer = &user.User{ID: 1, Username: "author"}
+			r.Reviewee = &user.User{ID: r.RevieweeId, Username: "user"}
+		}).
+		Return(nil).
+		Once()
+
+	got, err := svc.Create(userID, in)
 
 	require.NoError(t, err)
 	repo.AssertExpectations(t)
+
+	assert.Equal(t, uint(1), got.ID)
+	assert.Equal(t, in.Description, got.Description)
+	assert.Equal(t, in.Rating, got.Rating)
+	assert.Equal(t, in.RevieweeId, got.Reviewee.ID)
 }
 
 func TestCreate_Error(t *testing.T) {
 	svc, repo := newServiceWithMock()
+	userID := uint(1)
 
-	in := &review.Review{Description: "bad"}
+	in := &review.CreateReviewDTO{Description: "bad"}
 	repoErr := errors.New("insert failed")
-	repo.On("Create", in).Return(repoErr).Once()
 
-	err := svc.Create(in)
+	repo.
+		On("Create", mock.AnythingOfType("*review.Review")).
+		Return(repoErr).
+		Once()
+
+	got, err := svc.Create(userID, in)
 
 	require.ErrorIs(t, err, repoErr)
+	assert.Nil(t, got)
 	repo.AssertExpectations(t)
 }
 
@@ -147,38 +169,92 @@ func TestGet_Error(t *testing.T) {
 	assert.Equal(t, want, got)
 	repo.AssertExpectations(t)
 }
+// --- Update ---
 
 func TestUpdate_Success(t *testing.T) {
 	svc, repo := newServiceWithMock()
 
-	upd := &review.Review{ID: 5, Description: "new desc"}
-	repo.On("Update", upd).Return(nil).Once()
+	reviewerID := uint(5)
+	reviewID := uint(5)
 
-	err := svc.Update(upd)
+	upd := &review.UpdateReviewDTO{
+		ID:          reviewID,
+		Description: "new desc",
+		Rating:      4, // add whatever fields your DTO allows
+	}
+
+	// ── step 1: service asks the repo for the existing review ──
+	repo.
+		On("GetById", reviewID).
+		Return(&review.Review{
+			ID:         reviewID,
+			ReviewerID: reviewerID,
+			RevieweeId: 2,
+			Reviewer:   &user.User{ID: reviewerID, Username: "author"},
+			Reviewee:   &user.User{ID: 2, Username: "user"},
+		}, nil).
+		Once()
+
+	// ── step 2: service calls Update(&reviewObj) ──
+	repo.
+		On("Update", mock.AnythingOfType("*review.Review")).
+		Run(func(args mock.Arguments) {
+			r := args.Get(0).(*review.Review)
+
+			// simulate DB finishing the mutation and preloading relations
+			r.Reviewer = &user.User{ID: reviewerID, Username: "author"}
+			r.Reviewee = &user.User{ID: r.RevieweeId, Username: "user"}
+		}).
+		Return(nil).
+		Once()
+
+	got, err := svc.Update(reviewerID, upd)
 
 	require.NoError(t, err)
 	repo.AssertExpectations(t)
+
+	assert.Equal(t, reviewID, got.ID)
+	assert.Equal(t, upd.Description, got.Description)
+	assert.Equal(t, upd.Rating, got.Rating)
+	assert.Equal(t, uint(2), got.Reviewee.ID)
 }
 
 func TestUpdate_Error(t *testing.T) {
 	svc, repo := newServiceWithMock()
 
-	upd := &review.Review{ID: 5}
-	repoErr := errors.New("update failed")
-	repo.On("Update", upd).Return(repoErr).Once()
+	reviewerID := uint(5)
+	reviewID := uint(5)
+	upd := &review.UpdateReviewDTO{ID: reviewID, Description: "fail"}
 
-	err := svc.Update(upd)
+	repoErr := errors.New("update failed")
+
+	repo.On("GetById", reviewID).
+		Return(&review.Review{ID: reviewID, ReviewerID: reviewerID, RevieweeId: 2}, nil).
+		Once()
+
+	repo.On("Update", mock.AnythingOfType("*review.Review")).Return(repoErr).Once()
+
+	got, err := svc.Update(reviewerID, upd)
 
 	require.ErrorIs(t, err, repoErr)
+	assert.Nil(t, got)
 	repo.AssertExpectations(t)
 }
+
+// --- Delete ---
 
 func TestDelete_Success(t *testing.T) {
 	svc, repo := newServiceWithMock()
 
-	repo.On("Delete", uint(9)).Return(nil).Once()
+	userID := uint(9)
+	reviewID := uint(10)
 
-	err := svc.Delete(9)
+	repo.On("GetById", reviewID).
+		Return(&review.Review{ID: reviewID, ReviewerID: userID}, nil).
+		Once()
+	repo.On("Delete", reviewID).Return(nil).Once()
+
+	err := svc.Delete(userID, reviewID)
 
 	require.NoError(t, err)
 	repo.AssertExpectations(t)
@@ -187,10 +263,16 @@ func TestDelete_Success(t *testing.T) {
 func TestDelete_Error(t *testing.T) {
 	svc, repo := newServiceWithMock()
 
+	userID := uint(9)
+	reviewID := uint(10)
 	repoErr := errors.New("delete failed")
-	repo.On("Delete", uint(9)).Return(repoErr).Once()
 
-	err := svc.Delete(9)
+	repo.On("GetById", reviewID).
+		Return(&review.Review{ID: reviewID, ReviewerID: userID}, nil).
+		Once()
+	repo.On("Delete", reviewID).Return(repoErr).Once()
+
+	err := svc.Delete(userID, reviewID)
 
 	require.ErrorIs(t, err, repoErr)
 	repo.AssertExpectations(t)
