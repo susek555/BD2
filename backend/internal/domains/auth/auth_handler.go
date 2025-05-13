@@ -119,7 +119,7 @@ func prepareLoginResponse(access, refresh string, user user.User) *LoginResponse
 func (h *Handler) Refresh(c *gin.Context) {
 	var req RefreshInput
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, ErrInvalidBody)
+		custom_errors.HandleError(c, ErrInvalidBody, ErrorMap)
 		return
 	}
 	access, err := h.Service.Refresh(c, req.RefreshToken)
