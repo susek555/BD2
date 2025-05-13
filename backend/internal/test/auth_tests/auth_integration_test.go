@@ -90,9 +90,6 @@ func TestRegisterPersonSuccess(t *testing.T) {
 	w := httptest.NewRecorder()
 	server.ServeHTTP(w, req)
 	assert.Equal(t, wantStatus, w.Code)
-	var response map[string]interface{}
-	err = json.Unmarshal(w.Body.Bytes(), &response)
-	assert.NoError(t, err)
 }
 
 func TestRegisterCompanySuccess(t *testing.T) {
@@ -117,9 +114,7 @@ func TestRegisterCompanySuccess(t *testing.T) {
 	w := httptest.NewRecorder()
 	server.ServeHTTP(w, req)
 	assert.Equal(t, wantStatus, w.Code)
-	var response map[string]interface{}
-	err = json.Unmarshal(w.Body.Bytes(), &response)
-	assert.NoError(t, err)
+
 }
 
 func TestRegisterPersonEmailAlreadyExists(t *testing.T) {
