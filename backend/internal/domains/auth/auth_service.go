@@ -111,16 +111,15 @@ func (s *AuthService) Refresh(ctx context.Context, provided string) (string, err
 }
 
 func (s *AuthService) Logout(ctx context.Context, userID uint, provided string, allDevices bool) error {
-	if allDevices {
-		return s.RefreshTokenService.DeleteByUserID(ctx, userID)
-	}
 	if provided == "" {
 		return errors.New("refresh token required")
 	}
-
 	refresh, err := s.RefreshTokenService.FindByToken(ctx, provided)
 	if err != nil {
-		return err
+		return errors.New("refresh token not found")
+	}
+	if allDevices {
+		return s.RefreshTokenService.DeleteByUserID(ctx, userID)
 	}
 	return s.RefreshTokenService.Delete(refresh.ID)
 }
