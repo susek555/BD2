@@ -2,8 +2,6 @@ package auth
 
 import (
 	"context"
-	"errors"
-
 	"time"
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/refresh_token"
@@ -12,11 +10,6 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
 	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
 	"github.com/susek555/BD2/car-dealer-api/pkg/passwords"
-)
-
-var (
-	ErrEmailTaken         = errors.New("email already in use")
-	ErrInvalidCredentials = errors.New("invalid email or password")
 )
 
 type AuthServiceInterface interface {
@@ -50,16 +43,16 @@ func (s *AuthService) Register(ctx context.Context, in user.CreateUserDTO) map[s
 	}
 	_, noUsername := s.Repo.GetByUsername(in.Username)
 	if noUsername == nil {
-		errs["username"] = []string{"Username already taken"}
+		errs["username"] = []string{ErrUsernameTaken.Error()}
 	}
 	_, noEmail := s.Repo.GetByEmail(in.Email)
 	if noEmail == nil {
-		errs["email"] = []string{"Email already taken"}
+		errs["email"] = []string{ErrEmailTaken.Error()}
 	}
 	if in.Selector == "C" {
 		_, noNip := s.Repo.GetByCompanyNip(*in.CompanyNIP)
 		if noNip == nil {
-			errs["company_nip"] = []string{"NIP already taken"}
+			errs["company_nip"] = []string{ErrNipAlreadyTaken.Error()}
 		}
 	}
 	if len(errs) > 0 {
@@ -95,11 +88,11 @@ func (s *AuthService) Login(ctx context.Context, in LoginInput) (string, string,
 func (s *AuthService) Refresh(ctx context.Context, provided string) (string, error) {
 	refresh, err := s.RefreshTokenService.FindByToken(ctx, provided)
 	if err != nil {
-		return "", errors.New("invalid refresh token")
+		return "", ErrInvalidRefreshToken
 	}
 
 	if _, err := s.RefreshTokenService.VerifyExpiration(ctx, refresh); err != nil {
-		return "", errors.New("refresh token expired")
+		return "", ErrRefreshTokenExpired
 	}
 
 	access, err := jwt.GenerateToken(refresh.User.Email, int64(refresh.User.ID), s.JwtKey, time.Now().Add(2*time.Hour))
@@ -112,11 +105,11 @@ func (s *AuthService) Refresh(ctx context.Context, provided string) (string, err
 
 func (s *AuthService) Logout(ctx context.Context, userID uint, provided string, allDevices bool) error {
 	if provided == "" {
-		return errors.New("refresh token required")
+		return ErrRefreshTokenRequired
 	}
 	refresh, err := s.RefreshTokenService.FindByToken(ctx, provided)
 	if err != nil {
-		return errors.New("refresh token not found")
+		return ErrRefreshTokenNotFound
 	}
 	if allDevices {
 		return s.RefreshTokenService.DeleteByUserID(ctx, userID)
@@ -133,7 +126,7 @@ func (s *AuthService) newRefreshToken(ctx context.Context, userId uint, userEmai
 	}
 	err := s.RefreshTokenService.Create(&refresh)
 	if err != nil {
-		return "", err
+		return "", ErrCreateRefreshToken
 	}
 	return token, nil
 }
