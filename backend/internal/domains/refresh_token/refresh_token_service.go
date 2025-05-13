@@ -3,18 +3,20 @@ package refresh_token
 import (
 	"context"
 	"errors"
+	"time"
+
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/generic"
 	"gorm.io/gorm"
-	"time"
 )
 
 //go:generate mockery --name=RefreshTokenServiceInterface --output=../../test/mocks --case=snake --with-expecter
 type RefreshTokenServiceInterface interface {
 	generic.CRUDService[RefreshToken]
 
-	FindByToken(ctx context.Context, token string) (RefreshToken, error)
-	FindByUserEmail(ctx context.Context, email string) (RefreshToken, error)
-	VerifyExpiration(ctx context.Context, token RefreshToken) (RefreshToken, error)
+	FindByToken(ctx context.Context, token string) (*RefreshToken, error)
+	FindByUserEmail(ctx context.Context, email string) ([]RefreshToken, error)
+	FindByUserId(ctx context.Context, id uint) ([]RefreshToken, error)
+	VerifyExpiration(ctx context.Context, token *RefreshToken) (*RefreshToken, error)
 	DeleteByUserID(ctx context.Context, userID uint) error
 }
 
@@ -32,18 +34,22 @@ func NewRefreshTokenService(db *gorm.DB) *RefreshTokenService {
 	}
 }
 
-func (s *RefreshTokenService) FindByToken(ctx context.Context, token string) (RefreshToken, error) {
+func (s *RefreshTokenService) FindByToken(ctx context.Context, token string) (*RefreshToken, error) {
 	return s.Repo.FindByToken(token)
 }
 
-func (s *RefreshTokenService) FindByUserEmail(ctx context.Context, email string) (RefreshToken, error) {
+func (s *RefreshTokenService) FindByUserEmail(ctx context.Context, email string) ([]RefreshToken, error) {
 	return s.Repo.FindByUserEmail(email)
 }
 
-func (s *RefreshTokenService) VerifyExpiration(ctx context.Context, token RefreshToken) (RefreshToken, error) {
+func (s *RefreshTokenService) FindByUserId(ctx context.Context, id uint) ([]RefreshToken, error) {
+	return s.Repo.FindByUserId(id)
+}
+
+func (s *RefreshTokenService) VerifyExpiration(ctx context.Context, token *RefreshToken) (*RefreshToken, error) {
 	if token.ExpiryDate.Before(time.Now()) {
 		_ = s.Repo.Delete(token.ID)
-		return RefreshToken{}, errors.New("refresh token expired")
+		return nil, errors.New("refresh token expired")
 	}
 	return token, nil
 }
