@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
+	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
 	"gorm.io/gorm"
 )
 
@@ -23,22 +24,23 @@ type MinMax[T uint | string | time.Time] struct {
 }
 
 type OfferFilter struct {
-	PagingQuery              PagingQuery                `json:"query"`
-	OrderKey                 *string                    `json:"order_key"`
-	IsOrderDesc              *bool                      `json:"is_order_desc"`
-	OfferType                *OfferType                 `json:"offer_type"`
-	Manufacturers            *[]string                  `json:"manufacturers"`
-	Colors                   *[]car_params.Color        `json:"colors"`
-	Drives                   *[]car_params.Drive        `json:"drives"`
-	FuelTypes                *[]car_params.FuelType     `json:"fuel_types"`
-	Transmissions            *[]car_params.Transmission `json:"transmissions"`
-	PriceRange               *MinMax[uint]              `json:"price_range"`
-	MileageRange             *MinMax[uint]              `json:"mileage_range"`
-	YearRange                *MinMax[uint]              `json:"year_range"`
-	EnginePowerRange         *MinMax[uint]              `json:"engine_power_range"`
-	EngineCapacityRange      *MinMax[uint]              `json:"engine_capacity_range"`
-	CarRegistrationDateRagne *MinMax[string]            `json:"car_registration_date_range"`
-	OfferCreationDateRange   *MinMax[string]            `json:"offer_creation_date_range"`
+	Pagination               pagination.PaginationRequest `json:"pagination"`
+	Query                    *string                      `json:"query"`
+	OrderKey                 *string                      `json:"order_key"`
+	IsOrderDesc              *bool                        `json:"is_order_desc"`
+	OfferType                *OfferType                   `json:"offer_type"`
+	Manufacturers            *[]string                    `json:"manufacturers"`
+	Colors                   *[]car_params.Color          `json:"colors"`
+	Drives                   *[]car_params.Drive          `json:"drives"`
+	FuelTypes                *[]car_params.FuelType       `json:"fuel_types"`
+	Transmissions            *[]car_params.Transmission   `json:"transmissions"`
+	PriceRange               *MinMax[uint]                `json:"price_range"`
+	MileageRange             *MinMax[uint]                `json:"mileage_range"`
+	YearRange                *MinMax[uint]                `json:"year_range"`
+	EnginePowerRange         *MinMax[uint]                `json:"engine_power_range"`
+	EngineCapacityRange      *MinMax[uint]                `json:"engine_capacity_range"`
+	CarRegistrationDateRagne *MinMax[string]              `json:"car_registration_date_range"`
+	OfferCreationDateRange   *MinMax[string]              `json:"offer_creation_date_range"`
 }
 
 func (of *OfferFilter) ApplyOfferFilters(query *gorm.DB) (*gorm.DB, error) {

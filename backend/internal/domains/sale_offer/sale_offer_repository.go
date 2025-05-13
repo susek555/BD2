@@ -1,13 +1,13 @@
 package sale_offer
 
 import (
-	"github.com/pilagod/gorm-cursor-paginator/v2/paginator"
+	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
 	"gorm.io/gorm"
 )
 
 type SaleOfferRepositoryInterface interface {
 	Create(offer *SaleOffer) error
-	GetFiltered(filter *OfferFilter) ([]SaleOffer, paginator.Cursor, error)
+	GetFiltered(filter *OfferFilter) ([]SaleOffer, pagination.PaginationResponse, error)
 }
 
 type SaleOfferRepository struct {
@@ -30,7 +30,7 @@ func (r *SaleOfferRepository) Create(offer *SaleOffer) error {
 	})
 }
 
-func (r *SaleOfferRepository) GetFiltered(filter *OfferFilter) ([]SaleOffer, paginator.Cursor, error) {
+func (r *SaleOfferRepository) GetFiltered(filter *OfferFilter) ([]SaleOffer, pagination.PaginationResponse, error) {
 	var saleOffers []SaleOffer
 	query := r.DB.
 		Joins("JOIN cars on cars.id = sale_offers.car_id").
@@ -41,15 +41,11 @@ func (r *SaleOfferRepository) GetFiltered(filter *OfferFilter) ([]SaleOffer, pag
 		Preload("Car.Model.Manufacturer")
 	query, err := filter.ApplyOfferFilters(query)
 	if err != nil {
-		return nil, paginator.Cursor{}, err
+		return nil, pagination.PaginationResponse{}, err
 	}
-	p := GetOfferPaginator(filter.PagingQuery, filter.OrderKey)
-	result, cursor, err := p.Paginate(query, &saleOffers)
+	err = query.Scopes(pagination.Paginate(&filter.Pagination)).Find(&saleOffers).Error
 	if err != nil {
-		return nil, paginator.Cursor{}, err
+		return nil, pagination.PaginationResponse{}, err
 	}
-	if result.Error != nil {
-		return nil, paginator.Cursor{}, result.Error
-	}
-	return saleOffers, cursor, nil
+	return saleOffers, pagination.PaginationResponse{TotalRecords: len(saleOffers), TotalPages: len(saleOffers)/filter.Pagination.PageSize + 1}, nil
 }
