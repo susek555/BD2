@@ -8,6 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// Consts
 type OfferType string
 
 const (
@@ -17,6 +18,13 @@ const (
 )
 
 var OfferTypes = []OfferType{REGULAR_OFFER, AUCTION, BOTH}
+
+var OrderKeysMap = map[string]string{
+	"Price":           "price",
+	"Mileage":         "cars.mileage",
+	"Engine power":    "cars.engine_power",
+	"Engine capacity": "cars.engine_capacity",
+	"Date of issue":   "date_of_issue"}
 
 type MinMax[T uint | string | time.Time] struct {
 	Min *T `json:"min"`
@@ -118,7 +126,7 @@ func applyDateInRangeFilter(query *gorm.DB, column string, minmax *MinMax[string
 
 func applyOrderFilter(query *gorm.DB, orderKey *string) *gorm.DB {
 	if orderKey != nil {
-		return query.Order(*orderKey)
+		return query.Order(OrderKeysMap[*orderKey])
 	}
 	return query
 }
@@ -166,11 +174,11 @@ func (of *OfferFilter) validateRanges() error {
 }
 
 func (of *OfferFilter) validateDates() error {
-	if err := validateDateRange(of.CarRegistrationDateRagne); err != nil {
-		return err
-	}
-	if err := validateDateRange(of.OfferCreationDateRange); err != nil {
-		return err
+	datesRanges := []*MinMax[string]{of.CarRegistrationDateRagne, of.OfferCreationDateRange}
+	for _, r := range datesRanges {
+		if err := validateDateRange(r); err != nil {
+			return err
+		}
 	}
 	return nil
 }
