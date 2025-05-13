@@ -8,6 +8,7 @@ import { authConfig } from "@/app/lib/authConfig";
 import { getServerSession } from "next-auth/next";
 
 type PriceData = {
+    id: string;
     price: number;
     isAuction: boolean;
     auction?: AuctionData;
@@ -15,9 +16,10 @@ type PriceData = {
 }
 
 export default async function Price( data : { data : PriceData}) {
+
     const session = await getServerSession(authConfig);
     const loggedIn = !!session;
-    const { price, isAuction, auction, isActive } = data.data;
+    const { id, price, isAuction, auction, isActive } = data.data;
 
     return (
         <>
@@ -51,7 +53,7 @@ export default async function Price( data : { data : PriceData}) {
                     <div className="flex justify-center items-center flex-col h-full gap-8">
                         <p className="font-bold text-3xl">{price.toString()} PLN</p>
                         {loggedIn ? (
-                            <Link href="/account">
+                            <Link href={`/offer/${id}/buynow`}>
                                 <BasePriceButton>
                                     <p className="text-bold text-xl">Buy Now</p>
                                     <CurrencyDollarIcon className="ml-auto w-5 text-gray-50" />
@@ -81,7 +83,7 @@ export default async function Price( data : { data : PriceData}) {
                         <div className="flex justify-center items-center flex-col h-full gap-8">
                             <p className="font-bold text-3xl">{price.toString()} PLN</p>
                             {loggedIn ? (
-                                <Link href="/account">
+                                <Link href={`/offer/${id}/buynow`}>
                                     <BasePriceButton>
                                         <p className="text-bold text-xl">Buy Now</p>
                                         <CurrencyDollarIcon className="ml-auto w-5 text-gray-50" />
