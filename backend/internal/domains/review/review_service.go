@@ -59,9 +59,13 @@ func (service *ReviewService) GetById(id uint) (*RetrieveReviewDTO, error) {
 	return &reviewDTO, nil
 }
 
-func (service *ReviewService) Update(userId uint, review *UpdateReviewDTO) (*RetrieveReviewDTO, error) {
-	reviewObj := review.MapToObject(userId)
-	err := service.Repo.Update(&reviewObj)
+func (service *ReviewService) Update(reviewerId uint, review *UpdateReviewDTO) (*RetrieveReviewDTO, error) {
+	revieweeId, err := service.getRevieweeId(review.ID)
+	if err != nil {
+		return nil, err
+	}
+	reviewObj := review.MapToObject(reviewerId, revieweeId)
+	err = service.Repo.Update(&reviewObj)
 	if err != nil {
 		return nil, err
 	}
@@ -90,4 +94,12 @@ func (service *ReviewService) GetByRevieweeId(reviewedId uint) ([]Review, error)
 
 func (service *ReviewService) GetByReviewerIdAndRevieweeId(reviewerId uint, reviewedId uint) (Review, error) {
 	return service.Repo.GetByReviewerIdAndRevieweeId(reviewerId, reviewedId)
+}
+
+func (service *ReviewService) getRevieweeId(reviewId uint) (uint, error) {
+	review, err := service.Repo.GetById(reviewId)
+	if err != nil {
+		return 0, err
+	}
+	return review.RevieweeId, nil
 }
