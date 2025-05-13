@@ -1,4 +1,3 @@
-// app/offer/[id]/loading.tsx
 import { CarImageOfferPageSkeleton, NameOfferPageSkeleton, OfferDescriptionSkeleton, PriceOfferPageSkeleton } from "@/app/ui/skeletons";
 
 export default function Loading() {
