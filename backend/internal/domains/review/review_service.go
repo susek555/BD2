@@ -1,28 +1,83 @@
 package review
 
 import (
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/generic"
+	"errors"
+
 	"gorm.io/gorm"
 )
 
 type ReviewServiceInterface interface {
-	generic.CRUDService[Review]
+	Create(userId uint, review *CreateReviewDTO) (*RetrieveReviewDTO, error)
+	GetAll() ([]RetrieveReviewDTO, error)
+	GetById(id uint) (*RetrieveReviewDTO, error)
+	Update(userId uint, review *UpdateReviewDTO) (*RetrieveReviewDTO, error)
+	Delete(userId, id uint) error
 	GetByReviewerId(reviewerId uint) ([]Review, error)
 	GetByRevieweeId(reviewedId uint) ([]Review, error)
 	GetByReviewerIdAndRevieweeId(reviewerId uint, revieweeId uint) (Review, error)
 }
 
 type ReviewService struct {
-	generic.GenericService[Review, ReviewRepositoryInterface]
+	Repo ReviewRepositoryInterface
 }
 
 func NewReviewService(db *gorm.DB) ReviewServiceInterface {
 	repo := NewReviewRepository(db)
 	return &ReviewService{
-		GenericService: generic.GenericService[Review, ReviewRepositoryInterface]{
-			Repo: repo,
-		},
+		Repo: repo,
 	}
+}
+
+func (service *ReviewService) Create(userId uint, review *CreateReviewDTO) (*RetrieveReviewDTO, error) {
+	reviewObj := review.MapToObject(userId)
+	err := service.Repo.Create(&reviewObj)
+	if err != nil {
+		return nil, err
+	}
+	reviewDTO := reviewObj.MapToDTO()
+	return &reviewDTO, nil
+}
+
+func (service *ReviewService) GetAll() ([]RetrieveReviewDTO, error) {
+	reviews, err := service.Repo.GetAll()
+	if err != nil {
+		return nil, err
+	}
+	var reviewsDTO []RetrieveReviewDTO
+	for _, review := range reviews {
+		reviewsDTO = append(reviewsDTO, review.MapToDTO())
+	}
+	return reviewsDTO, nil
+}
+
+func (service *ReviewService) GetById(id uint) (*RetrieveReviewDTO, error) {
+	review, err := service.Repo.GetById(id)
+	if err != nil {
+		return nil, err
+	}
+	reviewDTO := review.MapToDTO()
+	return &reviewDTO, nil
+}
+
+func (service *ReviewService) Update(userId uint, review *UpdateReviewDTO) (*RetrieveReviewDTO, error) {
+	reviewObj := review.MapToObject(userId)
+	err := service.Repo.Update(&reviewObj)
+	if err != nil {
+		return nil, err
+	}
+	reviewDTO := reviewObj.MapToDTO()
+	return &reviewDTO, nil
+}
+
+func (service *ReviewService) Delete(userId, id uint) error {
+	review, err := service.Repo.GetById(id)
+	if err != nil {
+		return err
+	}
+	if review.ReviewerID != userId {
+		return errors.New("you are not the reviewer of this review")
+	}
+	return service.Repo.Delete(id)
 }
 
 func (service *ReviewService) GetByReviewerId(reviewerId uint) ([]Review, error) {

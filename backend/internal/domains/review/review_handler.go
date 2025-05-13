@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/auth"
 	"github.com/susek555/BD2/car-dealer-api/pkg/custom_errors"
 )
 
@@ -32,11 +33,7 @@ func (h *Handler) GetAllReviews(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
-	var reviewsDTO []RetrieveReviewDTO
-	for _, review := range reviews {
-		reviewsDTO = append(reviewsDTO, review.MapToDTO())
-	}
-	c.JSON(http.StatusOK, reviewsDTO)
+	c.JSON(http.StatusOK, reviews)
 }
 
 // GetReviewById godoc
@@ -61,8 +58,7 @@ func (h *Handler) GetReviewById(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
-	reviewDTO := review.MapToDTO()
-	c.JSON(http.StatusOK, reviewDTO)
+	c.JSON(http.StatusOK, review)
 }
 
 // CreateReview godoc
@@ -79,17 +75,21 @@ func (h *Handler) GetReviewById(c *gin.Context) {
 //	@Router			/review [post]
 func (h *Handler) CreateReview(c *gin.Context) {
 	var reviewInput CreateReviewDTO
-	review := reviewInput.MapToObject()
-	if err := c.ShouldBindJSON(&review); err != nil {
+	reviewerId, err := auth.GetUserId(c)
+	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
-	if err := h.service.Create(&review); err != nil {
+	if err := c.ShouldBindJSON(&reviewInput); err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
-	reviewDTO := review.MapToDTO()
-	c.JSON(http.StatusCreated, reviewDTO)
+	reviewOutput, err := h.service.Create(uint(reviewerId), &reviewInput)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+		return
+	}
+	c.JSON(http.StatusCreated, reviewOutput)
 }
 
 // UpdateReview godoc
@@ -105,16 +105,20 @@ func (h *Handler) CreateReview(c *gin.Context) {
 //	@Failure		400		{object}	custom_errors.HTTPError	"Bad Request – validation or update error"
 //	@Router			/review [put]
 func (h *Handler) UpdateReview(c *gin.Context) {
-	var reviewInput CreateReviewDTO
-	review := reviewInput.MapToObject()
-	if err := c.ShouldBindJSON(&review); err != nil {
+	var reviewInput UpdateReviewDTO
+	reviewerId, err := auth.GetUserId(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+		return
+	}
+	if err := c.ShouldBindJSON(&reviewInput); err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
-	if err := h.service.Update(&review); err != nil {
+	reviewOutput, err := h.service.Update(uint(reviewerId), &reviewInput)
+	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
-	reviewDTO := review.MapToDTO()
-	c.JSON(http.StatusOK, reviewDTO)
+	c.JSON(http.StatusOK, reviewOutput)
 }
 
 // DeleteReview godoc
@@ -131,8 +135,13 @@ func (h *Handler) DeleteReview(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+		return
 	}
-	if err := h.service.Delete(uint(id)); err != nil {
+	reviewerId, err := auth.GetUserId(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+	}
+	if err := h.service.Delete(reviewerId, uint(id)); err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
 	c.JSON(http.StatusNoContent, nil)
