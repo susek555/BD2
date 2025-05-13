@@ -11,12 +11,13 @@ func (ri *CreateReviewDTO) MapToObject(reviewerId uint) Review {
 	}
 }
 
-func (ur *UpdateReviewDTO) MapToObject(reviewerId uint) Review {
+func (ur *UpdateReviewDTO) MapToObject(reviewerId, revieweeId uint) Review {
 	return Review{
 		ID:          ur.ID,
 		Description: ur.Description,
 		Rating:      ur.Rating,
 		ReviewerID:  reviewerId,
+		RevieweeId:  revieweeId,
 	}
 }
 
