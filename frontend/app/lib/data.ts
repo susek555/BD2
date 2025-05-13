@@ -204,7 +204,21 @@ export async function fetchOfferDetails(id: string) : Promise<SaleOfferDetails |
             "http://localhost:8081/test_car_image_2.webp",
             "http://localhost:808/test_car_image_3.webp",
             ], // temp mock
-            description: "The Volkswagen Golf is a compact car known for its reliability, practicality, and efficient performance. It features a comfortable interior, advanced technology, and a timeless design, making it a popular choice among drivers worldwide.The Volkswagen Golf is a compact car known for its reliability, practicality, and efficient performance. It features a comfortable interior, advanced technology, and a timeless design, making it a popular choice among drivers worldwide.The Volkswagen Golf is a compact car known for its reliability, practicality, and efficient performance. It features a comfortable interior, advanced technology, and a timeless design, making it a popular choice among drivers worldwide.The Volkswagen Golf is a compact car known for its reliability, practicality, and efficient performance. It features a comfortable interior, advanced technology,The Volkswagen Golf is a compact car known for its reliability, practicality, and efficient performance. It features a comfortable interior, advanced technology, and a timeless design, making it a popular choice among drivers worldwide.The Volkswagen Golf is a compact car known for its reliability, practicality, and efficient performance. It features a comfortable interior, advanced technology, and a timeless design, making it a popular choice among drivers worldwide.The Volkswagen Golf is a compact car known for its reliability, practicality, and efficient performance. It features a comfortable interior, advanced technology, and a timeless design, making it a popular choice among drivers worldwide. and a timeless design, making it a popular choice among drivers worldwide."
+            description: "The Volkswagen Golf is a compact car known for its reliability, practicality, and efficient performance. It features a comfortable interior, advanced technology, and a timeless design, making it a popular choice among drivers worldwide.The Volkswagen Golf is a compact car known for its reliability, practicality, and efficient performance. It features a comfortable interior, advanced technology, and a timeless design, making it a popular choice among drivers worldwide.The Volkswagen Golf is a compact car known for its reliability, practicality, and efficient performance. It features a comfortable interior, advanced technology, and a timeless design, making it a popular choice among drivers worldwide.The Volkswagen Golf is a compact car known for its reliability, practicality, and efficient performance. It features a comfortable interior, advanced technology,The Volkswagen Golf is a compact car known for its reliability, practicality, and efficient performance. It features a comfortable interior, advanced technology, and a timeless design, making it a popular choice among drivers worldwide.The Volkswagen Golf is a compact car known for its reliability, practicality, and efficient performance. It features a comfortable interior, advanced technology, and a timeless design, making it a popular choice among drivers worldwide.The Volkswagen Golf is a compact car known for its reliability, practicality, and efficient performance. It features a comfortable interior, advanced technology, and a timeless design, making it a popular choice among drivers worldwide. and a timeless design, making it a popular choice among drivers worldwide.",
+            details: [
+                {
+                    name: "Engine",
+                    value: "2.0 TDI"
+                },
+                {
+                    name: "Power",
+                    value: "150 HP"
+                },
+                {
+                    name: "Color",
+                    value: "Blue"
+                }
+            ]
         };
     }
 
