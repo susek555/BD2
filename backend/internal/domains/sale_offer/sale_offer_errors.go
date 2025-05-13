@@ -13,6 +13,7 @@ var (
 	ErrInvalidSaleOfferType error = errors.New("invalid sale offer type")
 	ErrInvalidRange         error = errors.New("the min value should be lower than max")
 	ErrInvalidDateFromat    error = errors.New("invalid date format, should be YYYY-MM-DD")
+	ErrInvalidOrderKey      error = errors.New("invalid order-key")
 )
 
 var ErrorMap = map[error]int{

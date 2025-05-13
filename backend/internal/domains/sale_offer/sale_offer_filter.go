@@ -1,6 +1,7 @@
 package sale_offer
 
 import (
+	"slices"
 	"time"
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
@@ -132,18 +133,14 @@ func applyOrderFilter(query *gorm.DB, orderKey *string) *gorm.DB {
 }
 
 func (of *OfferFilter) validateParams() error {
-	if err := of.validateEnums(); err != nil {
-		return err
-	}
-	if err := of.validateDates(); err != nil {
-		return err
-	}
-	if err := of.validateRanges(); err != nil {
-		return err
+	validators := []func() error{of.validateEnums, of.validateRanges, of.validateDates, of.validateOrderKey}
+	for _, validate := range validators {
+		if err := validate(); err != nil {
+			return err
+		}
 	}
 	return nil
 }
-
 func (of *OfferFilter) validateEnums() error {
 	if of.OfferType != nil && !IsParamValid(*of.OfferType, OfferTypes) {
 		return ErrInvalidSaleOfferType
@@ -166,7 +163,7 @@ func (of *OfferFilter) validateEnums() error {
 func (of *OfferFilter) validateRanges() error {
 	ranges := []*MinMax[uint]{of.PriceRange, of.YearRange, of.MileageRange, of.EnginePowerRange, of.EngineCapacityRange}
 	for _, r := range ranges {
-		if r != nil && !isMinMaxValidNumbers(*r) {
+		if r != nil && !areMinMaxValidNumbers(*r) {
 			return ErrInvalidRange
 		}
 	}
@@ -179,6 +176,13 @@ func (of *OfferFilter) validateDates() error {
 		if err := validateDateRange(r); err != nil {
 			return err
 		}
+	}
+	return nil
+}
+
+func (of *OfferFilter) validateOrderKey() error {
+	if of.OrderKey != nil && !slices.Contains(getKeysFromMap(OrderKeysMap), *of.OrderKey) {
+		return ErrInvalidOrderKey
 	}
 	return nil
 }
@@ -215,7 +219,7 @@ func parseDateRange(minmax *MinMax[string]) (*MinMax[time.Time], error) {
 	return &MinMax[time.Time]{Min: min, Max: max}, nil
 }
 
-func isMinMaxValidNumbers(minmax MinMax[uint]) bool {
+func areMinMaxValidNumbers(minmax MinMax[uint]) bool {
 	if minmax.Min != nil && minmax.Max != nil {
 		return *minmax.Max > *minmax.Min
 	}
@@ -227,4 +231,12 @@ func isMinMaxValidDates(minmax MinMax[time.Time]) bool {
 		return (*minmax.Max).After(*minmax.Min)
 	}
 	return true
+}
+
+func getKeysFromMap[T comparable](m map[T]T) []T {
+	keys := make([]T, 0, len(m))
+	for k := range m {
+		keys = append(keys, k)
+	}
+	return keys
 }
