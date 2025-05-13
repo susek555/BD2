@@ -160,3 +160,5 @@ export type AuctionData = {
   currentBid: number;
   endDate: Date;
 }
+
+

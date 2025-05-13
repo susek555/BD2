@@ -31,7 +31,7 @@ export default function Price( data : { data : PriceData}) {
                             <p className="font-bold text-2xl">{price.toString()} PLN</p>
                         </div>
                     </div>
-                    <BidForm />
+                    <BidForm currentBid={auction!.currentBid} />
                 </div>
             ) : (
                 <div className="flex justify-center items-center flex-col h-full gap-8">
