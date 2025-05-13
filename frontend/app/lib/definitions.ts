@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { StringValidation, z } from 'zod';
 
 export const SignupFormSchema = z.object({
   selector: z.enum(['P', 'C']),
@@ -147,11 +147,8 @@ export type SaleOfferDetails = {
   imagesURLs: string[]; // URLs to images
   details: OfferDetails[];
   description: string;
-  // location: string; // city or region
-  // contactInfo: {
-  //   phoneNumber: string;
-  //   email: string;
-  // };
+  // location: string;
+  userDetails: OfferUserDetails;
 }
 
 export type AuctionData = {
@@ -162,6 +159,12 @@ export type AuctionData = {
 export type OfferDetails = {
   name: string;
   value: string;
+}
+
+export type OfferUserDetails = {
+  id: string;
+  username: string;
+  email: string;
 }
 
 

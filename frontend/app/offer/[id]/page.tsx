@@ -4,6 +4,7 @@ import Price from "@/app/ui/offer/price";
 import { Suspense,lazy } from "react";
 import OfferDescription from "@/app/ui/offer/description";
 import OfferDetailsTable from "@/app/ui/offer/details-table";
+import UserDetails from "@/app/ui/offer/user-details";
 
 export default async function Page(props: { params: Promise<{id: string }> }) {
     const { params } = props;
@@ -36,6 +37,8 @@ export default async function Page(props: { params: Promise<{id: string }> }) {
                     </div>
                     <div className="my-10" />
                     <Price data={{ id: id, price: offer.price ?? 0, isAuction: offer.isAuction, auction: offer.auctionData,  isActive: offer.isActive }} />
+                    <div className="my-4" />
+                    <UserDetails user={offer.userDetails} />
                 </div>
             </div>
         </>
