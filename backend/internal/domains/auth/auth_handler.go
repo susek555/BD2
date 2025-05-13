@@ -53,7 +53,7 @@ func (h *Handler) Register(ctx *gin.Context) {
 		ctx.JSON(http.StatusConflict, RegisterResponse{Errors: err})
 		return
 	}
-	ctx.JSON(http.StatusCreated, gin.H{})
+	ctx.Status(http.StatusCreated)
 }
 
 // Login godoc
