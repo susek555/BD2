@@ -8,7 +8,7 @@ import (
 var (
 	ErrEmailTaken           = errors.New("email already in use")
 	ErrUsernameTaken        = errors.New("username already in use")
-	ErrInvalidCredentials   = errors.New("invalid email or password")
+	ErrInvalidCredentials   = errors.New("invalid credentials")
 	ErrInvalidBody          = errors.New("invalid body")
 	ErrInvalidRefreshToken  = errors.New("invalid refresh token")
 	ErrNipAlreadyTaken      = errors.New("NIP already taken")
@@ -24,11 +24,11 @@ var ErrorMap = map[error]int{
 	ErrUsernameTaken:        http.StatusConflict,
 	ErrInvalidCredentials:   http.StatusUnauthorized,
 	ErrInvalidBody:          http.StatusBadRequest,
-	ErrInvalidRefreshToken:  http.StatusBadRequest,
+	ErrInvalidRefreshToken:  http.StatusUnauthorized,
 	ErrNipAlreadyTaken:      http.StatusConflict,
-	ErrRefreshTokenExpired:  http.StatusBadRequest,
+	ErrRefreshTokenExpired:  http.StatusUnauthorized,
 	ErrCreateRefreshToken:   http.StatusBadRequest,
 	ErrRefreshTokenRequired: http.StatusBadRequest,
-	ErrRefreshTokenNotFound: http.StatusBadRequest,
+	ErrRefreshTokenNotFound: http.StatusNotFound,
 	ErrUnauthorized:         http.StatusUnauthorized,
 }
