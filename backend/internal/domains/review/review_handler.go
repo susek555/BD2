@@ -1,10 +1,11 @@
 package review
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/susek555/BD2/car-dealer-api/pkg/custom_errors"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
+	"github.com/susek555/BD2/car-dealer-api/pkg/custom_errors"
 )
 
 type Handler struct {
