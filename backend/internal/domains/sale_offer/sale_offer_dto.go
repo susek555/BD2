@@ -56,7 +56,7 @@ type RetrieveSaleOfferDTO struct {
 	BuyNowPrice        *uint                   `json:"buy_now_price,omitempty"`
 }
 
-type RetrieveUsersWithPagination struct {
+type RetrieveOffersWithPagination struct {
 	PaginationResponse *pagination.PaginationResponse `json:"pagination"`
-	Users              []RetrieveSaleOfferDTO         `json:"users"`
+	Offers             []RetrieveSaleOfferDTO         `json:"offers"`
 }
