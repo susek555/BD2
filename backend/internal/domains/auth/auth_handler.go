@@ -158,7 +158,7 @@ func (h *Handler) Logout(c *gin.Context) {
 	}
 
 	if err := h.Service.Logout(c, userId.(uint), req.RefreshToken, req.AllDevices); err != nil {
-		c.JSON(http.StatusInternalServerError, custom_errors.NewHTTPError(err.Error()))
+		c.JSON(http.StatusNotFound, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
 	c.Status(http.StatusNoContent)
