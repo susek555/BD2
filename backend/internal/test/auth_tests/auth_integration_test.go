@@ -158,7 +158,7 @@ func TestRegisterPersonEmailAlreadyExists(t *testing.T) {
 	var response map[string]any
 	body := json.Unmarshal(w.Body.Bytes(), &response)
 	assert.NoError(t, body)
-	assert.Equal(t, "Email already taken", response["errors"].(map[string]any)["email"].([]any)[0])
+	assert.Equal(t, "email already in use", response["errors"].(map[string]any)["email"].([]any)[0])
 }
 
 func TestRegisterPersonUsernameAlreadyExists(t *testing.T) {
@@ -197,7 +197,7 @@ func TestRegisterPersonUsernameAlreadyExists(t *testing.T) {
 	var response map[string]any
 	body := json.Unmarshal(w.Body.Bytes(), &response)
 	assert.NoError(t, body)
-	assert.Equal(t, "Username already taken", response["errors"].(map[string]any)["username"].([]any)[0])
+	assert.Equal(t, "username already in use", response["errors"].(map[string]any)["username"].([]any)[0])
 }
 
 func TestRegisterPersonInvalidEmail(t *testing.T) {
@@ -264,7 +264,7 @@ func TestRegisterCompanyEmailAlreadyExists(t *testing.T) {
 	var response map[string]any
 	body := json.Unmarshal(w.Body.Bytes(), &response)
 	assert.NoError(t, body)
-	assert.Equal(t, "Email already taken", response["errors"].(map[string]any)["email"].([]any)[0])
+	assert.Equal(t, "email already in use", response["errors"].(map[string]any)["email"].([]any)[0])
 }
 
 func TestRegisterCompanyUsernameAlreadyExists(t *testing.T) {
@@ -303,7 +303,7 @@ func TestRegisterCompanyUsernameAlreadyExists(t *testing.T) {
 	var response map[string]any
 	body := json.Unmarshal(w.Body.Bytes(), &response)
 	assert.NoError(t, body)
-	assert.Equal(t, "Username already taken", response["errors"].(map[string]any)["username"].([]any)[0])
+	assert.Equal(t, "username already in use", response["errors"].(map[string]any)["username"].([]any)[0])
 }
 
 func TestRegisterCompanyNipAlreadyExists(t *testing.T) {
@@ -720,7 +720,7 @@ func TestLogoutEmptyToken(t *testing.T) {
 	}
 	seedRefreshTokens := []refresh_token.RefreshToken{}
 	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
-	wantStatus := http.StatusNotFound
+	wantStatus := http.StatusBadRequest
 	assert.NoError(t, err)
 	payload := `
 	{
@@ -908,7 +908,7 @@ func TestLogoutAllDevicesEmptyToken(t *testing.T) {
 		},
 	}
 	server, _, rtSvc, err := newTestServer(seedUsers, seedRefreshTokens)
-	wantStatus := http.StatusNotFound
+	wantStatus := http.StatusBadRequest
 	assert.NoError(t, err)
 	payload := `
 	{
@@ -953,7 +953,7 @@ func TestLogoutAllDevicesInvalidBody(t *testing.T) {
 	}
 	seedRefreshTokens := []refresh_token.RefreshToken{}
 	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
-	wantStatus := http.StatusNotFound
+	wantStatus := http.StatusBadRequest
 	assert.NoError(t, err)
 	payload := `
 	{
