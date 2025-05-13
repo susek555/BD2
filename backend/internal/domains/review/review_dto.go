@@ -2,7 +2,7 @@ package review
 
 import "github.com/susek555/BD2/car-dealer-api/internal/domains/user"
 
-type ReviewOutput struct {
+type RetrieveReviewDTO struct {
 	ID          uint    `json:"id"`
 	Description string  `json:"description"`
 	Rating      uint    `json:"rating"`
@@ -10,7 +10,7 @@ type ReviewOutput struct {
 	Reviewee    UserDTO `json:"reviewee"`
 }
 
-type ReviewInput struct {
+type CreateReviewDTO struct {
 	Description string `json:"description"`
 	Rating      uint   `json:"rating"`
 	ReviewerId  uint   `json:"reviewer_id"`
@@ -22,7 +22,7 @@ type UserDTO struct {
 	Username string `json:"username"`
 }
 
-func (ri *ReviewInput) MapToObject() Review {
+func (ri *CreateReviewDTO) MapToObject() Review {
 	return Review{
 		Description: ri.Description,
 		Rating:      ri.Rating,
@@ -31,8 +31,8 @@ func (ri *ReviewInput) MapToObject() Review {
 	}
 }
 
-func (r *Review) MapToDTO() ReviewOutput {
-	reviewDTO := ReviewOutput{}
+func (r *Review) MapToDTO() RetrieveReviewDTO {
+	reviewDTO := RetrieveReviewDTO{}
 	reviewDTO.ID = r.ID
 	reviewDTO.Description = r.Description
 	reviewDTO.Rating = r.Rating
