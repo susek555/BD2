@@ -4,6 +4,8 @@ import (
 	"github.com/pilagod/gorm-cursor-paginator/v2/paginator"
 )
 
+// CURSOR BASED PAGINATION - MIGHT BE USEFUL WHEN WORKING PRODUCTION DATABASE
+
 type PagingQuery struct {
 	Cursor paginator.Cursor `json:"cursor"`
 	Order  *paginator.Order `json:"order"`
