@@ -219,11 +219,7 @@ export async function fetchOfferDetails(id: string) : Promise<SaleOfferDetails |
                     value: "Blue"
                 }
             ],
-            userDetails: {
-                id: "1",
-                username: "Zwinny Ambrozy",
-                email: "zwinnyambrozy@nieuchwytni.com"
-            }
+            sellerName: "Zwinny Ambrozy"
         };
     }
 

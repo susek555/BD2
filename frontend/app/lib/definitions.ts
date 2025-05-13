@@ -148,7 +148,7 @@ export type SaleOfferDetails = {
   details: OfferDetails[];
   description: string;
   // location: string;
-  userDetails: OfferUserDetails;
+  sellerName: string;
 }
 
 export type AuctionData = {
@@ -161,10 +161,5 @@ export type OfferDetails = {
   value: string;
 }
 
-export type OfferUserDetails = {
-  id: string;
-  username: string;
-  email: string;
-}
 
 
