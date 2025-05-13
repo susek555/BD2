@@ -11,6 +11,15 @@ func (ri *CreateReviewDTO) MapToObject(reviewerId uint) Review {
 	}
 }
 
+func (ur *UpdateReviewDTO) MapToObject(reviewerId uint) Review {
+	return Review{
+		ID:          ur.ID,
+		Description: ur.Description,
+		Rating:      ur.Rating,
+		ReviewerID:  reviewerId,
+	}
+}
+
 func (r *Review) MapToDTO() RetrieveReviewDTO {
 	reviewDTO := RetrieveReviewDTO{}
 	reviewDTO.ID = r.ID
