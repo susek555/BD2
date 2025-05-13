@@ -69,14 +69,15 @@ func registerAuthRoutes(router *gin.Engine) {
 }
 
 func registerReviewRoutes(router *gin.Engine) {
+	verifier, _ := initializeVerifier()
 	reviewService := review.NewReviewService(initializers.DB)
 	reviewHandler := review.NewHandler(reviewService)
 	reviewRoutes := router.Group("/review")
 	reviewRoutes.GET("/", reviewHandler.GetAllReviews)
 	reviewRoutes.GET("/:id", reviewHandler.GetReviewById)
-	reviewRoutes.POST("/", reviewHandler.CreateReview)
-	reviewRoutes.PUT("/", reviewHandler.UpdateReview)
-	reviewRoutes.DELETE("/:id", reviewHandler.DeleteReview)
+	reviewRoutes.POST("/", middleware.Authenticate(verifier), reviewHandler.CreateReview)
+	reviewRoutes.PUT("/", middleware.Authenticate(verifier), reviewHandler.UpdateReview)
+	reviewRoutes.DELETE("/:id", middleware.Authenticate(verifier), reviewHandler.DeleteReview)
 	reviewRoutes.GET("/reviewer/:id", reviewHandler.GetReviewsByReviewerId)
 	reviewRoutes.GET("/reviewee/:id", reviewHandler.GetReviewsByRevieweeId)
 	reviewRoutes.GET("/reviewer/reviewee/:reviewerId/:revieweeId", reviewHandler.GetReviewsByReviewerIdAndRevieweeId)
