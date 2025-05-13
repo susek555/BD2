@@ -23,6 +23,7 @@ var OfferTypes = []OfferType{REGULAR_OFFER, AUCTION, BOTH}
 var OrderKeysMap = map[string]string{
 	"Price":           "price",
 	"Mileage":         "cars.mileage",
+	"Production year": "cars.production_year",
 	"Engine power":    "cars.engine_power",
 	"Engine capacity": "cars.engine_capacity",
 	"Date of issue":   "date_of_issue"}
@@ -69,7 +70,7 @@ func (of *OfferFilter) ApplyOfferFilters(query *gorm.DB) (*gorm.DB, error) {
 	query = applyInRangeFilter(query, "cars.engine_capacity", of.EngineCapacityRange)
 	query = applyDateInRangeFilter(query, "cars.registration_date", of.CarRegistrationDateRagne)
 	query = applyDateInRangeFilter(query, "date_of_issue", of.OfferCreationDateRange)
-	query = applyOrderFilter(query, of.OrderKey)
+	query = applyOrderFilter(query, of.OrderKey, of.IsOrderDesc)
 	return query, nil
 }
 
@@ -125,9 +126,15 @@ func applyDateInRangeFilter(query *gorm.DB, column string, minmax *MinMax[string
 	return query
 }
 
-func applyOrderFilter(query *gorm.DB, orderKey *string) *gorm.DB {
+func applyOrderFilter(query *gorm.DB, orderKey *string, isOrderDesc *bool) *gorm.DB {
+	var orderDirection string
+	if isOrderDesc == nil || *isOrderDesc {
+		orderDirection = "DESC"
+	} else {
+		orderDirection = "ASC"
+	}
 	if orderKey != nil {
-		return query.Order(OrderKeysMap[*orderKey])
+		return query.Order(OrderKeysMap[*orderKey] + " " + orderDirection)
 	}
 	return query
 }

@@ -1240,3 +1240,318 @@ func TestGetFiltered_OfferCreationDateLowerBound(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, len(result), len(offers))
 }
+
+// ----------------
+// Order by tests
+// ----------------
+
+func TestGetFiltered_OrderByPriceNoRecords(t *testing.T) {
+	offers := []sale_offer.SaleOffer{}
+	repo, _ := setupDB(offers)
+	key := "Price"
+	filter := sale_offer.OfferFilter{OrderKey: &key}
+	result, _, err := repo.GetFiltered(&filter)
+	assert.NoError(t, err)
+	assert.Equal(t, len(result), len(offers))
+}
+
+func TestGetFiltered_OrderByPriceSingleRecord(t *testing.T) {
+	offers := []sale_offer.SaleOffer{*CreateOffer(1)}
+	repo, _ := setupDB(offers)
+	key := "Price"
+	filter := sale_offer.OfferFilter{OrderKey: &key}
+	result, _, err := repo.GetFiltered(&filter)
+	assert.NoError(t, err)
+	assert.Equal(t, len(result), len(offers))
+}
+
+func TestGetFiltered_OrderByPriceMultipleRecordsDesc(t *testing.T) {
+	offers := []sale_offer.SaleOffer{}
+	for i := 1; i <= 5; i++ {
+		offers = append(offers, *CreateOffer(uint(i), WithOfferField("Price", uint(i))))
+	}
+	repo, _ := setupDB(offers)
+	key := "Price"
+	trueStm := true
+	filter := sale_offer.OfferFilter{OrderKey: &key, IsOrderDesc: &trueStm}
+	result, _, err := repo.GetFiltered(&filter)
+	assert.NoError(t, err)
+	for i := range offers {
+		assert.Equal(t, result[i].Price, uint(len(offers)-i))
+	}
+}
+
+func TestGetFiltered_OrderByPriceMultipleRecordsAsc(t *testing.T) {
+	offers := []sale_offer.SaleOffer{}
+	for i := 1; i <= 5; i++ {
+		offers = append(offers, *CreateOffer(uint(i), WithOfferField("Price", uint(i))))
+	}
+	repo, _ := setupDB(offers)
+	key := "Price"
+	falseStm := false
+	filter := sale_offer.OfferFilter{OrderKey: &key, IsOrderDesc: &falseStm}
+	result, _, err := repo.GetFiltered(&filter)
+	assert.NoError(t, err)
+	for i := range offers {
+		assert.Equal(t, result[i].Price, uint(i+1))
+	}
+}
+
+func TestGetFiltered_OrderByMileageNoRecords(t *testing.T) {
+	offers := []sale_offer.SaleOffer{}
+	repo, _ := setupDB(offers)
+	key := "Mileage"
+	filter := sale_offer.OfferFilter{OrderKey: &key}
+	result, _, err := repo.GetFiltered(&filter)
+	assert.NoError(t, err)
+	assert.Equal(t, len(result), len(offers))
+}
+
+func TestGetFiltered_OrderByMileageSingleRecord(t *testing.T) {
+	offers := []sale_offer.SaleOffer{*CreateOffer(1)}
+	repo, _ := setupDB(offers)
+	key := "Mileage"
+	filter := sale_offer.OfferFilter{OrderKey: &key}
+	result, _, err := repo.GetFiltered(&filter)
+	assert.NoError(t, err)
+	assert.Equal(t, len(result), len(offers))
+}
+
+func TestGetFiltered_OrderByMileageMultipleRecordsDesc(t *testing.T) {
+	offers := []sale_offer.SaleOffer{}
+	for i := 1; i <= 5; i++ {
+		offers = append(offers, *CreateOffer(uint(i), WithCarField("Mileage", uint(i))))
+	}
+	repo, _ := setupDB(offers)
+	key := "Mileage"
+	trueStm := true
+	filter := sale_offer.OfferFilter{OrderKey: &key, IsOrderDesc: &trueStm}
+	result, _, err := repo.GetFiltered(&filter)
+	assert.NoError(t, err)
+	for i := range offers {
+		assert.Equal(t, result[i].Car.Mileage, uint(len(offers)-i))
+	}
+}
+
+func TestGetFiltered_OrderByMileageMultipleRecordsAsc(t *testing.T) {
+	offers := []sale_offer.SaleOffer{}
+	for i := 1; i <= 5; i++ {
+		offers = append(offers, *CreateOffer(uint(i), WithCarField("Mileage", uint(i))))
+	}
+	repo, _ := setupDB(offers)
+	key := "Mileage"
+	falseStm := false
+	filter := sale_offer.OfferFilter{OrderKey: &key, IsOrderDesc: &falseStm}
+	result, _, err := repo.GetFiltered(&filter)
+	assert.NoError(t, err)
+	for i := range offers {
+		assert.Equal(t, result[i].Car.Mileage, uint(i+1))
+	}
+}
+
+func TestGetFiltered_OrderByYearNoRecords(t *testing.T) {
+	offers := []sale_offer.SaleOffer{}
+	repo, _ := setupDB(offers)
+	key := "Production year"
+	filter := sale_offer.OfferFilter{OrderKey: &key}
+	result, _, err := repo.GetFiltered(&filter)
+	assert.NoError(t, err)
+	assert.Equal(t, len(result), len(offers))
+}
+
+func TestGetFiltered_OrderByYearSingleRecord(t *testing.T) {
+	offers := []sale_offer.SaleOffer{*CreateOffer(1)}
+	repo, _ := setupDB(offers)
+	key := "Production year"
+	filter := sale_offer.OfferFilter{OrderKey: &key}
+	result, _, err := repo.GetFiltered(&filter)
+	assert.NoError(t, err)
+	assert.Equal(t, len(result), len(offers))
+}
+
+func TestGetFiltered_OrderByYearMultipleRecordsDesc(t *testing.T) {
+	offers := []sale_offer.SaleOffer{}
+	for i := 1; i <= 5; i++ {
+		offers = append(offers, *CreateOffer(uint(i), WithCarField("ProductionYear", uint(i+2000))))
+	}
+	repo, _ := setupDB(offers)
+	key := "Production year"
+	trueStm := true
+	filter := sale_offer.OfferFilter{OrderKey: &key, IsOrderDesc: &trueStm}
+	result, _, err := repo.GetFiltered(&filter)
+	assert.NoError(t, err)
+	for i := range offers {
+		assert.Equal(t, result[i].Car.ProductionYear, uint(2000+len(offers)-i))
+	}
+}
+
+func TestGetFiltered_OrderByYearMultipleRecordsAsc(t *testing.T) {
+	offers := []sale_offer.SaleOffer{}
+	for i := 1; i <= 5; i++ {
+		offers = append(offers, *CreateOffer(uint(i), WithCarField("ProductionYear", uint(i+2000))))
+	}
+	repo, _ := setupDB(offers)
+	key := "Production year"
+	falseStm := false
+	filter := sale_offer.OfferFilter{OrderKey: &key, IsOrderDesc: &falseStm}
+	result, _, err := repo.GetFiltered(&filter)
+	assert.NoError(t, err)
+	for i := range offers {
+		assert.Equal(t, result[i].Car.ProductionYear, uint(2000+i+1))
+	}
+}
+
+func TestGetFiltered_OrderByEnginePowerNoRecords(t *testing.T) {
+	offers := []sale_offer.SaleOffer{}
+	repo, _ := setupDB(offers)
+	key := "Engine power"
+	filter := sale_offer.OfferFilter{OrderKey: &key}
+	result, _, err := repo.GetFiltered(&filter)
+	assert.NoError(t, err)
+	assert.Equal(t, len(result), len(offers))
+}
+
+func TestGetFiltered_OrderByEnginePowerSingleRecord(t *testing.T) {
+	offers := []sale_offer.SaleOffer{*CreateOffer(1)}
+	repo, _ := setupDB(offers)
+	key := "Engine power"
+	filter := sale_offer.OfferFilter{OrderKey: &key}
+	result, _, err := repo.GetFiltered(&filter)
+	assert.NoError(t, err)
+	assert.Equal(t, len(result), len(offers))
+}
+
+func TestGetFiltered_OrderByEnginePowerMultipleRecordsDesc(t *testing.T) {
+	offers := []sale_offer.SaleOffer{}
+	for i := 1; i <= 5; i++ {
+		offers = append(offers, *CreateOffer(uint(i), WithCarField("EnginePower", uint(i+100))))
+	}
+	repo, _ := setupDB(offers)
+	key := "Engine power"
+	trueStm := true
+	filter := sale_offer.OfferFilter{OrderKey: &key, IsOrderDesc: &trueStm}
+	result, _, err := repo.GetFiltered(&filter)
+	assert.NoError(t, err)
+	for i := range offers {
+		assert.Equal(t, result[i].Car.EnginePower, uint(100+len(offers)-i))
+	}
+}
+
+func TestGetFiltered_OrderByEnginePowerMultipleRecordsAsc(t *testing.T) {
+	offers := []sale_offer.SaleOffer{}
+	for i := 1; i <= 5; i++ {
+		offers = append(offers, *CreateOffer(uint(i), WithCarField("EnginePower", uint(i+100))))
+	}
+	repo, _ := setupDB(offers)
+	key := "Engine power"
+	falseStm := false
+	filter := sale_offer.OfferFilter{OrderKey: &key, IsOrderDesc: &falseStm}
+	result, _, err := repo.GetFiltered(&filter)
+	assert.NoError(t, err)
+	for i := range offers {
+		assert.Equal(t, result[i].Car.EnginePower, uint(100+i+1))
+	}
+}
+
+func TestGetFiltered_OrderByEngineCapacityNoRecords(t *testing.T) {
+	offers := []sale_offer.SaleOffer{}
+	repo, _ := setupDB(offers)
+	key := "Engine capacity"
+	filter := sale_offer.OfferFilter{OrderKey: &key}
+	result, _, err := repo.GetFiltered(&filter)
+	assert.NoError(t, err)
+	assert.Equal(t, len(result), len(offers))
+}
+
+func TestGetFiltered_OrderByEngineCapacitySingleRecord(t *testing.T) {
+	offers := []sale_offer.SaleOffer{*CreateOffer(1)}
+	repo, _ := setupDB(offers)
+	key := "Engine capacity"
+	filter := sale_offer.OfferFilter{OrderKey: &key}
+	result, _, err := repo.GetFiltered(&filter)
+	assert.NoError(t, err)
+	assert.Equal(t, len(result), len(offers))
+}
+
+func TestGetFiltered_OrderByEngineCapacityMultipleRecordsDesc(t *testing.T) {
+	offers := []sale_offer.SaleOffer{}
+	for i := 1; i <= 5; i++ {
+		offers = append(offers, *CreateOffer(uint(i), WithCarField("EngineCapacity", uint(i+1000))))
+	}
+	repo, _ := setupDB(offers)
+	key := "Engine capacity"
+	trueStm := true
+	filter := sale_offer.OfferFilter{OrderKey: &key, IsOrderDesc: &trueStm}
+	result, _, err := repo.GetFiltered(&filter)
+	assert.NoError(t, err)
+	for i := range offers {
+		assert.Equal(t, result[i].Car.EngineCapacity, uint(1000+len(offers)-i))
+	}
+}
+func TestGetFiltered_OrderByEngineCapacityMultipleRecordsAsc(t *testing.T) {
+	offers := []sale_offer.SaleOffer{}
+	for i := 1; i <= 5; i++ {
+		offers = append(offers, *CreateOffer(uint(i), WithCarField("EngineCapacity", uint(1000+i))))
+	}
+	repo, _ := setupDB(offers)
+	key := "Engine capacity"
+	falseStm := false
+	filter := sale_offer.OfferFilter{OrderKey: &key, IsOrderDesc: &falseStm}
+	result, _, err := repo.GetFiltered(&filter)
+	assert.NoError(t, err)
+	for i := range offers {
+		assert.Equal(t, result[i].Car.EngineCapacity, uint(1000+i+1))
+	}
+}
+
+func TestGetFiltered_OrderByDateOfIssueNoRecords(t *testing.T) {
+	offers := []sale_offer.SaleOffer{}
+	repo, _ := setupDB(offers)
+	key := "Date of issue"
+	filter := sale_offer.OfferFilter{OrderKey: &key}
+	result, _, err := repo.GetFiltered(&filter)
+	assert.NoError(t, err)
+	assert.Equal(t, len(result), len(offers))
+}
+
+func TestGetFiltered_OrderByDateOfIssueSingleRecord(t *testing.T) {
+	offers := []sale_offer.SaleOffer{*CreateOffer(1)}
+	repo, _ := setupDB(offers)
+	key := "Date of issue"
+	filter := sale_offer.OfferFilter{OrderKey: &key}
+	result, _, err := repo.GetFiltered(&filter)
+	assert.NoError(t, err)
+	assert.Equal(t, len(result), len(offers))
+}
+
+func TestGetFiltered_OrderByDateOfIssueMultipleRecordsDesc(t *testing.T) {
+	offers := []sale_offer.SaleOffer{}
+	for i := 1; i <= 5; i++ {
+		offers = append(offers, *CreateOffer(uint(i), WithOfferField("DateOfIssue", time.Date(2025, 5, 1+i, 0, 0, 0, 0, time.UTC))))
+	}
+	repo, _ := setupDB(offers)
+	key := "Date of issue"
+	trueStm := true
+	filter := sale_offer.OfferFilter{OrderKey: &key, IsOrderDesc: &trueStm}
+	result, _, err := repo.GetFiltered(&filter)
+	assert.NoError(t, err)
+	for i := range offers {
+		assert.Equal(t, result[i].DateOfIssue, time.Date(2025, 5, 1+(len(offers)-i), 0, 0, 0, 0, time.UTC))
+	}
+}
+
+func TestGetFiltered_OrderByDateOfIssueMultipleRecordsAsc(t *testing.T) {
+	offers := []sale_offer.SaleOffer{}
+	for i := 1; i <= 5; i++ {
+		offers = append(offers, *CreateOffer(uint(i), WithOfferField("DateOfIssue", time.Date(2025, 5, 1+i, 0, 0, 0, 0, time.UTC))))
+	}
+	repo, _ := setupDB(offers)
+	key := "Date of issue"
+	falseStm := false
+	filter := sale_offer.OfferFilter{OrderKey: &key, IsOrderDesc: &falseStm}
+	result, _, err := repo.GetFiltered(&filter)
+	assert.NoError(t, err)
+	for i := range offers {
+		assert.Equal(t, result[i].DateOfIssue, time.Date(2025, 5, 1+i+1, 0, 0, 0, 0, time.UTC))
+	}
+}
