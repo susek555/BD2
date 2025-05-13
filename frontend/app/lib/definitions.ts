@@ -148,7 +148,7 @@ export type SaleOfferDetails = {
   // productionYear: number;
   // mileage: number;
   // color: string;
-  // description: string;
+  description: string;
   // location: string; // city or region
   // contactInfo: {
   //   phoneNumber: string;
