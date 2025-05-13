@@ -145,9 +145,7 @@ export type SaleOfferDetails = {
   auctionData?: AuctionData;
   isActive: boolean;
   imagesURLs: string[]; // URLs to images
-  // productionYear: number;
-  // mileage: number;
-  // color: string;
+  details: OfferDetails[];
   description: string;
   // location: string; // city or region
   // contactInfo: {
@@ -159,6 +157,11 @@ export type SaleOfferDetails = {
 export type AuctionData = {
   currentBid: number;
   endDate: Date;
+}
+
+export type OfferDetails = {
+  name: string;
+  value: string;
 }
 
 

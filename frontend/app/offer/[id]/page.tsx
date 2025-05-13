@@ -3,6 +3,7 @@ import Photos from "@/app/ui/offer/photos";
 import Price from "@/app/ui/offer/price";
 import { Suspense,lazy } from "react";
 import OfferDescription from "@/app/ui/offer/description";
+import OfferDetailsTable from "@/app/ui/offer/details-table";
 
 export default async function Page(props: { params: Promise<{id: string }> }) {
     const { params } = props;
@@ -25,12 +26,15 @@ export default async function Page(props: { params: Promise<{id: string }> }) {
                     </div>
                     <div className="my-3" />
                     <OfferDescription description={offer.description} />
+                    <div className="my-3" />
+                    <OfferDetailsTable details={offer.details} />
+                    <div className="my-10" />
                 </div>
                 <div className="md:w-120 h-full md:h-130">
                     <div className="p-4">
                         <h1 className="text-3xl font-bold">{offer.name}</h1>
                     </div>
-                    <div className="my-50" />
+                    <div className="my-10" />
                     <Price data={{ id: id, price: offer.price ?? 0, isAuction: offer.isAuction, auction: offer.auctionData,  isActive: offer.isActive }} />
                 </div>
             </div>
