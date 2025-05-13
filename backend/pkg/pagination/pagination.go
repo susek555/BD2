@@ -1,7 +1,13 @@
 package pagination
 
 import (
+	"errors"
+
 	"gorm.io/gorm"
+)
+
+var (
+	ErrPageOutOfRange error = errors.New("page out of range")
 )
 
 var (
@@ -26,12 +32,26 @@ func (pr *PaginationRequest) setDefaults(page int, pageSize int) {
 	if pr.PageSize <= 0 {
 		pr.PageSize = pageSize
 	}
+}
 
+func (pr *PaginationRequest) CalculateTotalPages(totalRecords int64) int64 {
+	pr.setDefaults(DEFAULT_PAGE, DEFAULT_PAGE_SIZE)
+	totalPages := totalRecords / int64(pr.PageSize)
+	if totalPages%int64(pr.PageSize) != 0 {
+		totalPages++
+	}
+	return totalPages
+}
+
+func (pr *PaginationRequest) ValidatePageNumber(totalPages int64) error {
+	if pr.Page > int(totalPages) {
+		return ErrPageOutOfRange
+	}
+	return nil
 }
 
 func Paginate(pr *PaginationRequest) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
-		pr.setDefaults(DEFAULT_PAGE, DEFAULT_PAGE_SIZE)
 		offset := (pr.Page - 1) * pr.PageSize
 		return db.Offset(offset).Limit(pr.PageSize)
 	}
