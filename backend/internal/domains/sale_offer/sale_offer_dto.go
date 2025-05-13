@@ -57,6 +57,6 @@ type RetrieveSaleOfferDTO struct {
 }
 
 type RetrieveUsersWithPagination struct {
-	PaginationResponse pagination.PaginationResponse `json:"pagination"`
-	Users              []RetrieveSaleOfferDTO        `json:"users"`
+	PaginationResponse *pagination.PaginationResponse `json:"pagination"`
+	Users              []RetrieveSaleOfferDTO         `json:"users"`
 }
