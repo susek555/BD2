@@ -14,6 +14,12 @@ type CreateReviewDTO struct {
 	RevieweeId  uint   `json:"reviewee_id"`
 }
 
+type UpdateReviewDTO struct {
+	ID          uint   `json:"id"`
+	Description string `json:"description"`
+	Rating      uint   `json:"rating"`
+}
+
 type UserDTO struct {
 	ID       uint   `json:"id"`
 	Username string `json:"username"`
