@@ -39,7 +39,7 @@ func (h *Handler) GetFilteredSaleOffers(c *gin.Context) {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
-	c.JSON(http.StatusOK, saleOffers)
+	c.JSON(http.StatusOK, *saleOffers)
 }
 
 func (h *Handler) GetOfferTypes(c *gin.Context) {
