@@ -38,7 +38,7 @@ export default async function Page(props: { params: Promise<{id: string }> }) {
                     <div className="my-10" />
                     <Price data={{ id: id, price: offer.price ?? 0, isAuction: offer.isAuction, auction: offer.auctionData,  isActive: offer.isActive }} />
                     <div className="my-4" />
-                    <UserDetails user={offer.userDetails} />
+                    <UserDetails sellerName={offer.sellerName} />
                 </div>
             </div>
         </>
