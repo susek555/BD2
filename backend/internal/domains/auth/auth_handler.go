@@ -34,7 +34,7 @@ func (h *Handler) Register(ctx *gin.Context) {
 	var request user.CreateUserDTO
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		ctx.JSON(http.StatusBadRequest, RegisterResponse{
-			Errors: map[string][]string{"other": {"invalid body"}},
+			Errors: map[string][]string{"other": {ErrInvalidBody.Error()}},
 		})
 		return
 	}
@@ -53,7 +53,7 @@ func (h *Handler) Register(ctx *gin.Context) {
 		ctx.JSON(http.StatusConflict, RegisterResponse{Errors: err})
 		return
 	}
-	ctx.JSON(http.StatusCreated, RegisterResponse{})
+	ctx.JSON(http.StatusCreated, gin.H{})
 }
 
 // Login godoc
@@ -72,14 +72,14 @@ func (h *Handler) Register(ctx *gin.Context) {
 func (h *Handler) Login(c *gin.Context) {
 	var req LoginInput
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, LoginResponse{Errors: map[string][]string{"server": {"invalid body"}}})
+		c.JSON(http.StatusBadRequest, LoginResponse{Errors: map[string][]string{"server": {ErrInvalidBody.Error()}}})
 		return
 	}
 
 	access, refresh, err, user_ := h.Service.Login(c, req)
 	loginResponse := prepareLoginResponse(access, refresh, *user_)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, LoginResponse{Errors: map[string][]string{"credentials": {"invalid credentials"}}})
+		c.JSON(http.StatusUnauthorized, LoginResponse{Errors: map[string][]string{"credentials": {ErrInvalidCredentials.Error()}}})
 		return
 	}
 	c.JSON(http.StatusOK, loginResponse)
@@ -119,12 +119,12 @@ func prepareLoginResponse(access, refresh string, user user.User) *LoginResponse
 func (h *Handler) Refresh(c *gin.Context) {
 	var req RefreshInput
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError("invalid body"))
+		c.JSON(http.StatusBadRequest, ErrInvalidBody)
 		return
 	}
 	access, err := h.Service.Refresh(c, req.RefreshToken)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, custom_errors.NewHTTPError(err.Error()))
+		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
 	response := LoginResponse{AccessToken: access}
@@ -147,18 +147,18 @@ func (h *Handler) Refresh(c *gin.Context) {
 func (h *Handler) Logout(c *gin.Context) {
 	var req LogoutInput
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError("invalid body"))
+		custom_errors.HandleError(c, ErrInvalidBody, ErrorMap)
 		return
 	}
 
 	userId, ok := c.Get("userID")
 	if !ok {
-		c.JSON(http.StatusUnauthorized, custom_errors.NewHTTPError("unauthorized"))
+		custom_errors.HandleError(c, ErrUnauthorized, ErrorMap)
 		return
 	}
 
 	if err := h.Service.Logout(c, userId.(uint), req.RefreshToken, req.AllDevices); err != nil {
-		c.JSON(http.StatusNotFound, custom_errors.NewHTTPError(err.Error()))
+		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
 	c.Status(http.StatusNoContent)
