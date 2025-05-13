@@ -3,6 +3,7 @@ import { BasePriceButton } from "./price-buttons/base-price-button";
 import { CurrencyDollarIcon } from "@heroicons/react/20/solid";
 import TimeLeft from "./time-left";
 import Link from "next/link";
+import BidForm from "./bid-form";
 
 type PriceData = {
     price: number;
@@ -30,6 +31,7 @@ export default function Price( data : { data : PriceData}) {
                             <p className="font-bold text-2xl">{price.toString()} PLN</p>
                         </div>
                     </div>
+                    <BidForm />
                 </div>
             ) : (
                 <div className="flex justify-center items-center flex-col h-full gap-8">
