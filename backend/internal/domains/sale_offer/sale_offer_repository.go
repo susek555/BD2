@@ -32,6 +32,7 @@ func (r *SaleOfferRepository) Create(offer *SaleOffer) error {
 
 func (r *SaleOfferRepository) GetFiltered(filter *OfferFilter) ([]SaleOffer, *pagination.PaginationResponse, error) {
 	var saleOffers []SaleOffer
+	var totalRecords int64
 	query := r.DB.
 		Joins("JOIN cars on cars.id = sale_offers.car_id").
 		Joins("LEFT JOIN auctions on auctions.offer_id = sale_offers.id").
@@ -43,9 +44,12 @@ func (r *SaleOfferRepository) GetFiltered(filter *OfferFilter) ([]SaleOffer, *pa
 	if err != nil {
 		return nil, nil, err
 	}
-	err = query.Scopes(pagination.Paginate(&filter.Pagination)).Find(&saleOffers).Error
-	if err != nil {
+	if err := query.Model(&SaleOffer{}).Count(&totalRecords).Error; err != nil {
 		return nil, nil, err
 	}
-	return saleOffers, &pagination.PaginationResponse{TotalRecords: len(saleOffers), TotalPages: len(saleOffers)/filter.Pagination.PageSize + 1}, nil
+	if err := query.Scopes(pagination.Paginate(&filter.Pagination)).Find(&saleOffers).Error; err != nil {
+		return nil, nil, err
+	}
+
+	return saleOffers, &pagination.PaginationResponse{TotalRecords: totalRecords, TotalPages: len(saleOffers)/filter.Pagination.PageSize + 1}, nil
 }
