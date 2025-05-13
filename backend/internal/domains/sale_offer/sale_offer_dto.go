@@ -5,6 +5,7 @@ import (
 
 	"github.com/pilagod/gorm-cursor-paginator/v2/paginator"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
+	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
 )
 
 type CreateSaleOfferDTO struct {
@@ -53,4 +54,9 @@ type RetrieveSaleOfferDTO struct {
 	Model              string                  `json:"model"`
 	DateEnd            *time.Time              `json:"date_end,omitempty"`
 	BuyNowPrice        *uint                   `json:"buy_now_price,omitempty"`
+}
+
+type RetrieveUsersWithPagination struct {
+	PaginationResponse pagination.PaginationResponse `json:"pagination"`
+	Users              []RetrieveSaleOfferDTO        `json:"users"`
 }
