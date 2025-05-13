@@ -134,7 +134,7 @@ func TestService_Login(t *testing.T) {
 
 		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
 
-		access, refresh, err, user_ := svc.Login(ctx, validIn)
+		access, refresh, user_, err := svc.Login(ctx, validIn)
 		assert.NoError(t, err)
 		assert.NotEmpty(t, access)
 		assert.NotEmpty(t, refresh)
@@ -155,7 +155,7 @@ func TestService_Login(t *testing.T) {
 
 		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
 
-		_, _, err, _ := svc.Login(ctx, validIn)
+		_, _, _, err := svc.Login(ctx, validIn)
 		assert.ErrorIs(t, err, auth.ErrInvalidCredentials)
 	})
 
@@ -168,7 +168,7 @@ func TestService_Login(t *testing.T) {
 
 		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
 
-		_, _, err, _ := svc.Login(ctx, validIn)
+		_, _, _, err := svc.Login(ctx, validIn)
 		assert.ErrorIs(t, err, auth.ErrInvalidCredentials)
 	})
 
@@ -186,7 +186,7 @@ func TestService_Login(t *testing.T) {
 
 		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
 
-		_, _, err, _ := svc.Login(ctx, validIn)
+		_, _, _, err := svc.Login(ctx, validIn)
 		assert.EqualError(t, err, "error - create refresh token")
 	})
 }
