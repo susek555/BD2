@@ -39,6 +39,7 @@ export default async function Page(props: { params: Promise<{id: string }> }) {
                     <Price data={{ id: id, price: offer.price ?? 0, isAuction: offer.isAuction, auction: offer.auctionData,  isActive: offer.isActive }} />
                     <div className="my-4" />
                     <UserDetails sellerName={offer.sellerName} />
+                    {/* // TODO - maybe add google maps with location */}
                 </div>
             </div>
         </>

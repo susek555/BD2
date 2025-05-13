@@ -6,7 +6,7 @@ export default function UserDetails({ sellerName }: { sellerName: string }) {
             <div className="flex justify-center items-center flex-col h-full gap-2">
                 <p className="text-2xl">Seller</p>
                 <a
-                    href={`/profile/${sellerName}`}
+                    href={`/account/${sellerName}`}
                     // TODO - add link to user profile
                     className="flex flex-row justify-center md:w-100 items-center bg-gray-100 p-4 rounded-md hover:bg-gray-200 transition"
                 >

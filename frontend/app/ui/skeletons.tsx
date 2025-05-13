@@ -65,3 +65,11 @@ export function PriceOfferPageSkeleton() {
     )
 }
 
+export function OfferDescriptionSkeleton() {
+    return (
+        <div className="flex flex-col gap-4 w-full h-full md:h-80 border border-gray-300">
+            <div className="h-full w-full bg-gray-200 animate-pulse" />
+        </div>
+    )
+}
+
