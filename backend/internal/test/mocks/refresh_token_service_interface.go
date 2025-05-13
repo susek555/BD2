@@ -162,22 +162,24 @@ func (_c *RefreshTokenServiceInterface_DeleteByUserID_Call) RunAndReturn(run fun
 }
 
 // FindByToken provides a mock function with given fields: ctx, token
-func (_m *RefreshTokenServiceInterface) FindByToken(ctx context.Context, token string) (refresh_token.RefreshToken, error) {
+func (_m *RefreshTokenServiceInterface) FindByToken(ctx context.Context, token string) (*refresh_token.RefreshToken, error) {
 	ret := _m.Called(ctx, token)
 
 	if len(ret) == 0 {
 		panic("no return value specified for FindByToken")
 	}
 
-	var r0 refresh_token.RefreshToken
+	var r0 *refresh_token.RefreshToken
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, string) (refresh_token.RefreshToken, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, string) (*refresh_token.RefreshToken, error)); ok {
 		return rf(ctx, token)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, string) refresh_token.RefreshToken); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, string) *refresh_token.RefreshToken); ok {
 		r0 = rf(ctx, token)
 	} else {
-		r0 = ret.Get(0).(refresh_token.RefreshToken)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*refresh_token.RefreshToken)
+		}
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
@@ -208,33 +210,35 @@ func (_c *RefreshTokenServiceInterface_FindByToken_Call) Run(run func(ctx contex
 	return _c
 }
 
-func (_c *RefreshTokenServiceInterface_FindByToken_Call) Return(_a0 refresh_token.RefreshToken, _a1 error) *RefreshTokenServiceInterface_FindByToken_Call {
+func (_c *RefreshTokenServiceInterface_FindByToken_Call) Return(_a0 *refresh_token.RefreshToken, _a1 error) *RefreshTokenServiceInterface_FindByToken_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *RefreshTokenServiceInterface_FindByToken_Call) RunAndReturn(run func(context.Context, string) (refresh_token.RefreshToken, error)) *RefreshTokenServiceInterface_FindByToken_Call {
+func (_c *RefreshTokenServiceInterface_FindByToken_Call) RunAndReturn(run func(context.Context, string) (*refresh_token.RefreshToken, error)) *RefreshTokenServiceInterface_FindByToken_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // FindByUserEmail provides a mock function with given fields: ctx, email
-func (_m *RefreshTokenServiceInterface) FindByUserEmail(ctx context.Context, email string) (refresh_token.RefreshToken, error) {
+func (_m *RefreshTokenServiceInterface) FindByUserEmail(ctx context.Context, email string) ([]refresh_token.RefreshToken, error) {
 	ret := _m.Called(ctx, email)
 
 	if len(ret) == 0 {
 		panic("no return value specified for FindByUserEmail")
 	}
 
-	var r0 refresh_token.RefreshToken
+	var r0 []refresh_token.RefreshToken
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, string) (refresh_token.RefreshToken, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, string) ([]refresh_token.RefreshToken, error)); ok {
 		return rf(ctx, email)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, string) refresh_token.RefreshToken); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, string) []refresh_token.RefreshToken); ok {
 		r0 = rf(ctx, email)
 	} else {
-		r0 = ret.Get(0).(refresh_token.RefreshToken)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]refresh_token.RefreshToken)
+		}
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
@@ -265,12 +269,71 @@ func (_c *RefreshTokenServiceInterface_FindByUserEmail_Call) Run(run func(ctx co
 	return _c
 }
 
-func (_c *RefreshTokenServiceInterface_FindByUserEmail_Call) Return(_a0 refresh_token.RefreshToken, _a1 error) *RefreshTokenServiceInterface_FindByUserEmail_Call {
+func (_c *RefreshTokenServiceInterface_FindByUserEmail_Call) Return(_a0 []refresh_token.RefreshToken, _a1 error) *RefreshTokenServiceInterface_FindByUserEmail_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *RefreshTokenServiceInterface_FindByUserEmail_Call) RunAndReturn(run func(context.Context, string) (refresh_token.RefreshToken, error)) *RefreshTokenServiceInterface_FindByUserEmail_Call {
+func (_c *RefreshTokenServiceInterface_FindByUserEmail_Call) RunAndReturn(run func(context.Context, string) ([]refresh_token.RefreshToken, error)) *RefreshTokenServiceInterface_FindByUserEmail_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// FindByUserId provides a mock function with given fields: ctx, id
+func (_m *RefreshTokenServiceInterface) FindByUserId(ctx context.Context, id uint) ([]refresh_token.RefreshToken, error) {
+	ret := _m.Called(ctx, id)
+
+	if len(ret) == 0 {
+		panic("no return value specified for FindByUserId")
+	}
+
+	var r0 []refresh_token.RefreshToken
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, uint) ([]refresh_token.RefreshToken, error)); ok {
+		return rf(ctx, id)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, uint) []refresh_token.RefreshToken); ok {
+		r0 = rf(ctx, id)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]refresh_token.RefreshToken)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, uint) error); ok {
+		r1 = rf(ctx, id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// RefreshTokenServiceInterface_FindByUserId_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'FindByUserId'
+type RefreshTokenServiceInterface_FindByUserId_Call struct {
+	*mock.Call
+}
+
+// FindByUserId is a helper method to define mock.On call
+//   - ctx context.Context
+//   - id uint
+func (_e *RefreshTokenServiceInterface_Expecter) FindByUserId(ctx interface{}, id interface{}) *RefreshTokenServiceInterface_FindByUserId_Call {
+	return &RefreshTokenServiceInterface_FindByUserId_Call{Call: _e.mock.On("FindByUserId", ctx, id)}
+}
+
+func (_c *RefreshTokenServiceInterface_FindByUserId_Call) Run(run func(ctx context.Context, id uint)) *RefreshTokenServiceInterface_FindByUserId_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(uint))
+	})
+	return _c
+}
+
+func (_c *RefreshTokenServiceInterface_FindByUserId_Call) Return(_a0 []refresh_token.RefreshToken, _a1 error) *RefreshTokenServiceInterface_FindByUserId_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *RefreshTokenServiceInterface_FindByUserId_Call) RunAndReturn(run func(context.Context, uint) ([]refresh_token.RefreshToken, error)) *RefreshTokenServiceInterface_FindByUserId_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -437,25 +500,27 @@ func (_c *RefreshTokenServiceInterface_Update_Call) RunAndReturn(run func(*refre
 }
 
 // VerifyExpiration provides a mock function with given fields: ctx, token
-func (_m *RefreshTokenServiceInterface) VerifyExpiration(ctx context.Context, token refresh_token.RefreshToken) (refresh_token.RefreshToken, error) {
+func (_m *RefreshTokenServiceInterface) VerifyExpiration(ctx context.Context, token *refresh_token.RefreshToken) (*refresh_token.RefreshToken, error) {
 	ret := _m.Called(ctx, token)
 
 	if len(ret) == 0 {
 		panic("no return value specified for VerifyExpiration")
 	}
 
-	var r0 refresh_token.RefreshToken
+	var r0 *refresh_token.RefreshToken
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, refresh_token.RefreshToken) (refresh_token.RefreshToken, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *refresh_token.RefreshToken) (*refresh_token.RefreshToken, error)); ok {
 		return rf(ctx, token)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, refresh_token.RefreshToken) refresh_token.RefreshToken); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *refresh_token.RefreshToken) *refresh_token.RefreshToken); ok {
 		r0 = rf(ctx, token)
 	} else {
-		r0 = ret.Get(0).(refresh_token.RefreshToken)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*refresh_token.RefreshToken)
+		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, refresh_token.RefreshToken) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, *refresh_token.RefreshToken) error); ok {
 		r1 = rf(ctx, token)
 	} else {
 		r1 = ret.Error(1)
@@ -471,24 +536,24 @@ type RefreshTokenServiceInterface_VerifyExpiration_Call struct {
 
 // VerifyExpiration is a helper method to define mock.On call
 //   - ctx context.Context
-//   - token refresh_token.RefreshToken
+//   - token *refresh_token.RefreshToken
 func (_e *RefreshTokenServiceInterface_Expecter) VerifyExpiration(ctx interface{}, token interface{}) *RefreshTokenServiceInterface_VerifyExpiration_Call {
 	return &RefreshTokenServiceInterface_VerifyExpiration_Call{Call: _e.mock.On("VerifyExpiration", ctx, token)}
 }
 
-func (_c *RefreshTokenServiceInterface_VerifyExpiration_Call) Run(run func(ctx context.Context, token refresh_token.RefreshToken)) *RefreshTokenServiceInterface_VerifyExpiration_Call {
+func (_c *RefreshTokenServiceInterface_VerifyExpiration_Call) Run(run func(ctx context.Context, token *refresh_token.RefreshToken)) *RefreshTokenServiceInterface_VerifyExpiration_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(refresh_token.RefreshToken))
+		run(args[0].(context.Context), args[1].(*refresh_token.RefreshToken))
 	})
 	return _c
 }
 
-func (_c *RefreshTokenServiceInterface_VerifyExpiration_Call) Return(_a0 refresh_token.RefreshToken, _a1 error) *RefreshTokenServiceInterface_VerifyExpiration_Call {
+func (_c *RefreshTokenServiceInterface_VerifyExpiration_Call) Return(_a0 *refresh_token.RefreshToken, _a1 error) *RefreshTokenServiceInterface_VerifyExpiration_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *RefreshTokenServiceInterface_VerifyExpiration_Call) RunAndReturn(run func(context.Context, refresh_token.RefreshToken) (refresh_token.RefreshToken, error)) *RefreshTokenServiceInterface_VerifyExpiration_Call {
+func (_c *RefreshTokenServiceInterface_VerifyExpiration_Call) RunAndReturn(run func(context.Context, *refresh_token.RefreshToken) (*refresh_token.RefreshToken, error)) *RefreshTokenServiceInterface_VerifyExpiration_Call {
 	_c.Call.Return(run)
 	return _c
 }
