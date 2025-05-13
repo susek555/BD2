@@ -13,6 +13,8 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auth"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/refresh_token"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
+	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
+	"github.com/susek555/BD2/car-dealer-api/pkg/middleware"
 	"github.com/susek555/BD2/car-dealer-api/pkg/passwords"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -44,27 +46,32 @@ func setupDB(users []user.User, refreshTokens []refresh_token.RefreshToken) (use
 	return repo, refreshTokenService, nil
 }
 
-func newTestServer(seedUsers []user.User, refreshTokens []refresh_token.RefreshToken) (*gin.Engine, error) {
+func newTestServer(seedUsers []user.User, refreshTokens []refresh_token.RefreshToken) (*gin.Engine, *auth.Handler, refresh_token.RefreshTokenServiceInterface, error) {
 	repo, rtSvc, err := setupDB(seedUsers, refreshTokens)
 	if err != nil {
-		return nil, err
+		return nil, nil, nil, err
 	}
 
 	svc := &auth.AuthService{Repo: repo, RefreshTokenService: rtSvc, JwtKey: []byte("secret")}
 	h := &auth.Handler{Service: svc}
-
+	verifier := jwt.NewJWTVerifier("secret")
 	r := gin.Default()
 	r.POST("/auth/register", h.Register)
 	r.POST("/auth/login", h.Login)
 	r.POST("/auth/refresh", h.Refresh)
-	return r, nil
+	r.POST("/logout", middleware.Authenticate(verifier), h.Logout)
+	return r, h, rtSvc, nil
 }
 
+func getValidToken(userId uint, email string) (string, error) {
+	secret := []byte("secret")
+	return jwt.GenerateToken(email, int64(userId), secret, time.Now().Add(1*time.Hour))
+}
 func TestRegisterPersonSuccess(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{}
 	seedRefreshTokens := []refresh_token.RefreshToken{}
-	server, err := newTestServer(seedUsers, seedRefreshTokens)
+	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusCreated
 	assert.NoError(t, err)
 	payload := `
@@ -92,7 +99,7 @@ func TestRegisterCompanySuccess(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{}
 	seedRefreshTokens := []refresh_token.RefreshToken{}
-	server, err := newTestServer(seedUsers, seedRefreshTokens)
+	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusCreated
 	assert.NoError(t, err)
 	payload := `
@@ -130,7 +137,7 @@ func TestRegisterPersonEmailAlreadyExists(t *testing.T) {
 		},
 	}
 	seedRefreshTokens := []refresh_token.RefreshToken{}
-	server, err := newTestServer(seedUsers, seedRefreshTokens)
+	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusConflict
 	assert.NoError(t, err)
 	payload := `
@@ -169,7 +176,7 @@ func TestRegisterPersonUsernameAlreadyExists(t *testing.T) {
 		},
 	}
 	seedRefreshTokens := []refresh_token.RefreshToken{}
-	server, err := newTestServer(seedUsers, seedRefreshTokens)
+	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusConflict
 	assert.NoError(t, err)
 	payload := `
@@ -197,7 +204,7 @@ func TestRegisterPersonInvalidEmail(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{}
 	seedTokens := []refresh_token.RefreshToken{}
-	server, err := newTestServer(seedUsers, seedTokens)
+	server, _, _, err := newTestServer(seedUsers, seedTokens)
 	wantStatus := http.StatusBadRequest
 	assert.NoError(t, err)
 	payload := `
@@ -236,7 +243,7 @@ func TestRegisterCompanyEmailAlreadyExists(t *testing.T) {
 		},
 	}
 	seedRefreshTokens := []refresh_token.RefreshToken{}
-	server, err := newTestServer(seedUsers, seedRefreshTokens)
+	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusConflict
 	assert.NoError(t, err)
 	payload := `
@@ -275,7 +282,7 @@ func TestRegisterCompanyUsernameAlreadyExists(t *testing.T) {
 		},
 	}
 	seedRefreshTokens := []refresh_token.RefreshToken{}
-	server, err := newTestServer(seedUsers, seedRefreshTokens)
+	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusConflict
 	assert.NoError(t, err)
 	payload := `
@@ -314,7 +321,7 @@ func TestRegisterCompanyNipAlreadyExists(t *testing.T) {
 		},
 	}
 	seedRefreshTokens := []refresh_token.RefreshToken{}
-	server, err := newTestServer(seedUsers, seedRefreshTokens)
+	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusConflict
 	assert.NoError(t, err)
 	payload := `
@@ -355,7 +362,7 @@ func TestLoginSuccess(t *testing.T) {
 		},
 	}
 	seedRefreshTokens := []refresh_token.RefreshToken{}
-	server, err := newTestServer(seedUsers, seedRefreshTokens)
+	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusOK
 	assert.NoError(t, err)
 	payload := `
@@ -398,7 +405,7 @@ func TestLoginInvalidLogin(t *testing.T) {
 		},
 	}
 	seedRefreshTokens := []refresh_token.RefreshToken{}
-	server, err := newTestServer(seedUsers, seedRefreshTokens)
+	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusUnauthorized
 	assert.NoError(t, err)
 	payload := `
@@ -435,7 +442,7 @@ func TestLoginInvalidPassword(t *testing.T) {
 		},
 	}
 	seedRefreshTokens := []refresh_token.RefreshToken{}
-	server, err := newTestServer(seedUsers, seedRefreshTokens)
+	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusUnauthorized
 	assert.NoError(t, err)
 	payload := `
@@ -459,7 +466,7 @@ func TestLoginInvalidBody(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{}
 	seedRefreshTokens := []refresh_token.RefreshToken{}
-	server, err := newTestServer(seedUsers, seedRefreshTokens)
+	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusBadRequest
 	assert.NoError(t, err)
 	payload := `
@@ -502,7 +509,7 @@ func TestRefreshSuccess(t *testing.T) {
 			ExpiryDate: time.Now().Add(30 * 24 * time.Hour),
 		},
 	}
-	server, err := newTestServer(seedUsers, seedRefreshTokens)
+	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusOK
 	assert.NoError(t, err)
 	payload := `
@@ -526,7 +533,7 @@ func TestRefreshInvalidToken(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{}
 	seedRefreshTokens := []refresh_token.RefreshToken{}
-	server, err := newTestServer(seedUsers, seedRefreshTokens)
+	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusUnauthorized
 	assert.NoError(t, err)
 	payload := `
@@ -555,7 +562,7 @@ func TestRefreshExpiredToken(t *testing.T) {
 			ExpiryDate: time.Now().Add(-30 * 24 * time.Hour),
 		},
 	}
-	server, err := newTestServer(seedUsers, seedRefreshTokens)
+	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusUnauthorized
 	assert.NoError(t, err)
 	payload := `
@@ -572,4 +579,309 @@ func TestRefreshExpiredToken(t *testing.T) {
 	err = json.Unmarshal(w.Body.Bytes(), &response)
 	assert.NoError(t, err)
 	assert.Equal(t, "refresh token expired", response["error_description"])
+}
+
+func TestRefreshInvalidBody(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	seedUsers := []user.User{}
+	seedRefreshTokens := []refresh_token.RefreshToken{}
+	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
+	wantStatus := http.StatusBadRequest
+	assert.NoError(t, err)
+	payload := `
+	{
+		"invalid_field": "invalid"
+	}
+	`
+	req := httptest.NewRequest(http.MethodPost, "/auth/refresh", strings.NewReader(payload))
+	req.Header.Set("Content-Type", "application/json")
+	w := httptest.NewRecorder()
+	server.ServeHTTP(w, req)
+	assert.Equal(t, wantStatus, w.Code)
+	var response map[string]any
+	err = json.Unmarshal(w.Body.Bytes(), &response)
+	assert.NoError(t, err)
+	assert.Equal(t, "invalid body", response["error_description"])
+}
+
+func TestLogoutSuccess(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	seedUsers := []user.User{
+		{
+			Email:    "herkules@gmail.com",
+			Username: "herkules",
+			Password: "PolskaGurom",
+			Selector: "P",
+			Person: &user.Person{
+				Name:    "Herakles",
+				Surname: "Wielki",
+			},
+		},
+	}
+	seedRefreshTokens := []refresh_token.RefreshToken{
+		{
+			UserId:     1,
+			Token:      "valid_refresh_token",
+			ExpiryDate: time.Now().Add(30 * 24 * time.Hour),
+		},
+	}
+	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
+	wantStatus := http.StatusNoContent
+	assert.NoError(t, err)
+	payload := `
+	{
+		"refresh_token": "valid_refresh_token"
+	}
+	`
+	accessToken, err := getValidToken(1, "herkules@gmail.com")
+	assert.NoError(t, err)
+	req := httptest.NewRequest(http.MethodPost, "/logout", strings.NewReader(payload))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+accessToken)
+	req.Header.Set("Accept", "application/json")
+	w := httptest.NewRecorder()
+	server.ServeHTTP(w, req)
+	assert.Equal(t, wantStatus, w.Code)
+}
+
+func TestLogoutNoHeader(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	seedUsers := []user.User{}
+	seedRefreshTokens := []refresh_token.RefreshToken{}
+	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
+	wantStatus := http.StatusUnauthorized
+	assert.NoError(t, err)
+	payload := `
+	{
+		"refresh_token": "invalid_refresh_token"
+	}
+	`
+	req := httptest.NewRequest(http.MethodPost, "/logout", strings.NewReader(payload))
+	req.Header.Set("Content-Type", "application/json")
+	w := httptest.NewRecorder()
+	server.ServeHTTP(w, req)
+	assert.Equal(t, wantStatus, w.Code)
+	var response map[string]any
+	err = json.Unmarshal(w.Body.Bytes(), &response)
+	assert.NoError(t, err)
+}
+
+func TestLogoutNonExistingToken(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	seedUsers := []user.User{
+		{
+			Email:    "herakles@gmail.com",
+			Username: "herkules",
+			Password: "PolskaGurom",
+			Selector: "P",
+			Person: &user.Person{
+				Name:    "Herakles",
+				Surname: "Wielki",
+			},
+		},
+	}
+	seedRefreshTokens := []refresh_token.RefreshToken{}
+	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
+	wantStatus := http.StatusNotFound
+	assert.NoError(t, err)
+	payload := `
+	{
+		"refresh_token": "invalid_refresh_token"
+	}
+	`
+	accessToken, err := getValidToken(1, "herakles@gmail.com")
+	assert.NoError(t, err)
+	req := httptest.NewRequest(http.MethodPost, "/logout", strings.NewReader(payload))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+accessToken)
+	req.Header.Set("Accept", "application/json")
+	w := httptest.NewRecorder()
+	server.ServeHTTP(w, req)
+	assert.Equal(t, wantStatus, w.Code)
+	var response map[string]any
+	err = json.Unmarshal(w.Body.Bytes(), &response)
+	assert.NoError(t, err)
+	assert.Equal(t, "refresh token not found", response["error_description"])
+}
+
+func TestLogoutEmptyToken(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	seedUsers := []user.User{
+		{
+			Email:    "herakles@gmail.com",
+			Username: "herkules",
+			Password: "PolskaGurom",
+			Selector: "P",
+			Person: &user.Person{
+				Name:    "Herakles",
+				Surname: "Wielki",
+			},
+		},
+	}
+	seedRefreshTokens := []refresh_token.RefreshToken{}
+	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
+	wantStatus := http.StatusNotFound
+	assert.NoError(t, err)
+	payload := `
+	{
+		"refresh_token": ""
+	}
+	`
+	accessToken, err := getValidToken(1, "herakles@gmail.com")
+	assert.NoError(t, err)
+	req := httptest.NewRequest(http.MethodPost, "/logout", strings.NewReader(payload))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+accessToken)
+	req.Header.Set("Accept", "application/json")
+	w := httptest.NewRecorder()
+	server.ServeHTTP(w, req)
+	assert.Equal(t, wantStatus, w.Code)
+	var response map[string]any
+	err = json.Unmarshal(w.Body.Bytes(), &response)
+	assert.NoError(t, err)
+	assert.Equal(t, "refresh token required", response["error_description"])
+}
+
+func TestLogoutAllDevicesSuccess(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	seedUsers := []user.User{
+		{
+			Email:    "herakles@gmail.com",
+			Username: "herkules",
+			Password: "PolskaGurom",
+			Selector: "P",
+			Person: &user.Person{
+				Name:    "Herakles",
+				Surname: "Wielki",
+			},
+		},
+		{
+			Email:    "herakles2@gmail.com",
+			Username: "herkules2",
+			Password: "PolskaGurom",
+			Selector: "P",
+			Person: &user.Person{
+				Name:    "Herakles",
+				Surname: "Wielki",
+			},
+		},
+	}
+	seedRefreshTokens := []refresh_token.RefreshToken{
+		{
+			UserId:     1,
+			Token:      "valid_refresh_token",
+			ExpiryDate: time.Now().Add(30 * 24 * time.Hour),
+		},
+		{
+			UserId:     1,
+			Token:      "valid_refresh_token_2",
+			ExpiryDate: time.Now().Add(30 * 24 * time.Hour),
+		},
+		{
+			UserId:     2,
+			Token:      "valid_refresh_token_3",
+			ExpiryDate: time.Now().Add(30 * 24 * time.Hour),
+		},
+	}
+	server, _, rtSvc, err := newTestServer(seedUsers, seedRefreshTokens)
+	wantStatus := http.StatusNoContent
+	assert.NoError(t, err)
+	payload := `
+	{
+		"refresh_token": "valid_refresh_token",
+		"all_devices": true
+	}
+	`
+	accessToken, err := getValidToken(1, "herakles@gmail.com")
+	assert.NoError(t, err)
+	req := httptest.NewRequest(http.MethodPost, "/logout", strings.NewReader(payload))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+accessToken)
+	req.Header.Set("Accept", "application/json")
+	w := httptest.NewRecorder()
+	server.ServeHTTP(w, req)
+	assert.Equal(t, wantStatus, w.Code)
+	user1Tokens, err := rtSvc.FindByUserId(&gin.Context{}, 1)
+	assert.NoError(t, err)
+	assert.Len(t, user1Tokens, 0)
+	users2Tokens, err := rtSvc.FindByUserId(&gin.Context{}, 2)
+	assert.NoError(t, err)
+	assert.Len(t, users2Tokens, 1)
+	assert.Equal(t, "valid_refresh_token_3", users2Tokens[0].Token)
+	assert.Equal(t, uint(2), users2Tokens[0].UserId)
+}
+
+func TestLogoutAllDevicesNoHeader(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	seedUsers := []user.User{}
+	seedRefreshTokens := []refresh_token.RefreshToken{}
+	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
+	wantStatus := http.StatusUnauthorized
+	assert.NoError(t, err)
+	payload := `
+	{
+		"refresh_token": "invalid_refresh_token",
+		"all_devices": true
+	}
+	`
+	req := httptest.NewRequest(http.MethodPost, "/logout", strings.NewReader(payload))
+	req.Header.Set("Content-Type", "application/json")
+	w := httptest.NewRecorder()
+	server.ServeHTTP(w, req)
+	assert.Equal(t, wantStatus, w.Code)
+	var response map[string]any
+	err = json.Unmarshal(w.Body.Bytes(), &response)
+	assert.NoError(t, err)
+	assert.Equal(t, "unauthorized", response["message"])
+}
+
+func TestLogoutAllDevicesNonExistingToken(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	seedUsers := []user.User{
+		{
+			Email:    "herakles@gmail.com",
+			Username: "herkules",
+			Password: "PolskaGurom",
+			Selector: "P",
+			Person: &user.Person{
+				Name:    "Herakles",
+				Surname: "Wielki",
+			},
+		},
+	}
+	seedRefreshTokens := []refresh_token.RefreshToken{
+		{
+			UserId:     1,
+			Token:      "valid_refresh_token",
+			ExpiryDate: time.Now().Add(30 * 24 * time.Hour),
+		},
+	}
+	server, _, rtSvc, err := newTestServer(seedUsers, seedRefreshTokens)
+	wantStatus := http.StatusNotFound
+	assert.NoError(t, err)
+	payload := `
+	{
+		"refresh_token": "invalid_refresh_token",
+		"all_devices": true
+	}
+	`
+	accessToken, err := getValidToken(1, "herakles@gmail.com")
+	assert.NoError(t, err)
+	req := httptest.NewRequest(http.MethodPost, "/logout", strings.NewReader(payload))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+accessToken)
+	req.Header.Set("Accept", "application/json")
+	w := httptest.NewRecorder()
+	server.ServeHTTP(w, req)
+	assert.Equal(t, wantStatus, w.Code)
+	var response map[string]any
+	err = json.Unmarshal(w.Body.Bytes(), &response)
+	assert.NoError(t, err)
+	assert.Equal(t, "refresh token not found", response["error_description"])
+	user1Tokens, err := rtSvc.FindByUserId(&gin.Context{}, 1)
+	assert.NoError(t, err)
+	assert.Len(t, user1Tokens, 1)
+	assert.Equal(t, "valid_refresh_token", user1Tokens[0].Token)
+	assert.Equal(t, uint(1), user1Tokens[0].UserId)
+	assert.Equal(t, time.Now().Add(30*24*time.Hour).Format(time.RFC3339), user1Tokens[0].ExpiryDate.Format(time.RFC3339))
 }
