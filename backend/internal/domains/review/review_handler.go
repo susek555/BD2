@@ -32,7 +32,7 @@ func (h *Handler) GetAllReviews(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
-	var reviewsDTO []ReviewOutput
+	var reviewsDTO []RetrieveReviewDTO
 	for _, review := range reviews {
 		reviewsDTO = append(reviewsDTO, review.MapToDTO())
 	}
@@ -78,7 +78,7 @@ func (h *Handler) GetReviewById(c *gin.Context) {
 //	@Failure		400		{object}	custom_errors.HTTPError	"Bad Request – validation or persistence error"
 //	@Router			/review [post]
 func (h *Handler) CreateReview(c *gin.Context) {
-	var reviewInput ReviewInput
+	var reviewInput CreateReviewDTO
 	review := reviewInput.MapToObject()
 	if err := c.ShouldBindJSON(&review); err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
@@ -105,7 +105,7 @@ func (h *Handler) CreateReview(c *gin.Context) {
 //	@Failure		400		{object}	custom_errors.HTTPError	"Bad Request – validation or update error"
 //	@Router			/review [put]
 func (h *Handler) UpdateReview(c *gin.Context) {
-	var reviewInput ReviewInput
+	var reviewInput CreateReviewDTO
 	review := reviewInput.MapToObject()
 	if err := c.ShouldBindJSON(&review); err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
@@ -158,7 +158,7 @@ func (h *Handler) GetReviewsByReviewerId(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
-	var reviewsDTO []ReviewOutput
+	var reviewsDTO []RetrieveReviewDTO
 	for _, review := range reviews {
 		reviewDTO := review.MapToDTO()
 		reviewsDTO = append(reviewsDTO, reviewDTO)
@@ -186,7 +186,7 @@ func (h *Handler) GetReviewsByRevieweeId(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
-	var reviewsDTO []ReviewOutput
+	var reviewsDTO []RetrieveReviewDTO
 	for _, review := range reviews {
 		reviewDTO := review.MapToDTO()
 		reviewsDTO = append(reviewsDTO, reviewDTO)
