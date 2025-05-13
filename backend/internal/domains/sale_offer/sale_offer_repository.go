@@ -50,6 +50,8 @@ func (r *SaleOfferRepository) GetFiltered(filter *OfferFilter) ([]SaleOffer, *pa
 	if err := query.Scopes(pagination.Paginate(&filter.Pagination)).Find(&saleOffers).Error; err != nil {
 		return nil, nil, err
 	}
-
-	return saleOffers, &pagination.PaginationResponse{TotalRecords: totalRecords, TotalPages: len(saleOffers)/filter.Pagination.PageSize + 1}, nil
+	return saleOffers, &pagination.PaginationResponse{
+		TotalRecords: totalRecords,
+		TotalPages:   totalRecords/int64(filter.Pagination.PageSize) + 1,
+	}, nil
 }
