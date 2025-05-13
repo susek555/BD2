@@ -1,11 +1,12 @@
 package auth
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
 	"github.com/susek555/BD2/car-dealer-api/pkg/custom_errors"
-	"net/http"
 )
 
 type Handler struct {
