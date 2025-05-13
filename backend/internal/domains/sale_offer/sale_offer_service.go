@@ -2,7 +2,7 @@ package sale_offer
 
 type SaleOfferServiceInterface interface {
 	Create(in CreateSaleOfferDTO) error
-	GetFiltered(filter *OfferFilter) ([]RetrieveSaleOfferDTO, error)
+	GetFiltered(filter *OfferFilter) (RetrieveUsersWithPagination, error)
 }
 
 type SaleOfferService struct {
@@ -21,16 +21,15 @@ func (s *SaleOfferService) Create(in CreateSaleOfferDTO) error {
 	return s.repo.Create(offer)
 }
 
-func (s *SaleOfferService) GetFiltered(filter *OfferFilter) ([]RetrieveSaleOfferDTO, error) {
-	offers, cursor, err := s.repo.GetFiltered(filter)
+func (s *SaleOfferService) GetFiltered(filter *OfferFilter) (RetrieveUsersWithPagination, error) {
+	offers, pagResponse, err := s.repo.GetFiltered(filter)
 	if err != nil {
-		return nil, err
+		return RetrieveUsersWithPagination{}, err
 	}
 	offersDTOs := make([]RetrieveSaleOfferDTO, 0, len(offers))
 	for _, offer := range offers {
 		dto := offer.MapToDTO()
-		dto.Cursor = cursor
 		offersDTOs = append(offersDTOs, *dto)
 	}
-	return offersDTOs, nil
+	return RetrieveUsersWithPagination{Users: offersDTOs, PaginationResponse: pagResponse}, nil
 }
