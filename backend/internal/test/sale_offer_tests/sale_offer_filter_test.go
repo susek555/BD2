@@ -5,38 +5,10 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/car"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
 )
-
-// ------
-// Setup
-// ------
-
-func setupDB(offers []sale_offer.SaleOffer) (sale_offer.SaleOfferRepositoryInterface, error) {
-	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
-	db.AutoMigrate(
-		&car.Car{},
-		&manufacturer.Manufacturer{},
-		&model.Model{},
-		&sale_offer.SaleOffer{},
-		&sale_offer.Auction{},
-	)
-	if err != nil {
-		return nil, err
-	}
-	repo := sale_offer.NewSaleOfferRepository(db)
-	for _, offer := range offers {
-		repo.Create(&offer)
-	}
-	return repo, nil
-}
 
 // ----------------
 // Pagination tests
