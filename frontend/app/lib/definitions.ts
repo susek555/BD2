@@ -1,4 +1,4 @@
-import { StringValidation, z } from 'zod';
+import { number, StringValidation, z } from 'zod';
 
 export const SignupFormSchema = z
   .object({
@@ -208,6 +208,59 @@ export type AuctionData = {
 export type OfferDetails = {
   name: string;
   value: string;
+}
+
+// Add Offer
+
+export type AddOfferFormState = {
+  errors?: {
+    producer?: string[];
+    model?: string[];
+    color?: string[];
+    fuelType?: string[];
+    gearbox?: string[];
+    driveType?: string[];
+    country?: string[];
+    productionYear?: number[];
+    mileage?: number[];
+    numberOfOwners?: number[];
+    numberOfSeats?: number[];
+    power?: number[];
+    dateOfFirstRegistration?: Date[];
+    plateNumber?: string[];
+    engineDisplacement?: number[];
+    location?: string[];
+    price?: number[];
+    isAuction?: boolean[];
+    auctionEndDate?: Date[];
+    auctionStartPrice?: number[];
+    description?: string[];
+    images?: string[];
+  }
+  values?: {
+    producer?: string;
+    model?: string;
+    color?: string;
+    fuelType?: string;
+    gearbox?: string;
+    driveType?: string;
+    country?: string;
+    productionYear?: number;
+    mileage?: number;
+    numberOfOwners?: number;
+    numberOfSeats?: number;
+    power?: number;
+    dateOfFirstRegistration?: Date;
+    plateNumber?: string;
+    engineDisplacement?: number;
+    location?: string;
+    price?: number;
+    isAuction?: boolean;
+    auctionEndDate?: Date;
+    auctionStartPrice?: number;
+    description?: string;
+    images?: File[]; // Array of image files
+  }
 }
 
 
