@@ -3,6 +3,7 @@
 import { syncFiltersWithParams } from "@/app/lib/(home)/syncWithParams";
 import { ModelFieldData, FilterFieldData } from "@/app/lib/definitions";
 import { BaseFilterTemplate } from "@/app/ui/(home)/base-filter-template/base-filter-template";
+import { get } from "http";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
@@ -11,32 +12,55 @@ export default function ProducersAndModels({ producersAndModels }: { producersAn
     const pathname = usePathname();
     const { replace } = useRouter();
 
-    const producers = syncFiltersWithParams([producersAndModels.producers], searchParams)[0];
-    let models: FilterFieldData = { fieldName: "Models", options: [] };
+    function getAvailableModels(producersData: FilterFieldData, models: string[][]) : string[] {
+        const selectedIndexes = (producersData.selected ?? [])
+            .map(selectedItem => producersData.options.indexOf(selectedItem))
+            .filter(index => index !== -1);
 
-    // Stan widoczności pola Models
+        const result = selectedIndexes.flatMap(index =>
+            models[index].map(model => `${producersData.options[index]} ${model}`)
+        );
+
+        return result;
+    }
+
+    const producers = syncFiltersWithParams([producersAndModels.producers], searchParams)[0] as { fieldName: string; options: string[]; selected: string[] };
+    const [models, setModels] = useState<FilterFieldData>({
+        fieldName: "Models",
+        options: getAvailableModels(producers, producersAndModels.models),
+    });
+
     const [showModels, setShowModels] = useState<boolean>(!!producers.selected && producers.selected.length > 0);
+
+    function handleProducersChange(name: string, selected: string[]) {
+        handleChange(name, selected);
+
+        // Aktualizuj modele na podstawie nowego wyboru producenta
+        if (selected.length > 0) {
+            const updatedModels = getAvailableModels({ ...producers, selected }, producersAndModels.models);
+            setModels({
+                fieldName: "Models",
+                options: updatedModels,
+                selected: []
+            });
+            setShowModels(true);
+        } else {
+            // Jeśli nie ma wybranych producentów, ukryj modele
+            setModels({ fieldName: "Models", options: [], selected: [] });
+            setShowModels(false);
+        }
+    }
 
     function handleChange(name: string, selected: string[]) {
         const params = new URLSearchParams(searchParams);
-        const sanitizedName = name.replace(/\s+/g, ''); // Remove whitespaces from name
+        const sanitizedName = name.replace(/\s+/g, '');
 
-        params.set('page', '1'); // Reset to the first page
+        params.set('page', '1');
         if (selected.length > 0) {
             params.set(sanitizedName, selected.join(","));
-            // Natychmiastowa aktualizacja widoczności
-            if (name === producers.fieldName) {
-                setShowModels(true);
-            }
         } else {
             params.delete(sanitizedName);
-            // Ukryj pole Models, jeśli nie ma wybranego producenta
-            if (name === producers.fieldName) {
-                setShowModels(false);
-            }
         }
-
-        console.log("producers.selected", producers.selected);
 
         replace(`${pathname}?${params.toString()}`);
     }
@@ -48,7 +72,7 @@ export default function ProducersAndModels({ producersAndModels }: { producersAn
                 name={producers.fieldName}
                 options={producers.options}
                 selected={producers.selected}
-                onChange={handleChange}
+                onChange={handleProducersChange}
             />
             {showModels && (
                 <BaseFilterTemplate
