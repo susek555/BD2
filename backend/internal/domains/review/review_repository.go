@@ -10,7 +10,7 @@ type ReviewRepositoryInterface interface {
 	generic.CRUDRepository[Review]
 	GetByReviewerId(reviewerId uint) ([]Review, error)
 	GetByRevieweeId(reviewedId uint) ([]Review, error)
-	GetByReviewerIdAndRevieweeId(reviewerId uint, reviewedId uint) (Review, error)
+	GetByReviewerIdAndRevieweeId(reviewerId uint, reviewedId uint) (*Review, error)
 }
 
 type ReviewRepository struct {
@@ -107,7 +107,7 @@ func (repo *ReviewRepository) GetByRevieweeId(reviewedId uint) ([]Review, error)
 	return reviews, err
 }
 
-func (repo *ReviewRepository) GetByReviewerIdAndRevieweeId(reviewerId uint, reviewedId uint) (Review, error) {
+func (repo *ReviewRepository) GetByReviewerIdAndRevieweeId(reviewerId uint, reviewedId uint) (*Review, error) {
 	var review Review
 	err := repo.repository.
 		DB.
@@ -117,5 +117,5 @@ func (repo *ReviewRepository) GetByReviewerIdAndRevieweeId(reviewerId uint, revi
 		Preload("Reviewee").
 		First(&review).
 		Error
-	return review, err
+	return &review, err
 }
