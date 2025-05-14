@@ -10,6 +10,7 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
+	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -35,6 +36,99 @@ func setupDB(offers []sale_offer.SaleOffer) (sale_offer.SaleOfferRepositoryInter
 		repo.Create(&offer)
 	}
 	return repo, nil
+}
+
+// ----------------
+// Pagination tests
+// ----------------
+
+func TestGetFiltered_PaginationNegaitvePage(t *testing.T) {
+	offers := []sale_offer.SaleOffer{}
+	repo, _ := setupDB(offers)
+	filter := sale_offer.OfferFilter{Pagination: pagination.PaginationRequest{Page: -1, PageSize: 8}}
+	_, _, err := repo.GetFiltered(&filter)
+	assert.ErrorIs(t, err, pagination.ErrPageOutOfRange)
+}
+
+func TestGetFiltered_PaginationZeroPage(t *testing.T) {
+	offers := []sale_offer.SaleOffer{}
+	repo, _ := setupDB(offers)
+	filter := sale_offer.OfferFilter{Pagination: pagination.PaginationRequest{Page: 0, PageSize: 8}}
+	_, _, err := repo.GetFiltered(&filter)
+	assert.ErrorIs(t, err, pagination.ErrPageOutOfRange)
+}
+
+func TestGetFiltered_PaginationPositivePage(t *testing.T) {
+	offers := []sale_offer.SaleOffer{}
+	repo, _ := setupDB(offers)
+	filter := sale_offer.OfferFilter{Pagination: pagination.PaginationRequest{Page: 1, PageSize: 8}}
+	_, _, err := repo.GetFiltered(&filter)
+	assert.NoError(t, err)
+}
+
+func TestGetFiltered_PaginationPageSizeNegative(t *testing.T) {
+	offers := []sale_offer.SaleOffer{}
+	repo, _ := setupDB(offers)
+	filter := sale_offer.OfferFilter{Pagination: pagination.PaginationRequest{Page: 1, PageSize: -1}}
+	_, _, err := repo.GetFiltered(&filter)
+	assert.ErrorIs(t, err, pagination.ErrNegativePageSize)
+}
+
+func TestGetFiltered_PaginationPageSizeZero(t *testing.T) {
+	offers := []sale_offer.SaleOffer{}
+	repo, _ := setupDB(offers)
+	filter := sale_offer.OfferFilter{Pagination: pagination.PaginationRequest{Page: 1, PageSize: 0}}
+	_, _, err := repo.GetFiltered(&filter)
+	assert.ErrorIs(t, err, pagination.ErrNegativePageSize)
+}
+
+func TestFiltered_PaginationPageSizePositive(t *testing.T) {
+	offers := []sale_offer.SaleOffer{}
+	repo, _ := setupDB(offers)
+	filter := sale_offer.OfferFilter{Pagination: pagination.PaginationRequest{Page: 1, PageSize: 8}}
+	_, _, err := repo.GetFiltered(&filter)
+	assert.NoError(t, err)
+}
+
+func TestFiltered_PaginationPageOutOfRange(t *testing.T) {
+	offers := []sale_offer.SaleOffer{*CreateOffer(1)}
+	repo, _ := setupDB(offers)
+	filter := sale_offer.OfferFilter{Pagination: pagination.PaginationRequest{Page: 2, PageSize: 8}}
+	_, _, err := repo.GetFiltered(&filter)
+	assert.ErrorIs(t, err, pagination.ErrPageOutOfRange)
+}
+
+func TestGetFiltered_PaginationSingleRecord(t *testing.T) {
+	offers := []sale_offer.SaleOffer{*CreateOffer(1)}
+	repo, _ := setupDB(offers)
+	filter := sale_offer.OfferFilter{Pagination: pagination.PaginationRequest{Page: 1, PageSize: 8}}
+	result, _, err := repo.GetFiltered(&filter)
+	assert.NoError(t, err)
+	assert.Equal(t, len(result), len(offers))
+}
+
+func TestGetFiltered_PaginationMultipleRecordsBounded(t *testing.T) {
+	offers := []sale_offer.SaleOffer{}
+	for i := 1; i <= 5; i++ {
+		offers = append(offers, *CreateOffer(uint(i)))
+	}
+	repo, _ := setupDB(offers)
+	filter := sale_offer.OfferFilter{Pagination: pagination.PaginationRequest{Page: 1, PageSize: 3}}
+	result, _, err := repo.GetFiltered(&filter)
+	assert.NoError(t, err)
+	assert.Equal(t, len(result), 3)
+}
+
+func TestGetFiltered_PaginationMultipleRecordsNotBounded(t *testing.T) {
+	offers := []sale_offer.SaleOffer{}
+	for i := 1; i <= 5; i++ {
+		offers = append(offers, *CreateOffer(uint(i)))
+	}
+	repo, _ := setupDB(offers)
+	filter := sale_offer.OfferFilter{Pagination: pagination.PaginationRequest{Page: 2, PageSize: 3}}
+	result, _, err := repo.GetFiltered(&filter)
+	assert.NoError(t, err)
+	assert.Equal(t, len(result), 2)
 }
 
 //------------------------
