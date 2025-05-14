@@ -103,26 +103,37 @@ export type RangeFieldData = {
 // SearchParams
 
 export type SearchParams = {
-  query: string | null;
-  page: number | null;
-  orderKey: string | null;
-  isOrderDesc: boolean | null;
-  offerType: string | null;
-  producers: string[] | null;
-  gearboxes: string[] | null;
-  fuelTypes: string[] | null;
-  price: {
-    min: number | null;
-    max: number | null;
+  query?: string;
+  page?: number;
+  orderKey?: string;
+  isOrderDesc?: boolean;
+  offerType?: string;
+  producers?: string[];
+  gearboxes?: string[];
+  fuelTypes?: string[];
+  price?: {
+    min?: number;
+    max?: number;
   };
-  mileage: {
-    min: number | null;
-    max: number | null;
+  mileage?: {
+    min?: number;
+    max?: number;
   };
-  year: {
-    min: number | null;
-    max: number | null;
+  year?: {
+    min?: number;
+    max?: number;
   };
+};
+
+export const parseIntOrUndefined = (value: string | undefined): number | undefined => {
+  if (!value) return undefined;
+  const parsed = parseInt(value, 10);
+  return isNaN(parsed) ? undefined : parsed;
+};
+
+export const parseArrayOrUndefined = (value: string | string[] | undefined): string[] | undefined => {
+  if (!value) return undefined;
+  return Array.isArray(value) ? value : [value];
 };
 
 // SaleOffer
