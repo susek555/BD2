@@ -4,9 +4,14 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { BaseAccountButton } from "@/app/ui/(topbar)/base-account-buttons/base-account-button";
 import { PlusIcon } from "@heroicons/react/20/solid";
+import { authConfig } from "@/app/lib/authConfig";
+import { getServerSession } from "next-auth/next";
 
 
-export function TopBar() {
+export async function TopBar() {
+    const session = await getServerSession(authConfig);
+    const loggedIn = !!session;
+
     return (
       <div className="flex w-full flex-row">
         <Link
@@ -26,9 +31,13 @@ export function TopBar() {
           <div className="flex justify-end px-2">
             <div className="flex flex-row space-x-2">
               <LoginButtons />
-              <BaseAccountButton className="flex-none">
-                Add Offer <PlusIcon className="ml-auto w-5 text-gray-50" />
-              </BaseAccountButton>
+                {loggedIn && (
+                <Link href="/offer/add">
+                  <BaseAccountButton className="hidden md:flex w-full">
+                  Add Offer <PlusIcon className="ml-auto w-5 text-gray-50" />
+                  </BaseAccountButton>
+                </Link>
+                )}
             </div>
           </div>
         </div>
