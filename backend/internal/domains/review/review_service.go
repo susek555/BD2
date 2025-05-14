@@ -10,9 +10,9 @@ type ReviewServiceInterface interface {
 	GetById(id uint) (*RetrieveReviewDTO, error)
 	Update(userId uint, review *UpdateReviewDTO) (*RetrieveReviewDTO, error)
 	Delete(userId, id uint) error
-	GetByReviewerId(reviewerId uint) ([]Review, error)
-	GetByRevieweeId(reviewedId uint) ([]Review, error)
-	GetByReviewerIdAndRevieweeId(reviewerId uint, revieweeId uint) (*Review, error)
+	GetByReviewerId(reviewerId uint) ([]RetrieveReviewDTO, error)
+	GetByRevieweeId(reviewedId uint) ([]RetrieveReviewDTO, error)
+	GetByReviewerIdAndRevieweeId(reviewerId uint, revieweeId uint) (*RetrieveReviewDTO, error)
 }
 
 type ReviewService struct {
@@ -85,16 +85,37 @@ func (service *ReviewService) Delete(userId, id uint) error {
 	return service.Repo.Delete(id)
 }
 
-func (service *ReviewService) GetByReviewerId(reviewerId uint) ([]Review, error) {
-	return service.Repo.GetByReviewerId(reviewerId)
+func (service *ReviewService) GetByReviewerId(reviewerId uint) ([]RetrieveReviewDTO, error) {
+	reviews, err := service.Repo.GetByReviewerId(reviewerId)
+	if err != nil {
+		return nil, err
+	}
+	var reviewsDTO []RetrieveReviewDTO
+	for _, review := range reviews {
+		reviewsDTO = append(reviewsDTO, review.MapToDTO())
+	}
+	return reviewsDTO, nil
 }
 
-func (service *ReviewService) GetByRevieweeId(reviewedId uint) ([]Review, error) {
-	return service.Repo.GetByRevieweeId(reviewedId)
+func (service *ReviewService) GetByRevieweeId(reviewedId uint) ([]RetrieveReviewDTO, error) {
+	reviews, err := service.Repo.GetByRevieweeId(reviewedId)
+	if err != nil {
+		return nil, err
+	}
+	var reviewsDTO []RetrieveReviewDTO
+	for _, review := range reviews {
+		reviewsDTO = append(reviewsDTO, review.MapToDTO())
+	}
+	return reviewsDTO, nil
 }
 
-func (service *ReviewService) GetByReviewerIdAndRevieweeId(reviewerId uint, reviewedId uint) (*Review, error) {
-	return service.Repo.GetByReviewerIdAndRevieweeId(reviewerId, reviewedId)
+func (service *ReviewService) GetByReviewerIdAndRevieweeId(reviewerId uint, reviewedId uint) (*RetrieveReviewDTO, error) {
+	review, err := service.Repo.GetByReviewerIdAndRevieweeId(reviewerId, reviewedId)
+	if err != nil {
+		return nil, err
+	}
+	reviewDTO := review.MapToDTO()
+	return &reviewDTO, nil
 }
 
 func (service *ReviewService) getRevieweeId(reviewId uint) (uint, error) {

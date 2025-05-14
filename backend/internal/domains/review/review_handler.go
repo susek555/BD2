@@ -170,12 +170,7 @@ func (h *Handler) GetReviewsByReviewerId(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
-	var reviewsDTO []RetrieveReviewDTO
-	for _, review := range reviews {
-		reviewDTO := review.MapToDTO()
-		reviewsDTO = append(reviewsDTO, reviewDTO)
-	}
-	generic.HandleListResponse(c, reviewsDTO)
+	generic.HandleListResponse(c, reviews)
 }
 
 // GetReviewsByRevieweeId godoc
@@ -198,12 +193,7 @@ func (h *Handler) GetReviewsByRevieweeId(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
-	var reviewsDTO []RetrieveReviewDTO
-	for _, review := range reviews {
-		reviewDTO := review.MapToDTO()
-		reviewsDTO = append(reviewsDTO, reviewDTO)
-	}
-	generic.HandleListResponse(c, reviewsDTO)
+	generic.HandleListResponse(c, reviews)
 }
 
 // GetReviewsByReviewerIdAndRevieweeId godoc
@@ -231,6 +221,5 @@ func (h *Handler) GetReviewsByReviewerIdAndRevieweeId(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
-	reviewDTO := review.MapToDTO()
-	c.JSON(http.StatusOK, reviewDTO)
+	c.JSON(http.StatusOK, review)
 }
