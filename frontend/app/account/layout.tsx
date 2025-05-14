@@ -24,21 +24,17 @@ export default function AccountLayout({
 }) {
   return (
     <main className='min-h-screen bg-gray-50'>
-      <div className='mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8'>
-        <div className='space-y-6'>
-          {/* Profile Info Section */}
-          <Suspense fallback={<ProfileInfoSkeleton />}>
-            <ProfileInfoWrapper />
-          </Suspense>
+      <div className='mx-auto max-w-7xl space-y-6 px-4 py-8 sm:px-6 lg:px-8'>
+        <Suspense fallback={<ProfileInfoSkeleton />}>
+          <ProfileInfoWrapper />
+        </Suspense>
 
-          <Suspense fallback={<TabBarSkeleton />}>
-            <StickyTabBar />
-          </Suspense>
-
-          {/* Tab content */}
-          {children}
-        </div>
+        <Suspense fallback={<TabBarSkeleton />}>
+          <StickyTabBar />
+        </Suspense>
       </div>
+
+      {children}
     </main>
   );
 }
