@@ -12,7 +12,7 @@ type ReviewServiceInterface interface {
 	Delete(userId, id uint) error
 	GetByReviewerId(reviewerId uint) ([]Review, error)
 	GetByRevieweeId(reviewedId uint) ([]Review, error)
-	GetByReviewerIdAndRevieweeId(reviewerId uint, revieweeId uint) (Review, error)
+	GetByReviewerIdAndRevieweeId(reviewerId uint, revieweeId uint) (*Review, error)
 }
 
 type ReviewService struct {
@@ -61,6 +61,10 @@ func (service *ReviewService) Update(reviewerId uint, review *UpdateReviewDTO) (
 	if err != nil {
 		return nil, err
 	}
+	_, err = service.Repo.GetByReviewerIdAndRevieweeId(reviewerId, revieweeId)
+	if err != nil {
+		return nil, errors.New("you are not the reviewer of this review")
+	}
 	reviewObj := review.MapToObject(reviewerId, revieweeId)
 	err = service.Repo.Update(&reviewObj)
 	if err != nil {
@@ -89,7 +93,7 @@ func (service *ReviewService) GetByRevieweeId(reviewedId uint) ([]Review, error)
 	return service.Repo.GetByRevieweeId(reviewedId)
 }
 
-func (service *ReviewService) GetByReviewerIdAndRevieweeId(reviewerId uint, reviewedId uint) (Review, error) {
+func (service *ReviewService) GetByReviewerIdAndRevieweeId(reviewerId uint, reviewedId uint) (*Review, error) {
 	return service.Repo.GetByReviewerIdAndRevieweeId(reviewerId, reviewedId)
 }
 
