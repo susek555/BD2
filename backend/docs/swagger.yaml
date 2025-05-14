@@ -6,8 +6,8 @@ definitions:
       password:
         type: string
     required:
-      - login
-      - password
+    - login
+    - password
     type: object
   auth.LoginResponse:
     properties:
@@ -48,7 +48,7 @@ definitions:
       refresh_token:
         type: string
     required:
-      - refresh_token
+    - refresh_token
     type: object
   auth.RegisterResponse:
     properties:
@@ -59,6 +59,92 @@ definitions:
           type: array
         type: object
     type: object
+  car_params.Color:
+    enum:
+    - Red
+    - Blue
+    - Yellow
+    - Green
+    - Orange
+    - Purple
+    - Brown
+    - Black
+    - White
+    - Gray
+    - Cyan
+    - Magenta
+    - Lime
+    - Navy
+    - Teal
+    - Maroon
+    - Olive
+    - Beige
+    - Gold
+    - Other
+    type: string
+    x-enum-varnames:
+    - RED
+    - BLUE
+    - YELLOW
+    - GREEN
+    - ORANGE
+    - PURPLE
+    - BROWN
+    - BLACK
+    - WHITE
+    - GRAY
+    - CYAN
+    - MAGENTA
+    - LIME
+    - NAVY
+    - TEAL
+    - MAROON
+    - OLIVE
+    - BEIGE
+    - GOLD
+    - OTHER
+  car_params.Drive:
+    enum:
+    - FWD
+    - RWD
+    - AWD
+    type: string
+    x-enum-varnames:
+    - FWD
+    - RWD
+    - AWD
+  car_params.FuelType:
+    enum:
+    - Diesel
+    - Petrol
+    - Electric
+    - Ethanol
+    - LPG
+    - Biofuel
+    - Hybird
+    - Hydrogen
+    type: string
+    x-enum-varnames:
+    - DIESEL
+    - PETROL
+    - ELECTRIC
+    - ETHANOL
+    - LPG
+    - BIOFUEL
+    - HYBRID
+    - HYDROGEN
+  car_params.Transmission:
+    enum:
+    - Manual
+    - Automatic
+    - CVT
+    - Dual clutch
+    type: string
+    x-enum-varnames:
+    - MANUAL
+    - AUTOMATIC
+    - CVT
+    - DUAL_CLUTCH
   custom_errors.HTTPError:
     properties:
       error_description:
@@ -77,6 +163,20 @@ definitions:
         type: integer
       name:
         type: string
+    type: object
+  pagination.PaginationRequest:
+    properties:
+      page:
+        type: integer
+      page_size:
+        type: integer
+    type: object
+  pagination.PaginationResponse:
+    properties:
+      total_pages:
+        type: integer
+      total_records:
+        type: integer
     type: object
   review.ReviewInput:
     properties:
@@ -98,15 +198,185 @@ definitions:
       rating:
         type: integer
       reviewee:
-        $ref: "#/definitions/review.UserDTO"
+        $ref: '#/definitions/review.UserDTO'
       reviewer:
-        $ref: "#/definitions/review.UserDTO"
+        $ref: '#/definitions/review.UserDTO'
     type: object
   review.UserDTO:
     properties:
       id:
         type: integer
       username:
+        type: string
+    type: object
+  sale_offer.CreateSaleOfferDTO:
+    properties:
+      color:
+        $ref: '#/definitions/car_params.Color'
+      date_of_issue:
+        type: string
+      description:
+        type: string
+      drive:
+        $ref: '#/definitions/car_params.Drive'
+      engine_capacity:
+        type: integer
+      engine_power:
+        type: integer
+      fuel_type:
+        $ref: '#/definitions/car_params.FuelType'
+      margin:
+        type: integer
+      mileage:
+        type: integer
+      model_id:
+        type: integer
+      number_of_doors:
+        type: integer
+      number_of_gears:
+        type: integer
+      number_of_seats:
+        type: integer
+      price:
+        type: integer
+      production_year:
+        type: integer
+      registration_date:
+        type: string
+      registration_number:
+        type: string
+      transmission:
+        $ref: '#/definitions/car_params.Transmission'
+      vin:
+        type: string
+    type: object
+  sale_offer.MinMax-string:
+    properties:
+      max:
+        type: string
+      min:
+        type: string
+    type: object
+  sale_offer.MinMax-uint:
+    properties:
+      max:
+        type: integer
+      min:
+        type: integer
+    type: object
+  sale_offer.OfferFilter:
+    properties:
+      car_registration_date_range:
+        $ref: '#/definitions/sale_offer.MinMax-string'
+      colors:
+        items:
+          $ref: '#/definitions/car_params.Color'
+        type: array
+      drives:
+        items:
+          $ref: '#/definitions/car_params.Drive'
+        type: array
+      engine_capacity_range:
+        $ref: '#/definitions/sale_offer.MinMax-uint'
+      engine_power_range:
+        $ref: '#/definitions/sale_offer.MinMax-uint'
+      fuel_types:
+        items:
+          $ref: '#/definitions/car_params.FuelType'
+        type: array
+      is_order_desc:
+        type: boolean
+      manufacturers:
+        items:
+          type: string
+        type: array
+      mileage_range:
+        $ref: '#/definitions/sale_offer.MinMax-uint'
+      offer_creation_date_range:
+        $ref: '#/definitions/sale_offer.MinMax-string'
+      offer_type:
+        $ref: '#/definitions/sale_offer.OfferType'
+      order_key:
+        type: string
+      pagination:
+        $ref: '#/definitions/pagination.PaginationRequest'
+      price_range:
+        $ref: '#/definitions/sale_offer.MinMax-uint'
+      query:
+        type: string
+      transmissions:
+        items:
+          $ref: '#/definitions/car_params.Transmission'
+        type: array
+      year_range:
+        $ref: '#/definitions/sale_offer.MinMax-uint'
+    type: object
+  sale_offer.OfferType:
+    enum:
+    - Regular offer
+    - Auction
+    - Both
+    type: string
+    x-enum-varnames:
+    - REGULAR_OFFER
+    - AUCTION
+    - BOTH
+  sale_offer.RetrieveOffersWithPagination:
+    properties:
+      offers:
+        items:
+          $ref: '#/definitions/sale_offer.RetrieveSaleOfferDTO'
+        type: array
+      pagination:
+        $ref: '#/definitions/pagination.PaginationResponse'
+    type: object
+  sale_offer.RetrieveSaleOfferDTO:
+    properties:
+      brand:
+        type: string
+      buy_now_price:
+        type: integer
+      color:
+        $ref: '#/definitions/car_params.Color'
+      date_end:
+        type: string
+      date_of_issue:
+        type: string
+      description:
+        type: string
+      drive:
+        $ref: '#/definitions/car_params.Drive'
+      engine_capacity:
+        type: integer
+      engine_power:
+        type: integer
+      fuel_type:
+        $ref: '#/definitions/car_params.FuelType'
+      margin:
+        type: integer
+      mileage:
+        type: integer
+      model:
+        type: string
+      number_of_doors:
+        type: integer
+      number_of_gears:
+        type: integer
+      number_of_seats:
+        type: integer
+      price:
+        type: integer
+      production_year:
+        type: integer
+      registration_date:
+        type: string
+      registration_number:
+        type: string
+      transmission:
+        $ref: '#/definitions/car_params.Transmission'
+      username:
+        type: string
+      vin:
         type: string
     type: object
   user.CreateUserDTO:
@@ -128,7 +398,7 @@ definitions:
       username:
         type: string
     required:
-      - email
+    - email
     type: object
   user.RetrieveUserDTO:
     properties:
@@ -139,7 +409,7 @@ definitions:
       email:
         type: string
       id:
-        type: string
+        type: integer
       person_name:
         type: string
       person_surname:
@@ -171,382 +441,390 @@ paths:
   /auth/login:
     post:
       consumes:
-        - application/json
+      - application/json
       description: Authenticate user and return a pair of tokens and user data
       parameters:
-        - description: Login form
-          in: body
-          name: body
-          required: true
-          schema:
-            $ref: "#/definitions/auth.LoginInput"
+      - description: Login form
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/auth.LoginInput'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK - returns tokens and data of the user
           schema:
-            $ref: "#/definitions/auth.LoginResponse"
+            $ref: '#/definitions/auth.LoginResponse'
         "400":
           description: Invalid input data
           schema:
-            $ref: "#/definitions/auth.LoginResponse"
+            $ref: '#/definitions/auth.LoginResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: "#/definitions/auth.LoginResponse"
+            $ref: '#/definitions/auth.LoginResponse'
         "500":
           description: Internal server error
           schema:
-            $ref: "#/definitions/auth.LoginResponse"
+            $ref: '#/definitions/auth.LoginResponse'
       summary: Login user
       tags:
-        - auth
+      - auth
   /auth/refresh:
     post:
       consumes:
-        - application/json
+      - application/json
       description: Refresh access tokens
       parameters:
-        - description: Refresh token form
-          in: body
-          name: body
-          required: true
-          schema:
-            $ref: "#/definitions/auth.RefreshInput"
+      - description: Refresh token form
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/auth.RefreshInput'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK - returns new access token
           schema:
-            $ref: "#/definitions/auth.LoginResponse"
+            $ref: '#/definitions/auth.LoginResponse'
         "400":
           description: Invalid input data
           schema:
-            $ref: "#/definitions/custom_errors.HTTPError"
+            $ref: '#/definitions/custom_errors.HTTPError'
         "401":
           description: Unauthorized
           schema:
-            $ref: "#/definitions/custom_errors.HTTPError"
+            $ref: '#/definitions/custom_errors.HTTPError'
         "500":
           description: Internal server error
           schema:
-            $ref: "#/definitions/custom_errors.HTTPError"
+            $ref: '#/definitions/custom_errors.HTTPError'
       summary: Refresh tokens
       tags:
-        - auth
+      - auth
   /auth/register:
     post:
       consumes:
-        - application/json
+      - application/json
       description: Set up account and return the status
       parameters:
-        - description: Registration form
-          in: body
-          name: body
-          required: true
-          schema:
-            $ref: "#/definitions/user.CreateUserDTO"
+      - description: Registration form
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/user.CreateUserDTO'
       produces:
-        - application/json
+      - application/json
       responses:
         "201":
           description: Created - returns tokens
           schema:
-            $ref: "#/definitions/auth.RegisterResponse"
+            $ref: '#/definitions/auth.RegisterResponse'
         "400":
           description: Invalid input data
           schema:
-            $ref: "#/definitions/auth.RegisterResponse"
+            $ref: '#/definitions/auth.RegisterResponse'
         "409":
           description: Login taken
           schema:
-            $ref: "#/definitions/auth.RegisterResponse"
+            $ref: '#/definitions/auth.RegisterResponse'
         "500":
           description: Internal server error
           schema:
-            $ref: "#/definitions/auth.RegisterResponse"
+            $ref: '#/definitions/auth.RegisterResponse'
       summary: Register new user
       tags:
-        - auth
-  /cars/colors:
+      - auth
+  /car/colors:
     get:
       consumes:
-        - application/json
+      - application/json
       description: Returns a list of all possible colors that are accepted when creating
-        a new offer. If color of your car is not in the list, chose 'other'.
+        a new offer. If the color of your car is not in the list, choose 'other'.
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: List of colors
           schema:
-            items:
-              type: string
-            type: array
+            additionalProperties:
+              items:
+                type: string
+              type: array
+            type: object
       summary: Get all possible colors
       tags:
-        - cars
-  /cars/drives:
+      - car
+  /car/drives:
     get:
       consumes:
-        - application/json
+      - application/json
       description: Returns a list of all possible drives that are accepted when creating
         a new offer.
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: List of drives
           schema:
-            items:
-              type: string
-            type: array
+            additionalProperties:
+              items:
+                type: string
+              type: array
+            type: object
       summary: Get all possible drives
       tags:
-        - cars
-  /cars/fuel-types:
+      - car
+  /car/fuel-types:
     get:
       consumes:
-        - application/json
+      - application/json
       description: Returns a list of all possible fuel types that are accepted when
         creating a new offer.
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: List of fuel types
           schema:
-            items:
-              type: string
-            type: array
+            additionalProperties:
+              items:
+                type: string
+              type: array
+            type: object
       summary: Get all possible fuel types
       tags:
-        - cars
-  /cars/manufacturers:
+      - car
+  /car/manufacturers:
     get:
       consumes:
-        - application/json
+      - application/json
       description: Returns a list of all manufacturers stored in the database.
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: List of manufacturers
           schema:
             items:
-              $ref: "#/definitions/manufacturer.Manufacturer"
+              $ref: '#/definitions/manufacturer.Manufacturer'
             type: array
         "500":
           description: Internal server error
           schema:
-            $ref: "#/definitions/custom_errors.HTTPError"
+            $ref: '#/definitions/custom_errors.HTTPError'
       summary: Get all manufacturers
       tags:
-        - cars
-  /cars/models/id/{id}:
+      - car
+  /car/models/id/{id}:
     get:
       consumes:
-        - application/json
+      - application/json
       description: Returns a list of all models stored in the database for a given
         manufacturer id.
       parameters:
-        - description: Manufacturer ID
-          in: path
-          name: id
-          required: true
-          type: integer
+      - description: Manufacturer ID
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: List of models
           schema:
             items:
-              $ref: "#/definitions/model.RetrieveModelDTO"
+              $ref: '#/definitions/model.RetrieveModelDTO'
             type: array
         "400":
           description: Id is not a number
           schema:
-            $ref: "#/definitions/custom_errors.HTTPError"
+            $ref: '#/definitions/custom_errors.HTTPError'
         "404":
           description: Models not found
           schema:
-            $ref: "#/definitions/custom_errors.HTTPError"
+            $ref: '#/definitions/custom_errors.HTTPError'
         "500":
           description: Internal server error
           schema:
-            $ref: "#/definitions/custom_errors.HTTPError"
+            $ref: '#/definitions/custom_errors.HTTPError'
       summary: Get all models by manufacturer id
       tags:
-        - cars
-  /cars/models/name/{name}:
+      - car
+  /car/models/name/{name}:
     get:
       consumes:
-        - application/json
+      - application/json
       description: Returns a list of all models stored in the database for a given
         manufacturer name.
       parameters:
-        - description: Manufacturer name
-          in: path
-          name: name
-          required: true
-          type: string
+      - description: Manufacturer name
+        in: path
+        name: name
+        required: true
+        type: string
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: List of models
           schema:
             items:
-              $ref: "#/definitions/model.RetrieveModelDTO"
+              $ref: '#/definitions/model.RetrieveModelDTO'
             type: array
         "404":
           description: Models not found
           schema:
-            $ref: "#/definitions/custom_errors.HTTPError"
+            $ref: '#/definitions/custom_errors.HTTPError'
         "500":
           description: Internal server error
           schema:
-            $ref: "#/definitions/custom_errors.HTTPError"
+            $ref: '#/definitions/custom_errors.HTTPError'
       summary: Get all models by manufacturer name
       tags:
-        - cars
-  /cars/transmissions:
+      - car
+  /car/transmissions:
     get:
       consumes:
-        - application/json
+      - application/json
       description: Returns a list of all possible transmissions that are accepted
         when creating a new offer.
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: List of transmissions
           schema:
-            items:
-              type: string
-            type: array
+            additionalProperties:
+              items:
+                type: string
+              type: array
+            type: object
       summary: Get all possible transmissions
       tags:
-        - cars
+      - car
   /logout:
     post:
       consumes:
-        - application/json
+      - application/json
       description: Logout user and invalidate refresh token
       parameters:
-        - description: Logout form
-          in: body
-          name: body
-          required: true
-          schema:
-            $ref: "#/definitions/auth.LogoutInput"
+      - description: Logout form
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/auth.LogoutInput'
       produces:
-        - application/json
+      - application/json
       responses:
         "204":
           description: No content
           schema:
-            $ref: "#/definitions/custom_errors.HTTPError"
+            $ref: '#/definitions/custom_errors.HTTPError'
         "400":
           description: Invalid input data
           schema:
-            $ref: "#/definitions/custom_errors.HTTPError"
+            $ref: '#/definitions/custom_errors.HTTPError'
         "401":
           description: Unauthorized
           schema:
-            $ref: "#/definitions/custom_errors.HTTPError"
+            $ref: '#/definitions/custom_errors.HTTPError'
         "500":
           description: Internal server error
           schema:
-            $ref: "#/definitions/custom_errors.HTTPError"
+            $ref: '#/definitions/custom_errors.HTTPError'
       summary: Logout user
       tags:
-        - auth
+      - auth
   /review:
     get:
       description: Returns every review in the system as an array of DTOs.
       operationId: getAllReviews
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK – list of reviews
           schema:
             items:
-              $ref: "#/definitions/review.ReviewOutput"
+              $ref: '#/definitions/review.ReviewOutput'
             type: array
         "400":
           description: Bad Request – query failed
           schema:
-            $ref: "#/definitions/custom_errors.HTTPError"
+            $ref: '#/definitions/custom_errors.HTTPError'
       summary: List all reviews
       tags:
-        - reviews
+      - reviews
     post:
       consumes:
-        - application/json
+      - application/json
       description: Persists a new review entity and returns the created review.
       operationId: createReview
       parameters:
-        - description: Review payload
-          in: body
-          name: body
-          required: true
-          schema:
-            $ref: "#/definitions/review.ReviewInput"
+      - description: Review payload
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/review.ReviewInput'
       produces:
-        - application/json
+      - application/json
       responses:
         "201":
           description: Created – review stored
           schema:
-            $ref: "#/definitions/review.ReviewOutput"
+            $ref: '#/definitions/review.ReviewOutput'
         "400":
           description: Bad Request – validation or persistence error
           schema:
-            $ref: "#/definitions/custom_errors.HTTPError"
+            $ref: '#/definitions/custom_errors.HTTPError'
       summary: Create a new review
       tags:
-        - reviews
+      - reviews
     put:
       consumes:
-        - application/json
+      - application/json
       description: Updates a review and returns the updated entity.
       operationId: updateReview
       parameters:
-        - description: Review payload
-          in: body
-          name: body
-          required: true
-          schema:
-            $ref: "#/definitions/review.ReviewInput"
+      - description: Review payload
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/review.ReviewInput'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK – review updated
           schema:
-            $ref: "#/definitions/review.ReviewOutput"
+            $ref: '#/definitions/review.ReviewOutput'
         "400":
           description: Bad Request – validation or update error
           schema:
-            $ref: "#/definitions/custom_errors.HTTPError"
+            $ref: '#/definitions/custom_errors.HTTPError'
       summary: Update an existing review
       tags:
-        - reviews
+      - reviews
   /review/{id}:
     delete:
       description: Deletes the review identified by its ID.
       operationId: deleteReview
       parameters:
-        - description: Review ID
-          in: path
-          name: id
-          required: true
-          type: integer
+      - description: Review ID
+        in: path
+        name: id
+        required: true
+        type: integer
       responses:
         "204":
           description: No Content – review deleted
@@ -555,266 +833,345 @@ paths:
         "400":
           description: Bad Request – invalid ID format or delete failed
           schema:
-            $ref: "#/definitions/custom_errors.HTTPError"
+            $ref: '#/definitions/custom_errors.HTTPError'
       summary: Delete a review
       tags:
-        - reviews
+      - reviews
     get:
       description: Returns review that match given id as an DTO.
       operationId: getReviewById
       parameters:
-        - description: Review id
-          in: path
-          name: id
-          required: true
-          type: integer
+      - description: Review id
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK – review with given id
           schema:
-            $ref: "#/definitions/review.ReviewOutput"
+            $ref: '#/definitions/review.ReviewOutput'
         "400":
           description: Bad Request – query failed
           schema:
-            $ref: "#/definitions/custom_errors.HTTPError"
+            $ref: '#/definitions/custom_errors.HTTPError'
       summary: Get review by id
       tags:
-        - reviews
+      - reviews
   /review/reviewee/{id}:
     get:
       description: Returns all reviews where the given user is the reviewee.
       operationId: getReviewsByRevieweeId
       parameters:
-        - description: Reviewee ID
-          in: path
-          name: id
-          required: true
-          type: integer
+      - description: Reviewee ID
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK – list of reviews
           schema:
             items:
-              $ref: "#/definitions/review.ReviewOutput"
+              $ref: '#/definitions/review.ReviewOutput'
             type: array
         "400":
           description: Bad Request – invalid ID format or query failed
           schema:
-            $ref: "#/definitions/custom_errors.HTTPError"
+            $ref: '#/definitions/custom_errors.HTTPError'
       summary: List reviews about a reviewee
       tags:
-        - reviews
+      - reviews
   /review/reviewer/{id}:
     get:
       description: Returns all reviews authored by the reviewer specified by ID.
       operationId: getReviewsByReviewerId
       parameters:
-        - description: Reviewer ID
-          in: path
-          name: id
-          required: true
-          type: integer
+      - description: Reviewer ID
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK – list of reviews
           schema:
             items:
-              $ref: "#/definitions/review.ReviewOutput"
+              $ref: '#/definitions/review.ReviewOutput'
             type: array
         "400":
           description: Bad Request – invalid ID format or query failed
           schema:
-            $ref: "#/definitions/custom_errors.HTTPError"
+            $ref: '#/definitions/custom_errors.HTTPError'
       summary: List reviews written by a reviewer
       tags:
-        - reviews
+      - reviews
   /review/reviewer/{reviewerId}/reviewee/{revieweeId}:
     get:
       description: Returns the review where <reviewerId> is the author and <revieweeId>
         is the subject.
       operationId: getReviewByReviewerAndReviewee
       parameters:
-        - description: Reviewer ID
-          in: path
-          name: reviewerId
-          required: true
-          type: integer
-        - description: Reviewee ID
-          in: path
-          name: revieweeId
-          required: true
-          type: integer
+      - description: Reviewer ID
+        in: path
+        name: reviewerId
+        required: true
+        type: integer
+      - description: Reviewee ID
+        in: path
+        name: revieweeId
+        required: true
+        type: integer
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK – review found
           schema:
-            $ref: "#/definitions/review.ReviewOutput"
+            $ref: '#/definitions/review.ReviewOutput'
         "400":
           description: Bad Request – invalid ID format or query failed
           schema:
-            $ref: "#/definitions/custom_errors.HTTPError"
+            $ref: '#/definitions/custom_errors.HTTPError'
       summary: Get review written by one user about another
       tags:
-        - reviews
+      - reviews
+  /sale-offer:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Returns a list of sale offers in paginated form. The results are filtered based on request's body. There are several constraints on the filter fields, such as:
+        - Offer type must be one of the predefined offer types (endpoint: /sale-offer/offer-types)
+        - Order key must be one of the predefined order keys (endpoint: /sale-offer/order-keys)
+        - List of manufacturers must contain only predefined manufacturers (endpoint: /car/manufacturers)
+        - List of colors must containonly predefined colors (endpoint: /car/colors)
+        - List of drives must contain only predefined drives (endpoint: /car/drives)
+        - List of fuel types must contain only predefined fuel types (endpoint: /car/fuel_types)
+        - List of transmissions must contain only predefined transmission types (endpoint: /car/transmissions)
+        - Whenever you use a range, the min value must be less than or equal to the max value, you can provide only one of them, and the other will be ignored.
+      parameters:
+      - description: Sale offer filter
+        in: body
+        name: filter
+        required: true
+        schema:
+          $ref: '#/definitions/sale_offer.OfferFilter'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of sale offers
+          schema:
+            $ref: '#/definitions/sale_offer.RetrieveOffersWithPagination'
+        "400":
+          description: Invalid input data
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Get filtered sale offers
+      tags:
+      - sale-offer
+  /sale-offer/offer-types:
+    get:
+      consumes:
+      - application/json
+      description: Returns a list of all possible offer types that are accepted when
+        using filtering.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of offer types
+          schema:
+            additionalProperties:
+              items:
+                type: string
+              type: array
+            type: object
+      summary: Get offer types
+      tags:
+      - sale-offer
+  /sale-offer/order-keys:
+    get:
+      consumes:
+      - application/json
+      description: Returns a list of all possible order keys that are accepted when
+        using filtering.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of order keys
+          schema:
+            additionalProperties:
+              items:
+                type: string
+              type: array
+            type: object
+      summary: Get order keys
+      tags:
+      - sale-offer
   /users:
     get:
       consumes:
-        - application/json
+      - application/json
       description: Return a list of all users stored in database. If user's subtype
         is person the company related fields will be omitted and vice versa.
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: List of users
           schema:
             items:
-              $ref: "#/definitions/user.RetrieveUserDTO"
+              $ref: '#/definitions/user.RetrieveUserDTO'
             type: array
         "500":
           description: Internal server error
           schema:
-            $ref: "#/definitions/custom_errors.HTTPError"
+            $ref: '#/definitions/custom_errors.HTTPError'
       summary: Get all users
       tags:
-        - users
+      - users
     put:
       consumes:
-        - application/json
+      - application/json
       description: Updates user's data in database from given form. Currently you
         can only change basic fields (email, username, password), not the subtype.
       parameters:
-        - description: Update form
-          in: body
-          name: body
-          required: true
-          schema:
-            $ref: "#/definitions/user.UpdateUserDTO"
+      - description: Update form
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/user.UpdateUserDTO'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: User updated
           schema:
-            $ref: "#/definitions/user.UpdateUserDTO"
+            $ref: '#/definitions/user.UpdateUserDTO'
         "400":
           description: Invalid input data
           schema:
-            $ref: "#/definitions/custom_errors.HTTPError"
+            $ref: '#/definitions/custom_errors.HTTPError'
         "404":
           description: User not found
           schema:
-            $ref: "#/definitions/custom_errors.HTTPError"
+            $ref: '#/definitions/custom_errors.HTTPError'
         "500":
           description: Internal server error
           schema:
-            $ref: "#/definitions/custom_errors.HTTPError"
+            $ref: '#/definitions/custom_errors.HTTPError'
       summary: Update user
       tags:
-        - users
+      - users
   /users/{id}:
     delete:
       consumes:
-        - application/json
+      - application/json
       description: Removes user who has provided id from database.
       parameters:
-        - description: User ID
-          in: path
-          name: id
-          required: true
-          type: integer
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
-        - application/json
+      - application/json
       responses:
         "204":
           description: User sucessfully deleted
         "400":
           description: Id is not a number
           schema:
-            $ref: "#/definitions/custom_errors.HTTPError"
+            $ref: '#/definitions/custom_errors.HTTPError'
         "404":
           description: User not found
           schema:
-            $ref: "#/definitions/custom_errors.HTTPError"
+            $ref: '#/definitions/custom_errors.HTTPError'
         "500":
           description: Internal server error
           schema:
-            $ref: "#/definitions/custom_errors.HTTPError"
+            $ref: '#/definitions/custom_errors.HTTPError'
       summary: Delete user
       tags:
-        - users
+      - users
   /users/email/{email}:
     get:
       consumes:
-        - application/json
+      - application/json
       description: Returns user who has provided email. If user's subtype is person
         the company related fields will be omitted and vice versa.
       parameters:
-        - description: User email
-          in: path
-          name: email
-          required: true
-          type: string
+      - description: User email
+        in: path
+        name: email
+        required: true
+        type: string
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: User found
           schema:
-            $ref: "#/definitions/user.RetrieveUserDTO"
+            $ref: '#/definitions/user.RetrieveUserDTO'
         "404":
           description: User not found
           schema:
-            $ref: "#/definitions/custom_errors.HTTPError"
+            $ref: '#/definitions/custom_errors.HTTPError'
         "500":
           description: Internal server error
           schema:
-            $ref: "#/definitions/custom_errors.HTTPError"
+            $ref: '#/definitions/custom_errors.HTTPError'
       summary: Get user by email
       tags:
-        - users
+      - users
   /users/id/{id}:
     get:
       consumes:
-        - application/json
+      - application/json
       description: Returns user who has provided id. If user's subtype is person the
         company related fields will be omitted and vice versa.
       parameters:
-        - description: User ID
-          in: path
-          name: id
-          required: true
-          type: integer
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: User
           schema:
-            $ref: "#/definitions/user.RetrieveUserDTO"
+            $ref: '#/definitions/user.RetrieveUserDTO'
         "400":
           description: Id is not a number
           schema:
-            $ref: "#/definitions/custom_errors.HTTPError"
+            $ref: '#/definitions/custom_errors.HTTPError'
         "404":
           description: User not found
           schema:
-            $ref: "#/definitions/custom_errors.HTTPError"
+            $ref: '#/definitions/custom_errors.HTTPError'
         "500":
           description: Internal server error
           schema:
-            $ref: "#/definitions/custom_errors.HTTPError"
+            $ref: '#/definitions/custom_errors.HTTPError'
       summary: Get user by id
       tags:
-        - users
+      - users
 schemes:
-  - http
+- http
 swagger: "2.0"

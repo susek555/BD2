@@ -176,9 +176,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/cars/colors": {
+        "/car/colors": {
             "get": {
-                "description": "Returns a list of all possible colors that are accepted when creating a new offer. If color of your car is not in the list, chose 'other'.",
+                "description": "Returns a list of all possible colors that are accepted when creating a new offer. If the color of your car is not in the list, choose 'other'.",
                 "consumes": [
                     "application/json"
                 ],
@@ -186,23 +186,26 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "cars"
+                    "car"
                 ],
                 "summary": "Get all possible colors",
                 "responses": {
                     "200": {
                         "description": "List of colors",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
                             }
                         }
                     }
                 }
             }
         },
-        "/cars/drives": {
+        "/car/drives": {
             "get": {
                 "description": "Returns a list of all possible drives that are accepted when creating a new offer.",
                 "consumes": [
@@ -212,23 +215,26 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "cars"
+                    "car"
                 ],
                 "summary": "Get all possible drives",
                 "responses": {
                     "200": {
                         "description": "List of drives",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
                             }
                         }
                     }
                 }
             }
         },
-        "/cars/fuel-types": {
+        "/car/fuel-types": {
             "get": {
                 "description": "Returns a list of all possible fuel types that are accepted when creating a new offer.",
                 "consumes": [
@@ -238,23 +244,26 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "cars"
+                    "car"
                 ],
                 "summary": "Get all possible fuel types",
                 "responses": {
                     "200": {
                         "description": "List of fuel types",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
                             }
                         }
                     }
                 }
             }
         },
-        "/cars/manufacturers": {
+        "/car/manufacturers": {
             "get": {
                 "description": "Returns a list of all manufacturers stored in the database.",
                 "consumes": [
@@ -264,7 +273,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "cars"
+                    "car"
                 ],
                 "summary": "Get all manufacturers",
                 "responses": {
@@ -286,7 +295,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/cars/models/id/{id}": {
+        "/car/models/id/{id}": {
             "get": {
                 "description": "Returns a list of all models stored in the database for a given manufacturer id.",
                 "consumes": [
@@ -296,7 +305,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "cars"
+                    "car"
                 ],
                 "summary": "Get all models by manufacturer id",
                 "parameters": [
@@ -339,7 +348,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/cars/models/name/{name}": {
+        "/car/models/name/{name}": {
             "get": {
                 "description": "Returns a list of all models stored in the database for a given manufacturer name.",
                 "consumes": [
@@ -349,7 +358,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "cars"
+                    "car"
                 ],
                 "summary": "Get all models by manufacturer name",
                 "parameters": [
@@ -386,7 +395,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/cars/transmissions": {
+        "/car/transmissions": {
             "get": {
                 "description": "Returns a list of all possible transmissions that are accepted when creating a new offer.",
                 "consumes": [
@@ -396,16 +405,19 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "cars"
+                    "car"
                 ],
                 "summary": "Get all possible transmissions",
                 "responses": {
                     "200": {
                         "description": "List of transmissions",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
                             }
                         }
                     }
@@ -760,6 +772,110 @@ const docTemplate = `{
                 }
             }
         },
+        "/sale-offer": {
+            "post": {
+                "description": "Returns a list of sale offers in paginated form. The results are filtered based on request's body. There are several constraints on the filter fields, such as:\n- Offer type must be one of the predefined offer types (endpoint: /sale-offer/offer-types)\n- Order key must be one of the predefined order keys (endpoint: /sale-offer/order-keys)\n- List of manufacturers must contain only predefined manufacturers (endpoint: /car/manufacturers)\n- List of colors must containonly predefined colors (endpoint: /car/colors)\n- List of drives must contain only predefined drives (endpoint: /car/drives)\n- List of fuel types must contain only predefined fuel types (endpoint: /car/fuel_types)\n- List of transmissions must contain only predefined transmission types (endpoint: /car/transmissions)\n- Whenever you use a range, the min value must be less than or equal to the max value, you can provide only one of them, and the other will be ignored.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sale-offer"
+                ],
+                "summary": "Get filtered sale offers",
+                "parameters": [
+                    {
+                        "description": "Sale offer filter",
+                        "name": "filter",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sale_offer.OfferFilter"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of sale offers",
+                        "schema": {
+                            "$ref": "#/definitions/sale_offer.RetrieveOffersWithPagination"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input data",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/sale-offer/offer-types": {
+            "get": {
+                "description": "Returns a list of all possible offer types that are accepted when using filtering.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sale-offer"
+                ],
+                "summary": "Get offer types",
+                "responses": {
+                    "200": {
+                        "description": "List of offer types",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/sale-offer/order-keys": {
+            "get": {
+                "description": "Returns a list of all possible order keys that are accepted when using filtering.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sale-offer"
+                ],
+                "summary": "Get order keys",
+                "responses": {
+                    "200": {
+                        "description": "List of order keys",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/users": {
             "get": {
                 "description": "Return a list of all users stored in database. If user's subtype is person the company related fields will be omitted and vice versa.",
@@ -1077,6 +1193,104 @@ const docTemplate = `{
                 }
             }
         },
+        "car_params.Color": {
+            "type": "string",
+            "enum": [
+                "Red",
+                "Blue",
+                "Yellow",
+                "Green",
+                "Orange",
+                "Purple",
+                "Brown",
+                "Black",
+                "White",
+                "Gray",
+                "Cyan",
+                "Magenta",
+                "Lime",
+                "Navy",
+                "Teal",
+                "Maroon",
+                "Olive",
+                "Beige",
+                "Gold",
+                "Other"
+            ],
+            "x-enum-varnames": [
+                "RED",
+                "BLUE",
+                "YELLOW",
+                "GREEN",
+                "ORANGE",
+                "PURPLE",
+                "BROWN",
+                "BLACK",
+                "WHITE",
+                "GRAY",
+                "CYAN",
+                "MAGENTA",
+                "LIME",
+                "NAVY",
+                "TEAL",
+                "MAROON",
+                "OLIVE",
+                "BEIGE",
+                "GOLD",
+                "OTHER"
+            ]
+        },
+        "car_params.Drive": {
+            "type": "string",
+            "enum": [
+                "FWD",
+                "RWD",
+                "AWD"
+            ],
+            "x-enum-varnames": [
+                "FWD",
+                "RWD",
+                "AWD"
+            ]
+        },
+        "car_params.FuelType": {
+            "type": "string",
+            "enum": [
+                "Diesel",
+                "Petrol",
+                "Electric",
+                "Ethanol",
+                "LPG",
+                "Biofuel",
+                "Hybird",
+                "Hydrogen"
+            ],
+            "x-enum-varnames": [
+                "DIESEL",
+                "PETROL",
+                "ELECTRIC",
+                "ETHANOL",
+                "LPG",
+                "BIOFUEL",
+                "HYBRID",
+                "HYDROGEN"
+            ]
+        },
+        "car_params.Transmission": {
+            "type": "string",
+            "enum": [
+                "Manual",
+                "Automatic",
+                "CVT",
+                "Dual clutch"
+            ],
+            "x-enum-varnames": [
+                "MANUAL",
+                "AUTOMATIC",
+                "CVT",
+                "DUAL_CLUTCH"
+            ]
+        },
         "custom_errors.HTTPError": {
             "type": "object",
             "properties": {
@@ -1104,6 +1318,28 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                }
+            }
+        },
+        "pagination.PaginationRequest": {
+            "type": "object",
+            "properties": {
+                "page": {
+                    "type": "integer"
+                },
+                "page_size": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pagination.PaginationResponse": {
+            "type": "object",
+            "properties": {
+                "total_pages": {
+                    "type": "integer"
+                },
+                "total_records": {
+                    "type": "integer"
                 }
             }
         },
@@ -1155,6 +1391,262 @@ const docTemplate = `{
                 }
             }
         },
+        "sale_offer.CreateSaleOfferDTO": {
+            "type": "object",
+            "properties": {
+                "color": {
+                    "$ref": "#/definitions/car_params.Color"
+                },
+                "date_of_issue": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "drive": {
+                    "$ref": "#/definitions/car_params.Drive"
+                },
+                "engine_capacity": {
+                    "type": "integer"
+                },
+                "engine_power": {
+                    "type": "integer"
+                },
+                "fuel_type": {
+                    "$ref": "#/definitions/car_params.FuelType"
+                },
+                "margin": {
+                    "type": "integer"
+                },
+                "mileage": {
+                    "type": "integer"
+                },
+                "model_id": {
+                    "type": "integer"
+                },
+                "number_of_doors": {
+                    "type": "integer"
+                },
+                "number_of_gears": {
+                    "type": "integer"
+                },
+                "number_of_seats": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "production_year": {
+                    "type": "integer"
+                },
+                "registration_date": {
+                    "type": "string"
+                },
+                "registration_number": {
+                    "type": "string"
+                },
+                "transmission": {
+                    "$ref": "#/definitions/car_params.Transmission"
+                },
+                "vin": {
+                    "type": "string"
+                }
+            }
+        },
+        "sale_offer.MinMax-string": {
+            "type": "object",
+            "properties": {
+                "max": {
+                    "type": "string"
+                },
+                "min": {
+                    "type": "string"
+                }
+            }
+        },
+        "sale_offer.MinMax-uint": {
+            "type": "object",
+            "properties": {
+                "max": {
+                    "type": "integer"
+                },
+                "min": {
+                    "type": "integer"
+                }
+            }
+        },
+        "sale_offer.OfferFilter": {
+            "type": "object",
+            "properties": {
+                "car_registration_date_range": {
+                    "$ref": "#/definitions/sale_offer.MinMax-string"
+                },
+                "colors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/car_params.Color"
+                    }
+                },
+                "drives": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/car_params.Drive"
+                    }
+                },
+                "engine_capacity_range": {
+                    "$ref": "#/definitions/sale_offer.MinMax-uint"
+                },
+                "engine_power_range": {
+                    "$ref": "#/definitions/sale_offer.MinMax-uint"
+                },
+                "fuel_types": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/car_params.FuelType"
+                    }
+                },
+                "is_order_desc": {
+                    "type": "boolean"
+                },
+                "manufacturers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "mileage_range": {
+                    "$ref": "#/definitions/sale_offer.MinMax-uint"
+                },
+                "offer_creation_date_range": {
+                    "$ref": "#/definitions/sale_offer.MinMax-string"
+                },
+                "offer_type": {
+                    "$ref": "#/definitions/sale_offer.OfferType"
+                },
+                "order_key": {
+                    "type": "string"
+                },
+                "pagination": {
+                    "$ref": "#/definitions/pagination.PaginationRequest"
+                },
+                "price_range": {
+                    "$ref": "#/definitions/sale_offer.MinMax-uint"
+                },
+                "query": {
+                    "type": "string"
+                },
+                "transmissions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/car_params.Transmission"
+                    }
+                },
+                "year_range": {
+                    "$ref": "#/definitions/sale_offer.MinMax-uint"
+                }
+            }
+        },
+        "sale_offer.OfferType": {
+            "type": "string",
+            "enum": [
+                "Regular offer",
+                "Auction",
+                "Both"
+            ],
+            "x-enum-varnames": [
+                "REGULAR_OFFER",
+                "AUCTION",
+                "BOTH"
+            ]
+        },
+        "sale_offer.RetrieveOffersWithPagination": {
+            "type": "object",
+            "properties": {
+                "offers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/sale_offer.RetrieveSaleOfferDTO"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/pagination.PaginationResponse"
+                }
+            }
+        },
+        "sale_offer.RetrieveSaleOfferDTO": {
+            "type": "object",
+            "properties": {
+                "brand": {
+                    "type": "string"
+                },
+                "buy_now_price": {
+                    "type": "integer"
+                },
+                "color": {
+                    "$ref": "#/definitions/car_params.Color"
+                },
+                "date_end": {
+                    "type": "string"
+                },
+                "date_of_issue": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "drive": {
+                    "$ref": "#/definitions/car_params.Drive"
+                },
+                "engine_capacity": {
+                    "type": "integer"
+                },
+                "engine_power": {
+                    "type": "integer"
+                },
+                "fuel_type": {
+                    "$ref": "#/definitions/car_params.FuelType"
+                },
+                "margin": {
+                    "type": "integer"
+                },
+                "mileage": {
+                    "type": "integer"
+                },
+                "model": {
+                    "type": "string"
+                },
+                "number_of_doors": {
+                    "type": "integer"
+                },
+                "number_of_gears": {
+                    "type": "integer"
+                },
+                "number_of_seats": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "production_year": {
+                    "type": "integer"
+                },
+                "registration_date": {
+                    "type": "string"
+                },
+                "registration_number": {
+                    "type": "string"
+                },
+                "transmission": {
+                    "$ref": "#/definitions/car_params.Transmission"
+                },
+                "username": {
+                    "type": "string"
+                },
+                "vin": {
+                    "type": "string"
+                }
+            }
+        },
         "user.CreateUserDTO": {
             "type": "object",
             "required": [
@@ -1200,7 +1692,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "person_name": {
                     "type": "string"
