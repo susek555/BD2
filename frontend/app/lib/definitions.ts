@@ -346,7 +346,7 @@ export type AddOfferFormState = {
 
 export type AddOfferFormData = {
   producers: string[];
-  models: string[];
+  models: string[][];
   colors: string[];
   fuelTypes: string[];
   gearboxes: string[];

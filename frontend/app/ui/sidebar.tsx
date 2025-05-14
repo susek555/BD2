@@ -6,10 +6,12 @@ import ProducersAndModels from '@/app/ui/producers-and-models';
 
 
 export default async function SideBar() {
-    const filters = await fetchFilterFields();
-    const ranges = await prepareRangeFields();
-    const sortingOptions = await fetchSortingOptions();
-    const producersAndModels = await fetchProducersAndModels();
+    const [filters, ranges, sortingOptions, producersAndModels] = await Promise.all([
+      fetchFilterFields(),
+      prepareRangeFields(),
+      fetchSortingOptions(),
+      fetchProducersAndModels()
+    ]);
 
     return (
       <div className="flex h-full flex-col px-3 py-2 md:px-2 rounded-r-lg border-black border-[2px]">
