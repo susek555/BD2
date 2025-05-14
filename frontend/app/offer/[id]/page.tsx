@@ -1,10 +1,10 @@
 import { fetchOfferDetails } from "@/app/lib/data";
-import Photos from "@/app/ui/offer/photos";
-import Price from "@/app/ui/offer/price";
+import Photos from "@/app/ui/offer/[id]/photos";
+import Price from "@/app/ui/offer/[id]/price";
 import { Suspense,lazy } from "react";
-import OfferDescription from "@/app/ui/offer/description";
-import OfferDetailsTable from "@/app/ui/offer/details-table";
-import UserDetails from "@/app/ui/offer/user-details";
+import OfferDescription from "@/app/ui/offer/[id]/description";
+import OfferDetailsTable from "@/app/ui/offer/[id]/details-table";
+import UserDetails from "@/app/ui/offer/[id]/user-details";
 
 export default async function Page(props: { params: Promise<{id: string }> }) {
     const { params } = props;
