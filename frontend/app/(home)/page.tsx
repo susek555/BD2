@@ -8,7 +8,7 @@ import {
 } from '../lib/definitions';
 import OffersFoundInfo from '../ui/(home)/offers-found-info';
 import Pagination from '../ui/(home)/pagination';
-import OffersTable from '../ui/(home)/table';
+import OffersTable from '../ui/(home)/offers-table';
 import { OffersFoundSkeleton, OffersTableSkeleton } from '../ui/skeletons';
 
 //TODO fix bug with filters not syncing when Home button clicked
