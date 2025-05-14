@@ -102,6 +102,7 @@ func registerCarRoutes(router *gin.Engine) {
 }
 
 func registerSaleOfferRoutes(router *gin.Engine) {
+	verifier, _ := initializeVerifier()
 	saleOfferRepo := sale_offer.NewSaleOfferRepository(initializers.DB)
 	manufacturerRepo := manufacturer.NewManufacturerRepository(initializers.DB)
 	manufacturerService := manufacturer.NewManufacturerService(manufacturerRepo)
@@ -109,7 +110,7 @@ func registerSaleOfferRoutes(router *gin.Engine) {
 	saleOfferHandler := sale_offer.NewHandler(saleOfferService)
 	saleOfferRoutes := router.Group("/sale-offer")
 	{
-		saleOfferRoutes.POST("/", saleOfferHandler.CreateSaleOffer)
+		saleOfferRoutes.POST("/", middleware.Authenticate(verifier), saleOfferHandler.CreateSaleOffer)
 		saleOfferRoutes.POST("/filtered", saleOfferHandler.GetFilteredSaleOffers)
 		saleOfferRoutes.GET("/offer-types", saleOfferHandler.GetOfferTypes)
 		saleOfferRoutes.GET("/order-keys", saleOfferHandler.GetOrderKeys)
