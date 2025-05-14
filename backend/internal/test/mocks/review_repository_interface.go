@@ -344,22 +344,24 @@ func (_c *ReviewRepositoryInterface_GetByReviewerId_Call) RunAndReturn(run func(
 }
 
 // GetByReviewerIdAndRevieweeId provides a mock function with given fields: reviewerId, reviewedId
-func (_m *ReviewRepositoryInterface) GetByReviewerIdAndRevieweeId(reviewerId uint, reviewedId uint) (review.Review, error) {
+func (_m *ReviewRepositoryInterface) GetByReviewerIdAndRevieweeId(reviewerId uint, reviewedId uint) (*review.Review, error) {
 	ret := _m.Called(reviewerId, reviewedId)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetByReviewerIdAndRevieweeId")
 	}
 
-	var r0 review.Review
+	var r0 *review.Review
 	var r1 error
-	if rf, ok := ret.Get(0).(func(uint, uint) (review.Review, error)); ok {
+	if rf, ok := ret.Get(0).(func(uint, uint) (*review.Review, error)); ok {
 		return rf(reviewerId, reviewedId)
 	}
-	if rf, ok := ret.Get(0).(func(uint, uint) review.Review); ok {
+	if rf, ok := ret.Get(0).(func(uint, uint) *review.Review); ok {
 		r0 = rf(reviewerId, reviewedId)
 	} else {
-		r0 = ret.Get(0).(review.Review)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*review.Review)
+		}
 	}
 
 	if rf, ok := ret.Get(1).(func(uint, uint) error); ok {
@@ -390,12 +392,12 @@ func (_c *ReviewRepositoryInterface_GetByReviewerIdAndRevieweeId_Call) Run(run f
 	return _c
 }
 
-func (_c *ReviewRepositoryInterface_GetByReviewerIdAndRevieweeId_Call) Return(_a0 review.Review, _a1 error) *ReviewRepositoryInterface_GetByReviewerIdAndRevieweeId_Call {
+func (_c *ReviewRepositoryInterface_GetByReviewerIdAndRevieweeId_Call) Return(_a0 *review.Review, _a1 error) *ReviewRepositoryInterface_GetByReviewerIdAndRevieweeId_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *ReviewRepositoryInterface_GetByReviewerIdAndRevieweeId_Call) RunAndReturn(run func(uint, uint) (review.Review, error)) *ReviewRepositoryInterface_GetByReviewerIdAndRevieweeId_Call {
+func (_c *ReviewRepositoryInterface_GetByReviewerIdAndRevieweeId_Call) RunAndReturn(run func(uint, uint) (*review.Review, error)) *ReviewRepositoryInterface_GetByReviewerIdAndRevieweeId_Call {
 	_c.Call.Return(run)
 	return _c
 }
