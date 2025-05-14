@@ -2,6 +2,8 @@ import LoginButtons from "@/app/ui/(topbar)/account-buttons";
 import SearchField from "@/app/ui/(topbar)/search-field";
 import Link from "next/link";
 import { Suspense } from "react";
+import { BaseAccountButton } from "@/app/ui/(topbar)/base-account-buttons/base-account-button";
+import { PlusIcon } from "@heroicons/react/20/solid";
 
 
 export function TopBar() {
@@ -22,7 +24,12 @@ export function TopBar() {
             </Suspense>
           </div>
           <div className="flex justify-end px-2">
-            <LoginButtons />
+            <div className="flex flex-row space-x-2">
+              <LoginButtons />
+              <BaseAccountButton className="flex-none">
+                Add Offer <PlusIcon className="ml-auto w-5 text-gray-50" />
+              </BaseAccountButton>
+            </div>
           </div>
         </div>
       </div>
