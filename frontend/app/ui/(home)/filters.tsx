@@ -51,7 +51,6 @@ export default function Filters({ filtersData, rangesData }: { filtersData: Filt
 
     return (
         <>
-            <p className="px-2">Filters:</p>
             {filters.map((filter, index) => (
                 <BaseFilterTemplate
                     key={index}
