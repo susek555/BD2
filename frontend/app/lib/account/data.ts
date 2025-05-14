@@ -2,7 +2,7 @@ import { getServerSession } from 'next-auth';
 import { authConfig } from '../authConfig';
 import { UserProfile } from '../definitions';
 
-export async function getSessionData(): Promise<UserProfile> {
+export async function fetchSessionData(): Promise<UserProfile> {
   const user = (await getServerSession(authConfig))?.user;
 
   if (!user) {
