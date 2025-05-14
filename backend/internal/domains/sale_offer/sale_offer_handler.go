@@ -35,12 +35,12 @@ func (h *Handler) CreateSaleOffer(c *gin.Context) {
 }
 
 func (h *Handler) GetFilteredSaleOffers(c *gin.Context) {
-	var filter OfferFilter
-	if err := c.ShouldBindJSON(&filter); err != nil {
+	filter := NewOfferFilter()
+	if err := c.ShouldBindJSON(filter); err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
-	saleOffers, err := h.service.GetFiltered(&filter)
+	saleOffers, err := h.service.GetFiltered(filter)
 	if err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
