@@ -146,7 +146,7 @@ func (h *Handler) DeleteReview(c *gin.Context) {
 	if err := h.service.Delete(reviewerId, uint(id)); err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
-	c.JSON(http.StatusNoContent, nil)
+	c.Status(http.StatusNoContent)
 }
 
 // GetReviewsByReviewerId godoc
