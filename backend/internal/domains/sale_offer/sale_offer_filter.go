@@ -51,6 +51,7 @@ type OfferFilter struct {
 	EngineCapacityRange      *MinMax[uint]                `json:"engine_capacity_range"`
 	CarRegistrationDateRagne *MinMax[string]              `json:"car_registration_date_range"`
 	OfferCreationDateRange   *MinMax[string]              `json:"offer_creation_date_range"`
+	PossibleManufacturers    []string                     `json:"-"`
 }
 
 func (of *OfferFilter) ApplyOfferFilters(query *gorm.DB) (*gorm.DB, error) {
@@ -151,6 +152,9 @@ func (of *OfferFilter) validateParams() error {
 func (of *OfferFilter) validateEnums() error {
 	if of.OfferType != nil && !IsParamValid(*of.OfferType, OfferTypes) {
 		return ErrInvalidSaleOfferType
+	}
+	if of.Manufacturers != nil && !AreParamsValid(of.Manufacturers, &of.PossibleManufacturers) {
+		return ErrInvalidManufacturer
 	}
 	if of.Colors != nil && !AreParamsValid(of.Colors, &car_params.Colors) {
 		return ErrInvalidColor
