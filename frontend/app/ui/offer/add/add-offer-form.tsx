@@ -1,6 +1,8 @@
 "use client"
 
-export default function AddOfferForm() {
+import { AddOfferFormData } from "@/app/lib/definitions";
+
+export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFormData}) {
     function handleSubmit(formData: FormData): any {
         const formDataObj = Object.fromEntries(formData.entries());
         console.log("Add Offer form data:", formDataObj);
