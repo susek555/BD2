@@ -33,6 +33,15 @@ type MinMax[T uint | string | time.Time] struct {
 	Max *T `json:"max"`
 }
 
+type FieldsConstraints struct {
+	OfferTypes    []OfferType
+	Manufacturers []string
+	Colors        []car_params.Color
+	Drives        []car_params.Drive
+	FuelTypes     []car_params.FuelType
+	Transmissions []car_params.Transmission
+}
+
 type OfferFilter struct {
 	Pagination               pagination.PaginationRequest `json:"pagination"`
 	Query                    *string                      `json:"query"`
@@ -51,7 +60,17 @@ type OfferFilter struct {
 	EngineCapacityRange      *MinMax[uint]                `json:"engine_capacity_range"`
 	CarRegistrationDateRagne *MinMax[string]              `json:"car_registration_date_range"`
 	OfferCreationDateRange   *MinMax[string]              `json:"offer_creation_date_range"`
-	PossibleManufacturers    []string                     `json:"-"`
+	Constriants              FieldsConstraints            `json:"-"`
+}
+
+func NewOfferFilter() *OfferFilter {
+	return &OfferFilter{Constriants: FieldsConstraints{
+		OfferTypes:    OfferTypes,
+		Colors:        car_params.Colors,
+		Drives:        car_params.Drives,
+		FuelTypes:     car_params.Types,
+		Transmissions: car_params.Transmissions,
+	}}
 }
 
 func (of *OfferFilter) ApplyOfferFilters(query *gorm.DB) (*gorm.DB, error) {
@@ -153,19 +172,19 @@ func (of *OfferFilter) validateEnums() error {
 	if of.OfferType != nil && !IsParamValid(*of.OfferType, OfferTypes) {
 		return ErrInvalidSaleOfferType
 	}
-	if of.Manufacturers != nil && !AreParamsValid(of.Manufacturers, &of.PossibleManufacturers) {
+	if of.Manufacturers != nil && !AreParamsValid(of.Manufacturers, &of.Constriants.Manufacturers) {
 		return ErrInvalidManufacturer
 	}
-	if of.Colors != nil && !AreParamsValid(of.Colors, &car_params.Colors) {
+	if of.Colors != nil && !AreParamsValid(of.Colors, &of.Constriants.Colors) {
 		return ErrInvalidColor
 	}
-	if of.Drives != nil && !AreParamsValid(of.Drives, &car_params.Drives) {
+	if of.Drives != nil && !AreParamsValid(of.Drives, &of.Constriants.Drives) {
 		return ErrInvalidDrive
 	}
-	if of.FuelTypes != nil && !AreParamsValid(of.FuelTypes, &car_params.Types) {
+	if of.FuelTypes != nil && !AreParamsValid(of.FuelTypes, &of.Constriants.FuelTypes) {
 		return ErrInvalidFuelType
 	}
-	if of.Transmissions != nil && !AreParamsValid(of.Transmissions, &car_params.Transmissions) {
+	if of.Transmissions != nil && !AreParamsValid(of.Transmissions, &of.Constriants.Transmissions) {
 		return ErrInvalidTransmission
 	}
 	return nil
