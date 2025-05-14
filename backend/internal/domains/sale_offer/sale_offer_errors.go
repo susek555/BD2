@@ -15,11 +15,17 @@ var (
 	ErrInvalidDateFromat    error = errors.New("invalid date format, should be YYYY-MM-DD")
 	ErrInvalidOrderKey      error = errors.New("invalid order-key")
 	ErrInvalidManufacturer  error = errors.New("invalid manufacturer")
+	ErrNotLoggedIn          error = errors.New("you have to be logged in to create offer")
 )
 
 var ErrorMap = map[error]int{
-	ErrInvalidColor:    http.StatusBadRequest,
-	ErrInvalidDrive:    http.StatusBadRequest,
-	ErrInvalidFuelType: http.StatusBadRequest,
-	ErrInvalidDrive:    http.StatusBadRequest,
+	ErrInvalidColor:         http.StatusBadRequest,
+	ErrInvalidDrive:         http.StatusBadRequest,
+	ErrInvalidFuelType:      http.StatusBadRequest,
+	ErrInvalidDrive:         http.StatusBadRequest,
+	ErrInvalidSaleOfferType: http.StatusBadRequest,
+	ErrInvalidRange:         http.StatusBadRequest,
+	ErrInvalidDateFromat:    http.StatusBadRequest,
+	ErrInvalidOrderKey:      http.StatusBadRequest,
+	ErrInvalidManufacturer:  http.StatusBadRequest,
 }
