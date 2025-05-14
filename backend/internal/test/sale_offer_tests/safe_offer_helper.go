@@ -9,6 +9,7 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
+	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
 )
 
 type OfferOption func(*sale_offer.SaleOffer, *car.Car)
@@ -80,4 +81,8 @@ func WithAuction(dateEnd time.Time, buyNowPrice uint) OfferOption {
 			BuyNowPrice: buyNowPrice,
 		}
 	}
+}
+
+func GetDefaultPaginationRequest() *pagination.PaginationRequest {
+	return &pagination.PaginationRequest{Page: 1, PageSize: 8}
 }
