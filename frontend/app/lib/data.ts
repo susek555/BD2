@@ -1,4 +1,4 @@
-import { FilterFieldData, RangeFieldData, SaleOffer, SaleOfferDetails, SearchParams } from "./definitions";
+import { FilterFieldData, ModelFieldData, RangeFieldData, SaleOffer, SaleOfferDetails, SearchParams } from "./definitions";
 
 // Sorting
 
@@ -14,14 +14,6 @@ export async function fetchSortingOptions(): Promise<string[]> {
 }
 
 // Filters
-
-async function fetchProducers() : Promise<string[]> {
-    // TODO connect API
-
-    const data = ["Audi", "Volksvagen", "Porsche", "Toyota", "Honda", "Mercedes", "Renault"]
-
-  return data;
-}
 
 async function fetchGearboxes() : Promise<string[]> {
     // TODO connect API
@@ -63,16 +55,46 @@ async function fetchCountries() : Promise<string[]> {
     return data;
 }
 
+
+
+export async function fetchProducersAndModels() : Promise<ModelFieldData> {
+    // TODO connect API
+
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    type ProducersAndModelsResponse = {
+        producers: string[];
+        models: string[][];
+    }
+
+    const response: ProducersAndModelsResponse = {
+        producers: ["Audi", "Volkswagen", "Porsche"],
+        models: [
+            ["A4", "A5", "A6"],
+            ["Golf", "Passat", "Tiguan"],
+            ["911", "Cayenne"]
+        ]
+    };
+
+    const data: ModelFieldData = {
+        producers: {
+            fieldName: "Producers",
+            options: response.producers,
+        },
+        options: response.models,
+        selected: []
+    };
+
+    return data;
+
+}
+
 export async function fetchFilterFields() : Promise<FilterFieldData[]> {
 
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     try{
         const data: FilterFieldData[] = await Promise.all([
-            (async () => ({
-                fieldName: "Producers",
-                options: await fetchProducers(),
-            }))(),
             (async () => ({
                 fieldName: "Colors",
                 options: await fetchColors(),

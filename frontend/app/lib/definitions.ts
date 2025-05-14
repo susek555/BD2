@@ -90,6 +90,12 @@ export type FilterFieldData = {
   selected?: string[];
 };
 
+export type ModelFieldData = {
+  producers: FilterFieldData;
+  options: string[][];
+  selected?: string[];
+}
+
 // Ranges
 
 export type RangeFieldData = {
