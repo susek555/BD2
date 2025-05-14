@@ -26,7 +26,10 @@ import (
 
 func setupDB(users []user.User, refreshTokens []refresh_token.RefreshToken) (user.UserRepositoryInterface, refresh_token.RefreshTokenServiceInterface, error) {
 	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
-	db.AutoMigrate(
+	if err != nil {
+		return nil, nil, err
+	}
+	err = db.AutoMigrate(
 		&user.User{},
 		&user.Person{},
 		&user.Company{},
@@ -37,11 +40,17 @@ func setupDB(users []user.User, refreshTokens []refresh_token.RefreshToken) (use
 	}
 	repo := user.NewUserRepository(db)
 	for _, user := range users {
-		repo.Create(&user)
+		err = repo.Create(&user)
+		if err != nil {
+			return nil, nil, err
+		}
 	}
 	refreshTokenService := refresh_token.NewRefreshTokenService(db)
 	for _, rt := range refreshTokens {
-		refreshTokenService.Create(&rt)
+		err = refreshTokenService.Create(&rt)
+		if err != nil {
+			return nil, nil, err
+		}
 	}
 	return repo, refreshTokenService, nil
 }
