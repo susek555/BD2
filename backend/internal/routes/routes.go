@@ -70,7 +70,8 @@ func registerAuthRoutes(router *gin.Engine) {
 
 func registerReviewRoutes(router *gin.Engine) {
 	verifier, _ := initializeVerifier()
-	reviewService := review.NewReviewService(initializers.DB)
+	reviewRepo := review.NewReviewRepository(initializers.DB)
+	reviewService := review.NewReviewService(reviewRepo)
 	reviewHandler := review.NewHandler(reviewService)
 	reviewRoutes := router.Group("/review")
 	reviewRoutes.GET("/", reviewHandler.GetAllReviews)
