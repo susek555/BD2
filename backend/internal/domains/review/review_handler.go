@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auth"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/generic"
 	"github.com/susek555/BD2/car-dealer-api/pkg/custom_errors"
 )
 
@@ -33,7 +34,7 @@ func (h *Handler) GetAllReviews(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
-	c.JSON(http.StatusOK, reviews)
+	generic.HandleListResponse(c, reviews)
 }
 
 // GetReviewById godoc
@@ -174,7 +175,7 @@ func (h *Handler) GetReviewsByReviewerId(c *gin.Context) {
 		reviewDTO := review.MapToDTO()
 		reviewsDTO = append(reviewsDTO, reviewDTO)
 	}
-	c.JSON(http.StatusOK, reviewsDTO)
+	generic.HandleListResponse(c, reviewsDTO)
 }
 
 // GetReviewsByRevieweeId godoc
@@ -202,7 +203,7 @@ func (h *Handler) GetReviewsByRevieweeId(c *gin.Context) {
 		reviewDTO := review.MapToDTO()
 		reviewsDTO = append(reviewsDTO, reviewDTO)
 	}
-	c.JSON(http.StatusOK, reviewsDTO)
+	generic.HandleListResponse(c, reviewsDTO)
 }
 
 // GetReviewsByReviewerIdAndRevieweeId godoc
