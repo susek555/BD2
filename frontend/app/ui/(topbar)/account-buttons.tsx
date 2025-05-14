@@ -10,7 +10,7 @@ export default async function LoginButtons() {
   const loggedIn = !!session;
 
   return (
-    <div className="flex flex-row space-x-2 px-2">
+    <div className="flex flex-row flex-grow space-x-2 pl-2">
       {loggedIn ? (
         <>
           <ClientLogoutButton />
