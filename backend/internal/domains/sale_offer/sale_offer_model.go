@@ -1,10 +1,10 @@
 package sale_offer
 
 import (
-	"os/user"
 	"time"
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
 )
 
 type SaleOffer struct {
