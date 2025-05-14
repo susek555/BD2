@@ -16,11 +16,11 @@ func NewHandler() *Handler {
 //
 //	@Summary		Get all possible colors
 //	@Description	Returns a list of all possible colors that are accepted when creating a new offer. If the color of your car is not in the list, choose 'other'.
-//	@Tags			cars
+//	@Tags			car
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	map[string][]string	"List of colors"
-//	@Router			/cars/colors [get]
+//	@Router			/car/colors [get]
 func (h *Handler) GetPossibleColors(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"colors": Colors})
 }
@@ -29,11 +29,11 @@ func (h *Handler) GetPossibleColors(c *gin.Context) {
 //
 //	@Summary		Get all possible drives
 //	@Description	Returns a list of all possible drives that are accepted when creating a new offer.
-//	@Tags			cars
+//	@Tags			car
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	map[string][]string	"List of drives"
-//	@Router			/cars/drives [get]
+//	@Router			/car/drives [get]
 func (h *Handler) GetPossibleDrives(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"drives": Drives})
 }
@@ -42,11 +42,11 @@ func (h *Handler) GetPossibleDrives(c *gin.Context) {
 //
 //	@Summary		Get all possible fuel types
 //	@Description	Returns a list of all possible fuel types that are accepted when creating a new offer.
-//	@Tags			cars
+//	@Tags			car
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	map[string][]string	"List of fuel types"
-//	@Router			/cars/fuel-types [get]
+//	@Router			/car/fuel-types [get]
 func (h *Handler) GetPossibleFuelTypes(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"fuel-types": Types})
 }
@@ -55,11 +55,11 @@ func (h *Handler) GetPossibleFuelTypes(c *gin.Context) {
 //
 //	@Summary		Get all possible transmissions
 //	@Description	Returns a list of all possible transmissions that are accepted when creating a new offer.
-//	@Tags			cars
+//	@Tags			car
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	map[string][]string	"List of transmissions"
-//	@Router			/cars/transmissions [get]
+//	@Router			/car/transmissions [get]
 func (h *Handler) GetPossibleTransmissions(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"transmissions": Transmissions})
 }

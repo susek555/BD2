@@ -89,7 +89,7 @@ func registerCarRoutes(router *gin.Engine) {
 	manufacturerService := manufacturer.NewManufacturerService(manufacturerRepo)
 	manufacrerHandler := manufacturer.NewHandler(manufacturerService)
 	carHandler := car_params.NewHandler()
-	carRoutes := router.Group("/cars")
+	carRoutes := router.Group("/car")
 	{
 		carRoutes.GET("/colors", carHandler.GetPossibleColors)
 		carRoutes.GET("/transmissions", carHandler.GetPossibleTransmissions)
