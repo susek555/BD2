@@ -16,6 +16,7 @@ func (dto *CreateSaleOfferDTO) MapToSaleOffer() (*SaleOffer, error) {
 		return nil, err
 	}
 	return &SaleOffer{
+		UserID:      dto.UserID,
 		Description: dto.Description,
 		Price:       dto.Price,
 		Margin:      dto.Margin,
@@ -43,6 +44,7 @@ func (dto *CreateSaleOfferDTO) MapToSaleOffer() (*SaleOffer, error) {
 func (offer *SaleOffer) MapToDTO() *RetrieveSaleOfferDTO {
 	buyNow, endDate := offer.prepareAuctionValues()
 	return &RetrieveSaleOfferDTO{
+		Username:           offer.User.Username,
 		Description:        offer.Description,
 		Price:              offer.Price,
 		Margin:             offer.Margin,

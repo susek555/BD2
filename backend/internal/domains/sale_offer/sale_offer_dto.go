@@ -8,6 +8,7 @@ import (
 )
 
 type CreateSaleOfferDTO struct {
+	UserID             uint                    `json:"-"`
 	Description        string                  `json:"description"`
 	Price              uint                    `json:"price"`
 	Margin             uint                    `json:"margin"`
@@ -30,6 +31,7 @@ type CreateSaleOfferDTO struct {
 }
 
 type RetrieveSaleOfferDTO struct {
+	Username           string                  `json:"username"`
 	Description        string                  `json:"description"`
 	Price              uint                    `json:"price"`
 	Margin             uint                    `json:"margin"`
