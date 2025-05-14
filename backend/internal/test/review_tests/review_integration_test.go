@@ -1199,3 +1199,401 @@ func TestDeleteNotYourReview(t *testing.T) {
 	assert.Equal(t, "you are not the reviewer of this review", got["error_description"])
 }
 
+func TestGetReviewsByReviewerIdNoReviews(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	seedUsers := []user.User{
+		{
+			Email:    "herakles@gmail.com",
+			Username: "herakles",
+			Password: "PolskaGurom",
+			Selector: "P",
+			Person: &user.Person{
+				Name:    "Herakles",
+				Surname: "Wielki",
+			},
+		},
+		{
+			Email:    "herakles2@gmail.com",
+			Username: "herakles2",
+			Password: "PolskaGurom",
+			Selector: "P",
+			Person: &user.Person{
+				Name:    "Herakles",
+				Surname: "Wielki",
+			},
+		},
+	}
+	seedReviews := []review.Review{}
+	server, _, _, err := newTestServer(seedUsers, seedReviews)
+	assert.NoError(t, err)
+	wantStatus := http.StatusOK
+	req := httptest.NewRequest(http.MethodGet, "/review/reviewer/1", nil)
+	req.Header.Set("Content-Type", "application/json")
+	w := httptest.NewRecorder()
+	server.ServeHTTP(w, req)
+	assert.Equal(t, wantStatus, w.Code)
+	var got []review.RetrieveReviewDTO
+	err = json.Unmarshal(w.Body.Bytes(), &got)
+	assert.NoError(t, err)
+	assert.Empty(t, got)
+}
+
+func TestGetReviewsByReviewerId(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	seedUsers := []user.User{
+		{
+			Email:    "herkules@gmail.com",
+			Username: "herkules",
+			Password: "PolskaGurom",
+			Selector: "P",
+			Person: &user.Person{
+				Name:    "Herkules",
+				Surname: "Wielki",
+			},
+		},
+		{
+			Email:    "herkules2@gmail.com",
+			Username: "herkules2",
+			Password: "PolskaGurom",
+			Selector: "P",
+			Person: &user.Person{
+				Name:    "Herkules",
+				Surname: "Wielki",
+			},
+		},
+	}
+	seedReviews := []review.Review{
+		{
+			ReviewerID:  1,
+			RevieweeId:  2,
+			Rating:      5,
+			Description: "Great service!",
+		},
+		{
+			ReviewerID:  2,
+			RevieweeId:  1,
+			Rating:      4,
+			Description: "Good service!",
+		},
+	}
+	server, _, _, err := newTestServer(seedUsers, seedReviews)
+	assert.NoError(t, err)
+	wantStatus := http.StatusOK
+	req := httptest.NewRequest(http.MethodGet, "/review/reviewer/1", nil)
+	req.Header.Set("Content-Type", "application/json")
+	w := httptest.NewRecorder()
+	server.ServeHTTP(w, req)
+	assert.Equal(t, wantStatus, w.Code)
+	var got []review.RetrieveReviewDTO
+	err = json.Unmarshal(w.Body.Bytes(), &got)
+	assert.NoError(t, err)
+	assert.Len(t, got, 1)
+	assert.Equal(t, seedReviews[0].Rating, got[0].Rating)
+	assert.Equal(t, seedReviews[0].Description, got[0].Description)
+	assert.Equal(t, seedReviews[0].ReviewerID, got[0].Reviewer.ID)
+	assert.Equal(t, seedReviews[0].RevieweeId, got[0].Reviewee.ID)
+	assert.Equal(t, uint(1), got[0].ID)
+	assert.Equal(t, uint(1), got[0].Reviewer.ID)
+	assert.Equal(t, uint(2), got[0].Reviewee.ID)
+	assert.Equal(t, seedUsers[0].Username, got[0].Reviewer.Username)
+	assert.Equal(t, seedUsers[1].Username, got[0].Reviewee.Username)
+}
+
+func TestGetReviewsByReviewerIdNotFound(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	seedUsers := []user.User{
+		{
+			Email:    "herkules@gmail.com",
+			Username: "herkules",
+			Password: "PolskaGurom",
+			Selector: "P",
+			Person: &user.Person{
+				Name:    "Herkules",
+				Surname: "Wielki",
+			},
+		},
+		{
+			Email:    "herkules2@gmail.com",
+			Username: "herkules2",
+			Password: "PolskaGurom",
+			Selector: "P",
+			Person: &user.Person{
+				Name:    "Herkules",
+				Surname: "Wielki",
+			},
+		},
+	}
+	seedReviews := []review.Review{
+		{
+			ReviewerID:  1,
+			RevieweeId:  2,
+			Rating:      5,
+			Description: "Great service!",
+		},
+		{
+			ReviewerID:  2,
+			RevieweeId:  1,
+			Rating:      4,
+			Description: "Good service!",
+		},
+	}
+	server, _, _, err := newTestServer(seedUsers, seedReviews)
+	assert.NoError(t, err)
+	wantStatus := http.StatusOK
+	req := httptest.NewRequest(http.MethodGet, "/review/reviewer/999", nil)
+	req.Header.Set("Content-Type", "application/json")
+	w := httptest.NewRecorder()
+	server.ServeHTTP(w, req)
+	assert.Equal(t, wantStatus, w.Code)
+	var got []review.RetrieveReviewDTO
+	err = json.Unmarshal(w.Body.Bytes(), &got)
+	assert.NoError(t, err)
+	assert.Empty(t, got)
+}
+
+func TestGetReviewsByRevieweeIdNoReviews(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	seedUsers := []user.User{
+		{
+			Email:    "herkules@gmail.com",
+			Username: "herkules",
+			Password: "PolskaGurom",
+			Selector: "P",
+			Person: &user.Person{
+				Name:    "Herkules",
+				Surname: "Wielki",
+			},
+		},
+		{
+			Email:    "herkules2@gmail.com",
+			Username: "herkules2",
+			Password: "PolskaGurom",
+			Selector: "P",
+			Person: &user.Person{
+				Name:    "Herkules",
+				Surname: "Wielki",
+			},
+		},
+	}
+	seedReviews := []review.Review{}
+	server, _, _, err := newTestServer(seedUsers, seedReviews)
+	assert.NoError(t, err)
+	wantStatus := http.StatusOK
+	req := httptest.NewRequest(http.MethodGet, "/review/reviewee/1", nil)
+	req.Header.Set("Content-Type", "application/json")
+	w := httptest.NewRecorder()
+	server.ServeHTTP(w, req)
+	assert.Equal(t, wantStatus, w.Code)
+	var got []review.RetrieveReviewDTO
+	err = json.Unmarshal(w.Body.Bytes(), &got)
+	assert.NoError(t, err)
+	assert.Empty(t, got)
+}
+
+func TestGetReviewsByRevieweeId(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	seedUsers := []user.User{
+		{
+			Email:    "herkules@gmail.com",
+			Username: "herkules",
+			Password: "PolskaGurom",
+			Selector: "P",
+			Person: &user.Person{
+				Name:    "Herkules",
+				Surname: "Wielki",
+			},
+		},
+		{
+			Email:    "herkules2@gmail.com",
+			Username: "herkules2",
+			Password: "PolskaGurom",
+			Selector: "P",
+			Person: &user.Person{
+				Name:    "Herkules",
+				Surname: "Wielki",
+			},
+		},
+	}
+	seedReviews := []review.Review{
+		{
+			ReviewerID:  1,
+			RevieweeId:  2,
+			Rating:      5,
+			Description: "Great service!",
+		},
+		{
+			ReviewerID:  2,
+			RevieweeId:  1,
+			Rating:      4,
+			Description: "Good service!",
+		},
+	}
+	server, _, _, err := newTestServer(seedUsers, seedReviews)
+	assert.NoError(t, err)
+	wantStatus := http.StatusOK
+	req := httptest.NewRequest(http.MethodGet, "/review/reviewee/2", nil)
+	req.Header.Set("Content-Type", "application/json")
+	w := httptest.NewRecorder()
+	server.ServeHTTP(w, req)
+	assert.Equal(t, wantStatus, w.Code)
+	var got []review.RetrieveReviewDTO
+	err = json.Unmarshal(w.Body.Bytes(), &got)
+	assert.NoError(t, err)
+	assert.Len(t, got, 1)
+	assert.Equal(t, seedReviews[0].Rating, got[0].Rating)
+	assert.Equal(t, seedReviews[0].Description, got[0].Description)
+	assert.Equal(t, seedReviews[0].ReviewerID, got[0].Reviewer.ID)
+	assert.Equal(t, seedReviews[0].RevieweeId, got[0].Reviewee.ID)
+	assert.Equal(t, uint(1), got[0].ID)
+	assert.Equal(t, uint(1), got[0].Reviewer.ID)
+	assert.Equal(t, uint(2), got[0].Reviewee.ID)
+	assert.Equal(t, seedUsers[0].Username, got[0].Reviewer.Username)
+	assert.Equal(t, seedUsers[1].Username, got[0].Reviewee.Username)
+}
+
+func TestGetReviewsByRevieweeIdNotFound(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	seedUsers := []user.User{
+		{
+			Email:    "herkules@gmail.com",
+			Username: "herkules",
+			Password: "PolskaGurom",
+			Selector: "P",
+			Person: &user.Person{
+				Name:    "Herkules",
+				Surname: "Wielki",
+			},
+		},
+		{
+			Email:    "herkules2@gmail.com",
+			Username: "herkules2",
+			Password: "PolskaGurom",
+			Selector: "P",
+			Person: &user.Person{
+				Name:    "Herkules",
+				Surname: "Wielki",
+			},
+		},
+	}
+	seedReviews := []review.Review{
+		{
+			ReviewerID:  1,
+			RevieweeId:  2,
+			Rating:      5,
+			Description: "Great service!",
+		},
+		{
+			ReviewerID:  2,
+			RevieweeId:  1,
+			Rating:      4,
+			Description: "Good service!",
+		},
+	}
+	server, _, _, err := newTestServer(seedUsers, seedReviews)
+	assert.NoError(t, err)
+	wantStatus := http.StatusOK
+	req := httptest.NewRequest(http.MethodGet, "/review/reviewee/999", nil)
+	req.Header.Set("Content-Type", "application/json")
+	w := httptest.NewRecorder()
+	server.ServeHTTP(w, req)
+	assert.Equal(t, wantStatus, w.Code)
+	var got []review.RetrieveReviewDTO
+	err = json.Unmarshal(w.Body.Bytes(), &got)
+	assert.NoError(t, err)
+	assert.Empty(t, got)
+}
+
+func TestGetReviewsByReviewerIdAndRevieweeIdNoReviews(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	seedUsers := []user.User{
+		{
+			Email:    "herkules@gmail.com",
+			Username: "herkules",
+			Password: "PolskaGurom",
+			Selector: "P",
+			Person: &user.Person{
+				Name:    "Herkules",
+				Surname: "Wielki",
+			},
+		},
+		{
+			Email:    "herkules2@gmail.com",
+			Username: "herkules2",
+			Password: "PolskaGurom",
+			Selector: "P",
+			Person: &user.Person{
+				Name:    "Herkules",
+				Surname: "Wielki",
+			},
+		},
+	}
+	seedReviews := []review.Review{}
+	server, _, _, err := newTestServer(seedUsers, seedReviews)
+	assert.NoError(t, err)
+	wantStatus := http.StatusNotFound
+	req := httptest.NewRequest(http.MethodGet, "/review/reviewer/1/reviewee/2", nil)
+	req.Header.Set("Content-Type", "application/json")
+	w := httptest.NewRecorder()
+	server.ServeHTTP(w, req)
+	assert.Equal(t, wantStatus, w.Code)
+}
+
+func TestGetReviewsByReviewerIdAndRevieweeId(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	seedUsers := []user.User{
+		{
+			Email:    "herkules@gmail.com",
+			Username: "herkules",
+			Password: "PolskaGurom",
+			Selector: "P",
+			Person: &user.Person{
+				Name:    "Herkules",
+				Surname: "Wielki",
+			},
+		},
+		{
+			Email:    "herkules2@gmail.com",
+			Username: "herkules2",
+			Password: "PolskaGurom",
+			Selector: "P",
+			Person: &user.Person{
+				Name:    "Herkules",
+				Surname: "Wielki",
+			},
+		},
+	}
+	seedReviews := []review.Review{
+		{
+			ReviewerID:  1,
+			RevieweeId:  2,
+			Rating:      5,
+			Description: "Great service!",
+		},
+		{
+			ReviewerID:  2,
+			RevieweeId:  1,
+			Rating:      4,
+			Description: "Good service!",
+		},
+	}
+	server, _, _, err := newTestServer(seedUsers, seedReviews)
+	assert.NoError(t, err)
+	wantStatus := http.StatusOK
+	req := httptest.NewRequest(http.MethodGet, "/review/reviewer/reviewee/1/2", nil)
+	req.Header.Set("Content-Type", "application/json")
+	w := httptest.NewRecorder()
+	server.ServeHTTP(w, req)
+	assert.Equal(t, wantStatus, w.Code)
+	var got review.RetrieveReviewDTO
+	err = json.Unmarshal(w.Body.Bytes(), &got)
+	assert.NoError(t, err)
+	assert.Equal(t, seedReviews[0].Rating, got.Rating)
+	assert.Equal(t, seedReviews[0].Description, got.Description)
+	assert.Equal(t, seedReviews[0].ReviewerID, got.Reviewer.ID)
+	assert.Equal(t, seedReviews[0].RevieweeId, got.Reviewee.ID)
+	assert.Equal(t, uint(1), got.ID)
+	assert.Equal(t, uint(1), got.Reviewer.ID)
+	assert.Equal(t, uint(2), got.Reviewee.ID)
+	assert.Equal(t, seedUsers[0].Username, got.Reviewer.Username)
+	assert.Equal(t, seedUsers[1].Username, got.Reviewee.Username)
+}
