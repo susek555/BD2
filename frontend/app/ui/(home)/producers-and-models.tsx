@@ -25,17 +25,16 @@ export default function ProducersAndModels({ producersAndModels }: { producersAn
     }
 
     const producers = syncFiltersWithParams([producersAndModels.producers], searchParams)[0] as { fieldName: string; options: string[]; selected: string[] };
-    const [models, setModels] = useState<FilterFieldData>({
+    const [models, setModels] = useState<FilterFieldData>(syncFiltersWithParams([{
         fieldName: "Models",
         options: getAvailableModels(producers, producersAndModels.models),
-    });
+    }], searchParams)[0]);
 
     const [showModels, setShowModels] = useState<boolean>(!!producers.selected && producers.selected.length > 0);
 
     function handleProducersChange(name: string, selected: string[]) {
         handleChange(name, selected);
 
-        // Aktualizuj modele na podstawie nowego wyboru producenta
         if (selected.length > 0) {
             const updatedModels = getAvailableModels({ ...producers, selected }, producersAndModels.models);
             setModels({
@@ -45,7 +44,6 @@ export default function ProducersAndModels({ producersAndModels }: { producersAn
             });
             setShowModels(true);
         } else {
-            // Jeśli nie ma wybranych producentów, ukryj modele
             setModels({ fieldName: "Models", options: [], selected: [] });
             setShowModels(false);
         }
