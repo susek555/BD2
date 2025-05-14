@@ -81,8 +81,7 @@ export async function fetchProducersAndModels() : Promise<ModelFieldData> {
             fieldName: "Producers",
             options: response.producers,
         },
-        options: response.models,
-        selected: []
+        models: response.models
     };
 
     return data;

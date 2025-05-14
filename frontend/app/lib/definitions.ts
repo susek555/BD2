@@ -92,8 +92,7 @@ export type FilterFieldData = {
 
 export type ModelFieldData = {
   producers: FilterFieldData;
-  options: string[][];
-  selected?: string[];
+  models: string[][];
 }
 
 // Ranges
