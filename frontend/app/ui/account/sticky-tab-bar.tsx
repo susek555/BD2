@@ -1,8 +1,8 @@
 'use client';
 
+import TabBar from '@/app/ui/account/tab-bar';
 import { useEffect, useRef, useState } from 'react';
 import Headroom from 'react-headroom';
-import TabBar from '@/app/ui/account/tab-bar';
 
 export default function StickyTabBar() {
   const [isSticky, setIsSticky] = useState(false);
@@ -16,7 +16,7 @@ export default function StickyTabBar() {
       {
         rootMargin: '-1px 0px 0px 0px',
         threshold: 0,
-      }
+      },
     );
 
     if (sentinelRef.current) {
@@ -31,29 +31,30 @@ export default function StickyTabBar() {
       <div ref={sentinelRef} className='h-0' />
 
       {/* Regular tab bar */}
-      <div className={`${isSticky ? 'invisible' : ''}`}>
+      <div>
         <TabBar />
       </div>
 
-      {/* Sticky tab bar */}
-      {isSticky && (
-        <Headroom
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            zIndex: 50,
-          }}
-          className='headroom-sticky'
-        >
+      {/* Sticky tab bar with wrapper that's always present */}
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 50,
+          height: isSticky ? 'auto' : 0,
+          overflow: 'hidden',
+        }}
+      >
+        <Headroom disable={!isSticky}>
           <div className='bg-white shadow-md'>
             <div className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
               <TabBar />
             </div>
           </div>
         </Headroom>
-      )}
+      </div>
     </>
   );
 }
