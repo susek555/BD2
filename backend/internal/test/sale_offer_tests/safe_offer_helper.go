@@ -14,6 +14,9 @@ import (
 
 type OfferOption func(*sale_offer.SaleOffer, *car.Car)
 
+// Simulates interaction with manufacturer service, which should return all possible manufacturers
+var manufacturers []string = []string{"Audi", "BMW", "Opel", "Toyota", "Skoda"}
+
 func CreateOffer(id uint, options ...OfferOption) *sale_offer.SaleOffer {
 	car := &car.Car{
 		ID:                 id,
@@ -38,7 +41,7 @@ func CreateOffer(id uint, options ...OfferOption) *sale_offer.SaleOffer {
 			ManufacturerID: id,
 			Manufacturer: manufacturer.Manufacturer{
 				ID:   id,
-				Name: "manufacturer",
+				Name: manufacturers[id-1],
 			},
 		},
 	}
