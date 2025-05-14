@@ -2,8 +2,6 @@ package review
 
 import (
 	"errors"
-
-	"gorm.io/gorm"
 )
 
 type ReviewServiceInterface interface {
@@ -21,8 +19,7 @@ type ReviewService struct {
 	Repo ReviewRepositoryInterface
 }
 
-func NewReviewService(db *gorm.DB) ReviewServiceInterface {
-	repo := NewReviewRepository(db)
+func NewReviewService(repo ReviewRepositoryInterface) ReviewServiceInterface {
 	return &ReviewService{
 		Repo: repo,
 	}
