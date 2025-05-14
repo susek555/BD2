@@ -1,16 +1,19 @@
 package sale_offer
 
+import "github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
+
 type SaleOfferServiceInterface interface {
 	Create(in CreateSaleOfferDTO) error
 	GetFiltered(filter *OfferFilter) (*RetrieveOffersWithPagination, error)
 }
 
 type SaleOfferService struct {
-	repo SaleOfferRepositoryInterface
+	repo       SaleOfferRepositoryInterface
+	manService manufacturer.ManufacturerServiceInterface
 }
 
-func NewSaleOfferService(saleOfferRepository SaleOfferRepositoryInterface) SaleOfferServiceInterface {
-	return &SaleOfferService{repo: saleOfferRepository}
+func NewSaleOfferService(saleOfferRepository SaleOfferRepositoryInterface, manufacturerService manufacturer.ManufacturerServiceInterface) SaleOfferServiceInterface {
+	return &SaleOfferService{repo: saleOfferRepository, manService: manufacturerService}
 }
 
 func (s *SaleOfferService) Create(in CreateSaleOfferDTO) error {
@@ -22,6 +25,11 @@ func (s *SaleOfferService) Create(in CreateSaleOfferDTO) error {
 }
 
 func (s *SaleOfferService) GetFiltered(filter *OfferFilter) (*RetrieveOffersWithPagination, error) {
+	manufacturers, err := s.manService.GetAllAsNames()
+	if err != nil {
+		return nil, err
+	}
+	filter.PossibleManufacturers = manufacturers
 	offers, pagResponse, err := s.repo.GetFiltered(filter)
 	if err != nil {
 		return nil, err

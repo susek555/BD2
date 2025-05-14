@@ -103,7 +103,9 @@ func registerCarRoutes(router *gin.Engine) {
 
 func registerSaleOfferRoutes(router *gin.Engine) {
 	saleOfferRepo := sale_offer.NewSaleOfferRepository(initializers.DB)
-	saleOfferService := sale_offer.NewSaleOfferService(saleOfferRepo)
+	manufacturerRepo := manufacturer.NewManufacturerRepository(initializers.DB)
+	manufacturerService := manufacturer.NewManufacturerService(manufacturerRepo)
+	saleOfferService := sale_offer.NewSaleOfferService(saleOfferRepo, manufacturerService)
 	saleOfferHandler := sale_offer.NewHandler(saleOfferService)
 	saleOfferRoutes := router.Group("/sale-offer")
 	{

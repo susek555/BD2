@@ -14,6 +14,7 @@ var (
 	ErrInvalidRange         error = errors.New("the min value should be lower than max")
 	ErrInvalidDateFromat    error = errors.New("invalid date format, should be YYYY-MM-DD")
 	ErrInvalidOrderKey      error = errors.New("invalid order-key")
+	ErrInvalidManufacturer  error = errors.New("invalid manufacturer")
 )
 
 var ErrorMap = map[error]int{
