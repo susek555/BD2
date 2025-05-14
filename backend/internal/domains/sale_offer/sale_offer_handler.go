@@ -21,6 +21,12 @@ func (h *Handler) CreateSaleOffer(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
+	userID, ok := c.Get("userID")
+	if !ok {
+		c.JSON(http.StatusUnauthorized, custom_errors.NewHTTPError(ErrNotLoggedIn.Error()))
+		return
+	}
+	offerDTO.UserID = userID.(uint)
 	if err := h.service.Create(offerDTO); err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
