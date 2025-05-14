@@ -212,6 +212,82 @@ export type OfferDetails = {
 
 // Add Offer
 
+export const AddOfferFormSchema = z.object({
+  producer: z.string().min(1, { message: 'Producer is required' }),
+  model: z.string().min(1, { message: 'Model is required' }),
+  color: z.string().min(1, { message: 'Color is required' }),
+  fuelType: z.string().min(1, { message: 'Fuel type is required' }),
+  gearbox: z.string().min(1, { message: 'Gearbox is required' }),
+  driveType: z.string().min(1, { message: 'Drive type is required' }),
+  country: z.string().min(1, { message: 'Country is required' }),
+  productionYear: z
+    .number()
+    .min(1900, { message: 'Year must be greater than 1900' })
+    .max(new Date().getFullYear(), { message: 'Year must be less than or equal to the current year' }),
+  mileage: z
+    .number()
+    .min(0, { message: 'Mileage must be greater than or equal to 0' })
+    .max(1_000_000, { message: 'Mileage must be less than or equal to 1,000,000' }),
+  numberOfOwners: z
+    .number()
+    .min(0, { message: 'Number of owners must be greater than or equal to 0' })
+    .max(100, { message: 'Number of owners must be less than or equal to 100' }),
+  numberOfSeats: z
+    .number()
+    .min(1, { message: 'Number of seats must be greater than or equal to 1' })
+    .max(100, { message: 'Number of seats must be less than or equal to 100' }),
+  power: z
+    .number()
+    .min(0, { message: 'Power must be greater than or equal to 0' })
+    .max(2_000, { message: 'Power must be less than or equal to 1,000' }),
+  dateOfFirstRegistration: z
+    .date()
+    .refine((date) => date.getFullYear() >= 1900, { message: 'Date must be greater than 1900' })
+    .refine((date) => date <= new Date(), { message: 'Date must be less than or equal to the current date' }),
+  plateNumber: z.string().min(1, { message: 'Plate number is required' }),
+  engineDisplacement: z
+    .number()
+    .min(0, { message: 'Engine displacement must be greater than or equal to 0' })
+    .max(10_000, { message: 'Engine displacement must be less than or equal to 10,000' }),
+  location: z.string().min(1, { message: 'Location is required' }),
+  price: z
+    .number()
+    .min(0, { message: 'Price must be greater than or equal to 0' })
+    .max(10_000_000, { message: 'Price must be less than or equal to 10,000,000' }),
+  isAuction: z.boolean(),
+  auctionEndDate: z
+    .date()
+    .optional()
+    .refine((date) => date && date > new Date(), { message: 'Date must be greater than the current date' }),
+  buyNowAuctionPrice: z
+    .number()
+    .optional()
+    .refine((price) => price && price > 0, { message: 'Price must be greater than 0' })
+    .refine((price) => price && price< 10_000_000, { message: 'Price must be less than 10,000,000' }),
+  description: z.string().min(1, { message: 'Description is required' }),
+  images: z
+    .array(z.instanceof(File))
+    .min(1, { message: 'At least one image is required' })
+    .max(10, { message: 'A maximum of 10 images is allowed' })
+    .refine((files) => files.every(file => file.size <= 5 * 1024 * 1024), {
+      message: 'Each image must be less than 5MB',
+    }),
+}).refine((data) => {
+  if (data.isAuction && !data.auctionEndDate) {
+    return false;
+  }
+  if (data.isAuction && !data.buyNowAuctionPrice) {
+    return false;
+  }
+  if (data.isAuction && data.buyNowAuctionPrice && data.buyNowAuctionPrice <= data.price) {
+    return false;
+  }
+  return true;
+}, {
+  message: 'Buy now auction price must be greater than the regular price',
+  path: ['buyNowAuctionPrice'],
+});
+
 export type AddOfferFormState = {
   errors?: {
     producer?: string[];
@@ -257,7 +333,7 @@ export type AddOfferFormState = {
     price?: number;
     isAuction?: boolean;
     auctionEndDate?: Date;
-    auctionStartPrice?: number;
+    buyNowAuctionPrice?: number;
     description?: string;
     images?: File[]; // Array of image files
   }
