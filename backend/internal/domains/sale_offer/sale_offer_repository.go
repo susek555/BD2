@@ -39,15 +39,15 @@ func (r *SaleOfferRepository) GetFiltered(filter *OfferFilter) ([]SaleOffer, *pa
 	if err != nil {
 		return nil, nil, err
 	}
-	totalPages := filter.Pagination.CalculateTotalPages(totalRecords)
-	if err := filter.Pagination.ValidatePageNumber(totalPages); err != nil {
+	paginationFunc, paginationResponse, err := pagination.Paginate(&filter.Pagination, totalRecords)
+	if err != nil {
 		return nil, nil, err
 	}
 	var saleOffers []SaleOffer
-	if err := query.Scopes(pagination.Paginate(&filter.Pagination)).Find(&saleOffers).Error; err != nil {
+	if err := query.Scopes(paginationFunc).Find(&saleOffers).Error; err != nil {
 		return nil, nil, err
 	}
-	return saleOffers, &pagination.PaginationResponse{TotalRecords: totalRecords, TotalPages: totalPages}, nil
+	return saleOffers, paginationResponse, nil
 }
 
 func (r *SaleOfferRepository) buildQuery(filter *OfferFilter) (*gorm.DB, error) {

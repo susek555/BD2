@@ -7,12 +7,8 @@ import (
 )
 
 var (
-	ErrPageOutOfRange error = errors.New("page out of range")
-)
-
-var (
-	DEFAULT_PAGE_SIZE int = 8
-	DEFAULT_PAGE      int = 1
+	ErrPageOutOfRange   = errors.New("page out of range")
+	ErrNegativePageSize = errors.New("page size must be greater than zero")
 )
 
 type PaginationRequest struct {
@@ -25,17 +21,21 @@ type PaginationResponse struct {
 	TotalRecords int64 `json:"total_records"`
 }
 
-func (pr *PaginationRequest) setDefaults(page int, pageSize int) {
-	if pr.Page <= 0 {
-		pr.Page = page
+func (pr *PaginationRequest) validatePageNumber(totalPages int64) error {
+	if pr.Page < 1 || int64(pr.Page) > totalPages {
+		return ErrPageOutOfRange
 	}
-	if pr.PageSize <= 0 {
-		pr.PageSize = pageSize
-	}
+	return nil
 }
 
-func (pr *PaginationRequest) CalculateTotalPages(totalRecords int64) int64 {
-	pr.setDefaults(DEFAULT_PAGE, DEFAULT_PAGE_SIZE)
+func (pr *PaginationRequest) validatePageSize() error {
+	if pr.PageSize <= 0 {
+		return ErrNegativePageSize
+	}
+	return nil
+}
+
+func (pr *PaginationRequest) calculateTotalPages(totalRecords int64) int64 {
 	totalPages := totalRecords / int64(pr.PageSize)
 	if totalRecords%int64(pr.PageSize) != 0 || totalRecords == 0 {
 		totalPages++
@@ -43,16 +43,16 @@ func (pr *PaginationRequest) CalculateTotalPages(totalRecords int64) int64 {
 	return totalPages
 }
 
-func (pr *PaginationRequest) ValidatePageNumber(totalPages int64) error {
-	if pr.Page > int(totalPages) {
-		return ErrPageOutOfRange
+func Paginate(pr *PaginationRequest, totalRecords int64) (func(db *gorm.DB) *gorm.DB, *PaginationResponse, error) {
+	if err := pr.validatePageSize(); err != nil {
+		return nil, nil, err
 	}
-	return nil
-}
-
-func Paginate(pr *PaginationRequest) func(db *gorm.DB) *gorm.DB {
+	totalPages := pr.calculateTotalPages(totalRecords)
+	if err := pr.validatePageNumber(totalPages); err != nil {
+		return nil, nil, err
+	}
+	offset := (pr.Page - 1) * pr.PageSize
 	return func(db *gorm.DB) *gorm.DB {
-		offset := (pr.Page - 1) * pr.PageSize
 		return db.Offset(offset).Limit(pr.PageSize)
-	}
+	}, &PaginationResponse{TotalPages: totalPages, TotalRecords: totalRecords}, nil
 }
