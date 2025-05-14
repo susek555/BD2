@@ -1,4 +1,4 @@
-import { FilterFieldData, ModelFieldData, RangeFieldData, SaleOffer, SaleOfferDetails, SearchParams } from "./definitions";
+import { AddOfferFormData, FilterFieldData, ModelFieldData, RangeFieldData, SaleOffer, SaleOfferDetails, SearchParams } from "./definitions";
 
 // Sorting
 
@@ -90,6 +90,7 @@ export async function fetchProducersAndModels() : Promise<ModelFieldData> {
 
 export async function fetchFilterFields() : Promise<FilterFieldData[]> {
 
+    // TODO remove delay
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     try{
@@ -281,4 +282,40 @@ export async function fetchOfferDetails(id: string) : Promise<SaleOfferDetails |
 
 // Add offer
 
-// export async function
+export async function fetchAddOfferFormData() : Promise<AddOfferFormData> {
+
+    // TODO remove delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    const producersAndModels = fetchProducersAndModels();
+    const colors = fetchColors();
+    const fuelTypes = fetchFuelTypes();
+    const gearboxes = fetchGearboxes();
+    const driveTypes = fetchDriveTypes();
+    const countries = fetchCountries();
+
+    const [ producersAndModelsResult,
+            colorsResult,
+            fuelTypesResult,
+            gearboxesResult,
+            driveTypesResult,
+            countriesResult
+        ] = await Promise.all([
+            producersAndModels,
+            colors,
+            fuelTypes,
+            gearboxes,
+            driveTypes,
+            countries
+        ]);
+
+    return {
+        producers: producersAndModelsResult.producers.options,
+        models: producersAndModelsResult.models,
+        colors: colorsResult,
+        fuelTypes: fuelTypesResult,
+        gearboxes: gearboxesResult,
+        driveTypes: driveTypesResult,
+        countries: countriesResult
+    };
+}
