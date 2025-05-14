@@ -55,6 +55,7 @@ func (r *SaleOfferRepository) buildQuery(filter *OfferFilter) (*gorm.DB, error) 
 		Joins("JOIN cars on cars.id = sale_offers.car_id").
 		Joins("LEFT JOIN auctions on auctions.offer_id = sale_offers.id").
 		Preload("Auction").
+		Preload("User").
 		Preload("Car").
 		Preload("Car.Model").
 		Preload("Car.Model.Manufacturer")
