@@ -29,13 +29,22 @@ func newServiceWithMock() (*review.ReviewService, *mocks.ReviewRepositoryInterfa
 func TestGetByReviewerId_Success(t *testing.T) {
 	svc, repo := newServiceWithMock()
 
-	want := []review.Review{{ID: 1, ReviewerID: 10}, {ID: 2, ReviewerID: 10}}
-	repo.On("GetByReviewerId", uint(10)).Return(want, nil).Once()
+	mockReviews := []review.Review{
+		{ID: 1, ReviewerID: 10, RevieweeId: 1, Reviewer: &user.User{ID: 10, Username: "reviewer1"}, Reviewee: &user.User{ID: 1, Username: "reviewee1"}},
+		{ID: 2, ReviewerID: 10, RevieweeId: 2, Reviewer: &user.User{ID: 10, Username: "reviewer1"}, Reviewee: &user.User{ID: 2, Username: "reviewee2"}},
+	}
+	
+	var expectedDTOs []review.RetrieveReviewDTO
+	for _, r := range mockReviews {
+		expectedDTOs = append(expectedDTOs, r.MapToDTO())
+	}
+	
+	repo.On("GetByReviewerId", uint(10)).Return(mockReviews, nil).Once()
 
 	got, err := svc.GetByReviewerId(10)
 
 	require.NoError(t, err)
-	assert.Equal(t, want, got)
+	assert.Equal(t, expectedDTOs, got)
 	repo.AssertExpectations(t)
 }
 
@@ -55,26 +64,42 @@ func TestGetByReviewerId_Error(t *testing.T) {
 func TestGetByRevieweeId_Success(t *testing.T) {
 	svc, repo := newServiceWithMock()
 
-	want := []review.Review{{ID: 3, RevieweeId: 20}}
-	repo.On("GetByRevieweeId", uint(20)).Return(want, nil).Once()
+	mockReviews := []review.Review{
+		{ID: 3, ReviewerID: 5, RevieweeId: 20, Reviewer: &user.User{ID: 5, Username: "reviewer"}, Reviewee: &user.User{ID: 20, Username: "reviewee"}},
+	}
+	
+	var expectedDTOs []review.RetrieveReviewDTO
+	for _, r := range mockReviews {
+		expectedDTOs = append(expectedDTOs, r.MapToDTO())
+	}
+	
+	repo.On("GetByRevieweeId", uint(20)).Return(mockReviews, nil).Once()
 
 	got, err := svc.GetByRevieweeId(20)
 
 	require.NoError(t, err)
-	assert.Equal(t, want, got)
+	assert.Equal(t, expectedDTOs, got)
 	repo.AssertExpectations(t)
 }
 
 func TestGetByReviewerAndReviewee_Success(t *testing.T) {
 	svc, repo := newServiceWithMock()
 
-	want := review.Review{ID: 4, ReviewerID: 10, RevieweeId: 20}
-	repo.On("GetByReviewerIdAndRevieweeId", uint(10), uint(20)).Return(&want, nil).Once()
+	mockReview := &review.Review{
+		ID: 4, 
+		ReviewerID: 10, 
+		RevieweeId: 20,
+		Reviewer: &user.User{ID: 10, Username: "reviewer"},
+		Reviewee: &user.User{ID: 20, Username: "reviewee"},
+	}
+	expectedDTO := mockReview.MapToDTO()
+	
+	repo.On("GetByReviewerIdAndRevieweeId", uint(10), uint(20)).Return(mockReview, nil).Once()
 
 	got, err := svc.GetByReviewerIdAndRevieweeId(10, 20)
 
 	require.NoError(t, err)
-	assert.Equal(t, &want, got)
+	assert.Equal(t, &expectedDTO, got)
 	repo.AssertExpectations(t)
 }
 
