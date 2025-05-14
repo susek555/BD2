@@ -149,6 +149,17 @@ export type SaleOffer = {
   isAuction: boolean;
 };
 
+export type HistoryOffer = {
+  id: string;
+  name: string; // producer and model
+  productionYear: number;
+  mileage: number;
+  color: string;
+  price: number;
+  isAuction: boolean;
+  dateEnd: string;
+};
+
 // Account page definitions
 
 export interface Tab {
