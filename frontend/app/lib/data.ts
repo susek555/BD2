@@ -15,35 +15,26 @@ export async function fetchSortingOptions() : Promise<string[]> {
 
 // Filters
 
-async function fetchProducers() : Promise<FilterFieldData> {
+async function fetchProducers() : Promise<string[]> {
     // TODO connect API
 
-    const data: FilterFieldData = {
-        fieldName: "Producer",
-        options: ["Audi", "Volksvagen", "Porsche", "Toyota", "Honda", "Mercedes", "Renault"]
-    };
+    const data = ["Audi", "Volksvagen", "Porsche", "Toyota", "Honda", "Mercedes", "Renault"]
 
     return data;
 }
 
-async function fetchGearboxes() : Promise<FilterFieldData> {
+async function fetchGearboxes() : Promise<string[]> {
     // TODO connect API
 
-    const data: FilterFieldData = {
-        fieldName: "Gearbox",
-        options: ["Manual", "Sequential Manual", "Automatic"]
-    };
+    const data = ["Manual", "Sequential Manual", "Automatic"]
 
     return data;
 }
 
-async function fetchFuelTypes() : Promise<FilterFieldData> {
+async function fetchFuelTypes() : Promise<string[]> {
     // TODO connect API
 
-    const data: FilterFieldData = {
-        fieldName: "Fuel",
-        options: ["Diesel", "Electric", "Gasoline"]
-    };
+    const data = ["Diesel", "Electric", "Gasoline"]
 
     return data;
 }
@@ -53,15 +44,21 @@ export async function fetchFilterFields() : Promise<FilterFieldData[]> {
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     try{
-        const producersData = fetchProducers();
-        const gearboxesData = fetchGearboxes();
-        const fuelTypesData = fetchFuelTypes();
-
-        const data = await Promise.all([
-            producersData,
-            gearboxesData,
-            fuelTypesData
+        const data: FilterFieldData[] = await Promise.all([
+            (async () => ({
+                fieldName: "Producers",
+                options: await fetchProducers(),
+            }))(),
+            (async () => ({
+                fieldName: "Gearboxes",
+                options: await fetchGearboxes(),
+            }))(),
+            (async () => ({
+                fieldName: "Fuel types",
+                options: await fetchFuelTypes(),
+            }))(),
         ]);
+
 
         return data;
     } catch (error) {
