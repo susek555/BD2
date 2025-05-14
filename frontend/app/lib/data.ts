@@ -39,7 +39,31 @@ async function fetchFuelTypes() : Promise<string[]> {
   return data;
 }
 
-export async function fetchFilterFields(): Promise<FilterFieldData[]> {
+async function fetchColors() : Promise<string[]> {
+    // TODO connect API
+
+    const data = ["Red", "Green", "Blue", "Black", "White", "Yellow"]
+
+    return data;
+}
+
+async function fetchDriveTypes() : Promise<string[]> {
+    // TODO connect API
+
+    const data = ["FWD", "RWD", "AWD"]
+
+    return data;
+}
+
+async function fetchCountries() : Promise<string[]> {
+    // TODO connect API
+
+    const data = ["Germany", "France", "Italy", "Spain", "USA"]
+
+    return data;
+}
+
+export async function fetchFilterFields() : Promise<FilterFieldData[]> {
 
     await new Promise(resolve => setTimeout(resolve, 1000));
 
@@ -50,6 +74,10 @@ export async function fetchFilterFields(): Promise<FilterFieldData[]> {
                 options: await fetchProducers(),
             }))(),
             (async () => ({
+                fieldName: "Colors",
+                options: await fetchColors(),
+            }))(),
+            (async () => ({
                 fieldName: "Gearboxes",
                 options: await fetchGearboxes(),
             }))(),
@@ -57,6 +85,14 @@ export async function fetchFilterFields(): Promise<FilterFieldData[]> {
                 fieldName: "Fuel types",
                 options: await fetchFuelTypes(),
             }))(),
+            (async () => ({
+                fieldName: "Drive types",
+                options: await fetchDriveTypes(),
+            }))(),
+            (async () => ({
+                fieldName: "Countries",
+                options: await fetchCountries(),
+            }))()
         ]);
 
 
