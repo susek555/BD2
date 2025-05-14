@@ -55,7 +55,7 @@ func (h *Handler) GetReviewById(c *gin.Context) {
 	}
 	review, err := h.service.GetById(uint(id))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+		c.JSON(http.StatusNotFound, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
 	c.JSON(http.StatusOK, review)
