@@ -236,6 +236,7 @@ export async function fetchHomePageData(params: SearchParams) : Promise<{totalPa
 }
 
 // Offer page
+
 export async function fetchOfferDetails(id: string) : Promise<SaleOfferDetails | null> {
     // TODO connect API
 
@@ -279,3 +280,7 @@ export async function fetchOfferDetails(id: string) : Promise<SaleOfferDetails |
 
     return data;
 }
+
+// Add offer
+
+// export async function
