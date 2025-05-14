@@ -33,7 +33,9 @@ export default function ProducersAndModels({ producersAndModels }: { producersAn
 
     const [showModels, setShowModels] = useState<boolean>(!!producers.selected && producers.selected.length > 0);
     const [isOpen, setIsOpen] = useState(false);
-    // models field
+
+    // models field  - has to be in this file to ensure syncronization when change in
+    //                 producers field clears selected values here
 
     function ModelsFilter() {
 
@@ -104,11 +106,11 @@ export default function ProducersAndModels({ producersAndModels }: { producersAn
 
         if (selected.length > 0) {
             params.set(sanitizedName, selected.join(","));
-            params.delete("Models");
         } else {
             params.delete(sanitizedName);
-            params.delete("Models");
         }
+
+        params.delete("Models");
 
         replace(`${pathname}?${params.toString()}`);
     }
