@@ -69,12 +69,12 @@ func TestGetByReviewerAndReviewee_Success(t *testing.T) {
 	svc, repo := newServiceWithMock()
 
 	want := review.Review{ID: 4, ReviewerID: 10, RevieweeId: 20}
-	repo.On("GetByReviewerIdAndRevieweeId", uint(10), uint(20)).Return(want, nil).Once()
+	repo.On("GetByReviewerIdAndRevieweeId", uint(10), uint(20)).Return(&want, nil).Once()
 
 	got, err := svc.GetByReviewerIdAndRevieweeId(10, 20)
 
 	require.NoError(t, err)
-	assert.Equal(t, want, got)
+	assert.Equal(t, &want, got)
 	repo.AssertExpectations(t)
 }
 
@@ -82,12 +82,12 @@ func TestGetByReviewerAndReviewee_Error(t *testing.T) {
 	svc, repo := newServiceWithMock()
 
 	repoErr := errors.New("not found")
-	repo.On("GetByReviewerIdAndRevieweeId", uint(10), uint(20)).Return(review.Review{}, repoErr).Once()
+	repo.On("GetByReviewerIdAndRevieweeId", uint(10), uint(20)).Return(nil, repoErr).Once()
 
 	got, err := svc.GetByReviewerIdAndRevieweeId(10, 20)
 
 	require.ErrorIs(t, err, repoErr)
-	assert.Equal(t, review.Review{}, got)
+	assert.Nil(t, got)
 	repo.AssertExpectations(t)
 }
 
@@ -195,6 +195,17 @@ func TestUpdate_Success(t *testing.T) {
 		}, nil).
 		Once()
 
+	repo.
+		On("GetByReviewerIdAndRevieweeId", reviewerID, uint(2)).
+		Return(&review.Review{
+			ID:         reviewID,
+			ReviewerID: reviewerID,
+			RevieweeId: 2,
+			Reviewer:   &user.User{ID: reviewerID, Username: "author"},
+			Reviewee:   &user.User{ID: 2, Username: "user"},
+		}, nil).
+		Once()
+
 	// ── step 2: service calls Update(&reviewObj) ──
 	repo.
 		On("Update", mock.AnythingOfType("*review.Review")).
@@ -229,6 +240,10 @@ func TestUpdate_Error(t *testing.T) {
 	repoErr := errors.New("update failed")
 
 	repo.On("GetById", reviewID).
+		Return(&review.Review{ID: reviewID, ReviewerID: reviewerID, RevieweeId: 2}, nil).
+		Once()
+
+	repo.On("GetByReviewerIdAndRevieweeId", reviewerID, uint(2)).
 		Return(&review.Review{ID: reviewID, ReviewerID: reviewerID, RevieweeId: 2}, nil).
 		Once()
 
