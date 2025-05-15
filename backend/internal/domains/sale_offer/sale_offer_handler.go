@@ -83,6 +83,13 @@ func (h *Handler) GetFilteredSaleOffers(c *gin.Context) {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
+	userID, ok := c.Get("userID")
+	if !ok {
+		filter.UserID = nil
+	} else {
+		uid := userID.(uint)
+		filter.UserID = &uid
+	}
 	saleOffers, err := h.service.GetFiltered(filter)
 	if err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
