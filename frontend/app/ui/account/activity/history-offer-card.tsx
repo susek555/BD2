@@ -1,5 +1,5 @@
 import { HistoryOffer } from '@/app/lib/definitions';
-import GenericOffer from '@/app/ui/generic-offer';
+import GenericOfferCard from '@/app/ui/generic-offer-card';
 
 export default function SingleHistoryOffer({ offer }: { offer: HistoryOffer }) {
   const formatDate = (dateString: string) => {
@@ -19,7 +19,7 @@ export default function SingleHistoryOffer({ offer }: { offer: HistoryOffer }) {
   );
 
   return (
-    <GenericOffer<HistoryOffer>
+    <GenericOfferCard<HistoryOffer>
       offer={offer}
       variant='history'
       headerContent={headerContent}
