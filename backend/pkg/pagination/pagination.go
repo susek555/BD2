@@ -43,16 +43,39 @@ func (pr *PaginationRequest) calculateTotalPages(totalRecords int64) int64 {
 	return totalPages
 }
 
-func Paginate(pr *PaginationRequest, totalRecords int64) (func(db *gorm.DB) *gorm.DB, *PaginationResponse, error) {
+func countTotalRecords[T any](query *gorm.DB) (int64, error) {
+	var totalRecords int64
+	model := new(T)
+	err := query.Model(&model).Count(&totalRecords).Error
+	return totalRecords, err
+}
+
+func buildPaginationScope(pr *PaginationRequest) (func(db *gorm.DB) *gorm.DB, error) {
+	offset := (pr.Page - 1) * pr.PageSize
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Offset(offset).Limit(pr.PageSize)
+	}, nil
+}
+
+func PaginateResults[T any](pr *PaginationRequest, query *gorm.DB) ([]T, *PaginationResponse, error) {
 	if err := pr.validatePageSize(); err != nil {
+		return nil, nil, err
+	}
+	totalRecords, err := countTotalRecords[T](query)
+	if err != nil {
 		return nil, nil, err
 	}
 	totalPages := pr.calculateTotalPages(totalRecords)
 	if err := pr.validatePageNumber(totalPages); err != nil {
 		return nil, nil, err
 	}
-	offset := (pr.Page - 1) * pr.PageSize
-	return func(db *gorm.DB) *gorm.DB {
-		return db.Offset(offset).Limit(pr.PageSize)
-	}, &PaginationResponse{TotalPages: totalPages, TotalRecords: totalRecords}, nil
+	paginationFunc, err := buildPaginationScope(pr)
+	if err != nil {
+		return nil, nil, err
+	}
+	var entities []T
+	if err := query.Scopes(paginationFunc).Find(&entities).Error; err != nil {
+		return nil, nil, err
+	}
+	return entities, &PaginationResponse{TotalPages: totalPages, TotalRecords: totalRecords}, nil
 }
