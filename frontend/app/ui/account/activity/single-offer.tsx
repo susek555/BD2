@@ -65,7 +65,7 @@ export default function SingleHistoryOffer({ offer }: { offer: HistoryOffer }) {
                 {offer.isAuction ? 'Final bid' : 'Price'}
               </p>
               <p className='text-2xl font-bold text-green-600'>
-                {offer.price.toLocaleString()} zł
+                {offer.price.toString()} zł
               </p>
             </div>
           </div>

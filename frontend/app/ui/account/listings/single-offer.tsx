@@ -96,7 +96,7 @@ export default function SingleListingsOffer({ offer }: { offer: SaleOffer }) {
                 {offer.isAuction ? 'Current bid' : 'Price'}
               </p>
               <p className='text-2xl font-bold text-green-600'>
-                {offer.price.toLocaleString()} zł
+                {offer.price.toString()} zł
               </p>
             </div>
           </div>

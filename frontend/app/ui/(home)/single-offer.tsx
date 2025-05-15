@@ -46,10 +46,15 @@ export default function SingleOffer({ offer }: { offer: SaleOffer }) {
             </p>
           </div>
 
-          <div className='flex h-full items-end justify-end self-end'>
-            <p className='px-3 text-2xl font-bold'>
-              {offer.price.toString()} zł
-            </p>
+          <div className='flex items-end pr-4'>
+            <div className='text-right'>
+              <p className='text-sm text-gray-600'>
+                {offer.isAuction ? 'Current bid' : 'Price'}
+              </p>
+              <p className='text-2xl font-bold text-green-600'>
+                {offer.price.toString()} zł
+              </p>
+            </div>
           </div>
         </div>
       </div>
