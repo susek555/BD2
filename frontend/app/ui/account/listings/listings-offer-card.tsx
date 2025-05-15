@@ -1,13 +1,13 @@
 'use client';
 
 import { deleteListing } from '@/app/lib/api/listing/requests';
-import { SaleOffer } from '@/app/lib/definitions';
+import { BaseOffer } from '@/app/lib/definitions';
 import ConfirmationModal from '@/app/ui/confirm-modal';
-import GenericOffer from '@/app/ui/generic-offer';
+import GenericOfferCard from '@/app/ui/generic-offer-card';
 import { PencilIcon, TrashIcon } from '@heroicons/react/20/solid';
 import { useState } from 'react';
 
-export default function SingleListingsOffer({ offer }: { offer: SaleOffer }) {
+export default function SingleListingsOffer({ offer }: { offer: BaseOffer }) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const handleDelete = () => {
@@ -42,7 +42,7 @@ export default function SingleListingsOffer({ offer }: { offer: SaleOffer }) {
 
   return (
     <>
-      <GenericOffer offer={offer} headerContent={headerContent} />
+      <GenericOfferCard offer={offer} headerContent={headerContent} />
 
       <ConfirmationModal
         title='Confirm Delete'

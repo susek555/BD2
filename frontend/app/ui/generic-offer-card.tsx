@@ -12,7 +12,7 @@ export interface GenericOfferProps<T extends BaseOffer = BaseOffer> {
   className?: string;
 }
 
-export default function GenericOffer<T extends BaseOffer = BaseOffer>({
+export default function GenericOfferCard<T extends BaseOffer = BaseOffer>({
   offer,
   variant = 'default',
   priceLabel,
