@@ -30,12 +30,10 @@ export default function StickyTabBar() {
     <>
       <div ref={sentinelRef} className='h-0' />
 
-      {/* Regular tab bar */}
       <div>
         <TabBar />
       </div>
 
-      {/* Sticky tab bar with wrapper that's always present */}
       <div
         style={{
           position: 'fixed',
