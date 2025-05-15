@@ -31,6 +31,7 @@ var ErrorMap = map[error]int{
 	ErrInvalidDateFromat:    http.StatusBadRequest,
 	ErrInvalidOrderKey:      http.StatusBadRequest,
 	ErrInvalidManufacturer:  http.StatusBadRequest,
+	ErrNotLoggedIn:          http.StatusUnauthorized,
 	gorm.ErrRecordNotFound:  http.StatusNotFound,
 	strconv.ErrSyntax:       http.StatusBadRequest,
 }

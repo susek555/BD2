@@ -1,11 +1,15 @@
 package sale_offer
 
-import "github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
+import (
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
+	"github.com/susek555/BD2/car-dealer-api/pkg/mapping"
+)
 
 type SaleOfferServiceInterface interface {
 	Create(in CreateSaleOfferDTO) error
 	GetFiltered(filter *OfferFilter) (*RetrieveOffersWithPagination, error)
 	GetByID(id uint) (*RetrieveDetailedSaleOfferDTO, error)
+	GetByUserID(id uint) ([]RetrieveSaleOfferDTO, error)
 }
 
 type SaleOfferService struct {
@@ -46,4 +50,13 @@ func (s *SaleOfferService) GetByID(id uint) (*RetrieveDetailedSaleOfferDTO, erro
 	}
 	offerDTO := offer.MapToDetailedDTO()
 	return offerDTO, nil
+}
+
+func (s *SaleOfferService) GetByUserID(id uint) ([]RetrieveSaleOfferDTO, error) {
+	offers, err := s.repo.GetByUserID(id)
+	if err != nil {
+		return nil, err
+	}
+	offersDTOs := mapping.MapSliceToDTOs(offers, (*SaleOffer).MapToDTO)
+	return offersDTOs, nil
 }
