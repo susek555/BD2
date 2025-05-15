@@ -40,7 +40,19 @@ func (dto *CreateSaleOfferDTO) MapToSaleOffer() (*SaleOffer, error) {
 	}, nil
 }
 
-func (offer *SaleOffer) MapToDTO() *RetrieveDetailedSaleOfferDTO {
+func (offer *SaleOffer) MapToDTO() *RetrieveSaleOfferDTO {
+	return &RetrieveSaleOfferDTO{
+		Username:       offer.User.Username,
+		Name:           offer.Car.Model.Manufacturer.Name + " " + offer.Car.Model.Name,
+		Price:          offer.Price,
+		Mileage:        offer.Car.Mileage,
+		ProductionYear: offer.Car.ProductionYear,
+		Color:          offer.Car.Color,
+		IsAuction:      offer.Auction != nil,
+	}
+}
+
+func (offer *SaleOffer) MapToDetailedDTO() *RetrieveDetailedSaleOfferDTO {
 	buyNow, endDate := offer.prepareAuctionValues()
 	return &RetrieveDetailedSaleOfferDTO{
 		Username:           offer.User.Username,

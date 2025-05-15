@@ -30,6 +30,17 @@ type CreateSaleOfferDTO struct {
 	ModelID            uint                    `json:"model_id"`
 }
 
+type RetrieveSaleOfferDTO struct {
+	ID             uint             `json:"id"`
+	Username       string           `json:"username"`
+	Name           string           `json:"name"`
+	Price          uint             `json:"price"`
+	Mileage        uint             `json:"mileage"`
+	ProductionYear uint             `json:"production_year"`
+	Color          car_params.Color `json:"color"`
+	IsAuction      bool             `json:"is_auction"`
+}
+
 type RetrieveDetailedSaleOfferDTO struct {
 	Username           string                  `json:"username"`
 	Description        string                  `json:"description"`
@@ -58,5 +69,5 @@ type RetrieveDetailedSaleOfferDTO struct {
 
 type RetrieveOffersWithPagination struct {
 	PaginationResponse *pagination.PaginationResponse `json:"pagination"`
-	Offers             []RetrieveDetailedSaleOfferDTO `json:"offers"`
+	Offers             []RetrieveSaleOfferDTO         `json:"offers"`
 }
