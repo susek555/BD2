@@ -1,3 +1,6 @@
+//go:build unit
+// +build unit
+
 package review_tests
 
 import (
@@ -33,12 +36,12 @@ func TestGetByReviewerId_Success(t *testing.T) {
 		{ID: 1, ReviewerID: 10, RevieweeId: 1, Reviewer: &user.User{ID: 10, Username: "reviewer1"}, Reviewee: &user.User{ID: 1, Username: "reviewee1"}},
 		{ID: 2, ReviewerID: 10, RevieweeId: 2, Reviewer: &user.User{ID: 10, Username: "reviewer1"}, Reviewee: &user.User{ID: 2, Username: "reviewee2"}},
 	}
-	
+
 	var expectedDTOs []review.RetrieveReviewDTO
 	for _, r := range mockReviews {
 		expectedDTOs = append(expectedDTOs, r.MapToDTO())
 	}
-	
+
 	repo.On("GetByReviewerId", uint(10)).Return(mockReviews, nil).Once()
 
 	got, err := svc.GetByReviewerId(10)
@@ -67,12 +70,12 @@ func TestGetByRevieweeId_Success(t *testing.T) {
 	mockReviews := []review.Review{
 		{ID: 3, ReviewerID: 5, RevieweeId: 20, Reviewer: &user.User{ID: 5, Username: "reviewer"}, Reviewee: &user.User{ID: 20, Username: "reviewee"}},
 	}
-	
+
 	var expectedDTOs []review.RetrieveReviewDTO
 	for _, r := range mockReviews {
 		expectedDTOs = append(expectedDTOs, r.MapToDTO())
 	}
-	
+
 	repo.On("GetByRevieweeId", uint(20)).Return(mockReviews, nil).Once()
 
 	got, err := svc.GetByRevieweeId(20)
@@ -86,14 +89,14 @@ func TestGetByReviewerAndReviewee_Success(t *testing.T) {
 	svc, repo := newServiceWithMock()
 
 	mockReview := &review.Review{
-		ID: 4, 
-		ReviewerID: 10, 
+		ID:         4,
+		ReviewerID: 10,
 		RevieweeId: 20,
-		Reviewer: &user.User{ID: 10, Username: "reviewer"},
-		Reviewee: &user.User{ID: 20, Username: "reviewee"},
+		Reviewer:   &user.User{ID: 10, Username: "reviewer"},
+		Reviewee:   &user.User{ID: 20, Username: "reviewee"},
 	}
 	expectedDTO := mockReview.MapToDTO()
-	
+
 	repo.On("GetByReviewerIdAndRevieweeId", uint(10), uint(20)).Return(mockReview, nil).Once()
 
 	got, err := svc.GetByReviewerIdAndRevieweeId(10, 20)
@@ -171,13 +174,25 @@ func TestCreate_Error(t *testing.T) {
 func TestGet_Success(t *testing.T) {
 	svc, repo := newServiceWithMock()
 
-	want := review.Review{ID: 7, ReviewerID: 1, RevieweeId: 2}
+	want := review.Review{
+		ID:         7,
+		ReviewerID: 1,
+		RevieweeId: 2,
+		Reviewer: &user.User{
+			ID:       1,
+			Username: "reviewer",
+		},
+		Reviewee: &user.User{
+			ID:       2,
+			Username: "reviewee",
+		},
+	}
 	repo.On("GetById", uint(7)).Return(&want, nil).Once()
 
 	got, err := svc.GetById(7)
-
+	expected := want.MapToDTO()
 	require.NoError(t, err)
-	assert.Equal(t, &want, got)
+	assert.Equal(t, &expected, got)
 	repo.AssertExpectations(t)
 }
 
@@ -188,12 +203,13 @@ func TestGet_Error(t *testing.T) {
 	repo.On("GetById", uint(7)).Return(&review.Review{}, repoErr).Once()
 
 	got, err := svc.GetById(7)
-	var want *review.Review = nil
+	var want *review.RetrieveReviewDTO = nil
 
 	require.ErrorIs(t, err, repoErr)
 	assert.Equal(t, want, got)
 	repo.AssertExpectations(t)
 }
+
 // --- Update ---
 
 func TestUpdate_Success(t *testing.T) {
