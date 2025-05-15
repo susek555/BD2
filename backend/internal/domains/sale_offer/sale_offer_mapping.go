@@ -40,9 +40,9 @@ func (dto *CreateSaleOfferDTO) MapToSaleOffer() (*SaleOffer, error) {
 	}, nil
 }
 
-func (offer *SaleOffer) MapToDTO() *RetrieveSaleOfferDTO {
+func (offer *SaleOffer) MapToDTO() *RetrieveDetailedSaleOfferDTO {
 	buyNow, endDate := offer.prepareAuctionValues()
-	return &RetrieveSaleOfferDTO{
+	return &RetrieveDetailedSaleOfferDTO{
 		Username:           offer.User.Username,
 		Description:        offer.Description,
 		Price:              offer.Price,
