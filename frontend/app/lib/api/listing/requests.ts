@@ -54,3 +54,22 @@ export const deleteListing = async (id: string) => {
 
   return response.json();
 };
+
+export const updateFavoriteStatus = async (id: string, isFavorite: boolean) => {
+  let response;
+  if (isFavorite) {
+    response = await fetch(`/api/favorites/${id}`, {
+      method: 'DELETE',
+    });
+  } else {
+    response = await fetch(`/api/favorites/${id}`, {
+      method: 'POST',
+    });
+  }
+
+  if (!response.ok) {
+    throw new Error('Failed to add listing to favorites');
+  }
+
+  return response.json();
+};
