@@ -4,7 +4,6 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/car"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
@@ -21,9 +20,9 @@ import (
 func setupDB() (*gorm.DB, error) {
 	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
 	db.AutoMigrate(
-		&car.Car{},
 		&manufacturer.Manufacturer{},
 		&model.Model{},
+		&sale_offer.Car{},
 		&sale_offer.SaleOffer{},
 		&sale_offer.Auction{},
 	)
@@ -41,14 +40,14 @@ func getRepositoryWithUsers(db *gorm.DB, offers []sale_offer.SaleOffer) sale_off
 	return repo
 }
 
-type OfferOption func(*sale_offer.SaleOffer, *car.Car)
+type OfferOption func(*sale_offer.SaleOffer, *sale_offer.Car)
 
 // Simulates interaction with manufacturer service, which should return all possible manufacturers
 var manufacturers []string = []string{"Audi", "BMW", "Opel", "Toyota", "Skoda"}
 
 func CreateOffer(id uint, options ...OfferOption) *sale_offer.SaleOffer {
-	car := &car.Car{
-		ID:                 id,
+	car := &sale_offer.Car{
+		OfferID:            id,
 		Vin:                "vin",
 		ProductionYear:     2025,
 		Mileage:            1000,
@@ -64,7 +63,7 @@ func CreateOffer(id uint, options ...OfferOption) *sale_offer.SaleOffer {
 		NumberOfGears:      6,
 		Drive:              car_params.FWD,
 		ModelID:            id,
-		Model: &model.Model{
+		Model: model.Model{
 			ID:             id,
 			Name:           "model",
 			ManufacturerID: id,
@@ -80,7 +79,6 @@ func CreateOffer(id uint, options ...OfferOption) *sale_offer.SaleOffer {
 		Price:       1000,
 		Margin:      15,
 		DateOfIssue: time.Now(),
-		CarID:       1,
 		Car:         car,
 	}
 	for _, option := range options {
@@ -90,7 +88,7 @@ func CreateOffer(id uint, options ...OfferOption) *sale_offer.SaleOffer {
 }
 
 func WithCarField(fieldName string, fieldValue interface{}) OfferOption {
-	return func(_ *sale_offer.SaleOffer, car *car.Car) {
+	return func(_ *sale_offer.SaleOffer, car *sale_offer.Car) {
 		v := reflect.ValueOf(car).Elem()
 		field := v.FieldByName(fieldName)
 		field.Set(reflect.ValueOf(fieldValue))
@@ -98,7 +96,7 @@ func WithCarField(fieldName string, fieldValue interface{}) OfferOption {
 }
 
 func WithOfferField(fieldName string, fieldValue interface{}) OfferOption {
-	return func(offer *sale_offer.SaleOffer, _ *car.Car) {
+	return func(offer *sale_offer.SaleOffer, _ *sale_offer.Car) {
 		v := reflect.ValueOf(offer).Elem()
 		field := v.FieldByName(fieldName)
 		field.Set(reflect.ValueOf(fieldValue))
@@ -106,7 +104,7 @@ func WithOfferField(fieldName string, fieldValue interface{}) OfferOption {
 }
 
 func WithAuction(dateEnd time.Time, buyNowPrice uint) OfferOption {
-	return func(offer *sale_offer.SaleOffer, _ *car.Car) {
+	return func(offer *sale_offer.SaleOffer, _ *sale_offer.Car) {
 		offer.Auction = &sale_offer.Auction{
 			OfferID:     offer.ID,
 			DateEnd:     dateEnd,

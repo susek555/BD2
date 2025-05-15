@@ -1,4 +1,4 @@
-package car
+package sale_offer
 
 import (
 	"time"
@@ -8,7 +8,7 @@ import (
 )
 
 type Car struct {
-	ID                 uint                    `json:"id" gorm:"primaryKey;autoIncrement"`
+	OfferID            uint                    `json:"id" gorm:"primaryKey"`
 	Vin                string                  `json:"vin"`
 	ProductionYear     uint                    `json:"production_year"`
 	Mileage            uint                    `json:"mileage"`
@@ -24,5 +24,6 @@ type Car struct {
 	NumberOfGears      uint                    `json:"number_of_gears" gorm:"check:number_of_gears BETWEEN 1 AND 10"`
 	Drive              car_params.Drive        `json:"drive"`
 	ModelID            uint                    `json:"model_id"`
-	Model              *model.Model            `gorm:"foreignKey:ModelID;references:ID;constraint:OnDelete:SET NULL,OnUpdate:CASCADE"`
+	Model              model.Model             `gorm:"foreignKey:ModelID;references:ID;constraint:OnDelete:SET NULL,OnUpdate:CASCADE"`
+	SaleOffer          SaleOffer               `gorm:"foreignKey:OfferID;references:ID;constraint:OnDelete:CASCADE,OnUpdate;CASCADE"`
 }

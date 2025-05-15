@@ -3,7 +3,6 @@ package sale_offer
 import (
 	"time"
 
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/car"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
 )
 
@@ -21,7 +20,7 @@ func (dto *CreateSaleOfferDTO) MapToSaleOffer() (*SaleOffer, error) {
 		Price:       dto.Price,
 		Margin:      dto.Margin,
 		DateOfIssue: dto.DateOfIssue,
-		Car: &car.Car{
+		Car: &Car{
 			Vin:                dto.Vin,
 			ProductionYear:     dto.ProductionYear,
 			Mileage:            dto.Mileage,
