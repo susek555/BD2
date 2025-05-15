@@ -99,7 +99,7 @@ func (h *Handler) GetFilteredSaleOffers(c *gin.Context) {
 	c.JSON(http.StatusOK, *saleOffers)
 }
 
-func (h *Handler) GetOfferByID(c *gin.Context) {
+func (h *Handler) GetSaleOfferByID(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
@@ -113,16 +113,30 @@ func (h *Handler) GetOfferByID(c *gin.Context) {
 	c.JSON(http.StatusOK, offerDTO)
 }
 
+func (h *Handler) GetSaleOffersByUserID(c *gin.Context) {
+	userID, ok := c.Get("userID")
+	if !ok {
+		c.JSON(http.StatusUnauthorized, custom_errors.NewHTTPError(ErrNotLoggedIn.Error()))
+		return
+	}
+	saleOffers, err := h.service.GetByUserID(userID.(uint))
+	if err != nil {
+		custom_errors.HandleError(c, err, ErrorMap)
+		return
+	}
+	c.JSON(http.StatusOK, saleOffers)
+}
+
 // GetOfferTypes godoc
 //
 //	@Summary		Get offer types
-//	@Description	Returns a list of all possible offer types that are accepted when using filtering.
+//	@Description	Returns a list of all possible offer types that are accepted when using filtering. If you choose both the auctions and regular offers will be found.
 //	@Tags			sale-offer
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	map[string][]string	"List of offer types"
 //	@Router			/sale-offer/offer-types [get]
-func (h *Handler) GetOfferTypes(c *gin.Context) {
+func (h *Handler) GetSaleOfferTypes(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"offer_types": OfferTypes})
 }
 
