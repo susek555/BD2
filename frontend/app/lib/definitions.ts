@@ -125,7 +125,9 @@ export type SearchParams = {
   };
 };
 
-export const parseIntOrUndefined = (value: string | undefined): number | undefined => {
+export const parseIntOrUndefined = (
+  value: string | undefined,
+): number | undefined => {
   if (!value) return undefined;
   const parsed = parseInt(value, 10);
   return isNaN(parsed) ? undefined : parsed;
@@ -149,18 +151,11 @@ export interface SaleOffer {
   color: string;
   price: number;
   isAuction: boolean;
-};
+}
 
-export type HistoryOffer = {
-  id: string;
-  name: string; // producer and model
-  productionYear: number;
-  mileage: number;
-  color: string;
-  price: number;
-  isAuction: boolean;
+export interface HistoryOffer extends SaleOffer {
   dateEnd: string;
-};
+}
 
 // Account page definitions
 
