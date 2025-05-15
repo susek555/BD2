@@ -78,7 +78,7 @@ func (h *Handler) DeleteAuctionById(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
-	c.JSON(http.StatusNoContent, gin.H{})
+	c.Status(http.StatusNoContent)
 }
 
 func (h *Handler) UpdateAuction(c *gin.Context) {
