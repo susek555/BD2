@@ -1,6 +1,11 @@
 import { getServerSession } from 'next-auth';
 import { authConfig } from '../authConfig';
-import { HistoryOffer, SearchParams, UserProfile } from '../definitions';
+import {
+  HistoryOffer,
+  SaleOffer,
+  SearchParams,
+  UserProfile,
+} from '../definitions';
 
 export async function fetchSessionData(): Promise<UserProfile> {
   const user = (await getServerSession(authConfig))?.user;
@@ -26,137 +31,49 @@ export async function fetchSessionData(): Promise<UserProfile> {
 }
 
 export async function fetchHistory(
-  params: SearchParams,
+  params: SearchParams = {},
 ): Promise<HistoryOffer[]> {
-  const data: HistoryOffer[] = [
-    {
-      id: '1',
-      name: 'Audi A4',
-      productionYear: 2000,
-      mileage: 150000,
-      color: 'Green',
-      price: 10000,
-      isAuction: true,
-      dateEnd: '2025-05-24',
-    },
-    {
-      id: '2',
-      name: 'Volkswagen Golf',
-      productionYear: 2005,
-      mileage: 120000,
-      color: 'Blue',
-      price: 15000,
-      isAuction: false,
-      dateEnd: '2025-04-11',
-    },
-    {
-      id: '3',
-      name: 'Porsche 911',
-      productionYear: 2010,
-      mileage: 80000,
-      color: 'Red',
-      price: 50000,
-      isAuction: true,
-      dateEnd: '2024-11-11',
-    },
-    {
-      id: '4',
-      name: 'Porsche 911',
-      productionYear: 2010,
-      mileage: 80000,
-      color: 'Red',
-      price: 50000,
-      isAuction: true,
-      dateEnd: '2024-11-11',
-    },
-    {
-      id: '5',
-      name: 'Porsche 911',
-      productionYear: 2010,
-      mileage: 80000,
-      color: 'Red',
-      price: 50000,
-      isAuction: true,
-      dateEnd: '2024-11-11',
-    },
-    {
-      id: '6',
-      name: 'Porsche 911',
-      productionYear: 2010,
-      mileage: 80000,
-      color: 'Red',
-      price: 50000,
-      isAuction: true,
-      dateEnd: '2024-11-11',
-    },
-  ];
-  return data;
+  const url = `${process.env.URL}/api/account/history`;
+
+  const response = await fetch(url, {
+    method: 'GET',
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch history offers');
+  }
+
+  return response.json();
 }
 
 export async function fetchListings(
-  params: SearchParams,
+  params: SearchParams = {},
 ): Promise<HistoryOffer[]> {
-  const data: HistoryOffer[] = [
-    {
-      id: '1',
-      name: 'Audi A4',
-      productionYear: 2000,
-      mileage: 150000,
-      color: 'Green',
-      price: 10000,
-      isAuction: true,
-      dateEnd: '2025-05-24',
-    },
-    {
-      id: '2',
-      name: 'Volkswagen Golf',
-      productionYear: 2005,
-      mileage: 120000,
-      color: 'Blue',
-      price: 15000,
-      isAuction: false,
-      dateEnd: '2025-04-11',
-    },
-    {
-      id: '3',
-      name: 'Porsche 911',
-      productionYear: 2010,
-      mileage: 80000,
-      color: 'Red',
-      price: 50000,
-      isAuction: true,
-      dateEnd: '2024-11-11',
-    },
-    {
-      id: '4',
-      name: 'Porsche 911',
-      productionYear: 2010,
-      mileage: 80000,
-      color: 'Red',
-      price: 50000,
-      isAuction: true,
-      dateEnd: '2024-11-11',
-    },
-    {
-      id: '5',
-      name: 'Porsche 911',
-      productionYear: 2010,
-      mileage: 80000,
-      color: 'Red',
-      price: 50000,
-      isAuction: true,
-      dateEnd: '2024-11-11',
-    },
-    {
-      id: '6',
-      name: 'Porsche 911',
-      productionYear: 2010,
-      mileage: 80000,
-      color: 'Red',
-      price: 50000,
-      isAuction: true,
-      dateEnd: '2024-11-11',
-    },
-  ];
-  return data;
+  const url = `${process.env.URL}/api/account/listings`;
+
+  const response = await fetch(url, {
+    method: 'GET',
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch history offers');
+  }
+
+  return response.json();
+}
+
+export async function fetchFavorites(
+  params: SearchParams = {},
+): Promise<SaleOffer[]> {
+  const url = `${process.env.URL}/api/account/favorites`;
+
+  const response = await fetch(url, {
+    method: 'GET',
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch history offers');
+  }
+
+  return response.json();
 }
