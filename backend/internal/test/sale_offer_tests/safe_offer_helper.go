@@ -18,7 +18,7 @@ import (
 // Setup
 // ------
 
-func setupDB(offers []sale_offer.SaleOffer) (sale_offer.SaleOfferRepositoryInterface, error) {
+func setupDB() (*gorm.DB, error) {
 	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
 	db.AutoMigrate(
 		&car.Car{},
@@ -30,11 +30,15 @@ func setupDB(offers []sale_offer.SaleOffer) (sale_offer.SaleOfferRepositoryInter
 	if err != nil {
 		return nil, err
 	}
+	return db, nil
+}
+
+func getRepositoryWithUsers(db *gorm.DB, offers []sale_offer.SaleOffer) sale_offer.SaleOfferRepositoryInterface {
 	repo := sale_offer.NewSaleOfferRepository(db)
 	for _, offer := range offers {
 		repo.Create(&offer)
 	}
-	return repo, nil
+	return repo
 }
 
 type OfferOption func(*sale_offer.SaleOffer, *car.Car)
