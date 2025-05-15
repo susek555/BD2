@@ -52,7 +52,7 @@ func (r *SaleOfferRepository) GetFiltered(filter *OfferFilter) ([]SaleOffer, *pa
 
 func (r *SaleOfferRepository) buildQuery(filter *OfferFilter) (*gorm.DB, error) {
 	query := r.DB.
-		Joins("JOIN cars on cars.id = sale_offers.car_id").
+		Joins("JOIN cars on cars.offer_id = sale_offers.id").
 		Joins("LEFT JOIN auctions on auctions.offer_id = sale_offers.id").
 		Preload("Auction").
 		Preload("User").
