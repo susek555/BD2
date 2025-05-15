@@ -9,6 +9,8 @@ import OffersFoundInfo from '@/app/ui/offers-found-info';
 import Pagination from '@/app/ui/pagination';
 import SideBar from '@/app/ui/sidebar';
 import { OffersFoundSkeleton, OffersTableSkeleton } from '@/app/ui/skeletons';
+import { PlusIcon } from '@heroicons/react/20/solid';
+import Link from 'next/link';
 import { Suspense } from 'react';
 
 export default async function ListingsPage(props: {
@@ -68,9 +70,18 @@ export default async function ListingsPage(props: {
         </Suspense>
       </div>
       <div className='flex-grow p-6 md:px-12 md:py-8'>
-        <Suspense fallback={<OffersFoundSkeleton />}>
-          <OffersFoundInfo params={params} />
-        </Suspense>
+        <div className='flex w-full items-center justify-between'>
+          <Suspense fallback={<OffersFoundSkeleton />}>
+            <OffersFoundInfo params={params} />
+          </Suspense>
+          <Link
+            href='/listing/create' // TODO add actual creeate redirect
+            className='flex items-center rounded-md bg-green-500 px-4 py-2 text-white hover:bg-green-600'
+          >
+            Add listing <PlusIcon className='ml-2 h-5 w-5' />
+          </Link>
+        </div>
+
         <div className='my-4' />
         <Suspense fallback={<OffersTableSkeleton />}>
           <UsersListings params={params} />
