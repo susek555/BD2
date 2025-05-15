@@ -4,7 +4,7 @@ import {
   parseIntOrUndefined,
   SearchParams,
 } from '@/app/lib/definitions';
-import UsersListings from '@/app/ui/account/listings/user-listings-table';
+import UsersListingsTable from '@/app/ui/account/listings/user-listings-table';
 import OffersFoundInfo from '@/app/ui/offers-found-info';
 import Pagination from '@/app/ui/pagination';
 import SideBar from '@/app/ui/sidebar';
@@ -84,7 +84,7 @@ export default async function ListingsPage(props: {
 
         <div className='my-4' />
         <Suspense fallback={<OffersTableSkeleton />}>
-          <UsersListings params={params} />
+          <UsersListingsTable params={params} />
         </Suspense>
         <div className='mt-5 flex w-full justify-center'>
           <Suspense>

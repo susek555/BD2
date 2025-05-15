@@ -4,7 +4,7 @@ import {
   parseIntOrUndefined,
   SearchParams,
 } from '@/app/lib/definitions';
-import OffersHistory from '@/app/ui/account/activity/offers-history-table';
+import OffersHistory from '@/app/ui/account/activity/user-history-table';
 import OffersFoundInfo from '@/app/ui/offers-found-info';
 import Pagination from '@/app/ui/pagination';
 import SideBar from '@/app/ui/sidebar';
