@@ -131,14 +131,16 @@ export const parseIntOrUndefined = (value: string | undefined): number | undefin
   return isNaN(parsed) ? undefined : parsed;
 };
 
-export const parseArrayOrUndefined = (value: string | string[] | undefined): string[] | undefined => {
+export const parseArrayOrUndefined = (
+  value: string | string[] | undefined,
+): string[] | undefined => {
   if (!value) return undefined;
   return Array.isArray(value) ? value : [value];
 };
 
 // SaleOffer
 
-export type SaleOffer = {
+export interface SaleOffer {
   id: string;
   // image: type to  be determined;
   name: string; // producer and model
