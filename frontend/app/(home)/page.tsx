@@ -1,13 +1,13 @@
 import SideBar from '@/app/ui/sidebar';
 import { Suspense } from 'react';
-import { fetchTotalPages } from '../lib/data';
+import { fetchOffers, fetchTotalPages } from '../lib/data';
 import {
   parseArrayOrUndefined,
   parseIntOrUndefined,
   SearchParams,
 } from '../lib/definitions';
-import OffersTable from '../ui/(home)/offers-table';
 import OffersFoundInfo from '../ui/offers-found-info';
+import OffersTable from '../ui/offers-table';
 import Pagination from '../ui/pagination';
 import { OffersFoundSkeleton, OffersTableSkeleton } from '../ui/skeletons';
 
@@ -76,7 +76,7 @@ export default async function Home(props: {
           </Suspense>
           <div className='my-4' />
           <Suspense fallback={<OffersTableSkeleton />}>
-            <OffersTable params={params} />
+            <OffersTable params={params} fetchFunction={fetchOffers} />
           </Suspense>
           <div className='mt-5 flex w-full justify-center pr-20'>
             <Suspense>
