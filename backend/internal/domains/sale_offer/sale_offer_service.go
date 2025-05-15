@@ -35,11 +35,7 @@ func (s *SaleOfferService) GetFiltered(filter *OfferFilter) (*RetrieveOffersWith
 	if err != nil {
 		return nil, err
 	}
-	offersDTOs := make([]RetrieveSaleOfferDTO, 0, len(offers))
-	for _, offer := range offers {
-		dto := offer.MapToDTO()
-		offersDTOs = append(offersDTOs, *dto)
-	}
+	offersDTOs := mapping.MapSliceToDTOs(offers, (*SaleOffer).MapToDTO)
 	return &RetrieveOffersWithPagination{Offers: offersDTOs, PaginationResponse: pagResponse}, nil
 }
 
