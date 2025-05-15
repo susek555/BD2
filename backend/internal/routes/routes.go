@@ -114,7 +114,7 @@ func registerSaleOfferRoutes(router *gin.Engine) {
 	saleOfferRoutes := router.Group("/sale-offer")
 	{
 		saleOfferRoutes.POST("/", middleware.Authenticate(verifier), saleOfferHandler.CreateSaleOffer)
-		saleOfferRoutes.POST("/filtered", saleOfferHandler.GetFilteredSaleOffers)
+		saleOfferRoutes.POST("/filtered", middleware.Authenticate(verifier), saleOfferHandler.GetFilteredSaleOffers)
 		saleOfferRoutes.GET("/offer-types", saleOfferHandler.GetOfferTypes)
 		saleOfferRoutes.GET("/order-keys", saleOfferHandler.GetOrderKeys)
 	}
