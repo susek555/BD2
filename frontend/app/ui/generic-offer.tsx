@@ -1,10 +1,10 @@
-import { SaleOffer } from '@/app/lib/definitions';
+import { BaseOffer } from '@/app/lib/definitions';
 import { CarImageSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
 
 export type OfferVariant = 'default' | 'history';
 
-export interface GenericOfferProps<T extends SaleOffer = SaleOffer> {
+export interface GenericOfferProps<T extends BaseOffer = BaseOffer> {
   offer: T;
   variant?: OfferVariant;
   priceLabel?: string;
@@ -12,7 +12,7 @@ export interface GenericOfferProps<T extends SaleOffer = SaleOffer> {
   className?: string;
 }
 
-export default function GenericOffer<T extends SaleOffer = SaleOffer>({
+export default function GenericOffer<T extends BaseOffer = BaseOffer>({
   offer,
   variant = 'default',
   priceLabel,

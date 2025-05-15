@@ -1,14 +1,14 @@
-import { SaleOffer, SearchParams } from '@/app/lib/definitions';
+import { BaseOffer, SearchParams } from '@/app/lib/definitions';
 import Link from 'next/link';
 
-interface GenericTableProps<T extends SaleOffer> {
+interface GenericTableProps<T extends BaseOffer> {
   fetchFunction: (params: SearchParams) => Promise<T[]>;
   params: SearchParams;
   ItemComponent: React.ComponentType<{ offer: T }>;
   className?: string;
 }
 
-export default async function GenericOffersTable<T extends SaleOffer>({
+export default async function GenericOffersTable<T extends BaseOffer>({
   fetchFunction,
   params,
   ItemComponent,

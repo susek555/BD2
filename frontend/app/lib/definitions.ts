@@ -142,7 +142,7 @@ export const parseArrayOrUndefined = (
 
 // SaleOffer
 
-export interface SaleOffer {
+export interface BaseOffer {
   id: string;
   // image: type to  be determined;
   name: string; // producer and model
@@ -153,7 +153,11 @@ export interface SaleOffer {
   isAuction: boolean;
 }
 
-export interface HistoryOffer extends SaleOffer {
+export interface SaleOffer extends BaseOffer {
+  isFavorite: boolean;
+}
+
+export interface HistoryOffer extends BaseOffer {
   dateEnd: string;
 }
 
