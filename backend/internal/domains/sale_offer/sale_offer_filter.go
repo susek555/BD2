@@ -44,6 +44,7 @@ type FieldsConstraints struct {
 
 type OfferFilter struct {
 	Pagination               pagination.PaginationRequest `json:"pagination"`
+	UserID                   *uint                        `json:"user_id"`
 	Query                    *string                      `json:"query"`
 	OrderKey                 *string                      `json:"order_key"`
 	IsOrderDesc              *bool                        `json:"is_order_desc"`
@@ -77,6 +78,7 @@ func (of *OfferFilter) ApplyOfferFilters(query *gorm.DB) (*gorm.DB, error) {
 	if err := of.validateParams(); err != nil {
 		return nil, err
 	}
+	query = applyUserFilter(query, of.UserID)
 	query = applyOfferTypeFilter(query, of.OfferType)
 	query = applyManufacturesrsFilter(query, of.Manufacturers)
 	query = applyInSliceFilter(query, "cars.color", of.Colors)
@@ -92,6 +94,13 @@ func (of *OfferFilter) ApplyOfferFilters(query *gorm.DB) (*gorm.DB, error) {
 	query = applyDateInRangeFilter(query, "date_of_issue", of.OfferCreationDateRange)
 	query = applyOrderFilter(query, of.OrderKey, of.IsOrderDesc)
 	return query, nil
+}
+
+func applyUserFilter(query *gorm.DB, userID *uint) *gorm.DB {
+	if userID != nil {
+		query = query.Where("user_id != ?", *userID)
+	}
+	return query
 }
 
 func applyOfferTypeFilter(query *gorm.DB, offerType *OfferType) *gorm.DB {
