@@ -5,11 +5,12 @@ package auction_test
 
 import (
 	"errors"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auction"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/test/mocks"
-	"testing"
 )
 
 func TestAuctionService_Create_OK(t *testing.T) {
