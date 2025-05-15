@@ -15,7 +15,7 @@ export default async function OffersHistory({
       {offers.map((offer) => (
         <Link
           key={offer.id}
-          href={`/account/activity/${offer.id}`}
+          href={`/account/activity/${offer.id}`} // TODO handle redirect from activity
           className={`block rounded-lg transition-shadow hover:shadow-lg ${
             offer.isAuction ? 'ring-2 ring-blue-500' : 'ring-2 ring-gray-500'
           }`}
