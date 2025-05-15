@@ -3,6 +3,9 @@ package sale_offer
 import (
 	"errors"
 	"net/http"
+	"strconv"
+
+	"gorm.io/gorm"
 )
 
 var (
@@ -28,4 +31,6 @@ var ErrorMap = map[error]int{
 	ErrInvalidDateFromat:    http.StatusBadRequest,
 	ErrInvalidOrderKey:      http.StatusBadRequest,
 	ErrInvalidManufacturer:  http.StatusBadRequest,
+	gorm.ErrRecordNotFound:  http.StatusNotFound,
+	strconv.ErrSyntax:       http.StatusBadRequest,
 }
