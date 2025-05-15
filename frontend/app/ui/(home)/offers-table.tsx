@@ -1,7 +1,7 @@
 import { fetchOffers } from '@/app/lib/data';
 import { SaleOffer, SearchParams } from '@/app/lib/definitions';
+import GenericOffer from '../generic-offer';
 import GenericOffersTable from '../generic-offer-table';
-import SingleOffer from './single-offer';
 
 export default async function OffersTable({
   params,
@@ -12,7 +12,7 @@ export default async function OffersTable({
     <GenericOffersTable<SaleOffer>
       fetchFunction={fetchOffers}
       params={params}
-      ItemComponent={SingleOffer}
+      ItemComponent={GenericOffer}
     />
   );
 }
