@@ -32,20 +32,13 @@ func (r *SaleOfferRepository) Create(offer *SaleOffer) error {
 }
 
 func (r *SaleOfferRepository) GetFiltered(filter *OfferFilter) ([]SaleOffer, *pagination.PaginationResponse, error) {
-	query, err := r.buildQuery(filter)
+	query := r.buildQuery()
+	query, err := filter.ApplyOfferFilters(query)
 	if err != nil {
 		return nil, nil, err
 	}
-	totalRecords, err := r.countTotalRecords(query)
+	saleOffers, paginationResponse, err := pagination.PaginateResults[SaleOffer](&filter.Pagination, query)
 	if err != nil {
-		return nil, nil, err
-	}
-	paginationFunc, paginationResponse, err := pagination.Paginate(&filter.Pagination, totalRecords)
-	if err != nil {
-		return nil, nil, err
-	}
-	var saleOffers []SaleOffer
-	if err := query.Scopes(paginationFunc).Find(&saleOffers).Error; err != nil {
 		return nil, nil, err
 	}
 	return saleOffers, paginationResponse, nil
@@ -57,7 +50,7 @@ func (r *SaleOfferRepository) GetByID(id uint) (*SaleOffer, error) {
 	return &offer, err
 }
 
-func (r *SaleOfferRepository) buildQuery(filter *OfferFilter) (*gorm.DB, error) {
+func (r *SaleOfferRepository) buildQuery() *gorm.DB {
 	query := r.DB.
 		Joins("JOIN cars on cars.offer_id = sale_offers.id").
 		Joins("LEFT JOIN auctions on auctions.offer_id = sale_offers.id").
@@ -66,11 +59,5 @@ func (r *SaleOfferRepository) buildQuery(filter *OfferFilter) (*gorm.DB, error) 
 		Preload("Car").
 		Preload("Car.Model").
 		Preload("Car.Model.Manufacturer")
-	return filter.ApplyOfferFilters(query)
-}
-
-func (r *SaleOfferRepository) countTotalRecords(query *gorm.DB) (int64, error) {
-	var totalRecords int64
-	err := query.Model(&SaleOffer{}).Count(&totalRecords).Error
-	return totalRecords, err
+	return query
 }
