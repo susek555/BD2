@@ -1,15 +1,15 @@
 import { fetchListings } from '@/app/lib/account/data';
-import { SaleOffer, SearchParams } from '@/app/lib/definitions';
+import { BaseOffer, SearchParams } from '@/app/lib/definitions';
 import GenericOffersTable from '@/app/ui/generic-offer-table';
-import SingleListingsOffer from './single-listings-offer';
+import SingleListingsOffer from './listings-offer-card';
 
-export default async function UsersListings({
+export default async function UsersListingsTable({
   params,
 }: {
   params: SearchParams;
 }) {
   return (
-    <GenericOffersTable<SaleOffer>
+    <GenericOffersTable<BaseOffer>
       fetchFunction={fetchListings}
       params={params}
       ItemComponent={SingleListingsOffer}
