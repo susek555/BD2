@@ -1,13 +1,13 @@
 package user
 
 type User struct {
-	ID       uint   `json:"id" gorm:"primaryKey;autoIncrement"`
-	Username string `json:"username" gorm:"unique"`
-	Password string `json:"password"`
-	Email    string `json:"email" gorm:"unique"`
-	Selector string `json:"selector" gorm:"check:selector IN ('P', 'C')"`
-	Company  *Company
-	Person   *Person
+	ID       uint     `json:"id" gorm:"primaryKey;autoIncrement"`
+	Username string   `json:"username" gorm:"unique"`
+	Password string   `json:"password"`
+	Email    string   `json:"email" gorm:"unique"`
+	Selector string   `json:"selector" gorm:"check:selector IN ('P', 'C')"`
+	Person   *Person  `gorm:"foreignKey:UserID;references:ID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE"`
+	Company  *Company `gorm:"foreignKey:UserID;references:ID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE"`
 }
 
 func (u *User) GetSubtype() UserSubtype {
