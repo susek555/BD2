@@ -30,7 +30,7 @@ type CreateSaleOfferDTO struct {
 	ModelID            uint                    `json:"model_id"`
 }
 
-type RetrieveSaleOfferDTO struct {
+type RetrieveDetailedSaleOfferDTO struct {
 	Username           string                  `json:"username"`
 	Description        string                  `json:"description"`
 	Price              uint                    `json:"price"`
@@ -58,5 +58,5 @@ type RetrieveSaleOfferDTO struct {
 
 type RetrieveOffersWithPagination struct {
 	PaginationResponse *pagination.PaginationResponse `json:"pagination"`
-	Offers             []RetrieveSaleOfferDTO         `json:"offers"`
+	Offers             []RetrieveDetailedSaleOfferDTO `json:"offers"`
 }

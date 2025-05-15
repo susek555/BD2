@@ -34,7 +34,7 @@ func (s *SaleOfferService) GetFiltered(filter *OfferFilter) (*RetrieveOffersWith
 	if err != nil {
 		return nil, err
 	}
-	offersDTOs := make([]RetrieveSaleOfferDTO, 0, len(offers))
+	offersDTOs := make([]RetrieveDetailedSaleOfferDTO, 0, len(offers))
 	for _, offer := range offers {
 		dto := offer.MapToDTO()
 		offersDTOs = append(offersDTOs, *dto)
