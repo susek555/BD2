@@ -9,6 +9,7 @@ type SaleOfferRepositoryInterface interface {
 	Create(offer *SaleOffer) error
 	GetFiltered(filter *OfferFilter) ([]SaleOffer, *pagination.PaginationResponse, error)
 	GetByID(id uint) (*SaleOffer, error)
+	GetByUserID(id uint) ([]SaleOffer, error)
 }
 
 type SaleOfferRepository struct {
@@ -48,6 +49,12 @@ func (r *SaleOfferRepository) GetByID(id uint) (*SaleOffer, error) {
 	var offer SaleOffer
 	err := r.DB.First(&offer, id).Error
 	return &offer, err
+}
+
+func (r *SaleOfferRepository) GetByUserID(id uint) ([]SaleOffer, error) {
+	var offers []SaleOffer
+	err := r.DB.Where("user_id = ?", id).Find(&offers).Error
+	return offers, err
 }
 
 func (r *SaleOfferRepository) buildQuery() *gorm.DB {
