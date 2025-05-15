@@ -2,8 +2,9 @@ package auction
 
 import (
 	"errors"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 	"time"
+
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 )
 
 func (dto *CreateAuctionDTO) MapToAuction() (*sale_offer.Auction, error) {
@@ -20,7 +21,7 @@ func (dto *CreateAuctionDTO) MapToAuction() (*sale_offer.Auction, error) {
 	if err != nil {
 		return nil, err
 	}
-	auction.Offer = offer
+	auction.Offer = *offer
 	auction.DateEnd = endDate
 	auction.BuyNowPrice = dto.BuyNowPrice
 	return &auction, nil
