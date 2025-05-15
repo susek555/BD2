@@ -6,9 +6,9 @@ import {
   parseIntOrUndefined,
   SearchParams,
 } from '../lib/definitions';
-import OffersFoundInfo from '../ui/(home)/offers-found-info';
-import Pagination from '../ui/(home)/pagination';
 import OffersTable from '../ui/(home)/offers-table';
+import OffersFoundInfo from '../ui/offers-found-info';
+import Pagination from '../ui/pagination';
 import { OffersFoundSkeleton, OffersTableSkeleton } from '../ui/skeletons';
 
 //TODO fix bug with filters not syncing when Home button clicked

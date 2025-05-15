@@ -4,9 +4,9 @@ import {
   parseIntOrUndefined,
   SearchParams,
 } from '@/app/lib/definitions';
-import OffersFoundInfo from '@/app/ui/(home)/offers-found-info';
-import Pagination from '@/app/ui/(home)/pagination';
 import UsersListings from '@/app/ui/account/listings/user-listings-table';
+import OffersFoundInfo from '@/app/ui/offers-found-info';
+import Pagination from '@/app/ui/pagination';
 import SideBar from '@/app/ui/sidebar';
 import { OffersFoundSkeleton, OffersTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
