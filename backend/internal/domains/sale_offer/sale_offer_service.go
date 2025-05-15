@@ -5,6 +5,7 @@ import "github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
 type SaleOfferServiceInterface interface {
 	Create(in CreateSaleOfferDTO) error
 	GetFiltered(filter *OfferFilter) (*RetrieveOffersWithPagination, error)
+	GetByID(id uint) (*RetrieveDetailedSaleOfferDTO, error)
 }
 
 type SaleOfferService struct {
@@ -40,4 +41,13 @@ func (s *SaleOfferService) GetFiltered(filter *OfferFilter) (*RetrieveOffersWith
 		offersDTOs = append(offersDTOs, *dto)
 	}
 	return &RetrieveOffersWithPagination{Offers: offersDTOs, PaginationResponse: pagResponse}, nil
+}
+
+func (s *SaleOfferService) GetByID(id uint) (*RetrieveDetailedSaleOfferDTO, error) {
+	offer, err := s.repo.GetByID(id)
+	if err != nil {
+		return nil, err
+	}
+	offerDTO := offer.MapToDetailedDTO()
+	return offerDTO, nil
 }

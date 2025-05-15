@@ -8,6 +8,7 @@ import (
 type SaleOfferRepositoryInterface interface {
 	Create(offer *SaleOffer) error
 	GetFiltered(filter *OfferFilter) ([]SaleOffer, *pagination.PaginationResponse, error)
+	GetByID(id uint) (*SaleOffer, error)
 }
 
 type SaleOfferRepository struct {
@@ -48,6 +49,12 @@ func (r *SaleOfferRepository) GetFiltered(filter *OfferFilter) ([]SaleOffer, *pa
 		return nil, nil, err
 	}
 	return saleOffers, paginationResponse, nil
+}
+
+func (r *SaleOfferRepository) GetByID(id uint) (*SaleOffer, error) {
+	var offer SaleOffer
+	err := r.DB.First(&offer, id).Error
+	return &offer, err
 }
 
 func (r *SaleOfferRepository) buildQuery(filter *OfferFilter) (*gorm.DB, error) {
