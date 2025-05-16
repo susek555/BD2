@@ -609,8 +609,49 @@
                 }
             }
         },
+        "/review/filter": {
+            "post": {
+                "description": "Returns reviews matching podanych kryteriów filtrowania wraz z paginacją.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "Filter reviews with pagination",
+                "operationId": "getFilteredReviews",
+                "parameters": [
+                    {
+                        "description": "Filter payload",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/review.ReviewFilter"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK ",
+                        "schema": {
+                            "$ref": "#/definitions/review.RetrieveReviewsWithPagination"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request – invalid filter or query failed",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/review/reviewee/{id}": {
-            "get": {
+            "post": {
                 "description": "Returns all reviews where the given user is the reviewee.",
                 "produces": [
                     "application/json"
@@ -649,7 +690,7 @@
             }
         },
         "/review/reviewer/{id}": {
-            "get": {
+            "post": {
                 "description": "Returns all reviews authored by the reviewer specified by ID.",
                 "produces": [
                     "application/json"
@@ -790,6 +831,81 @@
                     },
                     "400": {
                         "description": "Bad Request – invalid ID format or delete failed",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/review/{id}/average": {
+            "get": {
+                "description": "Returns the average rating value calculated over all reviews for the given reviewee.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "Get average rating for a reviewee",
+                "operationId": "getAverageRatingByRevieweeId",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Reviewee ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK – average rating (rounded to two decimals)",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request – invalid ID format or query failed",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/review/{id}/frequency": {
+            "get": {
+                "description": "Returns a map from rating value (1–5) to percentage frequency among all reviews for the given reviewee.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "Get distribution of ratings for a reviewee",
+                "operationId": "getFrequencyOfRatingByRevieweeId",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Reviewee ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK – percentage frequencies for ratings 1 through 5",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request – invalid ID format or query failed",
                         "schema": {
                             "$ref": "#/definitions/custom_errors.HTTPError"
                         }
@@ -1464,6 +1580,9 @@
                 "selector": {
                     "type": "string"
                 },
+                "user_id": {
+                    "type": "integer"
+                },
                 "username": {
                     "type": "string"
                 }
@@ -1712,11 +1831,54 @@
                 "rating": {
                     "type": "integer"
                 },
+                "review_date": {
+                    "type": "string"
+                },
                 "reviewee": {
                     "$ref": "#/definitions/review.UserDTO"
                 },
                 "reviewer": {
                     "$ref": "#/definitions/review.UserDTO"
+                }
+            }
+        },
+        "review.RetrieveReviewsWithPagination": {
+            "type": "object",
+            "properties": {
+                "pagination": {
+                    "$ref": "#/definitions/pagination.PaginationResponse"
+                },
+                "reviews": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/review.RetrieveReviewDTO"
+                    }
+                }
+            }
+        },
+        "review.ReviewFilter": {
+            "type": "object",
+            "properties": {
+                "is_order_desc": {
+                    "type": "boolean"
+                },
+                "order_key": {
+                    "type": "string"
+                },
+                "pagination": {
+                    "$ref": "#/definitions/pagination.PaginationRequest"
+                },
+                "ratings": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "reviewee_id": {
+                    "type": "integer"
+                },
+                "reviewer_id": {
+                    "type": "integer"
                 }
             }
         },

@@ -33,6 +33,8 @@ definitions:
         type: string
       selector:
         type: string
+      user_id:
+        type: integer
       username:
         type: string
     type: object
@@ -215,10 +217,38 @@ definitions:
         type: integer
       rating:
         type: integer
+      review_date:
+        type: string
       reviewee:
         $ref: '#/definitions/review.UserDTO'
       reviewer:
         $ref: '#/definitions/review.UserDTO'
+    type: object
+  review.RetrieveReviewsWithPagination:
+    properties:
+      pagination:
+        $ref: '#/definitions/pagination.PaginationResponse'
+      reviews:
+        items:
+          $ref: '#/definitions/review.RetrieveReviewDTO'
+        type: array
+    type: object
+  review.ReviewFilter:
+    properties:
+      is_order_desc:
+        type: boolean
+      order_key:
+        type: string
+      pagination:
+        $ref: '#/definitions/pagination.PaginationRequest'
+      ratings:
+        items:
+          type: integer
+        type: array
+      reviewee_id:
+        type: integer
+      reviewer_id:
+        type: integer
     type: object
   review.UpdateReviewDTO:
     properties:
@@ -980,8 +1010,88 @@ paths:
       summary: Get review by id
       tags:
       - reviews
-  /review/reviewee/{id}:
+  /review/{id}/average:
     get:
+      description: Returns the average rating value calculated over all reviews for
+        the given reviewee.
+      operationId: getAverageRatingByRevieweeId
+      parameters:
+      - description: Reviewee ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK – average rating (rounded to two decimals)
+          schema:
+            type: number
+        "400":
+          description: Bad Request – invalid ID format or query failed
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Get average rating for a reviewee
+      tags:
+      - reviews
+  /review/{id}/frequency:
+    get:
+      description: Returns a map from rating value (1–5) to percentage frequency among
+        all reviews for the given reviewee.
+      operationId: getFrequencyOfRatingByRevieweeId
+      parameters:
+      - description: Reviewee ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK – percentage frequencies for ratings 1 through 5
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
+        "400":
+          description: Bad Request – invalid ID format or query failed
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Get distribution of ratings for a reviewee
+      tags:
+      - reviews
+  /review/filter:
+    post:
+      consumes:
+      - application/json
+      description: Returns reviews matching podanych kryteriów filtrowania wraz z
+        paginacją.
+      operationId: getFilteredReviews
+      parameters:
+      - description: Filter payload
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/review.ReviewFilter'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'OK '
+          schema:
+            $ref: '#/definitions/review.RetrieveReviewsWithPagination'
+        "400":
+          description: Bad Request – invalid filter or query failed
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Filter reviews with pagination
+      tags:
+      - reviews
+  /review/reviewee/{id}:
+    post:
       description: Returns all reviews where the given user is the reviewee.
       operationId: getReviewsByRevieweeId
       parameters:
@@ -1007,7 +1117,7 @@ paths:
       tags:
       - reviews
   /review/reviewer/{id}:
-    get:
+    post:
       description: Returns all reviews authored by the reviewer specified by ID.
       operationId: getReviewsByReviewerId
       parameters:
