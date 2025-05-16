@@ -1,14 +1,13 @@
 package sale_offer_tests
 
 import (
-	"reflect"
 	"time"
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
-	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
+	u "github.com/susek555/BD2/car-dealer-api/internal/test/test_utils"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -45,7 +44,7 @@ type OfferOption func(*sale_offer.SaleOffer, *sale_offer.Car)
 // Simulates interaction with manufacturer service, which should return all possible manufacturers
 var manufacturers []string = []string{"Audi", "BMW", "Opel", "Toyota", "Skoda"}
 
-func CreateOffer(id uint, options ...OfferOption) *sale_offer.SaleOffer {
+func createOffer(id uint) *sale_offer.SaleOffer {
 	car := &sale_offer.Car{
 		OfferID:            id,
 		Vin:                "vin",
@@ -81,38 +80,31 @@ func CreateOffer(id uint, options ...OfferOption) *sale_offer.SaleOffer {
 		DateOfIssue: time.Now(),
 		Car:         car,
 	}
-	for _, option := range options {
-		option(offer, car)
-	}
 	return offer
 }
 
-func WithCarField(fieldName string, fieldValue interface{}) OfferOption {
-	return func(_ *sale_offer.SaleOffer, car *sale_offer.Car) {
-		v := reflect.ValueOf(car).Elem()
-		field := v.FieldByName(fieldName)
-		field.Set(reflect.ValueOf(fieldValue))
-	}
-}
-
-func WithOfferField(fieldName string, fieldValue interface{}) OfferOption {
-	return func(offer *sale_offer.SaleOffer, _ *sale_offer.Car) {
-		v := reflect.ValueOf(offer).Elem()
-		field := v.FieldByName(fieldName)
-		field.Set(reflect.ValueOf(fieldValue))
-	}
-}
-
-func WithAuction(dateEnd time.Time, buyNowPrice uint) OfferOption {
-	return func(offer *sale_offer.SaleOffer, _ *sale_offer.Car) {
-		offer.Auction = &sale_offer.Auction{
-			OfferID:     offer.ID,
-			DateEnd:     dateEnd,
-			BuyNowPrice: buyNowPrice,
+func withCarField(opt u.Option[sale_offer.Car]) u.Option[sale_offer.SaleOffer] {
+	return func(offer *sale_offer.SaleOffer) {
+		if offer.Car == nil {
+			offer.Car = &sale_offer.Car{}
 		}
+		opt(offer.Car)
 	}
 }
 
-func GetDefaultPaginationRequest() *pagination.PaginationRequest {
-	return &pagination.PaginationRequest{Page: 1, PageSize: 8}
+func withAuctionField(opt u.Option[sale_offer.Auction]) u.Option[sale_offer.SaleOffer] {
+	return func(offer *sale_offer.SaleOffer) {
+		if offer.Auction == nil {
+			offer.Auction = &sale_offer.Auction{}
+		}
+		opt(offer.Auction)
+	}
+}
+
+func createAuctionSaleOffer(id uint) *sale_offer.SaleOffer {
+	offer := *u.Build(createOffer(id),
+		withAuctionField(u.WithField[sale_offer.Auction]("OfferID", id)),
+		withAuctionField(u.WithField[sale_offer.Auction]("DateEnd", time.Now())),
+		withAuctionField(u.WithField[sale_offer.Auction]("BuyNowPrice", uint(0))))
+	return &offer
 }
