@@ -50,13 +50,7 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                         <option key={item} value={item}>{item}</option>
                     ))}
                 </select>
-                <label htmlFor="model" className="text-lg font-semibold">Model</label>
-                <select id="model" name="model" className="border rounded p-2" required defaultValue="">
-                    <option value="" disabled>Select a model...</option>
-                    {availableModels.map((item: string) => (
-                        <option key={item} value={item}>{item}</option>
-                    ))}
-                </select>
+                <SelectionLabel name="Model" options={availableModels} />
                 <SelectionLabel name="Color" options={inputsData.colors} />
                 <SelectionLabel name="Gearbox" options={inputsData.gearboxes} />
                 <SelectionLabel name="Fuel Type" options={inputsData.fuelTypes} />
