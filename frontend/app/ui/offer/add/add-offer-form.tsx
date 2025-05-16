@@ -57,7 +57,7 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
             formData.delete("auctionEndDate-month");
             formData.delete("auctionEndDate-year");
         }
-        
+
         startTransition(() => {
             action(formData)
         });
@@ -113,11 +113,8 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                     name={id}
                     className="border rounded p-2"
                     placeholder={`Enter ${name.toLowerCase()}`}
-                    defaultValue={
-                        typeof state?.values?.[id] === "number"
-                            ? state.values[id]
-                            : ""
-                    }
+                    defaultValue={state?.values?.[id]?.toString() ?? ""}
+
                     required
                 />
                 <div id="username-error" aria-live="polite" aria-atomic="true">
@@ -132,14 +129,17 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
         )
     }
 
-    function DateSelectionField({ id, name } : { id: string, name: string }) {
+    function DateSelectionField({ id, name }: { id: string, name: string }) {
+        const dateValue = state?.values?.[id]?.toString();
+        const dateParts = dateValue ? dateValue.split("-") : ["", "", ""];
+        const [year, month, day] = dateParts;
+
         return (
             <>
                 <label htmlFor={id} className="text-lg font-semibold">
                     {name}
                 </label>
                 <div className="flex gap-2 items-end">
-
                     <div className="flex flex-col">
                         <input
                             type="number"
@@ -148,11 +148,7 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                             min={1}
                             max={31}
                             className="border rounded p-2 w-20"
-                            defaultValue={
-                                state?.values?.[id] instanceof Date
-                                    ? state.values[id].getDate()
-                                    : ""
-                            }
+                            defaultValue={day || ""}
                             required
                             placeholder="Day"
                         />
@@ -165,11 +161,7 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                             min={1}
                             max={12}
                             className="border rounded p-2 w-20"
-                            defaultValue={
-                                state?.values?.[id] instanceof Date
-                                    ? state.values[id].getMonth() + 1
-                                    : ""
-                            }
+                            defaultValue={month || ""}
                             required
                             placeholder="Month"
                         />
@@ -182,11 +174,7 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                             min={1900}
                             max={2100}
                             className="border rounded p-2 w-28"
-                            defaultValue={
-                                state?.values?.[id] instanceof Date
-                                    ? state.values[id].getFullYear()
-                                    : ""
-                            }
+                            defaultValue={year || ""}
                             required
                             placeholder="Year"
                         />
@@ -195,14 +183,15 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                 <div id="username-error" aria-live="polite" aria-atomic="true">
                     {state?.errors?.[id] &&
                         state.errors[id].map((error: string) => (
-                        <p className="mt-2 text-sm text-red-500" key={error}>
-                            {error}
-                        </p>
-                    ))}
+                            <p className="mt-2 text-sm text-red-500" key={error}>
+                                {error}
+                            </p>
+                        ))}
                 </div>
             </>
         )
     }
+
 
     function TextInputField({ id, name } : { id: string, name: string }) {
         return (

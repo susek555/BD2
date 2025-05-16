@@ -8,7 +8,29 @@ export async function addOffer(
     console.log("Add Offer form data:", Object.fromEntries(formData.entries()));
 
     const formDataObj = Object.fromEntries(formData.entries());
-    const validatedFields = AddOfferFormSchema.safeParse(formDataObj);
+
+    const normalizedData = {
+        ...formDataObj,
+        productionYear: parseInt(formDataObj.productionYear as string),
+        mileage: parseInt(formDataObj.mileage as string),
+        numberOfDoors: parseInt(formDataObj.numberOfDoors as string),
+        numberOfSeats: parseInt(formDataObj.numberOfSeats as string),
+        power: parseInt(formDataObj.power as string),
+        engineDisplacement: parseInt(formDataObj.engineDisplacement as string),
+        dateOfFirstRegistration: formDataObj.dateOfFirstRegistration
+            ? new Date(formDataObj.dateOfFirstRegistration as string)
+            : undefined,
+        price: parseInt(formDataObj.price as string),
+        isAuction: formDataObj.isAuction === "true" ? true : false,
+        auctionEndDate: formDataObj.auctionEndDate
+            ? new Date(formDataObj.auctionEndDate as string)
+            : undefined,
+        buyNowAuctionPrice: formDataObj.buyNowAuctionPrice
+            ? parseFloat(formDataObj.buyNowAuctionPrice as string)
+            : undefined
+    }
+
+    const validatedFields = AddOfferFormSchema.safeParse(normalizedData);
     console.log("Add Offer validation result:", validatedFields);
 
 
