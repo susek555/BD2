@@ -1,8 +1,6 @@
 package review
 
 import (
-	"errors"
-
 	"github.com/susek555/BD2/car-dealer-api/pkg/mapping"
 )
 
@@ -76,7 +74,7 @@ func (service *ReviewService) GetAverageRatingByRevieweeId(revieweeId uint) (flo
 		return 0, err
 	}
 	if averageRating == 0 {
-		return 0, errors.New("no reviews found for this reviewee")
+		return 0, ErrNoReviewsFound
 	}
 	return averageRating, nil
 }
@@ -88,7 +86,7 @@ func (service *ReviewService) Update(reviewerId uint, review *UpdateReviewDTO) (
 	}
 	_, err = service.Repo.GetByReviewerIdAndRevieweeId(reviewerId, revieweeId)
 	if err != nil {
-		return nil, errors.New("you are not the reviewer of this review")
+		return nil, ErrNotReviewer
 	}
 	reviewObj := review.MapToObject(reviewerId, revieweeId)
 	err = service.Repo.Update(&reviewObj)
@@ -105,7 +103,7 @@ func (service *ReviewService) Delete(userId, id uint) error {
 		return err
 	}
 	if review.ReviewerID != userId {
-		return errors.New("you are not the reviewer of this review")
+		return ErrNotReviewer
 	}
 	return service.Repo.Delete(id)
 }
@@ -151,7 +149,7 @@ func (service *ReviewService) GetFrequencyOfRatingByRevieweeId(revieweeId uint) 
 		return nil, err
 	}
 	if len(frequency) == 0 {
-		return nil, errors.New("no reviews found for this reviewee")
+		return nil, ErrNoReviewsFound
 	}
 	return frequency, nil
 }
