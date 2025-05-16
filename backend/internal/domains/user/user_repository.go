@@ -34,7 +34,7 @@ func (r *UserRepository) Create(user *User) error {
 
 func (r *UserRepository) GetAll() ([]User, error) {
 	var users []User
-	err := r.DB.Preload("Company").Preload("Person").Find(&users).Error
+	err := r.buildBaseQuery().Find(&users).Error
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +43,7 @@ func (r *UserRepository) GetAll() ([]User, error) {
 
 func (r *UserRepository) GetById(id uint) (*User, error) {
 	var user User
-	err := r.DB.Preload("Company").Preload("Person").First(&user, id).Error
+	err := r.buildBaseQuery().First(&user, id).Error
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +52,7 @@ func (r *UserRepository) GetById(id uint) (*User, error) {
 
 func (r *UserRepository) GetByEmail(email string) (User, error) {
 	var u User
-	err := r.DB.Preload("Company").Preload("Person").Where("email = ?", email).First(&u).Error
+	err := r.buildBaseQuery().Where("email = ?", email).First(&u).Error
 	if err != nil {
 		return User{}, err
 	}
@@ -61,7 +61,7 @@ func (r *UserRepository) GetByEmail(email string) (User, error) {
 
 func (r *UserRepository) GetByUsername(username string) (User, error) {
 	var u User
-	err := r.DB.Preload("Company").Preload("Person").Where("username = ?", username).First(&u).Error
+	err := r.buildBaseQuery().Where("username = ?", username).First(&u).Error
 	if err != nil {
 		return User{}, err
 	}
@@ -70,11 +70,9 @@ func (r *UserRepository) GetByUsername(username string) (User, error) {
 
 func (r *UserRepository) GetByCompanyNip(nip string) (User, error) {
 	var u User
-	err := r.DB.
+	err := r.buildBaseQuery().
 		Joins("JOIN companies ON companies.user_id = users.id").
 		Where("companies.nip = ?", nip).
-		Preload("Company").
-		Preload("Person").
 		First(&u).Error
 
 	if err != nil {
@@ -97,4 +95,8 @@ func (r *UserRepository) Delete(id uint) error {
 	return r.DB.Transaction(func(tx *gorm.DB) error {
 		return r.DB.Delete(&User{}, id).Error
 	})
+}
+
+func (r *UserRepository) buildBaseQuery() *gorm.DB {
+	return r.DB.Preload("Person").Preload("Company")
 }
