@@ -91,6 +91,7 @@ func prepareLoginResponse(access, refresh string, user user.User) *LoginResponse
 		AccessToken:  access,
 		Selector:     user.Selector,
 		Username:     user.Username,
+		UserID:      user.ID,
 		Email:        user.Email,
 	}
 	if user.Selector == "C" {
