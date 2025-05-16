@@ -167,30 +167,13 @@ func (repo *ReviewRepository) buildBaseQuery() *gorm.DB {
 }
 
 func (repo *ReviewRepository) GetFrequencyOfRatingByRevieweeId(revieweeId uint) (map[int]int, error) {
-	freqMap := make(map[int]int, 5)
-	for i := 1; i <= 5; i++ {
-		freqMap[i] = 0
-	}
-
-	var raw []RatingFrequency
-	if err := repo.repository.
-		DB.
-		Model(&Review{}).
-		Select("rating, COUNT(*) AS frequency").
-		Where("reviewee_id = ?", revieweeId).
-		Group("rating").
-		Scan(&raw).
-		Error; err != nil {
+	freqMap := repo.prepareFreqMap()
+	raw, err := repo.getFrequencies(revieweeId)
+	if err != nil {
 		return freqMap, err
 	}
-
-	var total int64
-	if err := repo.repository.
-		DB.
-		Model(&Review{}).
-		Where("reviewee_id = ?", revieweeId).
-		Count(&total).
-		Error; err != nil {
+	total, err := repo.getTotalReviews(revieweeId)
+	if err != nil {
 		return freqMap, err
 	}
 
@@ -203,4 +186,42 @@ func (repo *ReviewRepository) GetFrequencyOfRatingByRevieweeId(revieweeId uint) 
 		}
 	}
 	return freqMap, nil
+}
+
+func (repo *ReviewRepository) prepareFreqMap() map[int]int {
+	freqMap := make(map[int]int, 5)
+	for i := 1; i <= 5; i++ {
+		freqMap[i] = 0
+	}
+	return freqMap
+}
+
+func (repo *ReviewRepository) getFrequencies(revieweeId uint) ([]RatingFrequency, error) {
+	var frequencies []RatingFrequency
+	err := repo.repository.
+		DB.
+		Model(&Review{}).
+		Select("rating, COUNT(*) AS frequency").
+		Where("reviewee_id = ?", revieweeId).
+		Group("rating").
+		Scan(&frequencies).
+		Error
+	if err != nil {
+		return nil, err
+	}
+	return frequencies, nil
+}
+
+func (repo *ReviewRepository) getTotalReviews(revieweeId uint) (int64, error) {
+	var total int64
+	err := repo.repository.
+		DB.
+		Model(&Review{}).
+		Where("reviewee_id = ?", revieweeId).
+		Count(&total).
+		Error
+	if err != nil {
+		return 0, err
+	}
+	return total, nil
 }
