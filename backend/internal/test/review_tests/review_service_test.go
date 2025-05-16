@@ -153,8 +153,8 @@ func TestCreate_Error(t *testing.T) {
 	svc, repo := newServiceWithMock()
 	userID := uint(1)
 
-	in := &review.CreateReviewDTO{Description: "bad"}
-	repoErr := errors.New("insert failed")
+	in := &review.CreateReviewDTO{Description: "bad", Rating: 1}
+	repoErr := errors.New("err")
 
 	repo.
 		On("Create", mock.AnythingOfType("*review.Review")).
@@ -163,7 +163,8 @@ func TestCreate_Error(t *testing.T) {
 
 	got, err := svc.Create(userID, in)
 
-	require.ErrorIs(t, err, repoErr)
+	require.Error(t, err)
+	assert.Equal(t, repoErr.Error(), err.Error())
 	assert.Nil(t, got)
 	repo.AssertExpectations(t)
 }
@@ -196,13 +197,14 @@ func TestGet_Success(t *testing.T) {
 func TestGet_Error(t *testing.T) {
 	svc, repo := newServiceWithMock()
 
-	repoErr := errors.New("not found")
+	repoErr := errors.New("no review found")
 	repo.On("GetById", uint(7)).Return(&review.Review{}, repoErr).Once()
 
 	got, err := svc.GetById(7)
 	var want *review.RetrieveReviewDTO = nil
 
-	require.ErrorIs(t, err, repoErr)
+	require.Error(t, err)
+	assert.Equal(t, repoErr.Error(), err.Error())
 	assert.Equal(t, want, got)
 	repo.AssertExpectations(t)
 }
@@ -273,7 +275,7 @@ func TestUpdate_Error(t *testing.T) {
 
 	reviewerID := uint(5)
 	reviewID := uint(5)
-	upd := &review.UpdateReviewDTO{ID: reviewID, Description: "fail"}
+	upd := &review.UpdateReviewDTO{ID: reviewID, Description: "fail", Rating: 1}
 
 	repoErr := errors.New("update failed")
 
