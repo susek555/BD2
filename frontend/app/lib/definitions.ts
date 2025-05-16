@@ -295,6 +295,7 @@ export const AddOfferFormSchema = z.object({
 
 export type AddOfferFormState = {
   errors?: {
+    [key: string]: string[] | undefined;
     producer?: string[];
     model?: string[];
     color?: string[];

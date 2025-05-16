@@ -26,4 +26,5 @@ export async function addOffer(
     return state;
 
     // permanentRedirect("/");
+    //TODO redirect to my offers
 }
