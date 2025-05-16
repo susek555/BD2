@@ -6,13 +6,7 @@ import { BaseFilterTemplate } from "@/app/ui/(home)/base-filter-template/base-fi
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
-export default function ProducersAndModels({ producersAndModels }: { producersAndModels: ModelFieldData }) {
-
-    const searchParams = useSearchParams();
-    const pathname = usePathname();
-    const { replace } = useRouter();
-
-    function getAvailableModels(producersData: FilterFieldData, models: string[][]) : string[] {
+export function getAvailableModels(producersData: FilterFieldData, models: string[][]) : string[] {
         const selectedIndexes = (producersData.selected ?? [])
             .map(selectedItem => producersData.options.indexOf(selectedItem))
             .filter(index => index !== -1);
@@ -23,6 +17,12 @@ export default function ProducersAndModels({ producersAndModels }: { producersAn
 
         return result;
     }
+
+export default function ProducersAndModels({ producersAndModels }: { producersAndModels: ModelFieldData }) {
+
+    const searchParams = useSearchParams();
+    const pathname = usePathname();
+    const { replace } = useRouter();
 
     const producers = syncFiltersWithParams([producersAndModels.producers], searchParams)[0] as { fieldName: string; options: string[]; selected: string[] };
     const [models, setModels] = useState<FilterFieldData>(syncFiltersWithParams([{
