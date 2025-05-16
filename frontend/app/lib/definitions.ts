@@ -335,12 +335,12 @@ export type AddOfferFormState = {
     dateOfFirstRegistration?: Date;
     plateNumber?: string;
     location?: string;
+    description?: string;
+    images?: File[]; // Array of image files
     price?: number;
     isAuction?: boolean;
     auctionEndDate?: Date;
     buyNowAuctionPrice?: number;
-    description?: string;
-    images?: File[]; // Array of image files
   }
 }
 
