@@ -103,7 +103,7 @@ func (h *Handler) UpdateUser(c *gin.Context) {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
-	if err := h.service.Update(userDTO); err != nil {
+	if err := h.service.Update(&userDTO); err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}

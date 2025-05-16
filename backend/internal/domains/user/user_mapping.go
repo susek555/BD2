@@ -61,30 +61,26 @@ func (dto *CreateUserDTO) validateC() error {
 	return nil
 }
 
-func (user *User) MapToDTO() (RetrieveUserDTO, error) {
+func (user *User) MapToDTO() *RetrieveUserDTO {
 	switch user.Selector {
 	case "P":
-		return RetrieveUserDTO{
-				ID:            user.ID,
-				Username:      user.Username,
-				Email:         user.Email,
-				PersonName:    &user.Person.Name,
-				PersonSurname: &user.Person.Surname,
-			},
-			nil
+		return &RetrieveUserDTO{
+			ID:            user.ID,
+			Username:      user.Username,
+			Email:         user.Email,
+			PersonName:    &user.Person.Name,
+			PersonSurname: &user.Person.Surname,
+		}
 	case "C":
-		return RetrieveUserDTO{
-				ID:          user.ID,
-				Username:    user.Username,
-				Email:       user.Email,
-				CompanyName: &user.Company.Name,
-				CompanyNIP:  &user.Company.NIP,
-			},
-			nil
-	default:
-		return RetrieveUserDTO{}, ErrInvalidSelector
+		return &RetrieveUserDTO{
+			ID:          user.ID,
+			Username:    user.Username,
+			Email:       user.Email,
+			CompanyName: &user.Company.Name,
+			CompanyNIP:  &user.Company.NIP,
+		}
 	}
-
+	return nil
 }
 
 func (dto *UpdateUserDTO) UpdateUserFromDTO(user *User) (*User, error) {
