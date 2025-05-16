@@ -252,8 +252,7 @@ func TestMapToUser_CompanyWithAllFields(t *testing.T) {
 
 func TestMapToDTO_Person(t *testing.T) {
 	user := createPerson()
-	dto, err := user.MapToDTO()
-	assert.NoError(t, err)
+	dto := user.MapToDTO()
 	assert.Equal(t, user.ID, dto.ID)
 	assert.Equal(t, user.Username, dto.Username)
 	assert.Equal(t, user.Email, dto.Email)
@@ -262,8 +261,7 @@ func TestMapToDTO_Person(t *testing.T) {
 }
 func TestMapToDTO_Company(t *testing.T) {
 	user := createCompany()
-	dto, err := user.MapToDTO()
-	assert.NoError(t, err)
+	dto := user.MapToDTO()
 	assert.Equal(t, user.ID, dto.ID)
 	assert.Equal(t, user.Username, dto.Username)
 	assert.Equal(t, user.Email, dto.Email)
