@@ -97,6 +97,7 @@ func (h *Handler) GetUserByEmail(c *gin.Context) {
 //	@Failure		404		{object}	custom_errors.HTTPError	"User not found"
 //	@Failure		500		{object}	custom_errors.HTTPError	"Internal server error"
 //	@Router			/users [put]
+//	@Security		Bearer
 func (h *Handler) UpdateUser(c *gin.Context) {
 	var userDTO UpdateUserDTO
 	if err := c.ShouldBindJSON(&userDTO); err != nil {
@@ -123,6 +124,8 @@ func (h *Handler) UpdateUser(c *gin.Context) {
 //	@Failure		404	{object}	custom_errors.HTTPError	"User not found"
 //	@Failure		500	{object}	custom_errors.HTTPError	"Internal server error"
 //	@Router			/users/{id} [delete]
+//
+//	@Security		Bearer
 func (h *Handler) DeleteUser(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {

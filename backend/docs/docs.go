@@ -493,7 +493,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/review.ReviewOutput"
+                                "$ref": "#/definitions/review.RetrieveReviewDTO"
                             }
                         }
                     },
@@ -525,7 +525,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/review.ReviewInput"
+                            "$ref": "#/definitions/review.UpdateReviewDTO"
                         }
                     }
                 ],
@@ -533,7 +533,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK – review updated",
                         "schema": {
-                            "$ref": "#/definitions/review.ReviewOutput"
+                            "$ref": "#/definitions/review.RetrieveReviewDTO"
                         }
                     },
                     "400": {
@@ -564,7 +564,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/review.ReviewInput"
+                            "$ref": "#/definitions/review.CreateReviewDTO"
                         }
                     }
                 ],
@@ -572,7 +572,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created – review stored",
                         "schema": {
-                            "$ref": "#/definitions/review.ReviewOutput"
+                            "$ref": "#/definitions/review.RetrieveReviewDTO"
                         }
                     },
                     "400": {
@@ -610,7 +610,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/review.ReviewOutput"
+                                "$ref": "#/definitions/review.RetrieveReviewDTO"
                             }
                         }
                     },
@@ -649,7 +649,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/review.ReviewOutput"
+                                "$ref": "#/definitions/review.RetrieveReviewDTO"
                             }
                         }
                     },
@@ -693,7 +693,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK – review found",
                         "schema": {
-                            "$ref": "#/definitions/review.ReviewOutput"
+                            "$ref": "#/definitions/review.RetrieveReviewDTO"
                         }
                     },
                     "400": {
@@ -729,7 +729,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK – review with given id",
                         "schema": {
-                            "$ref": "#/definitions/review.ReviewOutput"
+                            "$ref": "#/definitions/review.RetrieveReviewDTO"
                         }
                     },
                     "400": {
@@ -774,7 +774,64 @@ const docTemplate = `{
         },
         "/sale-offer": {
             "post": {
-                "description": "Returns a list of sale offers in paginated form. The results are filtered based on request's body. There are several constraints on the filter fields, such as:\n- Offer type must be one of the predefined offer types (endpoint: /sale-offer/offer-types)\n- Order key must be one of the predefined order keys (endpoint: /sale-offer/order-keys)\n- List of manufacturers must contain only predefined manufacturers (endpoint: /car/manufacturers)\n- List of colors must containonly predefined colors (endpoint: /car/colors)\n- List of drives must contain only predefined drives (endpoint: /car/drives)\n- List of fuel types must contain only predefined fuel types (endpoint: /car/fuel_types)\n- List of transmissions must contain only predefined transmission types (endpoint: /car/transmissions)\n- Whenever you use a range, the min value must be less than or equal to the max value, you can provide only one of them, and the other will be ignored.",
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Creates a new sale offer in the database. To create a sale offer, the user must be logged in. There are several constraints on the offer fields, such as:\n- Color must be one of the predefined colors (endpoint: /car/colors)\n- Fuel type must be one of the predefined fuel types (endpoint: /car/fuel_types)\n- Transmission must be one of the predefined transmission types (endpotin: /car/transmissions)\n- Drive must be one of the predefined drive types (endpoint: /car/drives)\n- Model must be one of the predefined models (endpoint: /car/models or /car/models/:id)\n- Number of doors must be between 1 and 6\n- Number of seats must be between 2 and 100\n- Engine power must be less than or equal to 9999 (in horsepower)\n- Engine capacity must be less than or equal to 9000 (in cm3)\n- Number of gears must be between 1 and 10",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sale-offer"
+                ],
+                "summary": "Create a new sale offer",
+                "parameters": [
+                    {
+                        "description": "Sale offer form",
+                        "name": "offer",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sale_offer.CreateSaleOfferDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created - returns the created sale offer",
+                        "schema": {
+                            "$ref": "#/definitions/sale_offer.CreateSaleOfferDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input data",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - user not logged in",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/sale-offer/filtered": {
+            "post": {
+                "description": "Returns a list of sale offers in paginated form. If the user is logged in, the results are not containing the offers created by the user. The results are filtered based on request's body. There are several constraints on the filter fields, such as:\n- Offer type must be one of the predefined offer types (endpoint: /sale-offer/offer-types)\n- Order key must be one of the predefined order keys (endpoint: /sale-offer/order-keys)\n- List of manufacturers must contain only predefined manufacturers (endpoint: /car/manufacturers)\n- List of colors must containonly predefined colors (endpoint: /car/colors)\n- List of drives must contain only predefined drives (endpoint: /car/drives)\n- List of fuel types must contain only predefined fuel types (endpoint: /car/fuel_types)\n- List of transmissions must contain only predefined transmission types (endpoint: /car/transmissions)\n- Whenever you use a range, the min value must be less than or equal to the max value, you can provide only one of them, and the other will be ignored.",
                 "consumes": [
                     "application/json"
                 ],
@@ -818,9 +875,99 @@ const docTemplate = `{
                 }
             }
         },
+        "/sale-offer/id/{id}": {
+            "get": {
+                "description": "Returns a sale offer by its ID. Can be used to retrieve detailed information about sale offer.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sale-offer"
+                ],
+                "summary": "Get sale offer by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Sale offer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Sale offer details",
+                        "schema": {
+                            "$ref": "#/definitions/sale_offer.RetrieveDetailedSaleOfferDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input data",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Sale offer not found",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/sale-offer/my-offers": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Returns a list of all sale offers created by the logged-in user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sale-offer"
+                ],
+                "summary": "Get my sale offers",
+                "responses": {
+                    "200": {
+                        "description": "List of sale offers",
+                        "schema": {
+                            "$ref": "#/definitions/sale_offer.RetrieveSaleOfferDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - user not logged in",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/sale-offer/offer-types": {
             "get": {
-                "description": "Returns a list of all possible offer types that are accepted when using filtering.",
+                "description": "Returns a list of all possible offer types that are accepted when using filtering. If you choose both the auctions and regular offers will be found.",
                 "consumes": [
                     "application/json"
                 ],
@@ -908,6 +1055,11 @@ const docTemplate = `{
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Updates user's data in database from given form. Currently you can only change basic fields (email, username, password), not the subtype.",
                 "consumes": [
                     "application/json"
@@ -1054,6 +1206,11 @@ const docTemplate = `{
         },
         "/users/{id}": {
             "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Removes user who has provided id from database.",
                 "consumes": [
                     "application/json"
@@ -1343,7 +1500,7 @@ const docTemplate = `{
                 }
             }
         },
-        "review.ReviewInput": {
+        "review.CreateReviewDTO": {
             "type": "object",
             "properties": {
                 "description": {
@@ -1354,13 +1511,10 @@ const docTemplate = `{
                 },
                 "reviewee_id": {
                     "type": "integer"
-                },
-                "reviewer_id": {
-                    "type": "integer"
                 }
             }
         },
-        "review.ReviewOutput": {
+        "review.RetrieveReviewDTO": {
             "type": "object",
             "properties": {
                 "description": {
@@ -1377,6 +1531,20 @@ const docTemplate = `{
                 },
                 "reviewer": {
                     "$ref": "#/definitions/review.UserDTO"
+                }
+            }
+        },
+        "review.UpdateReviewDTO": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "rating": {
+                    "type": "integer"
                 }
             }
         },
@@ -1541,6 +1709,9 @@ const docTemplate = `{
                         "$ref": "#/definitions/car_params.Transmission"
                     }
                 },
+                "user_id": {
+                    "type": "integer"
+                },
                 "year_range": {
                     "$ref": "#/definitions/sale_offer.MinMax-uint"
                 }
@@ -1559,21 +1730,7 @@ const docTemplate = `{
                 "BOTH"
             ]
         },
-        "sale_offer.RetrieveOffersWithPagination": {
-            "type": "object",
-            "properties": {
-                "offers": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/sale_offer.RetrieveSaleOfferDTO"
-                    }
-                },
-                "pagination": {
-                    "$ref": "#/definitions/pagination.PaginationResponse"
-                }
-            }
-        },
-        "sale_offer.RetrieveSaleOfferDTO": {
+        "sale_offer.RetrieveDetailedSaleOfferDTO": {
             "type": "object",
             "properties": {
                 "brand": {
@@ -1605,6 +1762,9 @@ const docTemplate = `{
                 },
                 "fuel_type": {
                     "$ref": "#/definitions/car_params.FuelType"
+                },
+                "id": {
+                    "type": "integer"
                 },
                 "margin": {
                     "type": "integer"
@@ -1643,6 +1803,49 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "vin": {
+                    "type": "string"
+                }
+            }
+        },
+        "sale_offer.RetrieveOffersWithPagination": {
+            "type": "object",
+            "properties": {
+                "offers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/sale_offer.RetrieveSaleOfferDTO"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/pagination.PaginationResponse"
+                }
+            }
+        },
+        "sale_offer.RetrieveSaleOfferDTO": {
+            "type": "object",
+            "properties": {
+                "color": {
+                    "$ref": "#/definitions/car_params.Color"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_auction": {
+                    "type": "boolean"
+                },
+                "mileage": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "production_year": {
+                    "type": "integer"
+                },
+                "username": {
                     "type": "string"
                 }
             }

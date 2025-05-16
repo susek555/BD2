@@ -25,7 +25,7 @@ func NewHandler(service ReviewServiceInterface) *Handler {
 //	@Description	Returns every review in the system as an array of DTOs.
 //	@Tags			reviews
 //	@Produce		json
-//	@Success		200	{array}		ReviewOutput			"OK – list of reviews"
+//	@Success		200	{array}		RetrieveReviewDTO		"OK – list of reviews"
 //	@Failure		400	{object}	custom_errors.HTTPError	"Bad Request – query failed"
 //	@Router			/review [get]
 func (h *Handler) GetAllReviews(c *gin.Context) {
@@ -45,7 +45,7 @@ func (h *Handler) GetAllReviews(c *gin.Context) {
 //	@Tags			reviews
 //	@Produce		json
 //	@Param			id	path		int						true	"Review id"
-//	@Success		200	{object}	ReviewOutput			"OK – review with given id"
+//	@Success		200	{object}	RetrieveReviewDTO		"OK – review with given id"
 //	@Failure		400	{object}	custom_errors.HTTPError	"Bad Request – query failed"
 //	@Router			/review/{id} [get]
 func (h *Handler) GetReviewById(c *gin.Context) {
@@ -70,8 +70,8 @@ func (h *Handler) GetReviewById(c *gin.Context) {
 //	@Tags			reviews
 //	@Accept			json
 //	@Produce		json
-//	@Param			body	body		ReviewInput				true	"Review payload"
-//	@Success		201		{object}	ReviewOutput			"Created – review stored"
+//	@Param			body	body		CreateReviewDTO			true	"Review payload"
+//	@Success		201		{object}	RetrieveReviewDTO		"Created – review stored"
 //	@Failure		400		{object}	custom_errors.HTTPError	"Bad Request – validation or persistence error"
 //	@Router			/review [post]
 func (h *Handler) CreateReview(c *gin.Context) {
@@ -101,8 +101,8 @@ func (h *Handler) CreateReview(c *gin.Context) {
 //	@Tags			reviews
 //	@Accept			json
 //	@Produce		json
-//	@Param			body	body		ReviewInput				true	"Review payload"
-//	@Success		200		{object}	ReviewOutput			"OK – review updated"
+//	@Param			body	body		UpdateReviewDTO			true	"Review payload"
+//	@Success		200		{object}	RetrieveReviewDTO		"OK – review updated"
 //	@Failure		400		{object}	custom_errors.HTTPError	"Bad Request – validation or update error"
 //	@Router			/review [put]
 func (h *Handler) UpdateReview(c *gin.Context) {
@@ -158,7 +158,7 @@ func (h *Handler) DeleteReview(c *gin.Context) {
 //	@Tags			reviews
 //	@Produce		json
 //	@Param			id	path		int						true	"Reviewer ID"
-//	@Success		200	{array}		ReviewOutput			"OK – list of reviews"
+//	@Success		200	{array}		RetrieveReviewDTO		"OK – list of reviews"
 //	@Failure		400	{object}	custom_errors.HTTPError	"Bad Request – invalid ID format or query failed"
 //	@Router			/review/reviewer/{id} [get]
 func (h *Handler) GetReviewsByReviewerId(c *gin.Context) {
@@ -181,7 +181,7 @@ func (h *Handler) GetReviewsByReviewerId(c *gin.Context) {
 //	@Tags			reviews
 //	@Produce		json
 //	@Param			id	path		int						true	"Reviewee ID"
-//	@Success		200	{array}		ReviewOutput			"OK – list of reviews"
+//	@Success		200	{array}		RetrieveReviewDTO		"OK – list of reviews"
 //	@Failure		400	{object}	custom_errors.HTTPError	"Bad Request – invalid ID format or query failed"
 //	@Router			/review/reviewee/{id} [get]
 func (h *Handler) GetReviewsByRevieweeId(c *gin.Context) {
@@ -205,7 +205,7 @@ func (h *Handler) GetReviewsByRevieweeId(c *gin.Context) {
 //	@Produce		json
 //	@Param			reviewerId	path		int						true	"Reviewer ID"
 //	@Param			revieweeId	path		int						true	"Reviewee ID"
-//	@Success		200			{object}	ReviewOutput			"OK – review found"
+//	@Success		200			{object}	RetrieveReviewDTO		"OK – review found"
 //	@Failure		400			{object}	custom_errors.HTTPError	"Bad Request – invalid ID format or query failed"
 //	@Router			/review/reviewer/{reviewerId}/reviewee/{revieweeId} [get]
 func (h *Handler) GetReviewsByReviewerIdAndRevieweeId(c *gin.Context) {

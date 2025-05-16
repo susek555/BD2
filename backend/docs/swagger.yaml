@@ -178,7 +178,7 @@ definitions:
       total_records:
         type: integer
     type: object
-  review.ReviewInput:
+  review.CreateReviewDTO:
     properties:
       description:
         type: string
@@ -186,10 +186,8 @@ definitions:
         type: integer
       reviewee_id:
         type: integer
-      reviewer_id:
-        type: integer
     type: object
-  review.ReviewOutput:
+  review.RetrieveReviewDTO:
     properties:
       description:
         type: string
@@ -201,6 +199,15 @@ definitions:
         $ref: '#/definitions/review.UserDTO'
       reviewer:
         $ref: '#/definitions/review.UserDTO'
+    type: object
+  review.UpdateReviewDTO:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      rating:
+        type: integer
     type: object
   review.UserDTO:
     properties:
@@ -308,6 +315,8 @@ definitions:
         items:
           $ref: '#/definitions/car_params.Transmission'
         type: array
+      user_id:
+        type: integer
       year_range:
         $ref: '#/definitions/sale_offer.MinMax-uint'
     type: object
@@ -321,16 +330,7 @@ definitions:
     - REGULAR_OFFER
     - AUCTION
     - BOTH
-  sale_offer.RetrieveOffersWithPagination:
-    properties:
-      offers:
-        items:
-          $ref: '#/definitions/sale_offer.RetrieveSaleOfferDTO'
-        type: array
-      pagination:
-        $ref: '#/definitions/pagination.PaginationResponse'
-    type: object
-  sale_offer.RetrieveSaleOfferDTO:
+  sale_offer.RetrieveDetailedSaleOfferDTO:
     properties:
       brand:
         type: string
@@ -352,6 +352,8 @@ definitions:
         type: integer
       fuel_type:
         $ref: '#/definitions/car_params.FuelType'
+      id:
+        type: integer
       margin:
         type: integer
       mileage:
@@ -377,6 +379,34 @@ definitions:
       username:
         type: string
       vin:
+        type: string
+    type: object
+  sale_offer.RetrieveOffersWithPagination:
+    properties:
+      offers:
+        items:
+          $ref: '#/definitions/sale_offer.RetrieveSaleOfferDTO'
+        type: array
+      pagination:
+        $ref: '#/definitions/pagination.PaginationResponse'
+    type: object
+  sale_offer.RetrieveSaleOfferDTO:
+    properties:
+      color:
+        $ref: '#/definitions/car_params.Color'
+      id:
+        type: integer
+      is_auction:
+        type: boolean
+      mileage:
+        type: integer
+      name:
+        type: string
+      price:
+        type: integer
+      production_year:
+        type: integer
+      username:
         type: string
     type: object
   user.CreateUserDTO:
@@ -754,7 +784,7 @@ paths:
           description: OK – list of reviews
           schema:
             items:
-              $ref: '#/definitions/review.ReviewOutput'
+              $ref: '#/definitions/review.RetrieveReviewDTO'
             type: array
         "400":
           description: Bad Request – query failed
@@ -774,14 +804,14 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/review.ReviewInput'
+          $ref: '#/definitions/review.CreateReviewDTO'
       produces:
       - application/json
       responses:
         "201":
           description: Created – review stored
           schema:
-            $ref: '#/definitions/review.ReviewOutput'
+            $ref: '#/definitions/review.RetrieveReviewDTO'
         "400":
           description: Bad Request – validation or persistence error
           schema:
@@ -800,14 +830,14 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/review.ReviewInput'
+          $ref: '#/definitions/review.UpdateReviewDTO'
       produces:
       - application/json
       responses:
         "200":
           description: OK – review updated
           schema:
-            $ref: '#/definitions/review.ReviewOutput'
+            $ref: '#/definitions/review.RetrieveReviewDTO'
         "400":
           description: Bad Request – validation or update error
           schema:
@@ -852,7 +882,7 @@ paths:
         "200":
           description: OK – review with given id
           schema:
-            $ref: '#/definitions/review.ReviewOutput'
+            $ref: '#/definitions/review.RetrieveReviewDTO'
         "400":
           description: Bad Request – query failed
           schema:
@@ -877,7 +907,7 @@ paths:
           description: OK – list of reviews
           schema:
             items:
-              $ref: '#/definitions/review.ReviewOutput'
+              $ref: '#/definitions/review.RetrieveReviewDTO'
             type: array
         "400":
           description: Bad Request – invalid ID format or query failed
@@ -903,7 +933,7 @@ paths:
           description: OK – list of reviews
           schema:
             items:
-              $ref: '#/definitions/review.ReviewOutput'
+              $ref: '#/definitions/review.RetrieveReviewDTO'
             type: array
         "400":
           description: Bad Request – invalid ID format or query failed
@@ -934,7 +964,7 @@ paths:
         "200":
           description: OK – review found
           schema:
-            $ref: '#/definitions/review.ReviewOutput'
+            $ref: '#/definitions/review.RetrieveReviewDTO'
         "400":
           description: Bad Request – invalid ID format or query failed
           schema:
@@ -947,7 +977,54 @@ paths:
       consumes:
       - application/json
       description: |-
-        Returns a list of sale offers in paginated form. The results are filtered based on request's body. There are several constraints on the filter fields, such as:
+        Creates a new sale offer in the database. To create a sale offer, the user must be logged in. There are several constraints on the offer fields, such as:
+        - Color must be one of the predefined colors (endpoint: /car/colors)
+        - Fuel type must be one of the predefined fuel types (endpoint: /car/fuel_types)
+        - Transmission must be one of the predefined transmission types (endpotin: /car/transmissions)
+        - Drive must be one of the predefined drive types (endpoint: /car/drives)
+        - Model must be one of the predefined models (endpoint: /car/models or /car/models/:id)
+        - Number of doors must be between 1 and 6
+        - Number of seats must be between 2 and 100
+        - Engine power must be less than or equal to 9999 (in horsepower)
+        - Engine capacity must be less than or equal to 9000 (in cm3)
+        - Number of gears must be between 1 and 10
+      parameters:
+      - description: Sale offer form
+        in: body
+        name: offer
+        required: true
+        schema:
+          $ref: '#/definitions/sale_offer.CreateSaleOfferDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created - returns the created sale offer
+          schema:
+            $ref: '#/definitions/sale_offer.CreateSaleOfferDTO'
+        "400":
+          description: Invalid input data
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "401":
+          description: Unauthorized - user not logged in
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      security:
+      - Bearer: []
+      summary: Create a new sale offer
+      tags:
+      - sale-offer
+  /sale-offer/filtered:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Returns a list of sale offers in paginated form. If the user is logged in, the results are not containing the offers created by the user. The results are filtered based on request's body. There are several constraints on the filter fields, such as:
         - Offer type must be one of the predefined offer types (endpoint: /sale-offer/offer-types)
         - Order key must be one of the predefined order keys (endpoint: /sale-offer/order-keys)
         - List of manufacturers must contain only predefined manufacturers (endpoint: /car/manufacturers)
@@ -981,12 +1058,72 @@ paths:
       summary: Get filtered sale offers
       tags:
       - sale-offer
+  /sale-offer/id/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Returns a sale offer by its ID. Can be used to retrieve detailed
+        information about sale offer.
+      parameters:
+      - description: Sale offer ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Sale offer details
+          schema:
+            $ref: '#/definitions/sale_offer.RetrieveDetailedSaleOfferDTO'
+        "400":
+          description: Invalid input data
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "404":
+          description: Sale offer not found
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Get sale offer by ID
+      tags:
+      - sale-offer
+  /sale-offer/my-offers:
+    get:
+      consumes:
+      - application/json
+      description: Returns a list of all sale offers created by the logged-in user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of sale offers
+          schema:
+            $ref: '#/definitions/sale_offer.RetrieveSaleOfferDTO'
+        "401":
+          description: Unauthorized - user not logged in
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      security:
+      - Bearer: []
+      summary: Get my sale offers
+      tags:
+      - sale-offer
   /sale-offer/offer-types:
     get:
       consumes:
       - application/json
       description: Returns a list of all possible offer types that are accepted when
-        using filtering.
+        using filtering. If you choose both the auctions and regular offers will be
+        found.
       produces:
       - application/json
       responses:
@@ -1074,6 +1211,8 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/custom_errors.HTTPError'
+      security:
+      - Bearer: []
       summary: Update user
       tags:
       - users
@@ -1105,6 +1244,8 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/custom_errors.HTTPError'
+      security:
+      - Bearer: []
       summary: Delete user
       tags:
       - users
