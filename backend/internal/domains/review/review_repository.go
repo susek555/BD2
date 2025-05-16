@@ -2,6 +2,7 @@ package review
 
 import (
 	"errors"
+	"math"
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/generic"
 	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
@@ -152,7 +153,8 @@ func (repo *ReviewRepository) GetAverageRatingByRevieweeId(revieweeId uint) (flo
 	if err != nil {
 		return 0, errors.New("no reviews found")
 	}
-	return average, nil
+	roundedAverage := math.Round(average*100) / 100
+	return roundedAverage, nil
 }
 
 func (repo *ReviewRepository) buildBaseQuery() *gorm.DB {
