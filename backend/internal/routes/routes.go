@@ -81,8 +81,8 @@ func registerReviewRoutes(router *gin.Engine) {
 	reviewRoutes.POST("/", middleware.Authenticate(verifier), reviewHandler.CreateReview)
 	reviewRoutes.PUT("/", middleware.Authenticate(verifier), reviewHandler.UpdateReview)
 	reviewRoutes.DELETE("/:id", middleware.Authenticate(verifier), reviewHandler.DeleteReview)
-	reviewRoutes.GET("/reviewer/:id", reviewHandler.GetReviewsByReviewerId)
-	reviewRoutes.GET("/reviewee/:id", reviewHandler.GetReviewsByRevieweeId)
+	reviewRoutes.POST("/reviewer/:id", reviewHandler.GetReviewsByReviewerId)
+	reviewRoutes.POST("/reviewee/:id", reviewHandler.GetReviewsByRevieweeId)
 	reviewRoutes.GET("/reviewer/reviewee/:reviewerId/:revieweeId", reviewHandler.GetReviewsByReviewerIdAndRevieweeId)
 	reviewRoutes.POST("/filtered", reviewHandler.GetFilteredReviews)
 }
