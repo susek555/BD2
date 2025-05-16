@@ -36,7 +36,7 @@ func (h *Handler) CreateAuction(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
-	c.JSON(http.StatusOK, dto)
+	c.JSON(http.StatusCreated, dto)
 }
 
 func (h *Handler) GetAllAuctions(c *gin.Context) {
