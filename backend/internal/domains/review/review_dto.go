@@ -1,5 +1,7 @@
 package review
 
+import "github.com/susek555/BD2/car-dealer-api/pkg/pagination"
+
 type RetrieveReviewDTO struct {
 	ID          uint    `json:"id"`
 	Description string  `json:"description"`
@@ -24,4 +26,9 @@ type UpdateReviewDTO struct {
 type UserDTO struct {
 	ID       uint   `json:"id"`
 	Username string `json:"username"`
+}
+
+type RetrieveReviewsWithPagination struct {
+	Reviews            []RetrieveReviewDTO           `json:"reviews"`
+	PaginationResponse pagination.PaginationResponse `json:"pagination"`
 }
