@@ -150,8 +150,8 @@ func (h *Handler) GetSaleOfferTypes(c *gin.Context) {
 //	@Success		200	{object}	map[string][]string	"List of order keys"
 //	@Router			/sale-offer/order-keys [get]
 func (h *Handler) GetOrderKeys(c *gin.Context) {
-	keys := make([]string, 0, len(OrderMap))
-	for k := range OrderMap {
+	keys := make([]string, 0, len(OrderKeysMap))
+	for k := range OrderKeysMap {
 		keys = append(keys, k)
 	}
 	c.JSON(http.StatusOK, gin.H{"order_keys": keys})
