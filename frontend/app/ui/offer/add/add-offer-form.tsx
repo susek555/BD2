@@ -1,19 +1,11 @@
 "use client"
 
-import { AddOfferFormData } from "@/app/lib/definitions";
-import React from "react";
+import { AddOfferFormData, AddOfferFormState } from "@/app/lib/definitions";
+import React, { useActionState } from "react";
 import { getAvailableModels } from "../../(home)/producers-and-models";
-import { string } from "zod";
+import { addOffer } from "@/app/actions/add-offer";
 
 export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFormData}) {
-
-    function handleSubmit(formData: FormData): any {
-        //TODO set offer type
-        const formDataObj = Object.fromEntries(formData.entries());
-        console.log("Add Offer form data:", formDataObj);
-        return formDataObj;
-    }
-
     const [availableModels, setAvailableModels] = React.useState<string[]>([]);
 
     function handleProducerChange(producer: string) {
@@ -25,6 +17,38 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
 
     function changeOfferType(isAuction: boolean) {
         setIsAuction(isAuction);
+    }
+
+    const initialState: AddOfferFormState = {
+        errors: {},
+        values: {}
+    };
+
+    const [state, action] = useActionState(addOffer, initialState);
+
+    const handleSubmit = (formData: FormData) => {
+        formData.append("isAuction", isAuction.toString());
+        const registraction_day = formData.get("dateOfFirstRegistration-day");
+        const registraction_month = formData.get("dateOfFirstRegistration-month");
+        const registraction_year = formData.get("dateOfFirstRegistration-year");
+        if (registraction_day && registraction_month && registraction_year) {
+            const date = `${registraction_year.toString().padStart(4, "0")}-${registraction_month.toString().padStart(2, "0")}-${registraction_day.toString().padStart(2, "0")}`;
+            formData.set("dateOfFirstRegistration", date);
+            formData.delete("dateOfFirstRegistration-day");
+            formData.delete("dateOfFirstRegistration-month");
+            formData.delete("dateOfFirstRegistration-year");
+        }
+        const auction_day = formData.get("auctionEndDate-day");
+        const auction_month = formData.get("auctionEndDate-month");
+        const auction_year = formData.get("auctionEndDate-year");
+        if (auction_day && auction_month && auction_year) {
+            const auctionDate = `${auction_year.toString().padStart(4, "0")}-${auction_month.toString().padStart(2, "0")}-${auction_day.toString().padStart(2, "0")}`;
+            formData.set("auctionEndDate", auctionDate);
+            formData.delete("auctionEndDate-day");
+            formData.delete("auctionEndDate-month");
+            formData.delete("auctionEndDate-year");
+        }
+        return action(formData)
     }
 
     // UI
