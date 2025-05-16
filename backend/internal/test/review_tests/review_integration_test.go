@@ -514,7 +514,7 @@ func TestCreateReviewInvalidRating(t *testing.T) {
 	var got map[string]string
 	err = json.Unmarshal(w.Body.Bytes(), &got)
 	assert.NoError(t, err)
-	assert.Equal(t, "CHECK constraint failed: chk_reviews_rating", got["error_description"])
+	assert.Equal(t, "invalid rating, must be between 1 and 5", got["error_description"])
 }
 
 func TestCreateReviewSelfReview(t *testing.T) {
@@ -876,7 +876,7 @@ func TestUpdateReviewInvalidRating(t *testing.T) {
 	var got map[string]string
 	err = json.Unmarshal(w.Body.Bytes(), &got)
 	assert.NoError(t, err)
-	assert.Equal(t, "CHECK constraint failed: chk_reviews_rating", got["error_description"])
+	assert.Equal(t, "invalid rating, must be between 1 and 5", got["error_description"])
 }
 
 func TestUpdateNotYourReview(t *testing.T) {
@@ -1094,7 +1094,7 @@ func TestDeleteReviewSuccess(t *testing.T) {
 	assert.Equal(t, http.StatusNotFound, w.Code)
 	err = json.Unmarshal(w.Body.Bytes(), &got)
 	assert.NoError(t, err)
-	assert.Equal(t, "record not found", got["error_description"])
+	assert.Equal(t, "no review found", got["error_description"])
 }
 
 func TestDeleteReviewNotFound(t *testing.T) {
