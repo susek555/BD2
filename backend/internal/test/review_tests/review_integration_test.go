@@ -63,7 +63,7 @@ func newTestServer(seedUsers []user.User, seedReviews []review.Review) (*gin.Eng
 	verifier := jwt.NewJWTVerifier("secret")
 	reviewService := review.NewReviewService(reviewRepo)
 	userService := user.NewUserService(userRepo)
-	reviewHandler := review.NewHandler(reviewService)
+	reviewHandler := review.NewReviewHandler(reviewService)
 
 	router := gin.Default()
 	reviewRoutes := router.Group("/review")
