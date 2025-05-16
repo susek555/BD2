@@ -328,12 +328,12 @@ export type AddOfferFormState = {
     country?: string;
     productionYear?: number;
     mileage?: number;
-    numberOfOwners?: number;
+    numberOfDoors?: number;
     numberOfSeats?: number;
     power?: number;
+    engineDisplacement?: number;
     dateOfFirstRegistration?: Date;
     plateNumber?: string;
-    engineDisplacement?: number;
     location?: string;
     price?: number;
     isAuction?: boolean;

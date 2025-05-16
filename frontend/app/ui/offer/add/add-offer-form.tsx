@@ -33,6 +33,62 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
         )
     }
 
+    function NumberInputField({ name } : { name: string }) {
+        return (
+            <>
+                <label htmlFor={`${name.toLowerCase()}`} className="text-lg font-semibold">{name}</label>
+                <input type="number" id={`${name.toLowerCase()}`} name={`${name.toLowerCase()}`} className="border rounded p-2" required />
+            </>
+        )
+    }
+
+    function DateSelectionField({ name } : { name: string }) {
+        return (
+            <>
+                <label htmlFor={`${name.toLowerCase()}`} className="text-lg font-semibold">{name}</label>
+                <div className="flex gap-2 items-end">
+
+                    <div className="flex flex-col">
+                        <input
+                            type="number"
+                            id={`${name.toLowerCase()}-day`}
+                            name={`${name.toLowerCase()}-day`}
+                            min={1}
+                            max={31}
+                            className="border rounded p-2 w-20"
+                            required
+                            placeholder="Day"
+                        />
+                    </div>
+                    <div className="flex flex-col">
+                        <input
+                            type="number"
+                            id={`${name.toLowerCase()}-month`}
+                            name={`${name.toLowerCase()}-month`}
+                            min={1}
+                            max={12}
+                            className="border rounded p-2 w-20"
+                            required
+                            placeholder="Month"
+                        />
+                    </div>
+                    <div className="flex flex-col">
+                        <input
+                            type="number"
+                            id={`${name.toLowerCase()}-year`}
+                            name={`${name.toLowerCase()}-year`}
+                            min={1900}
+                            max={2100}
+                            className="border rounded p-2 w-28"
+                            required
+                            placeholder="Year"
+                        />
+                    </div>
+                </div>
+            </>
+        )
+    }
+
     return (
         <form className=" w-full md:w-200" action={handleSubmit}>
             <div className="rounded-lg bg-gray-50 px-6 pb-4 pt-8 flex flex-col gap-4">
@@ -56,6 +112,13 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                 <SelectionLabel name="Fuel Type" options={inputsData.fuelTypes} />
                 <SelectionLabel name="Drive Type" options={inputsData.driveTypes} />
                 <SelectionLabel name="Country" options={inputsData.countries} />
+                <NumberInputField name="Production Year" />
+                <NumberInputField name="Mileage" />
+                <NumberInputField name="Number of doors" />
+                <NumberInputField name="Number of seats" />
+                <NumberInputField name="Power" />
+                <NumberInputField name="Engine displacement" />
+                <DateSelectionField name="Date of first registration" />
 
                 <label htmlFor="description" className="text-lg font-semibold">Description</label>
                 <textarea id="description" name="description" className="border rounded p-2 h-32" required></textarea>
