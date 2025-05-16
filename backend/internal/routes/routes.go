@@ -74,7 +74,7 @@ func registerReviewRoutes(router *gin.Engine) {
 	verifier, _ := initializeVerifier()
 	reviewRepo := review.NewReviewRepository(initializers.DB)
 	reviewService := review.NewReviewService(reviewRepo)
-	reviewHandler := review.NewHandler(reviewService)
+	reviewHandler := review.NewReviewHandler(reviewService)
 	reviewRoutes := router.Group("/review")
 	reviewRoutes.GET("/", reviewHandler.GetAllReviews)
 	reviewRoutes.GET("/:id", reviewHandler.GetReviewById)
