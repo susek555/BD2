@@ -2,6 +2,7 @@ package review
 
 import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/generic"
+	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
 	"gorm.io/gorm"
 )
 
@@ -11,6 +12,7 @@ type ReviewRepositoryInterface interface {
 	GetByReviewerId(reviewerId uint) ([]Review, error)
 	GetByRevieweeId(reviewedId uint) ([]Review, error)
 	GetByReviewerIdAndRevieweeId(reviewerId uint, reviewedId uint) (*Review, error)
+	GetFiltered(filter *ReviewFilter) ([]Review, *pagination.PaginationResponse, error)
 }
 
 type ReviewRepository struct {
@@ -60,6 +62,21 @@ func (repo *ReviewRepository) GetById(id uint) (*Review, error) {
 		return nil, err
 	}
 	return &review, nil
+}
+
+func (repo *ReviewRepository) GetFiltered(filter *ReviewFilter) ([]Review, *pagination.PaginationResponse, error) {
+	query := repo.buildBaseQuery().
+		Joins("JOIN users as reviewer ON reviews.reviewer_id = reviewer.id").
+		Joins("JOIN users as reviewee ON reviews.reviewee_id = reviewee.id")
+	query, err := filter.ApplyReviewFilters(query)
+	if err != nil {
+		return nil, nil, err
+	}
+	reviews, paginationResponse, err := pagination.PaginateResults[Review](&filter.Pagination, query)
+	if err != nil {
+		return nil, nil, err
+	}
+	return reviews, paginationResponse, nil
 }
 
 func (repo *ReviewRepository) Update(review *Review) error {
@@ -118,4 +135,12 @@ func (repo *ReviewRepository) GetByReviewerIdAndRevieweeId(reviewerId uint, revi
 		First(&review).
 		Error
 	return &review, err
+}
+
+func (repo *ReviewRepository) buildBaseQuery() *gorm.DB {
+	db := repo.repository.DB
+	query := db.
+		Preload("Reviewer").
+		Preload("Reviewee")
+	return query
 }
