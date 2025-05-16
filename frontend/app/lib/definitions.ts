@@ -233,10 +233,10 @@ export const AddOfferFormSchema = z.object({
     .number()
     .min(0, { message: 'Mileage must be greater than or equal to 0' })
     .max(1_000_000, { message: 'Mileage must be less than or equal to 1,000,000' }),
-  numberOfOwners: z
+  numberOfDoors: z
     .number()
-    .min(0, { message: 'Number of owners must be greater than or equal to 0' })
-    .max(100, { message: 'Number of owners must be less than or equal to 100' }),
+    .min(0, { message: 'Number of doors must be greater than or equal to 0' })
+    .max(100, { message: 'Number of doors must be less than or equal to 100' }),
   numberOfSeats: z
     .number()
     .min(1, { message: 'Number of seats must be greater than or equal to 1' })
@@ -302,21 +302,22 @@ export type AddOfferFormState = {
     gearbox?: string[];
     driveType?: string[];
     country?: string[];
-    productionYear?: number[];
-    mileage?: number[];
-    numberOfOwners?: number[];
-    numberOfSeats?: number[];
-    power?: number[];
-    dateOfFirstRegistration?: Date[];
+    productionYear?: string[];
+    mileage?: string[];
+    numberOfDoors?: string[];
+    numberOfSeats?: string[];
+    power?: string[];
+    dateOfFirstRegistration?: string[];
     plateNumber?: string[];
-    engineDisplacement?: number[];
+    engineDisplacement?: string[];
     location?: string[];
-    price?: number[];
-    isAuction?: boolean[];
-    auctionEndDate?: Date[];
-    auctionStartPrice?: number[];
+    price?: string[];
+    isAuction?: string[];
+    auctionEndDate?: string[];
+    auctionStartPrice?: string[];
     description?: string[];
     images?: string[];
+    buyNowAuctionPrice?: string[];
   }
   values?: {
     producer?: string;
