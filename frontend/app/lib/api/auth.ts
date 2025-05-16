@@ -1,15 +1,15 @@
-"use server";
+'use server';
 
-const API_URL = process.env.API_URL;
+import { API_URL } from '../constants';
 
 export type registerResult = {
   errors?: {
-    username?: string[]
-    email?: string[]
-    nip?: string[]
-    other?: string[]
-  }
-}
+    username?: string[];
+    email?: string[];
+    nip?: string[];
+    other?: string[];
+  };
+};
 
 /**
  * Sends registration data to the backend and stores tokens if successful
@@ -39,7 +39,7 @@ export async function registerUser(userData: {
 
     const data: registerResult = await response.json();
 
-    console.log("Registration response: ", data);
+    console.log('Registration response: ', data);
 
     if (!response.ok) {
       return {
@@ -48,12 +48,11 @@ export async function registerUser(userData: {
     }
 
     return {};
-
   } catch (error) {
     console.error('Registration error:', error);
     return {
       errors: {
-        other: [error as string]
+        other: [error as string],
       },
     };
   }

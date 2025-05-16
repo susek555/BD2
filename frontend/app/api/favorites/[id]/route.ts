@@ -1,5 +1,3 @@
-const API_URL = process.env.API_URL;
-
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
