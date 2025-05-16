@@ -160,17 +160,27 @@ func (h *Handler) DeleteReview(c *gin.Context) {
 //	@Param			id	path		int						true	"Reviewer ID"
 //	@Success		200	{array}		RetrieveReviewDTO		"OK – list of reviews"
 //	@Failure		400	{object}	custom_errors.HTTPError	"Bad Request – invalid ID format or query failed"
-//	@Router			/review/reviewer/{id} [get]
+//	@Router			/review/reviewer/{id} [post]
 func (h *Handler) GetReviewsByReviewerId(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
-	reviews, err := h.service.GetByReviewerId(uint(id))
+	userId := uint(id)
+	filter := NewReviewFilter()
+
+	if err := c.ShouldBindJSON(filter); err != nil {
+		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+		return
+	}
+	filter.ReviewerId = &userId
+
+	reviews, err := h.service.GetFiltered(filter)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+		return
 	}
-	generic.HandleListResponse(c, reviews)
+	c.JSON(http.StatusOK, reviews)
 }
 
 // GetReviewsByRevieweeId godoc
@@ -189,11 +199,21 @@ func (h *Handler) GetReviewsByRevieweeId(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
-	reviews, err := h.service.GetByRevieweeId(uint(id))
+	userId := uint(id)
+	filter := NewReviewFilter()
+
+	if err := c.ShouldBindJSON(filter); err != nil {
+		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+		return
+	}
+	filter.RevieweeId = &userId
+
+	reviews, err := h.service.GetFiltered(filter)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+		return
 	}
-	generic.HandleListResponse(c, reviews)
+	c.JSON(http.StatusOK, reviews)
 }
 
 // GetReviewsByReviewerIdAndRevieweeId godoc
