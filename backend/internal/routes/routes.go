@@ -131,15 +131,16 @@ func registerSaleOfferRoutes(router *gin.Engine) {
 }
 
 func registerAuctionRoutes(router *gin.Engine) {
+	verifier, _ := initializeVerifier()
 	auctionRepo := auction.NewAuctionRepository(initializers.DB)
 	auctionService := auction.NewAuctionService(auctionRepo)
 	auctionHandler := auction.NewHandler(auctionService)
 	auctionRoutes := router.Group("/auction")
 	auctionRoutes.GET("/", auctionHandler.GetAllAuctions)
 	auctionRoutes.GET("/:id", auctionHandler.GetAuctionById)
-	auctionRoutes.POST("/", auctionHandler.CreateAuction)
-	auctionRoutes.PUT("/", auctionHandler.UpdateAuction)
-	auctionRoutes.DELETE("/:id", auctionHandler.DeleteAuctionById)
+	auctionRoutes.POST("/", middleware.Authenticate(verifier), auctionHandler.CreateAuction)
+	auctionRoutes.PUT("/", middleware.Authenticate(verifier), auctionHandler.UpdateAuction)
+	auctionRoutes.DELETE("/:id", middleware.Authenticate(verifier), auctionHandler.DeleteAuctionById)
 
 }
 
