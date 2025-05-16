@@ -1,17 +1,22 @@
 "use client"
 
 import { AddOfferFormData, AddOfferFormState } from "@/app/lib/definitions";
-import React, { useActionState } from "react";
+import React, { startTransition, useActionState } from "react";
 import { getAvailableModels } from "../../(home)/producers-and-models";
-import { addOffer } from "@/app/actions/add-offer";
+import { addOffer, setProducer } from "@/app/actions/add-offer";
 
 export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFormData}) {
+    const [producer, setProducerAction] = React.useReducer(setProducer, "");
     const [availableModels, setAvailableModels] = React.useState<string[]>([]);
 
-    function handleProducerChange(producer: string) {
-        const models = getAvailableModels({ fieldName: "Producers", options: inputsData.producers, selected: [producer] }, inputsData.models);
+    const handleProducerChange = (newProducer: string) => {
+        const models = getAvailableModels(
+            { fieldName: "Producers", options: inputsData.producers, selected: [newProducer] },
+            inputsData.models
+        );
         setAvailableModels(models);
-    }
+        setProducerAction(newProducer);
+    };
 
     const [isAuction, setIsAuction] = React.useState<boolean>(false);
 
@@ -26,7 +31,11 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
 
     const [state, action] = useActionState(addOffer, initialState);
 
-    const handleSubmit = (formData: FormData) => {
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
+        const formData = new FormData(event.currentTarget);
+
         formData.append("isAuction", isAuction.toString());
         const registraction_day = formData.get("dateOfFirstRegistration-day");
         const registraction_month = formData.get("dateOfFirstRegistration-month");
@@ -48,7 +57,11 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
             formData.delete("auctionEndDate-month");
             formData.delete("auctionEndDate-year");
         }
-        return action(formData)
+        
+        startTransition(() => {
+            action(formData)
+        });
+
     }
 
     // UI
@@ -59,7 +72,18 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                 <label htmlFor={id} className="text-lg font-semibold">
                     {name}
                 </label>
-                <select id={id} name={id} className="border rounded p-2" required defaultValue="">
+                <select
+                    id={id}
+                    name={id}
+                    className="border rounded p-2"
+                    required
+                    defaultValue={
+                        typeof state?.values?.[id] === "string"
+                            ? state.values[id]
+                            : ""
+                    }
+                    {...(id === "producer" ? { onChange: (e) => handleProducerChange(e.target.value) } : {})}
+                >
                     <option value="" disabled>Select a {name}...</option>
                     {options.map((item: string) => (
                         <option key={item} value={item}>{item}</option>
@@ -89,6 +113,11 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                     name={id}
                     className="border rounded p-2"
                     placeholder={`Enter ${name.toLowerCase()}`}
+                    defaultValue={
+                        typeof state?.values?.[id] === "number"
+                            ? state.values[id]
+                            : ""
+                    }
                     required
                 />
                 <div id="username-error" aria-live="polite" aria-atomic="true">
@@ -119,6 +148,11 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                             min={1}
                             max={31}
                             className="border rounded p-2 w-20"
+                            defaultValue={
+                                state?.values?.[id] instanceof Date
+                                    ? state.values[id].getDate()
+                                    : ""
+                            }
                             required
                             placeholder="Day"
                         />
@@ -131,6 +165,11 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                             min={1}
                             max={12}
                             className="border rounded p-2 w-20"
+                            defaultValue={
+                                state?.values?.[id] instanceof Date
+                                    ? state.values[id].getMonth() + 1
+                                    : ""
+                            }
                             required
                             placeholder="Month"
                         />
@@ -143,6 +182,11 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                             min={1900}
                             max={2100}
                             className="border rounded p-2 w-28"
+                            defaultValue={
+                                state?.values?.[id] instanceof Date
+                                    ? state.values[id].getFullYear()
+                                    : ""
+                            }
                             required
                             placeholder="Year"
                         />
@@ -171,6 +215,11 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                     id={id}
                     name={id}
                     className="border rounded p-2"
+                    defaultValue={
+                        typeof state?.values?.[id] === "string"
+                            ? state.values[id]
+                            : ""
+                    }
                     placeholder={`Enter ${name.toLowerCase()}`}
                     required
                 />
@@ -187,7 +236,7 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
     }
 
     return (
-        <form className=" w-full md:w-200" action={handleSubmit}>
+        <form className=" w-full md:w-200" onSubmit={handleSubmit}>
             <div className="rounded-lg bg-gray-50 px-6 pb-4 pt-8 flex flex-col gap-4">
                 <label htmlFor="producer" className="text-lg font-semibold">Producer</label>
                 <select
@@ -195,7 +244,7 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                     name="producer"
                     className="border rounded p-2"
                     required
-                    defaultValue=""
+                    value={producer}
                     onChange={e => handleProducerChange(e.target.value)}
                 >
                     <option value="" disabled>Select a producer...</option>
@@ -211,6 +260,7 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                         </p>
                     ))}
                 </div>
+                {/* <SelectionLabel id="producer" name="Producer" options={inputsData.producers} /> */}
                 <SelectionLabel id="model" name="Model" options={availableModels} />
                 <SelectionLabel id="color" name="Color" options={inputsData.colors} />
                 <SelectionLabel id="gearbox" name="Gearbox" options={inputsData.gearboxes} />
@@ -234,6 +284,8 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                     id="description"
                     name="description"
                     className="border rounded p-2 h-32"
+                    defaultValue={state?.values?.description || ""}
+                    placeholder="Enter description..."
                     required
                 ></textarea>
 

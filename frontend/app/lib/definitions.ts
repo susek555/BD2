@@ -321,6 +321,7 @@ export type AddOfferFormState = {
     buyNowAuctionPrice?: string[];
   }
   values?: {
+    [key: string]: string | number | boolean | Date | File[] | undefined;
     producer?: string;
     model?: string;
     color?: string;

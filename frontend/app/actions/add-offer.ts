@@ -16,9 +16,7 @@ export async function addOffer(
         console.log("Add Offer validation errors:", validatedFields.error.flatten().fieldErrors);
         return {
             errors: validatedFields.error.flatten().fieldErrors,
-            values: Object.fromEntries(
-                Object.entries(formDataObj).filter(([key]) => !key.includes('password'))
-            ) as AddOfferFormState['values']
+            values: formDataObj as AddOfferFormState['values']
         };
     }
 
@@ -27,4 +25,11 @@ export async function addOffer(
 
     // permanentRedirect("/");
     //TODO redirect to my offers
+}
+
+export function setProducer(
+    producer: string,
+    newProducer: string,
+): string {
+    return newProducer;
 }
