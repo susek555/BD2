@@ -72,8 +72,8 @@ func newTestServer(seedUsers []user.User, seedReviews []review.Review) (*gin.Eng
 	reviewRoutes.POST("/", middleware.Authenticate(verifier), reviewHandler.CreateReview)
 	reviewRoutes.PUT("/", middleware.Authenticate(verifier), reviewHandler.UpdateReview)
 	reviewRoutes.DELETE("/:id", middleware.Authenticate(verifier), reviewHandler.DeleteReview)
-	reviewRoutes.GET("/reviewer/:id", reviewHandler.GetReviewsByReviewerId)
-	reviewRoutes.GET("/reviewee/:id", reviewHandler.GetReviewsByRevieweeId)
+	reviewRoutes.POST("/reviewer/:id", reviewHandler.GetReviewsByReviewerId)
+	reviewRoutes.POST("/reviewee/:id", reviewHandler.GetReviewsByRevieweeId)
 	reviewRoutes.GET("/reviewer/reviewee/:reviewerId/:revieweeId", reviewHandler.GetReviewsByReviewerIdAndRevieweeId)
 
 	return router, reviewService, userService, nil
@@ -1227,15 +1227,22 @@ func TestGetReviewsByReviewerIdNoReviews(t *testing.T) {
 	server, _, _, err := newTestServer(seedUsers, seedReviews)
 	assert.NoError(t, err)
 	wantStatus := http.StatusOK
-	req := httptest.NewRequest(http.MethodGet, "/review/reviewer/1", nil)
+	input := `
+	{
+    	"pagination": {"page": 1, "page_size": 4}
+	}
+	`
+	req := httptest.NewRequest(http.MethodPost, "/review/reviewer/1", strings.NewReader(input))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 	server.ServeHTTP(w, req)
 	assert.Equal(t, wantStatus, w.Code)
-	var got []review.RetrieveReviewDTO
+	var got review.RetrieveReviewsWithPagination
 	err = json.Unmarshal(w.Body.Bytes(), &got)
 	assert.NoError(t, err)
-	assert.Empty(t, got)
+	assert.Len(t, got.Reviews, 0)
+	assert.Equal(t, int64(0), got.PaginationResponse.TotalRecords)
+	assert.Equal(t, int64(1), got.PaginationResponse.TotalPages)
 }
 
 func TestGetReviewsByReviewerId(t *testing.T) {
@@ -1279,24 +1286,26 @@ func TestGetReviewsByReviewerId(t *testing.T) {
 	server, _, _, err := newTestServer(seedUsers, seedReviews)
 	assert.NoError(t, err)
 	wantStatus := http.StatusOK
-	req := httptest.NewRequest(http.MethodGet, "/review/reviewer/1", nil)
+	input := `
+	{
+		"pagination": {"page": 1, "page_size": 4}
+	}
+	`
+	req := httptest.NewRequest(http.MethodPost, "/review/reviewer/1", strings.NewReader(input))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 	server.ServeHTTP(w, req)
 	assert.Equal(t, wantStatus, w.Code)
-	var got []review.RetrieveReviewDTO
+	var got review.RetrieveReviewsWithPagination
 	err = json.Unmarshal(w.Body.Bytes(), &got)
 	assert.NoError(t, err)
-	assert.Len(t, got, 1)
-	assert.Equal(t, seedReviews[0].Rating, got[0].Rating)
-	assert.Equal(t, seedReviews[0].Description, got[0].Description)
-	assert.Equal(t, seedReviews[0].ReviewerID, got[0].Reviewer.ID)
-	assert.Equal(t, seedReviews[0].RevieweeId, got[0].Reviewee.ID)
-	assert.Equal(t, uint(1), got[0].ID)
-	assert.Equal(t, uint(1), got[0].Reviewer.ID)
-	assert.Equal(t, uint(2), got[0].Reviewee.ID)
-	assert.Equal(t, seedUsers[0].Username, got[0].Reviewer.Username)
-	assert.Equal(t, seedUsers[1].Username, got[0].Reviewee.Username)
+	assert.Len(t, got.Reviews, 1)
+	assert.Equal(t, seedReviews[0].Rating, got.Reviews[0].Rating)
+	assert.Equal(t, seedReviews[0].Description, got.Reviews[0].Description)
+	assert.Equal(t, seedReviews[0].ReviewerID, got.Reviews[0].Reviewer.ID)
+	assert.Equal(t, seedReviews[0].RevieweeId, got.Reviews[0].Reviewee.ID)
+	assert.Equal(t, int64(1), got.PaginationResponse.TotalRecords)
+	assert.Equal(t, int64(1), got.PaginationResponse.TotalPages)
 }
 
 func TestGetReviewsByReviewerIdNotFound(t *testing.T) {
@@ -1340,15 +1349,22 @@ func TestGetReviewsByReviewerIdNotFound(t *testing.T) {
 	server, _, _, err := newTestServer(seedUsers, seedReviews)
 	assert.NoError(t, err)
 	wantStatus := http.StatusOK
-	req := httptest.NewRequest(http.MethodGet, "/review/reviewer/999", nil)
+	input := `
+	{
+		"pagination": {"page": 1, "page_size": 4}
+	}
+	`
+	req := httptest.NewRequest(http.MethodPost, "/review/reviewer/999", strings.NewReader(input))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 	server.ServeHTTP(w, req)
 	assert.Equal(t, wantStatus, w.Code)
-	var got []review.RetrieveReviewDTO
+	var got review.RetrieveReviewsWithPagination
 	err = json.Unmarshal(w.Body.Bytes(), &got)
 	assert.NoError(t, err)
-	assert.Empty(t, got)
+	assert.Len(t, got.Reviews, 0)
+	assert.Equal(t, int64(0), got.PaginationResponse.TotalRecords)
+	assert.Equal(t, int64(1), got.PaginationResponse.TotalPages)
 }
 
 func TestGetReviewsByRevieweeIdNoReviews(t *testing.T) {
@@ -1379,15 +1395,22 @@ func TestGetReviewsByRevieweeIdNoReviews(t *testing.T) {
 	server, _, _, err := newTestServer(seedUsers, seedReviews)
 	assert.NoError(t, err)
 	wantStatus := http.StatusOK
-	req := httptest.NewRequest(http.MethodGet, "/review/reviewee/1", nil)
+	input := `
+	{
+		"pagination": {"page": 1, "page_size": 4}
+	}
+	`
+	req := httptest.NewRequest(http.MethodPost, "/review/reviewee/1", strings.NewReader(input))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 	server.ServeHTTP(w, req)
 	assert.Equal(t, wantStatus, w.Code)
-	var got []review.RetrieveReviewDTO
+	var got review.RetrieveReviewsWithPagination
 	err = json.Unmarshal(w.Body.Bytes(), &got)
 	assert.NoError(t, err)
-	assert.Empty(t, got)
+	assert.Len(t, got.Reviews, 0)
+	assert.Equal(t, int64(0), got.PaginationResponse.TotalRecords)
+	assert.Equal(t, int64(1), got.PaginationResponse.TotalPages)
 }
 
 func TestGetReviewsByRevieweeId(t *testing.T) {
@@ -1431,24 +1454,26 @@ func TestGetReviewsByRevieweeId(t *testing.T) {
 	server, _, _, err := newTestServer(seedUsers, seedReviews)
 	assert.NoError(t, err)
 	wantStatus := http.StatusOK
-	req := httptest.NewRequest(http.MethodGet, "/review/reviewee/2", nil)
+	input := `
+	{
+		"pagination": {"page": 1, "page_size": 4}
+	}
+	`
+	req := httptest.NewRequest(http.MethodPost, "/review/reviewee/2", strings.NewReader(input))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 	server.ServeHTTP(w, req)
 	assert.Equal(t, wantStatus, w.Code)
-	var got []review.RetrieveReviewDTO
+	var got review.RetrieveReviewsWithPagination
 	err = json.Unmarshal(w.Body.Bytes(), &got)
 	assert.NoError(t, err)
-	assert.Len(t, got, 1)
-	assert.Equal(t, seedReviews[0].Rating, got[0].Rating)
-	assert.Equal(t, seedReviews[0].Description, got[0].Description)
-	assert.Equal(t, seedReviews[0].ReviewerID, got[0].Reviewer.ID)
-	assert.Equal(t, seedReviews[0].RevieweeId, got[0].Reviewee.ID)
-	assert.Equal(t, uint(1), got[0].ID)
-	assert.Equal(t, uint(1), got[0].Reviewer.ID)
-	assert.Equal(t, uint(2), got[0].Reviewee.ID)
-	assert.Equal(t, seedUsers[0].Username, got[0].Reviewer.Username)
-	assert.Equal(t, seedUsers[1].Username, got[0].Reviewee.Username)
+	assert.Len(t, got.Reviews, 1)
+	assert.Equal(t, seedReviews[0].Rating, got.Reviews[0].Rating)
+	assert.Equal(t, seedReviews[0].Description, got.Reviews[0].Description)
+	assert.Equal(t, seedReviews[0].ReviewerID, got.Reviews[0].Reviewer.ID)
+	assert.Equal(t, seedReviews[0].RevieweeId, got.Reviews[0].Reviewee.ID)
+	assert.Equal(t, int64(1), got.PaginationResponse.TotalRecords)
+	assert.Equal(t, int64(1), got.PaginationResponse.TotalPages)
 }
 
 func TestGetReviewsByRevieweeIdNotFound(t *testing.T) {
@@ -1492,15 +1517,22 @@ func TestGetReviewsByRevieweeIdNotFound(t *testing.T) {
 	server, _, _, err := newTestServer(seedUsers, seedReviews)
 	assert.NoError(t, err)
 	wantStatus := http.StatusOK
-	req := httptest.NewRequest(http.MethodGet, "/review/reviewee/999", nil)
+	input := `
+	{
+		"pagination": {"page": 1, "page_size": 4}
+	}
+	`
+	req := httptest.NewRequest(http.MethodPost, "/review/reviewee/999", strings.NewReader(input))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 	server.ServeHTTP(w, req)
 	assert.Equal(t, wantStatus, w.Code)
-	var got []review.RetrieveReviewDTO
+	var got review.RetrieveReviewsWithPagination
 	err = json.Unmarshal(w.Body.Bytes(), &got)
 	assert.NoError(t, err)
-	assert.Empty(t, got)
+	assert.Len(t, got.Reviews, 0)
+	assert.Equal(t, int64(0), got.PaginationResponse.TotalRecords)
+	assert.Equal(t, int64(1), got.PaginationResponse.TotalPages)
 }
 
 func TestGetReviewsByReviewerIdAndRevieweeIdNoReviews(t *testing.T) {
