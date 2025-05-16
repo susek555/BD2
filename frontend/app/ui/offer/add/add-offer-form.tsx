@@ -15,11 +15,12 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
     const [state, action] = useActionState(addOffer, initialState);
     const [liveState, setLiveState] = React.useState<AddOfferFormState>(state);
 
-    React.useEffect(() => {
-        if (state !== liveState) {
-            setLiveState(state);
-        }
-    }, [state]);
+    // React.useEffect(() => {
+    //     if (state !== liveState) {
+    //         setLiveState(state);
+    //         console.log("State updated:", state);
+    //     }
+    // }, [state]);
 
     const updateField = (name: string, value: any) => {
         setLiveState((prev) => ({
@@ -67,6 +68,7 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
             formData.delete("dateOfFirstRegistration-day");
             formData.delete("dateOfFirstRegistration-month");
             formData.delete("dateOfFirstRegistration-year");
+            updateField("dateOfFirstRegistration", date);
         }
         const auction_day = formData.get("auctionEndDate-day");
         const auction_month = formData.get("auctionEndDate-month");
@@ -77,7 +79,10 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
             formData.delete("auctionEndDate-day");
             formData.delete("auctionEndDate-month");
             formData.delete("auctionEndDate-year");
+            updateField("auctionEndDate", auctionDate);
         }
+
+        console.log("Old liveState:", liveState);
 
         startTransition(() => {
             action(formData)
