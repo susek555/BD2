@@ -244,6 +244,18 @@ func (h *ReviewHandler) GetReviewsByReviewerIdAndRevieweeId(c *gin.Context) {
 	c.JSON(http.StatusOK, review)
 }
 
+// GetFilteredReviews godoc
+//
+//	@ID				getFilteredReviews
+//	@Summary		Filter reviews with pagination
+//	@Description	Returns reviews matching podanych kryteriów filtrowania wraz z paginacją.
+//	@Tags			reviews
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body		review.ReviewFilter	true	"Filter payload"
+//	@Success		200		{object}	review.RetrieveReviewsWithPagination	"OK "
+//	@Failure		400		{object}	custom_errors.HTTPError					"Bad Request – invalid filter or query failed"
+//	@Router			/review/filter [post]
 func (h *ReviewHandler) GetFilteredReviews(c *gin.Context) {
 	filter := NewReviewFilter()
 	if err := c.ShouldBindJSON(filter); err != nil {
@@ -258,6 +270,17 @@ func (h *ReviewHandler) GetFilteredReviews(c *gin.Context) {
 	c.JSON(http.StatusOK, reviews)
 }
 
+// GetAverageRatingByRevieweeId godoc
+//
+//	@ID				getAverageRatingByRevieweeId
+//	@Summary		Get average rating for a reviewee
+//	@Description	Returns the average rating value calculated over all reviews for the given reviewee.
+//	@Tags			reviews
+//	@Produce		json
+//	@Param			id	path		int								true	"Reviewee ID"
+//	@Success		200	{number}	float64							"OK – average rating (rounded to two decimals)"
+//	@Failure		400	{object}	custom_errors.HTTPError		"Bad Request – invalid ID format or query failed"
+//	@Router			/review/{id}/average [get]
 func (h *ReviewHandler) GetAverageRatingByRevieweeId(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
@@ -272,6 +295,17 @@ func (h *ReviewHandler) GetAverageRatingByRevieweeId(c *gin.Context) {
 	c.JSON(http.StatusOK, averageRating)
 }
 
+// GetFrequencyOfRatingByRevieweeId godoc
+//
+//	@ID				getFrequencyOfRatingByRevieweeId
+//	@Summary		Get distribution of ratings for a reviewee
+//	@Description	Returns a map from rating value (1–5) to percentage frequency among all reviews for the given reviewee.
+//	@Tags			reviews
+//	@Produce		json
+//	@Param			id	path		int								true	"Reviewee ID"
+//	@Success		200	{object}	map[int]int						"OK – percentage frequencies for ratings 1 through 5"
+//	@Failure		400	{object}	custom_errors.HTTPError		"Bad Request – invalid ID format or query failed"
+//	@Router			/review/{id}/frequency [get]
 func (h *ReviewHandler) GetFrequencyOfRatingByRevieweeId(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
