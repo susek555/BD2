@@ -12,7 +12,7 @@ type Handler struct {
 	service SaleOfferServiceInterface
 }
 
-func NewHandler(s SaleOfferServiceInterface) *Handler {
+func NewSaleOfferHandler(s SaleOfferServiceInterface) *Handler {
 	return &Handler{service: s}
 }
 

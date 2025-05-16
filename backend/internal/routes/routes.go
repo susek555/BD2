@@ -42,8 +42,8 @@ func initializeVerifier() (*jwt.JWTVerifier, []byte) {
 
 func registerUserRoutes(router *gin.Engine) {
 	userRepo := user.NewUserRepository(initializers.DB)
-	userService := user.NewService(userRepo)
-	userHandler := user.NewHandler(userService)
+	userService := user.NewUserService(userRepo)
+	userHandler := user.NewUserHandler(userService)
 	verifier, _ := initializeVerifier()
 	userRoutes := router.Group("/users")
 	{
@@ -110,7 +110,7 @@ func registerSaleOfferRoutes(router *gin.Engine) {
 	manufacturerRepo := manufacturer.NewManufacturerRepository(initializers.DB)
 	manufacturerService := manufacturer.NewManufacturerService(manufacturerRepo)
 	saleOfferService := sale_offer.NewSaleOfferService(saleOfferRepo, manufacturerService)
-	saleOfferHandler := sale_offer.NewHandler(saleOfferService)
+	saleOfferHandler := sale_offer.NewSaleOfferHandler(saleOfferService)
 	saleOfferRoutes := router.Group("/sale-offer")
 	{
 		saleOfferRoutes.POST("/", middleware.Authenticate(verifier), saleOfferHandler.CreateSaleOffer)
