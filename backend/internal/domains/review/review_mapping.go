@@ -27,7 +27,7 @@ func (ur *UpdateReviewDTO) MapToObject(reviewerId, revieweeId uint) Review {
 	}
 }
 
-func (r *Review) MapToDTO() RetrieveReviewDTO {
+func (r *Review) MapToDTO() *RetrieveReviewDTO {
 	reviewDTO := RetrieveReviewDTO{}
 	reviewDTO.ID = r.ID
 	reviewDTO.Description = r.Description
@@ -37,7 +37,7 @@ func (r *Review) MapToDTO() RetrieveReviewDTO {
 	reviewer := MapToUserDTO(r.Reviewer)
 	reviewDTO.Reviewer = reviewer
 	reviewDTO.ReviewDate = r.ReviewDate
-	return reviewDTO
+	return &reviewDTO
 }
 
 func MapToUserDTO(u *user.User) UserDTO {
