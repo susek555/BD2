@@ -25,6 +25,12 @@ func (s *AuctionService) Create(auction *CreateAuctionDTO) (*RetrieveAuctionDTO,
 	if err != nil {
 		return nil, err
 	}
+	if auctionEntity.BuyNowPrice < 1 {
+		return nil, errors.New("buy now price must be greater than 0")
+	}
+	if auctionEntity.BuyNowPrice < auctionEntity.Offer.Price {
+		return nil, errors.New("buy now price must be greater than offer price")
+	}
 	err = s.repo.Create(auctionEntity)
 	if err != nil {
 		return nil, err
