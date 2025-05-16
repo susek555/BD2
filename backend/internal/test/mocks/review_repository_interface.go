@@ -526,6 +526,64 @@ func (_c *ReviewRepositoryInterface_GetFiltered_Call) RunAndReturn(run func(*rev
 	return _c
 }
 
+// GetFrequencyOfRatingByRevieweeId provides a mock function with given fields: revieweeId
+func (_m *ReviewRepositoryInterface) GetFrequencyOfRatingByRevieweeId(revieweeId uint) (map[int]int, error) {
+	ret := _m.Called(revieweeId)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetFrequencyOfRatingByRevieweeId")
+	}
+
+	var r0 map[int]int
+	var r1 error
+	if rf, ok := ret.Get(0).(func(uint) (map[int]int, error)); ok {
+		return rf(revieweeId)
+	}
+	if rf, ok := ret.Get(0).(func(uint) map[int]int); ok {
+		r0 = rf(revieweeId)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(map[int]int)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(uint) error); ok {
+		r1 = rf(revieweeId)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// ReviewRepositoryInterface_GetFrequencyOfRatingByRevieweeId_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetFrequencyOfRatingByRevieweeId'
+type ReviewRepositoryInterface_GetFrequencyOfRatingByRevieweeId_Call struct {
+	*mock.Call
+}
+
+// GetFrequencyOfRatingByRevieweeId is a helper method to define mock.On call
+//   - revieweeId uint
+func (_e *ReviewRepositoryInterface_Expecter) GetFrequencyOfRatingByRevieweeId(revieweeId interface{}) *ReviewRepositoryInterface_GetFrequencyOfRatingByRevieweeId_Call {
+	return &ReviewRepositoryInterface_GetFrequencyOfRatingByRevieweeId_Call{Call: _e.mock.On("GetFrequencyOfRatingByRevieweeId", revieweeId)}
+}
+
+func (_c *ReviewRepositoryInterface_GetFrequencyOfRatingByRevieweeId_Call) Run(run func(revieweeId uint)) *ReviewRepositoryInterface_GetFrequencyOfRatingByRevieweeId_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(uint))
+	})
+	return _c
+}
+
+func (_c *ReviewRepositoryInterface_GetFrequencyOfRatingByRevieweeId_Call) Return(_a0 map[int]int, _a1 error) *ReviewRepositoryInterface_GetFrequencyOfRatingByRevieweeId_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *ReviewRepositoryInterface_GetFrequencyOfRatingByRevieweeId_Call) RunAndReturn(run func(uint) (map[int]int, error)) *ReviewRepositoryInterface_GetFrequencyOfRatingByRevieweeId_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // Update provides a mock function with given fields: entity
 func (_m *ReviewRepositoryInterface) Update(entity *review.Review) error {
 	ret := _m.Called(entity)
