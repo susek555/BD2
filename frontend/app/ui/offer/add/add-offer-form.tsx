@@ -155,16 +155,27 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                 <TextInputField name="Plate number" />
                 <TextInputField name="Location" />
 
-                <label htmlFor="description" className="text-lg font-semibold">Description</label>
-                <textarea id="description" name="description" className="border rounded p-2 h-32" required></textarea>
+                <label htmlFor="description" className="text-lg font-semibold">
+                    Description
+                </label>
+                <textarea
+                    id="description"
+                    name="description"
+                    className="border rounded p-2 h-32"
+                    required
+                ></textarea>
 
-                <label htmlFor="images" className="text-lg font-semibold">Images</label>
+                <label htmlFor="images" className="text-lg font-semibold">
+                    Images
+                </label>
                 //TODO
                 {/* <input type="file" id="images" name="images" className="border rounded p-2" multiple required /> */}
 
                 <div className="my-10"/>
                 <NumberInputField name="Price" />
-
+                <label htmlFor="offer type" className="text-lg font-semibold">
+                    Offer Type
+                </label>
 
 
                 <button type="submit" className="bg-blue-600 text-white rounded p-2">Submit</button>
