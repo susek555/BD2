@@ -263,34 +263,48 @@ export const AddOfferFormSchema = z.object({
   auctionEndDate: z
     .date()
     .optional()
-    .refine((date) => date && date > new Date(), { message: 'Date must be greater than the current date' }),
+    .refine((date) => !date || date > new Date(), { message: 'Date must be greater than the current date' }),
   buyNowAuctionPrice: z
     .number()
+    .nullable()
     .optional()
-    .refine((price) => price && price > 0, { message: 'Price must be greater than 0' })
-    .refine((price) => price && price< 10_000_000, { message: 'Price must be less than 10,000,000' }),
+    .refine(
+      (price) => price === null || price === undefined || price > 0,
+      { message: 'Price must be greater than 0' }
+    )
+    .refine(
+      (price) => price === null || price === undefined || price < 10_000_000,
+      { message: 'Price must be less than 10,000,000' }
+    ),
   description: z.string().min(1, { message: 'Description is required' }),
   images: z
-    .array(z.instanceof(File))
-    .min(1, { message: 'At least one image is required' })
-    .max(10, { message: 'A maximum of 10 images is allowed' })
-    .refine((files) => files.every(file => file.size <= 5 * 1024 * 1024), {
-      message: 'Each image must be less than 5MB',
-    }),
-}).refine((data) => {
-  if (data.isAuction && !data.auctionEndDate) {
-    return false;
+    .array(z.instanceof(File)).optional()   //TODO remove optional and uncomment code below
+    // .min(1, { message: 'At least one image is required' })
+    // .max(10, { message: 'A maximum of 10 images is allowed' })
+    // .refine((files) => files.every(file => file.size <= 5 * 1024 * 1024), {
+    //   message: 'Each image must be less than 5MB',
+    // }),
+}).superRefine((data, ctx) => {
+  if (data.isAuction) {
+    if (!data.auctionEndDate) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Auction end date is required when auction is enabled',
+        path: ['auctionEndDate'],
+      });
+    }
+    if (
+      data.buyNowAuctionPrice !== null &&
+      data.buyNowAuctionPrice !== undefined &&
+      data.buyNowAuctionPrice <= data.price
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Buy now auction price must be greater than the regular price',
+        path: ['buyNowAuctionPrice'],
+      });
+    }
   }
-  if (data.isAuction && !data.buyNowAuctionPrice) {
-    return false;
-  }
-  if (data.isAuction && data.buyNowAuctionPrice && data.buyNowAuctionPrice <= data.price) {
-    return false;
-  }
-  return true;
-}, {
-  message: 'Buy now auction price must be greater than the regular price',
-  path: ['buyNowAuctionPrice'],
 });
 
 export type AddOfferFormState = {
