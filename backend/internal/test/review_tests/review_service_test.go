@@ -1,6 +1,3 @@
-//go:build unit
-// +build unit
-
 package review_tests
 
 import (
@@ -39,7 +36,7 @@ func TestGetByReviewerId_Success(t *testing.T) {
 
 	var expectedDTOs []review.RetrieveReviewDTO
 	for _, r := range mockReviews {
-		expectedDTOs = append(expectedDTOs, r.MapToDTO())
+		expectedDTOs = append(expectedDTOs, *r.MapToDTO())
 	}
 
 	repo.On("GetByReviewerId", uint(10)).Return(mockReviews, nil).Once()
@@ -73,7 +70,7 @@ func TestGetByRevieweeId_Success(t *testing.T) {
 
 	var expectedDTOs []review.RetrieveReviewDTO
 	for _, r := range mockReviews {
-		expectedDTOs = append(expectedDTOs, r.MapToDTO())
+		expectedDTOs = append(expectedDTOs, *r.MapToDTO())
 	}
 
 	repo.On("GetByRevieweeId", uint(20)).Return(mockReviews, nil).Once()
@@ -102,7 +99,7 @@ func TestGetByReviewerAndReviewee_Success(t *testing.T) {
 	got, err := svc.GetByReviewerIdAndRevieweeId(10, 20)
 
 	require.NoError(t, err)
-	assert.Equal(t, &expectedDTO, got)
+	assert.Equal(t, expectedDTO, got)
 	repo.AssertExpectations(t)
 }
 
@@ -192,7 +189,7 @@ func TestGet_Success(t *testing.T) {
 	got, err := svc.GetById(7)
 	expected := want.MapToDTO()
 	require.NoError(t, err)
-	assert.Equal(t, &expected, got)
+	assert.Equal(t, expected, got)
 	repo.AssertExpectations(t)
 }
 
