@@ -62,7 +62,7 @@ func (h *Handler) CreateSaleOffer(c *gin.Context) {
 // GetFilteredSaleOffers godoc
 //
 //	@Summary		Get filtered sale offers
-//	@Description	Returns a list of sale offers in paginated form. The results are filtered based on request's body. There are several constraints on the filter fields, such as:
+//	@Description	Returns a list of sale offers in paginated form. If the user is logged in, the results are not containing the offers created by the user. The results are filtered based on request's body. There are several constraints on the filter fields, such as:
 //	@Description	- Offer type must be one of the predefined offer types (endpoint: /sale-offer/offer-types)
 //	@Description	- Order key must be one of the predefined order keys (endpoint: /sale-offer/order-keys)
 //	@Description	- List of manufacturers must contain only predefined manufacturers (endpoint: /car/manufacturers)
@@ -71,7 +71,6 @@ func (h *Handler) CreateSaleOffer(c *gin.Context) {
 //	@Description	- List of fuel types must contain only predefined fuel types (endpoint: /car/fuel_types)
 //	@Description	- List of transmissions must contain only predefined transmission types (endpoint: /car/transmissions)
 //	@Description	- Whenever you use a range, the min value must be less than or equal to the max value, you can provide only one of them, and the other will be ignored.
-//	@Description	If the user is logged in, the results are not containing the offers created by the user.
 //	@Tags			sale-offer
 //	@Accept			json
 //	@Produce		json
@@ -79,7 +78,7 @@ func (h *Handler) CreateSaleOffer(c *gin.Context) {
 //	@Success		200		{object}	RetrieveOffersWithPagination	"List of sale offers"
 //	@Failure		400		{object}	custom_errors.HTTPError			"Invalid input data"
 //	@Failure		500		{object}	custom_errors.HTTPError			"Internal server error"
-//	@Router			/sale-offer [post]
+//	@Router			/sale-offer/filtered [post]
 func (h *Handler) GetFilteredSaleOffers(c *gin.Context) {
 	filter := NewOfferFilter()
 	if err := c.ShouldBindJSON(filter); err != nil {
@@ -108,11 +107,11 @@ func (h *Handler) GetFilteredSaleOffers(c *gin.Context) {
 //	@Tags			sale-offer
 //	@Accept			json
 //	@Produce		json
-//	@Param			id	path		uint					true	"Sale offer ID"
-//	@Success		200	{object}	RetrieveSaleOfferDTO	"Sale offer details"
-//	@Failure		400	{object}	custom_errors.HTTPError	"Invalid input data"
-//	@Failure		404	{object}	custom_errors.HTTPError	"Sale offer not found"
-//	@Failure		500	{object}	custom_errors.HTTPError	"Internal server error"
+//	@Param			id	path		uint							true	"Sale offer ID"
+//	@Success		200	{object}	RetrieveDetailedSaleOfferDTO	"Sale offer details"
+//	@Failure		400	{object}	custom_errors.HTTPError			"Invalid input data"
+//	@Failure		404	{object}	custom_errors.HTTPError			"Sale offer not found"
+//	@Failure		500	{object}	custom_errors.HTTPError			"Internal server error"
 //	@Router			/sale-offer/id/{id} [get]
 func (h *Handler) GetSaleOfferByID(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
@@ -135,9 +134,9 @@ func (h *Handler) GetSaleOfferByID(c *gin.Context) {
 //	@Tags			sale-offer
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{object}	RetrieveOffersWithPagination	"List of sale offers"
-//	@Failure		401	{object}	custom_errors.HTTPError			"Unauthorized - user not logged in"
-//	@Failure		500	{object}	custom_errors.HTTPError			"Internal server error"
+//	@Success		200	{object}	RetrieveSaleOfferDTO	"List of sale offers"
+//	@Failure		401	{object}	custom_errors.HTTPError	"Unauthorized - user not logged in"
+//	@Failure		500	{object}	custom_errors.HTTPError	"Internal server error"
 //	@Router			/sale-offer/my-offers [get]
 //	@Security		Bearer
 func (h *Handler) GetMySaleOffers(c *gin.Context) {
