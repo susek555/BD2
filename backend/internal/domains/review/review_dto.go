@@ -6,6 +6,7 @@ type RetrieveReviewDTO struct {
 	Rating      uint    `json:"rating"`
 	Reviewer    UserDTO `json:"reviewer"`
 	Reviewee    UserDTO `json:"reviewee"`
+	CreatedAt   string  `json:"created_at"`
 }
 
 type CreateReviewDTO struct {
