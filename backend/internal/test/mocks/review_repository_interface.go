@@ -170,6 +170,62 @@ func (_c *ReviewRepositoryInterface_GetAll_Call) RunAndReturn(run func() ([]revi
 	return _c
 }
 
+// GetAverageRatingByRevieweeId provides a mock function with given fields: revieweeId
+func (_m *ReviewRepositoryInterface) GetAverageRatingByRevieweeId(revieweeId uint) (float64, error) {
+	ret := _m.Called(revieweeId)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetAverageRatingByRevieweeId")
+	}
+
+	var r0 float64
+	var r1 error
+	if rf, ok := ret.Get(0).(func(uint) (float64, error)); ok {
+		return rf(revieweeId)
+	}
+	if rf, ok := ret.Get(0).(func(uint) float64); ok {
+		r0 = rf(revieweeId)
+	} else {
+		r0 = ret.Get(0).(float64)
+	}
+
+	if rf, ok := ret.Get(1).(func(uint) error); ok {
+		r1 = rf(revieweeId)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// ReviewRepositoryInterface_GetAverageRatingByRevieweeId_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetAverageRatingByRevieweeId'
+type ReviewRepositoryInterface_GetAverageRatingByRevieweeId_Call struct {
+	*mock.Call
+}
+
+// GetAverageRatingByRevieweeId is a helper method to define mock.On call
+//   - revieweeId uint
+func (_e *ReviewRepositoryInterface_Expecter) GetAverageRatingByRevieweeId(revieweeId interface{}) *ReviewRepositoryInterface_GetAverageRatingByRevieweeId_Call {
+	return &ReviewRepositoryInterface_GetAverageRatingByRevieweeId_Call{Call: _e.mock.On("GetAverageRatingByRevieweeId", revieweeId)}
+}
+
+func (_c *ReviewRepositoryInterface_GetAverageRatingByRevieweeId_Call) Run(run func(revieweeId uint)) *ReviewRepositoryInterface_GetAverageRatingByRevieweeId_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(uint))
+	})
+	return _c
+}
+
+func (_c *ReviewRepositoryInterface_GetAverageRatingByRevieweeId_Call) Return(_a0 float64, _a1 error) *ReviewRepositoryInterface_GetAverageRatingByRevieweeId_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *ReviewRepositoryInterface_GetAverageRatingByRevieweeId_Call) RunAndReturn(run func(uint) (float64, error)) *ReviewRepositoryInterface_GetAverageRatingByRevieweeId_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // GetById provides a mock function with given fields: id
 func (_m *ReviewRepositoryInterface) GetById(id uint) (*review.Review, error) {
 	ret := _m.Called(id)
