@@ -39,6 +39,7 @@ func NewHandler(s SaleOfferServiceInterface) *Handler {
 //	@Failure		401		{object}	custom_errors.HTTPError	"Unauthorized - user not logged in"
 //	@Failure		500		{object}	custom_errors.HTTPError	"Internal server error"
 //	@Router			/sale-offer [post]
+//	@Security		Bearer
 func (h *Handler) CreateSaleOffer(c *gin.Context) {
 	var offerDTO CreateSaleOfferDTO
 	if err := c.ShouldBindJSON(&offerDTO); err != nil {
@@ -70,6 +71,7 @@ func (h *Handler) CreateSaleOffer(c *gin.Context) {
 //	@Description	- List of fuel types must contain only predefined fuel types (endpoint: /car/fuel_types)
 //	@Description	- List of transmissions must contain only predefined transmission types (endpoint: /car/transmissions)
 //	@Description	- Whenever you use a range, the min value must be less than or equal to the max value, you can provide only one of them, and the other will be ignored.
+//	@Description	If the user is logged in, the results are not containing the offers created by the user.
 //	@Tags			sale-offer
 //	@Accept			json
 //	@Produce		json
@@ -99,6 +101,19 @@ func (h *Handler) GetFilteredSaleOffers(c *gin.Context) {
 	c.JSON(http.StatusOK, *saleOffers)
 }
 
+// GetSaleOfferByID godoc
+//
+//	@Summary		Get sale offer by ID
+//	@Description	Returns a sale offer by its ID. Can be used to retrieve detailed information about sale offer.
+//	@Tags			sale-offer
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		uint					true	"Sale offer ID"
+//	@Success		200	{object}	RetrieveSaleOfferDTO	"Sale offer details"
+//	@Failure		400	{object}	custom_errors.HTTPError	"Invalid input data"
+//	@Failure		404	{object}	custom_errors.HTTPError	"Sale offer not found"
+//	@Failure		500	{object}	custom_errors.HTTPError	"Internal server error"
+//	@Router			/sale-offer/id/{id} [get]
 func (h *Handler) GetSaleOfferByID(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
@@ -113,7 +128,19 @@ func (h *Handler) GetSaleOfferByID(c *gin.Context) {
 	c.JSON(http.StatusOK, offerDTO)
 }
 
-func (h *Handler) GetSaleOffersByUserID(c *gin.Context) {
+// GetMySaleOffers godoc
+//
+//	@Summary		Get my sale offers
+//	@Description	Returns a list of all sale offers created by the logged-in user.
+//	@Tags			sale-offer
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{object}	RetrieveOffersWithPagination	"List of sale offers"
+//	@Failure		401	{object}	custom_errors.HTTPError			"Unauthorized - user not logged in"
+//	@Failure		500	{object}	custom_errors.HTTPError			"Internal server error"
+//	@Router			/sale-offer/my-offers [get]
+//	@Security		Bearer
+func (h *Handler) GetMySaleOffers(c *gin.Context) {
 	userID, ok := c.Get("userID")
 	if !ok {
 		c.JSON(http.StatusUnauthorized, custom_errors.NewHTTPError(ErrNotLoggedIn.Error()))
