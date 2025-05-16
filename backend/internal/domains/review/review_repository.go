@@ -167,38 +167,40 @@ func (repo *ReviewRepository) buildBaseQuery() *gorm.DB {
 }
 
 func (repo *ReviewRepository) GetFrequencyOfRatingByRevieweeId(revieweeId uint) (map[int]int, error) {
-	mapFrequency := make(map[int]int)
-	err := repo.repository.
-		DB.
-		Model(&Review{}).
-		Select("rating, COUNT(*) as frequency").
-		Where("reviewee_id = ?", revieweeId).
-		Group("rating").
-		Scan(&mapFrequency).
-		Error
-	if err != nil {
-		return nil, err
-	}
-	var count int64
-	err = repo.repository.
-		DB.
-		Model(&Review{}).
-		Where("reviewee_id = ?", revieweeId).
-		Count(&count).
-		Error
-	if err != nil {
-		return nil, err
-	}
-	if len(mapFrequency) == 0 {
-		return nil, errors.New("no reviews found")
+	freqMap := make(map[int]int, 5)
+	for i := 1; i <= 5; i++ {
+		freqMap[i] = 0
 	}
 
-	for i := 1; i <= 5; i++ {
-		if freq, exists := mapFrequency[i]; exists {
-			mapFrequency[i] = int(float64(freq) / float64(count) * 100)
-		} else {
-			mapFrequency[i] = 0
+	var raw []RatingFrequency
+	if err := repo.repository.
+		DB.
+		Model(&Review{}).
+		Select("rating, COUNT(*) AS frequency").
+		Where("reviewee_id = ?", revieweeId).
+		Group("rating").
+		Scan(&raw).
+		Error; err != nil {
+		return freqMap, err
+	}
+
+	var total int64
+	if err := repo.repository.
+		DB.
+		Model(&Review{}).
+		Where("reviewee_id = ?", revieweeId).
+		Count(&total).
+		Error; err != nil {
+		return freqMap, err
+	}
+
+	for _, rf := range raw {
+		freqMap[rf.Rating] = rf.Frequency
+	}
+	if total > 0 {
+		for i := 1; i <= 5; i++ {
+			freqMap[i] = int(float64(freqMap[i]) / float64(total) * 100)
 		}
 	}
-	return mapFrequency, nil
+	return freqMap, nil
 }
