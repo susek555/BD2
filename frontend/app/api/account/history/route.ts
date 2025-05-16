@@ -1,8 +1,6 @@
 import { HistoryOffer } from '@/app/lib/definitions';
 import { NextResponse } from 'next/server';
 
-const API_URL = process.env.API_URL;
-
 export async function GET(request: Request) {
   const data: HistoryOffer[] = [
     {
