@@ -257,3 +257,17 @@ func (h *Handler) GetFilteredReviews(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, reviews)
 }
+
+func (h *Handler) GetAverageRatingByRevieweeId(c *gin.Context) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+	}
+	revieweeId := uint(id)
+	averageRating, err := h.service.GetAverageRatingByRevieweeId(revieweeId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+		return
+	}
+	c.JSON(http.StatusOK, averageRating)
+}
