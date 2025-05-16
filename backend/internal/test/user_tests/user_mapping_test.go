@@ -1,6 +1,3 @@
-//go:build unit
-// +build unit
-
 package user_tests
 
 import (
@@ -11,29 +8,9 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/pkg/passwords"
 )
 
-func createPerson() *u.User {
-	user := u.User{
-		ID:       1,
-		Username: "john",
-		Email:    "john@example.com",
-		Password: "hashed_password",
-		Selector: "P",
-		Person:   &u.Person{Name: "john person", Surname: "doe person"},
-	}
-	return &user
-}
-
-func createCompany() *u.User {
-	user := u.User{
-		ID:       1,
-		Username: "john",
-		Email:    "john@example.com",
-		Password: "hashed_password",
-		Selector: "C",
-		Company:  &u.Company{Name: "john company", NIP: "1234567890"},
-	}
-	return &user
-}
+// --------------------------------
+// Test map to user from create dto
+// --------------------------------
 
 func TestMapToUser_EmptyDTO(t *testing.T) {
 	dto := u.CreateUserDTO{}
@@ -250,10 +227,13 @@ func TestMapToUser_CompanyWithAllFields(t *testing.T) {
 	assert.Nil(t, user.Person)
 }
 
+// ----------------------------------
+// Test map to retireve dto from user
+// ----------------------------------
+
 func TestMapToDTO_Person(t *testing.T) {
-	user := createPerson()
-	dto, err := user.MapToDTO()
-	assert.NoError(t, err)
+	user := createPerson(1)
+	dto := user.MapToDTO()
 	assert.Equal(t, user.ID, dto.ID)
 	assert.Equal(t, user.Username, dto.Username)
 	assert.Equal(t, user.Email, dto.Email)
@@ -261,9 +241,8 @@ func TestMapToDTO_Person(t *testing.T) {
 	assert.Equal(t, user.Person.Surname, *dto.PersonSurname)
 }
 func TestMapToDTO_Company(t *testing.T) {
-	user := createCompany()
-	dto, err := user.MapToDTO()
-	assert.NoError(t, err)
+	user := createCompany(1)
+	dto := user.MapToDTO()
 	assert.Equal(t, user.ID, dto.ID)
 	assert.Equal(t, user.Username, dto.Username)
 	assert.Equal(t, user.Email, dto.Email)
@@ -271,13 +250,17 @@ func TestMapToDTO_Company(t *testing.T) {
 	assert.Equal(t, user.Company.NIP, *dto.CompanyNIP)
 }
 
+// --------------------------------
+// Test update user from update dto
+// --------------------------------
+
 func TestUpdateUserFromDTO_Email(t *testing.T) {
 	email := "john_updated@example.com"
 	dto := u.UpdateUserDTO{
 		ID:    1,
 		Email: &email,
 	}
-	user := createPerson()
+	user := createPerson(1)
 	new_user, _ := dto.UpdateUserFromDTO(user)
 	assert.Equal(t, email, new_user.Email)
 	assert.Equal(t, user.Username, new_user.Username)
@@ -291,7 +274,7 @@ func TestUpdateUserFromDTO_Password(t *testing.T) {
 		ID:       1,
 		Password: &password,
 	}
-	user := createPerson()
+	user := createPerson(1)
 	new_user, _ := dto.UpdateUserFromDTO(user)
 	assert.Equal(t, user.Email, new_user.Email)
 	assert.Equal(t, user.Username, new_user.Username)
@@ -305,7 +288,7 @@ func TestUpdateUserFromDTO_Username(t *testing.T) {
 		ID:       1,
 		Username: &username,
 	}
-	user := createPerson()
+	user := createPerson(1)
 	new_user, _ := dto.UpdateUserFromDTO(user)
 	assert.Equal(t, user.Email, new_user.Email)
 	assert.Equal(t, user.Password, new_user.Password)
@@ -317,7 +300,7 @@ func TestUpdateUserFromDTO_Empty(t *testing.T) {
 	dto := u.UpdateUserDTO{
 		ID: 1,
 	}
-	user := createPerson()
+	user := createPerson(1)
 	new_user, _ := dto.UpdateUserFromDTO(user)
 	assert.Equal(t, user.Email, new_user.Email)
 	assert.Equal(t, user.Password, new_user.Password)
