@@ -29,6 +29,6 @@ type UserDTO struct {
 }
 
 type RetrieveReviewsWithPagination struct {
-	Reviews            []RetrieveReviewDTO           `json:"reviews"`
-	PaginationResponse pagination.PaginationResponse `json:"pagination"`
+	Reviews            []RetrieveReviewDTO            `json:"reviews"`
+	PaginationResponse *pagination.PaginationResponse `json:"pagination"`
 }
