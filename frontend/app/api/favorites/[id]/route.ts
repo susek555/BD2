@@ -2,7 +2,7 @@ const API_URL = process.env.API_URL;
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
   // TODO implement API call to add to favorites
@@ -12,7 +12,7 @@ export async function POST(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
   // TODO implement API call to delete from favorites

@@ -2,7 +2,7 @@ const API_URL = process.env.API_URL;
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
   console.log('Update listing id:', id);
@@ -12,17 +12,17 @@ export async function PUT(
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
   console.log('Get listing id:', id);
   // TODO implement API call to get listing
-  return Response.json({ id: params.id });
+  return Response.json({ id: id });
 }
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
   console.log('Deleted listing id:', id);
