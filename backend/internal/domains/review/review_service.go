@@ -2,6 +2,8 @@ package review
 
 import (
 	"errors"
+
+	"github.com/susek555/BD2/car-dealer-api/pkg/mapping"
 )
 
 type ReviewServiceInterface interface {
@@ -13,6 +15,7 @@ type ReviewServiceInterface interface {
 	GetByReviewerId(reviewerId uint) ([]RetrieveReviewDTO, error)
 	GetByRevieweeId(reviewedId uint) ([]RetrieveReviewDTO, error)
 	GetByReviewerIdAndRevieweeId(reviewerId uint, revieweeId uint) (*RetrieveReviewDTO, error)
+	GetFiltered(filter *ReviewFilter) (*RetrieveReviewsWithPagination, error)
 }
 
 type ReviewService struct {
@@ -32,7 +35,7 @@ func (service *ReviewService) Create(userId uint, review *CreateReviewDTO) (*Ret
 		return nil, err
 	}
 	reviewDTO := reviewObj.MapToDTO()
-	return &reviewDTO, nil
+	return reviewDTO, nil
 }
 
 func (service *ReviewService) GetAll() ([]RetrieveReviewDTO, error) {
@@ -40,10 +43,7 @@ func (service *ReviewService) GetAll() ([]RetrieveReviewDTO, error) {
 	if err != nil {
 		return nil, err
 	}
-	var reviewsDTO []RetrieveReviewDTO
-	for _, review := range reviews {
-		reviewsDTO = append(reviewsDTO, review.MapToDTO())
-	}
+	reviewsDTO := mapping.MapSliceToDTOs(reviews, (*Review).MapToDTO)
 	return reviewsDTO, nil
 }
 
@@ -53,7 +53,19 @@ func (service *ReviewService) GetById(id uint) (*RetrieveReviewDTO, error) {
 		return nil, err
 	}
 	reviewDTO := review.MapToDTO()
-	return &reviewDTO, nil
+	return reviewDTO, nil
+}
+
+func (service *ReviewService) GetFiltered(filter *ReviewFilter) (*RetrieveReviewsWithPagination, error) {
+	reviews, pagResponse, err := service.Repo.GetFiltered(filter)
+	if err != nil {
+		return nil, err
+	}
+	reviewsDTO := mapping.MapSliceToDTOs(reviews, (*Review).MapToDTO)
+	return &RetrieveReviewsWithPagination{
+		Reviews:            reviewsDTO,
+		PaginationResponse: pagResponse,
+	}, nil
 }
 
 func (service *ReviewService) Update(reviewerId uint, review *UpdateReviewDTO) (*RetrieveReviewDTO, error) {
@@ -71,7 +83,7 @@ func (service *ReviewService) Update(reviewerId uint, review *UpdateReviewDTO) (
 		return nil, err
 	}
 	reviewDTO := reviewObj.MapToDTO()
-	return &reviewDTO, nil
+	return reviewDTO, nil
 }
 
 func (service *ReviewService) Delete(userId, id uint) error {
@@ -90,10 +102,7 @@ func (service *ReviewService) GetByReviewerId(reviewerId uint) ([]RetrieveReview
 	if err != nil {
 		return nil, err
 	}
-	var reviewsDTO []RetrieveReviewDTO
-	for _, review := range reviews {
-		reviewsDTO = append(reviewsDTO, review.MapToDTO())
-	}
+	reviewsDTO := mapping.MapSliceToDTOs(reviews, (*Review).MapToDTO)
 	return reviewsDTO, nil
 }
 
@@ -102,10 +111,7 @@ func (service *ReviewService) GetByRevieweeId(reviewedId uint) ([]RetrieveReview
 	if err != nil {
 		return nil, err
 	}
-	var reviewsDTO []RetrieveReviewDTO
-	for _, review := range reviews {
-		reviewsDTO = append(reviewsDTO, review.MapToDTO())
-	}
+	reviewsDTO := mapping.MapSliceToDTOs(reviews, (*Review).MapToDTO)
 	return reviewsDTO, nil
 }
 
@@ -115,7 +121,7 @@ func (service *ReviewService) GetByReviewerIdAndRevieweeId(reviewerId uint, revi
 		return nil, err
 	}
 	reviewDTO := review.MapToDTO()
-	return &reviewDTO, nil
+	return reviewDTO, nil
 }
 
 func (service *ReviewService) getRevieweeId(reviewId uint) (uint, error) {
