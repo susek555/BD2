@@ -5,8 +5,10 @@ import (
 	"net/http/httptest"
 	"reflect"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
 	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
 )
 
@@ -45,4 +47,11 @@ func PerformRequest(server *gin.Engine, method string, url string, body []byte, 
 
 func GetDefaultPaginationRequest() *pagination.PaginationRequest {
 	return &pagination.PaginationRequest{Page: 1, PageSize: 8}
+}
+
+const JWTSECRET = "secret"
+
+func GetValidToken(userId uint, email string) (string, error) {
+	secret := []byte("secret")
+	return jwt.GenerateToken(email, int64(userId), secret, time.Now().Add(1*time.Hour))
 }

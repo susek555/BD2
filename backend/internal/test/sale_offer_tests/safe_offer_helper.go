@@ -39,8 +39,6 @@ func getRepositoryWithSaleOffers(db *gorm.DB, offers []sale_offer.SaleOffer) sal
 	return repo
 }
 
-type OfferOption func(*sale_offer.SaleOffer, *sale_offer.Car)
-
 // Simulates interaction with manufacturer service, which should return all possible manufacturers
 var manufacturers []string = []string{"Audi", "BMW", "Opel", "Toyota", "Skoda"}
 

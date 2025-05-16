@@ -1,11 +1,12 @@
 package user_tests
 
 import (
-	"time"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/generic"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
+	"github.com/susek555/BD2/car-dealer-api/internal/test/test_utils"
 	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
 	"github.com/susek555/BD2/car-dealer-api/pkg/middleware"
 	"gorm.io/driver/sqlite"
@@ -35,14 +36,12 @@ func getSubtypesRepositories(db *gorm.DB) (generic.CRUDRepository[user.Company],
 	return comapnyRepo, personRepo
 }
 
-func insertUsersToDatabase(users []user.User, repo user.UserRepositoryInterface) error {
+func getRepositoryWithUsers(db *gorm.DB, users []user.User) user.UserRepositoryInterface {
+	repo := user.NewUserRepository(db)
 	for _, user := range users {
-		err := repo.Create(&user)
-		if err != nil {
-			return err
-		}
+		repo.Create(&user)
 	}
-	return nil
+	return repo
 }
 
 func newTestServer(seedUsers []user.User) (*gin.Engine, error) {
@@ -50,11 +49,8 @@ func newTestServer(seedUsers []user.User) (*gin.Engine, error) {
 	if err != nil {
 		return nil, err
 	}
-	verifier := jwt.NewJWTVerifier(JWTSECRET)
-	userRepo := user.NewUserRepository(db)
-	if err := insertUsersToDatabase(seedUsers, userRepo); err != nil {
-		return nil, err
-	}
+	verifier := jwt.NewJWTVerifier(test_utils.JWTSECRET)
+	userRepo := getRepositoryWithUsers(db, seedUsers)
 	userService := user.NewUserService(userRepo)
 	userHandler := user.NewUserHandler(userService)
 	r := gin.Default()
@@ -69,17 +65,6 @@ func newTestServer(seedUsers []user.User) (*gin.Engine, error) {
 	return r, nil
 }
 
-// -------------------
-// Authorization setup
-// -------------------
-
-const JWTSECRET = "secret"
-
-func getValidToken(userId uint, email string) (string, error) {
-	secret := []byte("secret")
-	return jwt.GenerateToken(email, int64(userId), secret, time.Now().Add(1*time.Hour))
-}
-
 // ------------
 // Basic models
 // ------------
@@ -87,8 +72,8 @@ func getValidToken(userId uint, email string) (string, error) {
 func createPerson(id uint) *user.User {
 	user := user.User{
 		ID:       id,
-		Username: "john",
-		Email:    "john@example.com",
+		Username: fmt.Sprintf("john%d", id),
+		Email:    fmt.Sprintf("john%d@gmail.com", id),
 		Password: "hashed_password",
 		Selector: "P",
 		Person:   &user.Person{Name: "john person", Surname: "doe person"},
@@ -99,11 +84,31 @@ func createPerson(id uint) *user.User {
 func createCompany(id uint) *user.User {
 	user := user.User{
 		ID:       id,
-		Username: "john",
-		Email:    "john@example.com",
+		Username: fmt.Sprintf("john%d", id),
+		Email:    fmt.Sprintf("john%d@gmail.com", id),
 		Password: "hashed_password",
 		Selector: "C",
-		Company:  &user.Company{Name: "john company", NIP: "1234567890"},
+		Company:  &user.Company{Name: "john company", NIP: fmt.Sprintf("1234567890-%d", id)},
 	}
 	return &user
+}
+
+func doesUserAndRetrieveUserDTOsMatch(user user.User, dto user.RetrieveUserDTO) bool {
+	if user.ID != dto.ID || user.Username != dto.Username || user.Email != dto.Email {
+		return false
+	}
+	if (user.Company == nil) != (dto.CompanyName == nil) {
+		return false
+	}
+	if user.Company != nil && user.Company.Name != *dto.CompanyName {
+		return false
+	}
+
+	if (user.Person == nil) != (dto.PersonName == nil) {
+		return false
+	}
+	if user.Person != nil && user.Person.Name != *dto.PersonName {
+		return false
+	}
+	return true
 }
