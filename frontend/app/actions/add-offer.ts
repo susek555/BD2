@@ -26,7 +26,7 @@ export async function addOffer(
             ? new Date(formDataObj.auctionEndDate as string)
             : undefined,
         buyNowAuctionPrice: formDataObj.buyNowAuctionPrice
-            ? parseFloat(formDataObj.buyNowAuctionPrice as string)
+            ? parseInt(formDataObj.buyNowAuctionPrice as string)
             : undefined
     }
 

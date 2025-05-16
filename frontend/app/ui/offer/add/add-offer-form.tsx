@@ -3,10 +3,38 @@
 import { AddOfferFormData, AddOfferFormState } from "@/app/lib/definitions";
 import React, { startTransition, useActionState } from "react";
 import { getAvailableModels } from "../../(home)/producers-and-models";
-import { addOffer, setProducer } from "@/app/actions/add-offer";
+import { addOffer } from "@/app/actions/add-offer";
+import { useDebouncedCallback } from "use-debounce";
 
 export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFormData}) {
-    const [producer, setProducerAction] = React.useReducer(setProducer, "");
+    const initialState: AddOfferFormState = {
+        errors: {},
+        values: {isAuction: false},
+    };
+
+    const [state, action] = useActionState(addOffer, initialState);
+    const [liveState, setLiveState] = React.useState<AddOfferFormState>(state);
+
+    React.useEffect(() => {
+        if (state !== liveState) {
+            setLiveState(state);
+        }
+    }, [state]);
+
+    const updateField = (name: string, value: any) => {
+        setLiveState((prev) => ({
+            ...prev,
+            values: {
+                ...prev.values,
+                [name]: value,
+            },
+        }));
+    };
+
+    const debouncedUpdateField = useDebouncedCallback((name: string, val: any) => {
+        updateField(name, val);
+    }, 500);
+
     const [availableModels, setAvailableModels] = React.useState<string[]>([]);
 
     const handleProducerChange = (newProducer: string) => {
@@ -15,28 +43,21 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
             inputsData.models
         );
         setAvailableModels(models);
-        setProducerAction(newProducer);
+        updateField("producer", newProducer);
     };
 
-    const [isAuction, setIsAuction] = React.useState<boolean>(false);
+    const [description, setDescription] = React.useState<string>(liveState.values?.description?.toString() ?? "");
 
-    function changeOfferType(isAuction: boolean) {
-        setIsAuction(isAuction);
-    }
-
-    const initialState: AddOfferFormState = {
-        errors: {},
-        values: {}
+    const changeOfferType = (isAuction: boolean) => {
+        updateField("isAuction", isAuction);
     };
-
-    const [state, action] = useActionState(addOffer, initialState);
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
         const formData = new FormData(event.currentTarget);
 
-        formData.append("isAuction", isAuction.toString());
+        formData.append("isAuction", liveState.values?.isAuction == null ? "false" : liveState.values.isAuction.toString());
         const registraction_day = formData.get("dateOfFirstRegistration-day");
         const registraction_month = formData.get("dateOfFirstRegistration-month");
         const registraction_year = formData.get("dateOfFirstRegistration-year");
@@ -77,12 +98,17 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                     name={id}
                     className="border rounded p-2"
                     required
-                    defaultValue={
-                        typeof state?.values?.[id] === "string"
-                            ? state.values[id]
-                            : ""
-                    }
-                    {...(id === "producer" ? { onChange: (e) => handleProducerChange(e.target.value) } : {})}
+                    // defaultValue={
+                    //     typeof state?.values?.[id] === "string"
+                    //         ? state.values[id]
+                    //         : ""
+                    // }
+                    value={liveState.values?.[id]?.toString() ?? ""}
+                    {...(id === "producer" ? {
+                        onChange: (e) => handleProducerChange(e.target.value)
+                    } : {
+                        onChange: (e) => updateField(id, e.target.value)
+                    })}
                 >
                     <option value="" disabled>Select a {name}...</option>
                     {options.map((item: string) => (
@@ -102,6 +128,17 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
     }
 
     function NumberInputField({ id, name } : { id:string, name: string }) {
+        const [value, setValue] = React.useState<string>(liveState.values?.[id]?.toString() ?? "");
+
+        function handleNumberChange(id: string, value: string) {
+            const parsedValue = parseInt(value);
+            if (!isNaN(parsedValue)) {
+                debouncedUpdateField(id, parsedValue);
+            } else {
+                debouncedUpdateField(id, value);
+            }
+        }
+
         return (
             <>
                 <label htmlFor={id} className="text-lg font-semibold">
@@ -113,8 +150,11 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                     name={id}
                     className="border rounded p-2"
                     placeholder={`Enter ${name.toLowerCase()}`}
-                    defaultValue={state?.values?.[id]?.toString() ?? ""}
-
+                    value={value}
+                    onChange={(e) => {
+                        setValue(e.target.value);
+                        handleNumberChange(id, e.target.value)
+                    }}
                     required
                 />
                 <div id="username-error" aria-live="polite" aria-atomic="true">
@@ -130,70 +170,108 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
     }
 
     function DateSelectionField({ id, name }: { id: string, name: string }) {
-        const dateValue = state?.values?.[id]?.toString();
-        const dateParts = dateValue ? dateValue.split("-") : ["", "", ""];
-        const [year, month, day] = dateParts;
+        const [initialDate, setInitialDate] = React.useState<string>(liveState.values?.[id]?.toString() ?? "");
+
+        const [year, setYear] = React.useState<string>(() => {
+            return initialDate ? initialDate.split("-")[0] ?? "" : "";
+        });
+        const [month, setMonth] = React.useState<string>(() => {
+            return initialDate ? initialDate.split("-")[1] ?? "" : "";
+        });
+        const [day, setDay] = React.useState<string>(() => {
+            return initialDate ? initialDate.split("-")[2] ?? "" : "";
+        });
+
+        const prevInitialDateRef = React.useRef<string>("");
+
+        React.useEffect(() => {
+        if (liveState.values?.[id]?.toString() !== prevInitialDateRef.current) {
+            const newInitialDate = liveState.values?.[id]?.toString() ?? "";
+            setInitialDate(newInitialDate);
+            const parts = newInitialDate.split("-");
+            setYear(parts[0] ?? "");
+            setMonth(parts[1] ?? "");
+            setDay(parts[2] ?? "");
+            prevInitialDateRef.current = newInitialDate;
+        }
+        }, [liveState.values, id]);
+
+        React.useEffect(() => {
+        if (
+            year.length === 4 &&
+            month.length > 0 && parseInt(month) >= 1 && parseInt(month) <= 12 &&
+            day.length > 0 && parseInt(day) >= 1 && parseInt(day) <= 31
+        ) {
+            const newDate = `${year.padStart(4, "0")}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+            if (newDate !== prevInitialDateRef.current) {
+                debouncedUpdateField(id, newDate);
+                setInitialDate(newDate);
+                prevInitialDateRef.current = newDate;
+            }
+        }
+        }, [year, month, day, id]);
 
         return (
             <>
-                <label htmlFor={id} className="text-lg font-semibold">
-                    {name}
-                </label>
+                <label htmlFor={id} className="text-lg font-semibold">{name}</label>
                 <div className="flex gap-2 items-end">
-                    <div className="flex flex-col">
-                        <input
-                            type="number"
-                            id={`${id}-day`}
-                            name={`${id}-day`}
-                            min={1}
-                            max={31}
-                            className="border rounded p-2 w-20"
-                            defaultValue={day || ""}
-                            required
-                            placeholder="Day"
-                        />
-                    </div>
-                    <div className="flex flex-col">
-                        <input
-                            type="number"
-                            id={`${id}-month`}
-                            name={`${id}-month`}
-                            min={1}
-                            max={12}
-                            className="border rounded p-2 w-20"
-                            defaultValue={month || ""}
-                            required
-                            placeholder="Month"
-                        />
-                    </div>
-                    <div className="flex flex-col">
-                        <input
-                            type="number"
-                            id={`${id}-year`}
-                            name={`${id}-year`}
-                            min={1900}
-                            max={2100}
-                            className="border rounded p-2 w-28"
-                            defaultValue={year || ""}
-                            required
-                            placeholder="Year"
-                        />
-                    </div>
+                    <input
+                        type="number"
+                        id={`${id}-day`}
+                        name={`${id}-day`}
+                        min={1}
+                        max={31}
+                        className="border rounded p-2 w-20"
+                        value={day}
+                        onChange={(e) => setDay(e.target.value)}
+                        required
+                        placeholder="Day"
+                    />
+                    <input
+                        type="number"
+                        id={`${id}-month`}
+                        name={`${id}-month`}
+                        min={1}
+                        max={12}
+                        className="border rounded p-2 w-20"
+                        value={month}
+                        onChange={(e) => setMonth(e.target.value)}
+                        required
+                        placeholder="Month"
+                    />
+                    <input
+                        type="number"
+                        id={`${id}-year`}
+                        name={`${id}-year`}
+                        min={1900}
+                        max={2100}
+                        className="border rounded p-2 w-28"
+                        value={year}
+                        onChange={(e) => setYear(e.target.value)}
+                        required
+                        placeholder="Year"
+                    />
                 </div>
                 <div id="username-error" aria-live="polite" aria-atomic="true">
-                    {state?.errors?.[id] &&
-                        state.errors[id].map((error: string) => (
-                            <p className="mt-2 text-sm text-red-500" key={error}>
-                                {error}
-                            </p>
-                        ))}
+                    {state?.errors?.[id]?.map((error: string) => (
+                        <p className="mt-2 text-sm text-red-500" key={error}>{error}</p>
+                    ))}
                 </div>
             </>
-        )
+        );
     }
 
 
+
+
     function TextInputField({ id, name } : { id: string, name: string }) {
+        const [value, setValue] = React.useState<string>(liveState.values?.[id]?.toString() ?? "");
+
+        function handleTextChange(id: string, value: string) {
+            setValue(value);
+            debouncedUpdateField(id, value);
+        }
+
         return (
             <>
                 <label htmlFor={id} className="text-lg font-semibold">
@@ -204,11 +282,8 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                     id={id}
                     name={id}
                     className="border rounded p-2"
-                    defaultValue={
-                        typeof state?.values?.[id] === "string"
-                            ? state.values[id]
-                            : ""
-                    }
+                    value={value}
+                    onChange={(e) => handleTextChange(id, e.target.value)}
                     placeholder={`Enter ${name.toLowerCase()}`}
                     required
                 />
@@ -233,7 +308,7 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                     name="producer"
                     className="border rounded p-2"
                     required
-                    value={producer}
+                    value={liveState.values?.producer || ""}
                     onChange={e => handleProducerChange(e.target.value)}
                 >
                     <option value="" disabled>Select a producer...</option>
@@ -273,7 +348,10 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                     id="description"
                     name="description"
                     className="border rounded p-2 h-32"
-                    defaultValue={state?.values?.description || ""}
+                    value={description}
+                    onChange={(e) => {
+                        debouncedUpdateField("description", e.target.value)
+                        setDescription(e.target.value);}}
                     placeholder="Enter description..."
                     required
                 ></textarea>
@@ -295,7 +373,7 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                             id="standard offer"
                             type="radio"
                             value="P"
-                            checked={isAuction === false}
+                            checked={liveState.values?.isAuction === false}
                             onChange={() => changeOfferType(false)}
                             className="h-4 w-4 text-blue-500 focus:ring-blue-400"
                         />
@@ -308,7 +386,7 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                             id="auction"
                             type="radio"
                             value="C"
-                            checked={isAuction === true}
+                            checked={liveState.values?.isAuction === true}
                             onChange={() => changeOfferType(true)}
                             className="h-4 w-4 text-blue-500 focus:ring-blue-400"
                         />
@@ -326,7 +404,7 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                     ))}
                 </div>
 
-                {isAuction && (
+                {liveState.values?.isAuction && (
                     <>
                         <DateSelectionField id="auctionEndDate" name="Auction end date" />
                         <NumberInputField id="buyNowAuctionPrice" name="Buy now price" />
