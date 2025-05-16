@@ -3,10 +3,12 @@
 import { AddOfferFormData } from "@/app/lib/definitions";
 import React from "react";
 import { getAvailableModels } from "../../(home)/producers-and-models";
+import { string } from "zod";
 
 export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFormData}) {
 
     function handleSubmit(formData: FormData): any {
+        //TODO set offer type
         const formDataObj = Object.fromEntries(formData.entries());
         console.log("Add Offer form data:", formDataObj);
         return formDataObj;
@@ -21,19 +23,19 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
 
     const [isAuction, setIsAuction] = React.useState<boolean>(false);
 
-    function changeAuctionType(isAuction: boolean) {
+    function changeOfferType(isAuction: boolean) {
         setIsAuction(isAuction);
     }
 
     // UI
 
-    function SelectionLabel({ name, options }: { name: string; options: string[] }) {
+    function SelectionLabel({ id, name, options }: { id: string, name: string; options: string[] }) {
         return (
             <>
-                <label htmlFor={`${name.toLowerCase()}`} className="text-lg font-semibold">
+                <label htmlFor={id} className="text-lg font-semibold">
                     {name}
                 </label>
-                <select id={`${name.toLowerCase()}`} name={`${name.toLowerCase()}`} className="border rounded p-2" required defaultValue="">
+                <select id={id} name={id} className="border rounded p-2" required defaultValue="">
                     <option value="" disabled>Select a {name}...</option>
                     {options.map((item: string) => (
                         <option key={item} value={item}>{item}</option>
@@ -43,16 +45,16 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
         )
     }
 
-    function NumberInputField({ name } : { name: string }) {
+    function NumberInputField({ id, name } : { id:string, name: string }) {
         return (
             <>
-                <label htmlFor={`${name.toLowerCase()}`} className="text-lg font-semibold">
+                <label htmlFor={id} className="text-lg font-semibold">
                     {name}
                 </label>
                 <input
                     type="number"
-                    id={`${name.toLowerCase()}`}
-                    name={`${name.toLowerCase()}`}
+                    id={id}
+                    name={id}
                     className="border rounded p-2"
                     placeholder={`Enter ${name.toLowerCase()}`}
                     required
@@ -61,10 +63,10 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
         )
     }
 
-    function DateSelectionField({ name } : { name: string }) {
+    function DateSelectionField({ id, name } : { id: string, name: string }) {
         return (
             <>
-                <label htmlFor={`${name.toLowerCase()}`} className="text-lg font-semibold">
+                <label htmlFor={id} className="text-lg font-semibold">
                     {name}
                 </label>
                 <div className="flex gap-2 items-end">
@@ -72,8 +74,8 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                     <div className="flex flex-col">
                         <input
                             type="number"
-                            id={`${name.toLowerCase()}-day`}
-                            name={`${name.toLowerCase()}-day`}
+                            id={`${id}-day`}
+                            name={`${id}-day`}
                             min={1}
                             max={31}
                             className="border rounded p-2 w-20"
@@ -84,8 +86,8 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                     <div className="flex flex-col">
                         <input
                             type="number"
-                            id={`${name.toLowerCase()}-month`}
-                            name={`${name.toLowerCase()}-month`}
+                            id={`${id}-month`}
+                            name={`${id}-month`}
                             min={1}
                             max={12}
                             className="border rounded p-2 w-20"
@@ -96,8 +98,8 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                     <div className="flex flex-col">
                         <input
                             type="number"
-                            id={`${name.toLowerCase()}-year`}
-                            name={`${name.toLowerCase()}-year`}
+                            id={`${id}-year`}
+                            name={`${id}-year`}
                             min={1900}
                             max={2100}
                             className="border rounded p-2 w-28"
@@ -110,16 +112,16 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
         )
     }
 
-    function TextInputField({ name } : { name: string }) {
+    function TextInputField({ id, name } : { id: string, name: string }) {
         return (
             <>
-                <label htmlFor={`${name.toLowerCase()}`} className="text-lg font-semibold">
+                <label htmlFor={id} className="text-lg font-semibold">
                     {name}
                 </label>
                 <input
                     type="text"
-                    id={`${name.toLowerCase()}`}
-                    name={`${name.toLowerCase()}`}
+                    id={id}
+                    name={id}
                     className="border rounded p-2"
                     placeholder={`Enter ${name.toLowerCase()}`}
                     required
@@ -145,21 +147,21 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                         <option key={item} value={item}>{item}</option>
                     ))}
                 </select>
-                <SelectionLabel name="Model" options={availableModels} />
-                <SelectionLabel name="Color" options={inputsData.colors} />
-                <SelectionLabel name="Gearbox" options={inputsData.gearboxes} />
-                <SelectionLabel name="Fuel Type" options={inputsData.fuelTypes} />
-                <SelectionLabel name="Drive Type" options={inputsData.driveTypes} />
-                <SelectionLabel name="Country" options={inputsData.countries} />
-                <NumberInputField name="Production Year" />
-                <NumberInputField name="Mileage" />
-                <NumberInputField name="Number of doors" />
-                <NumberInputField name="Number of seats" />
-                <NumberInputField name="Power" />
-                <NumberInputField name="Engine displacement" />
-                <DateSelectionField name="Date of first registration" />
-                <TextInputField name="Plate number" />
-                <TextInputField name="Location" />
+                <SelectionLabel id="model" name="Model" options={availableModels} />
+                <SelectionLabel id="color" name="Color" options={inputsData.colors} />
+                <SelectionLabel id="gearbox" name="Gearbox" options={inputsData.gearboxes} />
+                <SelectionLabel id="fuelType" name="Fuel Type" options={inputsData.fuelTypes} />
+                <SelectionLabel id="driveType" name="Drive Type" options={inputsData.driveTypes} />
+                <SelectionLabel id="country" name="Country" options={inputsData.countries} />
+                <NumberInputField id="productionYear" name="Production Year" />
+                <NumberInputField id="mileage" name="Mileage" />
+                <NumberInputField id="numberOfDoors" name="Number of doors" />
+                <NumberInputField id="numberOfSeats" name="Number of seats" />
+                <NumberInputField id="power" name="Power" />
+                <NumberInputField id="engineDisplacement" name="Engine displacement" />
+                <DateSelectionField id="dateOfFirstRegistration" name="Date of first registration" />
+                <TextInputField id="plateNumber" name="Plate number" />
+                <TextInputField id="location" name="Location" />
 
                 <label htmlFor="description" className="text-lg font-semibold">
                     Description
@@ -178,7 +180,7 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                 {/* <input type="file" id="images" name="images" className="border rounded p-2" multiple required /> */}
 
                 <div className="my-10"/>
-                <NumberInputField name="Price" />
+                <NumberInputField id="price" name="Price" />
                 <label htmlFor="offer type" className="text-lg font-semibold">
                     Offer Type
                 </label>
@@ -189,7 +191,7 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                             type="radio"
                             value="P"
                             checked={isAuction === false}
-                            onChange={() => changeAuctionType(false)}
+                            onChange={() => changeOfferType(false)}
                             className="h-4 w-4 text-blue-500 focus:ring-blue-400"
                         />
                         <label htmlFor="standard offer" className="ml-2 text-sm font-medium text-gray-900">
@@ -202,7 +204,7 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                             type="radio"
                             value="C"
                             checked={isAuction === true}
-                            onChange={() => changeAuctionType(true)}
+                            onChange={() => changeOfferType(true)}
                             className="h-4 w-4 text-blue-500 focus:ring-blue-400"
                         />
                         <label htmlFor="auction" className="ml-2 text-sm font-medium text-gray-900">
@@ -210,15 +212,15 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                         </label>
                     </div>
                 </div>
-                
+
                 {isAuction && (
                     <>
-                        <DateSelectionField name="Auction end date" />
-                        <NumberInputField name="Buy now price" />
+                        <DateSelectionField id="auctionEndDate" name="Auction end date" />
+                        <NumberInputField id="buyNowAuctionPrice" name="Buy now price" />
                     </>
                 )}
 
-                <button type="submit" className="bg-blue-600 text-white rounded p-2">Submit</button>
+                <button type="submit" className="bg-blue-600 text-white rounded p-2">Add offer</button>
             </div>
         </form>
     )
