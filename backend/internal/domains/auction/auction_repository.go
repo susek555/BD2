@@ -30,6 +30,7 @@ func (a *AuctionRepository) Create(auction *sale_offer.Auction) error {
 			}
 			return tx.
 				Preload("Offer.Car.Model.Manufacturer").
+				Preload("Offer.User").
 				First(auction, "offer_id = ?", auction.OfferID).Error
 		})
 }
