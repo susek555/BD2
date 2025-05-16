@@ -271,3 +271,17 @@ func (h *Handler) GetAverageRatingByRevieweeId(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, averageRating)
 }
+
+func (h *Handler) GetFrequencyOfRatingByRevieweeId(c *gin.Context) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+	}
+	revieweeId := uint(id)
+	frequency, err := h.service.GetFrequencyOfRatingByRevieweeId(revieweeId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+		return
+	}
+	c.JSON(http.StatusOK, frequency)
+}
