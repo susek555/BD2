@@ -19,8 +19,8 @@ func MigrateModels() {
 		&review.Review{},
 		&manufacturer.Manufacturer{},
 		&model.Model{},
-		&sale_offer.Car{},
 		&sale_offer.SaleOffer{},
+		&sale_offer.Car{},
 		&sale_offer.Auction{},
 		&bid.Bid{},
 	)

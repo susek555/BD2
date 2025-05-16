@@ -21,19 +21,13 @@ func NewSaleOfferRepository(db *gorm.DB) SaleOfferRepositoryInterface {
 }
 
 func (r *SaleOfferRepository) Create(offer *SaleOffer) error {
-	return r.DB.Transaction(func(tx *gorm.DB) error {
-		if err := tx.Create(offer.Car).Error; err != nil {
-			return err
-		}
-		if err := tx.Create(offer).Error; err != nil {
-			return err
-		}
-		return nil
-	})
+	return r.DB.Session(&gorm.Session{FullSaveAssociations: true}).Create(offer).Error
 }
 
 func (r *SaleOfferRepository) GetFiltered(filter *OfferFilter) ([]SaleOffer, *pagination.PaginationResponse, error) {
-	query := r.buildQuery()
+	query := r.buildBaseQuery().
+		Joins("JOIN cars on cars.offer_id = sale_offers.id").
+		Joins("LEFT JOIN auctions on auctions.offer_id = sale_offers.id")
 	query, err := filter.ApplyOfferFilters(query)
 	if err != nil {
 		return nil, nil, err
@@ -47,20 +41,18 @@ func (r *SaleOfferRepository) GetFiltered(filter *OfferFilter) ([]SaleOffer, *pa
 
 func (r *SaleOfferRepository) GetByID(id uint) (*SaleOffer, error) {
 	var offer SaleOffer
-	err := r.DB.First(&offer, id).Error
+	err := r.buildBaseQuery().First(&offer, id).Error
 	return &offer, err
 }
 
 func (r *SaleOfferRepository) GetByUserID(id uint) ([]SaleOffer, error) {
 	var offers []SaleOffer
-	err := r.DB.Where("user_id = ?", id).Find(&offers).Error
+	err := r.buildBaseQuery().Where("user_id = ?", id).Find(&offers).Error
 	return offers, err
 }
 
-func (r *SaleOfferRepository) buildQuery() *gorm.DB {
+func (r *SaleOfferRepository) buildBaseQuery() *gorm.DB {
 	query := r.DB.
-		Joins("JOIN cars on cars.offer_id = sale_offers.id").
-		Joins("LEFT JOIN auctions on auctions.offer_id = sale_offers.id").
 		Preload("Auction").
 		Preload("User").
 		Preload("Car").
