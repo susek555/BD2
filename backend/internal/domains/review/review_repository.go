@@ -1,6 +1,8 @@
 package review
 
 import (
+	"errors"
+
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/generic"
 	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
 	"gorm.io/gorm"
@@ -148,7 +150,7 @@ func (repo *ReviewRepository) GetAverageRatingByRevieweeId(revieweeId uint) (flo
 		Scan(&average).
 		Error
 	if err != nil {
-		return 0, err
+		return 0, errors.New("no reviews found")
 	}
 	return average, nil
 }
