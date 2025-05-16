@@ -72,7 +72,7 @@ export async function fetchFavorites(
   });
 
   if (!response.ok) {
-    throw new Error('Failed to fetch history offers');
+    throw new Error('Failed to fetch favorite offers');
   }
 
   return response.json();
