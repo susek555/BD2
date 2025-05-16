@@ -84,6 +84,7 @@ func registerReviewRoutes(router *gin.Engine) {
 	reviewRoutes.GET("/reviewer/:id", reviewHandler.GetReviewsByReviewerId)
 	reviewRoutes.GET("/reviewee/:id", reviewHandler.GetReviewsByRevieweeId)
 	reviewRoutes.GET("/reviewer/reviewee/:reviewerId/:revieweeId", reviewHandler.GetReviewsByReviewerIdAndRevieweeId)
+	reviewRoutes.POST("/filtered", reviewHandler.GetFilteredReviews)
 }
 
 func registerCarRoutes(router *gin.Engine) {
