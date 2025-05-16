@@ -34,7 +34,7 @@ func (s *SaleOfferService) GetFiltered(filter *OfferFilter) (*RetrieveOffersWith
 	if err != nil {
 		return nil, err
 	}
-	filter.Constriants.Manufacturers = manufacturers
+	filter.Constraints.Manufacturers = manufacturers
 	offers, pagResponse, err := s.repo.GetFiltered(filter)
 	if err != nil {
 		return nil, err

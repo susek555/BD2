@@ -59,13 +59,13 @@ type OfferFilter struct {
 	YearRange                *MinMax[uint]                `json:"year_range"`
 	EnginePowerRange         *MinMax[uint]                `json:"engine_power_range"`
 	EngineCapacityRange      *MinMax[uint]                `json:"engine_capacity_range"`
-	CarRegistrationDateRagne *MinMax[string]              `json:"car_registration_date_range"`
+	CarRegistrationDateRange *MinMax[string]              `json:"car_registration_date_range"`
 	OfferCreationDateRange   *MinMax[string]              `json:"offer_creation_date_range"`
-	Constriants              FieldsConstraints            `json:"-"`
+	Constraints              FieldsConstraints            `json:"-"`
 }
 
 func NewOfferFilter() *OfferFilter {
-	return &OfferFilter{Constriants: FieldsConstraints{
+	return &OfferFilter{Constraints: FieldsConstraints{
 		OfferTypes:    OfferTypes,
 		Colors:        car_params.Colors,
 		Drives:        car_params.Drives,
@@ -80,7 +80,7 @@ func (of *OfferFilter) ApplyOfferFilters(query *gorm.DB) (*gorm.DB, error) {
 	}
 	query = applyUserFilter(query, of.UserID)
 	query = applyOfferTypeFilter(query, of.OfferType)
-	query = applyManufacturesrsFilter(query, of.Manufacturers)
+	query = applyManufacturersFilter(query, of.Manufacturers)
 	query = applyInSliceFilter(query, "cars.color", of.Colors)
 	query = applyInSliceFilter(query, "cars.drive", of.Drives)
 	query = applyInSliceFilter(query, "cars.fuel_type", of.FuelTypes)
@@ -90,7 +90,7 @@ func (of *OfferFilter) ApplyOfferFilters(query *gorm.DB) (*gorm.DB, error) {
 	query = applyInRangeFilter(query, "cars.production_year", of.YearRange)
 	query = applyInRangeFilter(query, "cars.engine_power", of.EnginePowerRange)
 	query = applyInRangeFilter(query, "cars.engine_capacity", of.EngineCapacityRange)
-	query = applyDateInRangeFilter(query, "cars.registration_date", of.CarRegistrationDateRagne)
+	query = applyDateInRangeFilter(query, "cars.registration_date", of.CarRegistrationDateRange)
 	query = applyDateInRangeFilter(query, "date_of_issue", of.OfferCreationDateRange)
 	query = applyOrderFilter(query, of.OrderKey, of.IsOrderDesc)
 	return query, nil
@@ -117,7 +117,7 @@ func applyOfferTypeFilter(query *gorm.DB, offerType *OfferType) *gorm.DB {
 	}
 }
 
-func applyManufacturesrsFilter(query *gorm.DB, values *[]string) *gorm.DB {
+func applyManufacturersFilter(query *gorm.DB, values *[]string) *gorm.DB {
 	if values != nil && len(*values) > 0 {
 		query = query.
 			Joins("JOIN models ON models.id = cars.model_id").
@@ -181,19 +181,19 @@ func (of *OfferFilter) validateEnums() error {
 	if of.OfferType != nil && !IsParamValid(*of.OfferType, OfferTypes) {
 		return ErrInvalidSaleOfferType
 	}
-	if of.Manufacturers != nil && !AreParamsValid(of.Manufacturers, &of.Constriants.Manufacturers) {
+	if of.Manufacturers != nil && !AreParamsValid(of.Manufacturers, &of.Constraints.Manufacturers) {
 		return ErrInvalidManufacturer
 	}
-	if of.Colors != nil && !AreParamsValid(of.Colors, &of.Constriants.Colors) {
+	if of.Colors != nil && !AreParamsValid(of.Colors, &of.Constraints.Colors) {
 		return ErrInvalidColor
 	}
-	if of.Drives != nil && !AreParamsValid(of.Drives, &of.Constriants.Drives) {
+	if of.Drives != nil && !AreParamsValid(of.Drives, &of.Constraints.Drives) {
 		return ErrInvalidDrive
 	}
-	if of.FuelTypes != nil && !AreParamsValid(of.FuelTypes, &of.Constriants.FuelTypes) {
+	if of.FuelTypes != nil && !AreParamsValid(of.FuelTypes, &of.Constraints.FuelTypes) {
 		return ErrInvalidFuelType
 	}
-	if of.Transmissions != nil && !AreParamsValid(of.Transmissions, &of.Constriants.Transmissions) {
+	if of.Transmissions != nil && !AreParamsValid(of.Transmissions, &of.Constraints.Transmissions) {
 		return ErrInvalidTransmission
 	}
 	return nil
@@ -210,7 +210,7 @@ func (of *OfferFilter) validateRanges() error {
 }
 
 func (of *OfferFilter) validateDates() error {
-	datesRanges := []*MinMax[string]{of.CarRegistrationDateRagne, of.OfferCreationDateRange}
+	datesRanges := []*MinMax[string]{of.CarRegistrationDateRange, of.OfferCreationDateRange}
 	for _, r := range datesRanges {
 		if err := validateDateRange(r); err != nil {
 			return err
