@@ -185,3 +185,19 @@ export interface UserProfile {
   companyName?: string;
   companyNip?: string;
 }
+
+// Reviews
+
+interface ReviewUser {
+  id: number;
+  username: string;
+}
+
+export interface Review {
+  id: number;
+  description: string;
+  rating: number;
+  date: string;
+  reviewer: ReviewUser;
+  reviewee: ReviewUser;
+}
