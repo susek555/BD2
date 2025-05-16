@@ -42,6 +42,7 @@ type RetrieveSaleOfferDTO struct {
 }
 
 type RetrieveDetailedSaleOfferDTO struct {
+	ID                 uint                    `json:"id"`
 	Username           string                  `json:"username"`
 	Description        string                  `json:"description"`
 	Price              uint                    `json:"price"`
