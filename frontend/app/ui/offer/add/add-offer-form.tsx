@@ -24,7 +24,9 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
     function SelectionLabel({ name, options }: { name: string; options: string[] }) {
         return (
             <>
-                <label htmlFor={`${name.toLowerCase()}`} className="text-lg font-semibold">{name}</label>
+                <label htmlFor={`${name.toLowerCase()}`} className="text-lg font-semibold">
+                    {name}
+                </label>
                 <select id={`${name.toLowerCase()}`} name={`${name.toLowerCase()}`} className="border rounded p-2" required defaultValue="">
                     <option value="" disabled>Select a {name}...</option>
                     {options.map((item: string) => (
@@ -38,8 +40,17 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
     function NumberInputField({ name } : { name: string }) {
         return (
             <>
-                <label htmlFor={`${name.toLowerCase()}`} className="text-lg font-semibold">{name}</label>
-                <input type="number" id={`${name.toLowerCase()}`} name={`${name.toLowerCase()}`} className="border rounded p-2" required />
+                <label htmlFor={`${name.toLowerCase()}`} className="text-lg font-semibold">
+                    {name}
+                </label>
+                <input
+                    type="number"
+                    id={`${name.toLowerCase()}`}
+                    name={`${name.toLowerCase()}`}
+                    className="border rounded p-2"
+                    placeholder={`Enter ${name.toLowerCase()}`}
+                    required
+                />
             </>
         )
     }
@@ -47,7 +58,9 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
     function DateSelectionField({ name } : { name: string }) {
         return (
             <>
-                <label htmlFor={`${name.toLowerCase()}`} className="text-lg font-semibold">{name}</label>
+                <label htmlFor={`${name.toLowerCase()}`} className="text-lg font-semibold">
+                    {name}
+                </label>
                 <div className="flex gap-2 items-end">
 
                     <div className="flex flex-col">
@@ -94,8 +107,17 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
     function TextInputField({ name } : { name: string }) {
         return (
             <>
-                <label htmlFor={`${name.toLowerCase()}`} className="text-lg font-semibold">{name}</label>
-                <input type="text" id={`${name.toLowerCase()}`} name={`${name.toLowerCase()}`} className="border rounded p-2" required />
+                <label htmlFor={`${name.toLowerCase()}`} className="text-lg font-semibold">
+                    {name}
+                </label>
+                <input
+                    type="text"
+                    id={`${name.toLowerCase()}`}
+                    name={`${name.toLowerCase()}`}
+                    className="border rounded p-2"
+                    placeholder={`Enter ${name.toLowerCase()}`}
+                    required
+                />
             </>
         )
     }
@@ -142,7 +164,7 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
 
                 <div className="my-10"/>
                 <NumberInputField name="Price" />
-                
+
 
 
                 <button type="submit" className="bg-blue-600 text-white rounded p-2">Submit</button>
