@@ -1,6 +1,10 @@
 package review
 
-import "github.com/susek555/BD2/car-dealer-api/internal/domains/user"
+import (
+	"time"
+
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
+)
 
 func (ri *CreateReviewDTO) MapToObject(reviewerId uint) Review {
 	return Review{
@@ -8,6 +12,7 @@ func (ri *CreateReviewDTO) MapToObject(reviewerId uint) Review {
 		Rating:      ri.Rating,
 		ReviewerID:  reviewerId,
 		RevieweeId:  ri.RevieweeId,
+		ReviewDate:  time.Now().Format("2006-01-02 15:04:05"),
 	}
 }
 
@@ -18,6 +23,7 @@ func (ur *UpdateReviewDTO) MapToObject(reviewerId, revieweeId uint) Review {
 		Rating:      ur.Rating,
 		ReviewerID:  reviewerId,
 		RevieweeId:  revieweeId,
+		ReviewDate:  time.Now().Format("2006-01-02 15:04:05"),
 	}
 }
 
@@ -30,6 +36,7 @@ func (r *Review) MapToDTO() RetrieveReviewDTO {
 	reviewDTO.Reviewee = reviewee
 	reviewer := MapToUserDTO(r.Reviewer)
 	reviewDTO.Reviewer = reviewer
+	reviewDTO.ReviewDate = r.ReviewDate
 	return reviewDTO
 }
 
