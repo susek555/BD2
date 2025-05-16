@@ -193,7 +193,7 @@ func (h *ReviewHandler) GetReviewsByReviewerId(c *gin.Context) {
 //	@Param			id	path		int						true	"Reviewee ID"
 //	@Success		200	{array}		RetrieveReviewDTO		"OK – list of reviews"
 //	@Failure		400	{object}	custom_errors.HTTPError	"Bad Request – invalid ID format or query failed"
-//	@Router			/review/reviewee/{id} [get]
+//	@Router			/review/reviewee/{id} [post]
 func (h *ReviewHandler) GetReviewsByRevieweeId(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
