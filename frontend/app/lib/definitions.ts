@@ -211,3 +211,19 @@ export type OfferDetails = {
 
 
 
+
+// Reviews
+
+interface ReviewUser {
+  id: number;
+  username: string;
+}
+
+export interface Review {
+  id: number;
+  description: string;
+  rating: number;
+  date: string;
+  reviewer: ReviewUser;
+  reviewee: ReviewUser;
+}
