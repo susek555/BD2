@@ -65,6 +65,14 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                         <option key={item} value={item}>{item}</option>
                     ))}
                 </select>
+                <div id="username-error" aria-live="polite" aria-atomic="true">
+                    {state?.errors?.[id] &&
+                        state.errors[id].map((error: string) => (
+                        <p className="mt-2 text-sm text-red-500" key={error}>
+                            {error}
+                        </p>
+                    ))}
+                </div>
             </>
         )
     }
@@ -83,6 +91,14 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                     placeholder={`Enter ${name.toLowerCase()}`}
                     required
                 />
+                <div id="username-error" aria-live="polite" aria-atomic="true">
+                    {state?.errors?.[id] &&
+                        state.errors[id].map((error: string) => (
+                        <p className="mt-2 text-sm text-red-500" key={error}>
+                            {error}
+                        </p>
+                    ))}
+                </div>
             </>
         )
     }
@@ -132,6 +148,14 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                         />
                     </div>
                 </div>
+                <div id="username-error" aria-live="polite" aria-atomic="true">
+                    {state?.errors?.[id] &&
+                        state.errors[id].map((error: string) => (
+                        <p className="mt-2 text-sm text-red-500" key={error}>
+                            {error}
+                        </p>
+                    ))}
+                </div>
             </>
         )
     }
@@ -150,6 +174,14 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                     placeholder={`Enter ${name.toLowerCase()}`}
                     required
                 />
+                <div id="username-error" aria-live="polite" aria-atomic="true">
+                    {state?.errors?.[id] &&
+                        state.errors[id].map((error: string) => (
+                        <p className="mt-2 text-sm text-red-500" key={error}>
+                            {error}
+                        </p>
+                    ))}
+                </div>
             </>
         )
     }
@@ -171,6 +203,14 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                         <option key={item} value={item}>{item}</option>
                     ))}
                 </select>
+                <div id="username-error" aria-live="polite" aria-atomic="true">
+                    {state?.errors?.producer &&
+                        state.errors.producer.map((error: string) => (
+                        <p className="mt-2 text-sm text-red-500" key={error}>
+                            {error}
+                        </p>
+                    ))}
+                </div>
                 <SelectionLabel id="model" name="Model" options={availableModels} />
                 <SelectionLabel id="color" name="Color" options={inputsData.colors} />
                 <SelectionLabel id="gearbox" name="Gearbox" options={inputsData.gearboxes} />
@@ -235,6 +275,14 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                             Auction
                         </label>
                     </div>
+                </div>
+                <div id="username-error" aria-live="polite" aria-atomic="true">
+                    {state?.errors?.isAuction &&
+                        state.errors.isAuction.map((error: string) => (
+                        <p className="mt-2 text-sm text-red-500" key={error}>
+                            {error}
+                        </p>
+                    ))}
                 </div>
 
                 {isAuction && (
