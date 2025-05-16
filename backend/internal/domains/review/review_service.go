@@ -29,8 +29,11 @@ func NewReviewService(repo ReviewRepositoryInterface) ReviewServiceInterface {
 }
 
 func (service *ReviewService) Create(userId uint, review *CreateReviewDTO) (*RetrieveReviewDTO, error) {
-	reviewObj := review.MapToObject(userId)
-	err := service.Repo.Create(&reviewObj)
+	reviewObj, err := review.MapToObject(userId)
+	if err != nil {
+		return nil, err
+	}
+	err = service.Repo.Create(reviewObj)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +53,7 @@ func (service *ReviewService) GetAll() ([]RetrieveReviewDTO, error) {
 func (service *ReviewService) GetById(id uint) (*RetrieveReviewDTO, error) {
 	review, err := service.Repo.GetById(id)
 	if err != nil {
-		return nil, err
+		return nil, ErrNoReviewFound
 	}
 	reviewDTO := review.MapToDTO()
 	return reviewDTO, nil
@@ -88,8 +91,11 @@ func (service *ReviewService) Update(reviewerId uint, review *UpdateReviewDTO) (
 	if err != nil {
 		return nil, ErrNotReviewer
 	}
-	reviewObj := review.MapToObject(reviewerId, revieweeId)
-	err = service.Repo.Update(&reviewObj)
+	reviewObj, err := review.MapToObject(reviewerId, revieweeId)
+	if err != nil {
+		return nil, err
+	}
+	err = service.Repo.Update(reviewObj)
 	if err != nil {
 		return nil, err
 	}
