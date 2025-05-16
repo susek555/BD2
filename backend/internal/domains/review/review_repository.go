@@ -17,6 +17,7 @@ type ReviewRepositoryInterface interface {
 	GetByReviewerIdAndRevieweeId(reviewerId uint, reviewedId uint) (*Review, error)
 	GetFiltered(filter *ReviewFilter) ([]Review, *pagination.PaginationResponse, error)
 	GetAverageRatingByRevieweeId(revieweeId uint) (float64, error)
+	GetFrequencyOfRatingByRevieweeId(revieweeId uint) (map[int]int, error)
 }
 
 type ReviewRepository struct {
@@ -163,4 +164,41 @@ func (repo *ReviewRepository) buildBaseQuery() *gorm.DB {
 		Preload("Reviewer").
 		Preload("Reviewee")
 	return query
+}
+
+func (repo *ReviewRepository) GetFrequencyOfRatingByRevieweeId(revieweeId uint) (map[int]int, error) {
+	mapFrequency := make(map[int]int)
+	err := repo.repository.
+		DB.
+		Model(&Review{}).
+		Select("rating, COUNT(*) as frequency").
+		Where("reviewee_id = ?", revieweeId).
+		Group("rating").
+		Scan(&mapFrequency).
+		Error
+	if err != nil {
+		return nil, err
+	}
+	var count int64
+	err = repo.repository.
+		DB.
+		Model(&Review{}).
+		Where("reviewee_id = ?", revieweeId).
+		Count(&count).
+		Error
+	if err != nil {
+		return nil, err
+	}
+	if len(mapFrequency) == 0 {
+		return nil, errors.New("no reviews found")
+	}
+
+	for i := 1; i <= 5; i++ {
+		if freq, exists := mapFrequency[i]; exists {
+			mapFrequency[i] = int(float64(freq) / float64(count) * 100)
+		} else {
+			mapFrequency[i] = 0
+		}
+	}
+	return mapFrequency, nil
 }
