@@ -13,13 +13,14 @@ type ReviewRepositoryInterface interface {
 	GetByRevieweeId(reviewedId uint) ([]Review, error)
 	GetByReviewerIdAndRevieweeId(reviewerId uint, reviewedId uint) (*Review, error)
 	GetFiltered(filter *ReviewFilter) ([]Review, *pagination.PaginationResponse, error)
+	GetAverageRatingByRevieweeId(revieweeId uint) (float64, error)
 }
 
 type ReviewRepository struct {
 	repository *generic.GormRepository[Review]
 }
 
-func NewReviewRepository(dbHandle *gorm.DB) *ReviewRepository {
+func NewReviewRepository(dbHandle *gorm.DB) ReviewRepositoryInterface {
 	return &ReviewRepository{repository: generic.GetGormRepository[Review](dbHandle)}
 }
 
@@ -135,6 +136,21 @@ func (repo *ReviewRepository) GetByReviewerIdAndRevieweeId(reviewerId uint, revi
 		First(&review).
 		Error
 	return &review, err
+}
+
+func (repo *ReviewRepository) GetAverageRatingByRevieweeId(revieweeId uint) (float64, error) {
+	var average float64
+	err := repo.repository.
+		DB.
+		Model(&Review{}).
+		Select("AVG(rating)").
+		Where("reviewee_id = ?", revieweeId).
+		Scan(&average).
+		Error
+	if err != nil {
+		return 0, err
+	}
+	return average, nil
 }
 
 func (repo *ReviewRepository) buildBaseQuery() *gorm.DB {
