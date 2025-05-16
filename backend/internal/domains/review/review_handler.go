@@ -223,3 +223,17 @@ func (h *Handler) GetReviewsByReviewerIdAndRevieweeId(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, review)
 }
+
+func (h *Handler) GetFilteredReviews(c *gin.Context) {
+	filter := NewReviewFilter()
+	if err := c.ShouldBindJSON(filter); err != nil {
+		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+		return
+	}
+	reviews, err := h.service.GetFiltered(filter)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+		return
+	}
+	c.JSON(http.StatusOK, reviews)
+}
