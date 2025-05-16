@@ -19,6 +19,12 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
         setAvailableModels(models);
     }
 
+    const [isAuction, setIsAuction] = React.useState<boolean>(false);
+
+    function changeAuctionType(isAuction: boolean) {
+        setIsAuction(isAuction);
+    }
+
     // UI
 
     function SelectionLabel({ name, options }: { name: string; options: string[] }) {
@@ -176,7 +182,41 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                 <label htmlFor="offer type" className="text-lg font-semibold">
                     Offer Type
                 </label>
-
+                <div className="flex gap-8">
+                    <div className="flex items-center">
+                        <input
+                            id="standard offer"
+                            type="radio"
+                            value="P"
+                            checked={isAuction === false}
+                            onChange={() => changeAuctionType(false)}
+                            className="h-4 w-4 text-blue-500 focus:ring-blue-400"
+                        />
+                        <label htmlFor="standard offer" className="ml-2 text-sm font-medium text-gray-900">
+                            Standard offer
+                        </label>
+                    </div>
+                    <div className="flex items-center">
+                        <input
+                            id="auction"
+                            type="radio"
+                            value="C"
+                            checked={isAuction === true}
+                            onChange={() => changeAuctionType(true)}
+                            className="h-4 w-4 text-blue-500 focus:ring-blue-400"
+                        />
+                        <label htmlFor="auction" className="ml-2 text-sm font-medium text-gray-900">
+                            Auction
+                        </label>
+                    </div>
+                </div>
+                
+                {isAuction && (
+                    <>
+                        <DateSelectionField name="Auction end date" />
+                        <NumberInputField name="Buy now price" />
+                    </>
+                )}
 
                 <button type="submit" className="bg-blue-600 text-white rounded p-2">Submit</button>
             </div>
