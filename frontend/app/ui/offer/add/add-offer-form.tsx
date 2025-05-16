@@ -19,6 +19,8 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
         setAvailableModels(models);
     }
 
+    // UI
+
     function SelectionLabel({ name, options }: { name: string; options: string[] }) {
         return (
             <>
@@ -89,6 +91,15 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
         )
     }
 
+    function TextInputField({ name } : { name: string }) {
+        return (
+            <>
+                <label htmlFor={`${name.toLowerCase()}`} className="text-lg font-semibold">{name}</label>
+                <input type="text" id={`${name.toLowerCase()}`} name={`${name.toLowerCase()}`} className="border rounded p-2" required />
+            </>
+        )
+    }
+
     return (
         <form className=" w-full md:w-200" action={handleSubmit}>
             <div className="rounded-lg bg-gray-50 px-6 pb-4 pt-8 flex flex-col gap-4">
@@ -119,9 +130,20 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                 <NumberInputField name="Power" />
                 <NumberInputField name="Engine displacement" />
                 <DateSelectionField name="Date of first registration" />
+                <TextInputField name="Plate number" />
+                <TextInputField name="Location" />
 
                 <label htmlFor="description" className="text-lg font-semibold">Description</label>
                 <textarea id="description" name="description" className="border rounded p-2 h-32" required></textarea>
+
+                <label htmlFor="images" className="text-lg font-semibold">Images</label>
+                //TODO
+                {/* <input type="file" id="images" name="images" className="border rounded p-2" multiple required /> */}
+
+                <div className="my-10"/>
+                <NumberInputField name="Price" />
+                
+
 
                 <button type="submit" className="bg-blue-600 text-white rounded p-2">Submit</button>
             </div>
