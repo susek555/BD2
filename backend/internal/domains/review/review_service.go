@@ -16,6 +16,7 @@ type ReviewServiceInterface interface {
 	GetByRevieweeId(reviewedId uint) ([]RetrieveReviewDTO, error)
 	GetByReviewerIdAndRevieweeId(reviewerId uint, revieweeId uint) (*RetrieveReviewDTO, error)
 	GetFiltered(filter *ReviewFilter) (*RetrieveReviewsWithPagination, error)
+	GetAverageRatingByRevieweeId(revieweeId uint) (float64, error)
 }
 
 type ReviewService struct {
@@ -66,6 +67,17 @@ func (service *ReviewService) GetFiltered(filter *ReviewFilter) (*RetrieveReview
 		Reviews:            reviewsDTO,
 		PaginationResponse: pagResponse,
 	}, nil
+}
+
+func (service *ReviewService) GetAverageRatingByRevieweeId(revieweeId uint) (float64, error) {
+	averageRating, err := service.Repo.GetAverageRatingByRevieweeId(revieweeId)
+	if err != nil {
+		return 0, err
+	}
+	if averageRating == 0 {
+		return 0, errors.New("no reviews found for this reviewee")
+	}
+	return averageRating, nil
 }
 
 func (service *ReviewService) Update(reviewerId uint, review *UpdateReviewDTO) (*RetrieveReviewDTO, error) {
