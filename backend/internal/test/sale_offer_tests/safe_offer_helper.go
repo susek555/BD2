@@ -32,7 +32,7 @@ func setupDB() (*gorm.DB, error) {
 	return db, nil
 }
 
-func getRepositoryWithUsers(db *gorm.DB, offers []sale_offer.SaleOffer) sale_offer.SaleOfferRepositoryInterface {
+func getRepositoryWithSaleOffers(db *gorm.DB, offers []sale_offer.SaleOffer) sale_offer.SaleOfferRepositoryInterface {
 	repo := sale_offer.NewSaleOfferRepository(db)
 	for _, offer := range offers {
 		repo.Create(&offer)

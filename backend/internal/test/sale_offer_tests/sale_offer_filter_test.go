@@ -17,7 +17,7 @@ import (
 func TestGetFiltered_PaginationNegaitvePage(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.Pagination = pagination.PaginationRequest{Page: -1, PageSize: 8}
 	_, _, err := repo.GetFiltered(filter)
@@ -27,7 +27,7 @@ func TestGetFiltered_PaginationNegaitvePage(t *testing.T) {
 func TestGetFiltered_PaginationZeroPage(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.Pagination = pagination.PaginationRequest{Page: 0, PageSize: 8}
 	_, _, err := repo.GetFiltered(filter)
@@ -37,7 +37,7 @@ func TestGetFiltered_PaginationZeroPage(t *testing.T) {
 func TestGetFiltered_PaginationPositivePage(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.Pagination = pagination.PaginationRequest{Page: 1, PageSize: 8}
 	_, _, err := repo.GetFiltered(filter)
@@ -47,7 +47,7 @@ func TestGetFiltered_PaginationPositivePage(t *testing.T) {
 func TestGetFiltered_PaginationPageSizeNegative(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.Pagination = pagination.PaginationRequest{Page: 1, PageSize: -1}
 	_, _, err := repo.GetFiltered(filter)
@@ -57,7 +57,7 @@ func TestGetFiltered_PaginationPageSizeNegative(t *testing.T) {
 func TestGetFiltered_PaginationPageSizeZero(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.Pagination = pagination.PaginationRequest{Page: 1, PageSize: 0}
 	_, _, err := repo.GetFiltered(filter)
@@ -67,7 +67,7 @@ func TestGetFiltered_PaginationPageSizeZero(t *testing.T) {
 func TestFiltered_PaginationPageSizePositive(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.Pagination = pagination.PaginationRequest{Page: 1, PageSize: 8}
 	_, _, err := repo.GetFiltered(filter)
@@ -77,7 +77,7 @@ func TestFiltered_PaginationPageSizePositive(t *testing.T) {
 func TestFiltered_PaginationPageOutOfRange(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1)}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.Pagination = pagination.PaginationRequest{Page: 2, PageSize: 8}
 	_, _, err := repo.GetFiltered(filter)
@@ -87,7 +87,7 @@ func TestFiltered_PaginationPageOutOfRange(t *testing.T) {
 func TestGetFiltered_PaginationSingleRecord(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1)}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.Pagination = pagination.PaginationRequest{Page: 1, PageSize: 8}
 	result, _, err := repo.GetFiltered(filter)
@@ -101,7 +101,7 @@ func TestGetFiltered_PaginationMultipleRecordsBounded(t *testing.T) {
 		offers = append(offers, *CreateOffer(uint(i)))
 	}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.Pagination = pagination.PaginationRequest{Page: 1, PageSize: 3}
 	result, _, err := repo.GetFiltered(filter)
@@ -115,7 +115,7 @@ func TestGetFiltered_PaginationMultipleRecordsNotBounded(t *testing.T) {
 		offers = append(offers, *CreateOffer(uint(i)))
 	}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.Pagination = pagination.PaginationRequest{Page: 2, PageSize: 3}
 	result, _, err := repo.GetFiltered(filter)
@@ -130,7 +130,7 @@ func TestGetFiltered_PaginationMultipleRecordsNotBounded(t *testing.T) {
 func TestGetFiltered_InvalidManufacturer(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.Manufacturers = &[]string{"invalid"}
 	_, _, err := repo.GetFiltered(filter)
@@ -140,7 +140,7 @@ func TestGetFiltered_InvalidManufacturer(t *testing.T) {
 func TestGetFiltered_InvalidOfferType(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	offer := sale_offer.OfferType("invalid")
 	filter := sale_offer.NewOfferFilter()
 	filter.OfferType = &offer
@@ -151,7 +151,7 @@ func TestGetFiltered_InvalidOfferType(t *testing.T) {
 func TestGetFiltered_InvalidColor(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.Colors = &[]car_params.Color{"invaid"}
 	_, _, err := repo.GetFiltered(filter)
@@ -161,7 +161,7 @@ func TestGetFiltered_InvalidColor(t *testing.T) {
 func TestGetFiltered_InvalidDrive(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.Drives = &[]car_params.Drive{"invaid"}
 	_, _, err := repo.GetFiltered(filter)
@@ -171,7 +171,7 @@ func TestGetFiltered_InvalidDrive(t *testing.T) {
 func TestGetFiltered_InvalidFuelType(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.FuelTypes = &[]car_params.FuelType{"invaid"}
 	_, _, err := repo.GetFiltered(filter)
@@ -181,7 +181,7 @@ func TestGetFiltered_InvalidFuelType(t *testing.T) {
 func TestGetFiltered_InvalidTransmission(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.Transmissions = &[]car_params.Transmission{"invaid"}
 	_, _, err := repo.GetFiltered(filter)
@@ -191,7 +191,7 @@ func TestGetFiltered_InvalidTransmission(t *testing.T) {
 func TestGetFiltered_InvalidPriceRange(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(2)
 	max := uint(1)
 	filter := sale_offer.NewOfferFilter()
@@ -203,7 +203,7 @@ func TestGetFiltered_InvalidPriceRange(t *testing.T) {
 func TestGetFiltered_InvalidPriceRangeBothValues(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(1)
 	max := uint(1)
 	filter := sale_offer.NewOfferFilter()
@@ -215,7 +215,7 @@ func TestGetFiltered_InvalidPriceRangeBothValues(t *testing.T) {
 func TestGetFiltered_InvalidMileageRange(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(2)
 	max := uint(1)
 	filter := sale_offer.NewOfferFilter()
@@ -227,7 +227,7 @@ func TestGetFiltered_InvalidMileageRange(t *testing.T) {
 func TestGetFiltered_InvalidMileageRangeBothValues(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(1)
 	max := uint(1)
 	filter := sale_offer.NewOfferFilter()
@@ -239,7 +239,7 @@ func TestGetFiltered_InvalidMileageRangeBothValues(t *testing.T) {
 func TestGetFiltered_InvalidYearRange(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(2)
 	max := uint(1)
 	filter := sale_offer.NewOfferFilter()
@@ -251,7 +251,7 @@ func TestGetFiltered_InvalidYearRange(t *testing.T) {
 func TestGetFiltered_InvalidYearRangeBothValues(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(1)
 	max := uint(1)
 	filter := sale_offer.NewOfferFilter()
@@ -263,7 +263,7 @@ func TestGetFiltered_InvalidYearRangeBothValues(t *testing.T) {
 func TestGetFiltered_InvalidEnginePowerRange(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(2)
 	max := uint(1)
 	filter := sale_offer.NewOfferFilter()
@@ -275,7 +275,7 @@ func TestGetFiltered_InvalidEnginePowerRange(t *testing.T) {
 func TestGetFiltered_InvalidEnginePowerRangeBothValues(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(1)
 	max := uint(1)
 	filter := sale_offer.NewOfferFilter()
@@ -287,7 +287,7 @@ func TestGetFiltered_InvalidEnginePowerRangeBothValues(t *testing.T) {
 func TestGetFiltered_InvalidEngineCapacityRange(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(2)
 	max := uint(1)
 	filter := sale_offer.NewOfferFilter()
@@ -299,7 +299,7 @@ func TestGetFiltered_InvalidEngineCapacityRange(t *testing.T) {
 func TestGetFiltered_InvalidEngineCapacityRangeBothValues(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(1)
 	max := uint(1)
 	filter := sale_offer.NewOfferFilter()
@@ -311,7 +311,7 @@ func TestGetFiltered_InvalidEngineCapacityRangeBothValues(t *testing.T) {
 func TestGetFiltered_InvalidCarRegistrationDateRange(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := "2023-01-01"
 	max := "2022-01-01"
 	filter := sale_offer.NewOfferFilter()
@@ -323,7 +323,7 @@ func TestGetFiltered_InvalidCarRegistrationDateRange(t *testing.T) {
 func TestGetFiltered_InvalidCarRegistrationDateRangeBothValues(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := "2023-01-01"
 	max := "2023-01-01"
 	filter := sale_offer.NewOfferFilter()
@@ -335,7 +335,7 @@ func TestGetFiltered_InvalidCarRegistrationDateRangeBothValues(t *testing.T) {
 func TestGetFiltered_InvalidCarRegistrationDateFormat(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := "2023-01-01"
 	max := "2022/01/01"
 	filter := sale_offer.NewOfferFilter()
@@ -347,7 +347,7 @@ func TestGetFiltered_InvalidCarRegistrationDateFormat(t *testing.T) {
 func TestGetFiltered_InvalidOfferCreationDateRange(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := "2023-01-01"
 	max := "2022-01-01"
 	filter := sale_offer.NewOfferFilter()
@@ -359,7 +359,7 @@ func TestGetFiltered_InvalidOfferCreationDateRange(t *testing.T) {
 func TestGetFiltered_InvalidOfferCreationDateRangeBothValues(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := "2023-01-01"
 	max := "2023-01-01"
 	filter := sale_offer.NewOfferFilter()
@@ -371,7 +371,7 @@ func TestGetFiltered_InvalidOfferCreationDateRangeBothValues(t *testing.T) {
 func TestGetFiltered_InvalidOfferCreationDateFormat(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := "2023-01-01"
 	max := "2022/01/01"
 	filter := sale_offer.NewOfferFilter()
@@ -387,7 +387,7 @@ func TestGetFiltered_InvalidOfferCreationDateFormat(t *testing.T) {
 func TestGetFiltered_ValidOfferTypeAutcion(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	offer := sale_offer.OfferType(sale_offer.AUCTION)
 	filter := sale_offer.NewOfferFilter()
 	filter.OfferType = &offer
@@ -399,7 +399,7 @@ func TestGetFiltered_ValidOfferTypeAutcion(t *testing.T) {
 func TestGetFiltered_ValidOfferTypeRegularOffer(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	offer := sale_offer.OfferType(sale_offer.REGULAR_OFFER)
 	filter := sale_offer.NewOfferFilter()
 	filter.OfferType = &offer
@@ -410,7 +410,7 @@ func TestGetFiltered_ValidOfferTypeRegularOffer(t *testing.T) {
 func TestGetFiltered_ValidOfferTypeBoth(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	offer := sale_offer.OfferType(sale_offer.BOTH)
 	filter := sale_offer.NewOfferFilter()
 	filter.OfferType = &offer
@@ -422,7 +422,7 @@ func TestGetFiltered_ValidOfferTypeBoth(t *testing.T) {
 func TestGetFiltered_ValidManufacturer(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.Constriants.Manufacturers = manufacturers
 	filter.Pagination = *GetDefaultPaginationRequest()
@@ -433,7 +433,7 @@ func TestGetFiltered_ValidManufacturer(t *testing.T) {
 func TestGetFiltered_ValidColor(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.Colors = &car_params.Colors
 	filter.Pagination = *GetDefaultPaginationRequest()
@@ -444,7 +444,7 @@ func TestGetFiltered_ValidColor(t *testing.T) {
 func TestGetFiltered_ValidDrive(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.Drives = &car_params.Drives
 	filter.Pagination = *GetDefaultPaginationRequest()
@@ -455,7 +455,7 @@ func TestGetFiltered_ValidDrive(t *testing.T) {
 func TestGetFiltered_ValidFuelType(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.FuelTypes = &car_params.Types
 	filter.Pagination = *GetDefaultPaginationRequest()
@@ -466,7 +466,7 @@ func TestGetFiltered_ValidFuelType(t *testing.T) {
 func TestGetFiltered_ValidTransmission(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.Transmissions = &car_params.Transmissions
 	filter.Pagination = *GetDefaultPaginationRequest()
@@ -477,7 +477,7 @@ func TestGetFiltered_ValidTransmission(t *testing.T) {
 func TestGetFiltered_ValidPriceRange(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(1)
 	max := uint(2)
 	filter := sale_offer.NewOfferFilter()
@@ -490,7 +490,7 @@ func TestGetFiltered_ValidPriceRange(t *testing.T) {
 func TestGetFiltered_ValidPriceRangeMinNil(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	max := uint(2)
 	filter := sale_offer.NewOfferFilter()
 	filter.PriceRange = &sale_offer.MinMax[uint]{Min: nil, Max: &max}
@@ -502,7 +502,7 @@ func TestGetFiltered_ValidPriceRangeMinNil(t *testing.T) {
 func TestGetFiltered_ValidPriceRangeMaxNil(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(1)
 	filter := sale_offer.NewOfferFilter()
 	filter.PriceRange = &sale_offer.MinMax[uint]{Min: &min, Max: nil}
@@ -514,7 +514,7 @@ func TestGetFiltered_ValidPriceRangeMaxNil(t *testing.T) {
 func TestGetFiltered_ValidPriceRangeBothNil(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.PriceRange = &sale_offer.MinMax[uint]{Min: nil, Max: nil}
 	filter.Pagination = *GetDefaultPaginationRequest()
@@ -525,7 +525,7 @@ func TestGetFiltered_ValidPriceRangeBothNil(t *testing.T) {
 func TestGetFiltered_ValidMileageRange(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(1)
 	max := uint(2)
 	filter := sale_offer.NewOfferFilter()
@@ -538,7 +538,7 @@ func TestGetFiltered_ValidMileageRange(t *testing.T) {
 func TestGetFiltered_ValidMileageRangeMinNil(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	max := uint(2)
 	filter := sale_offer.NewOfferFilter()
 	filter.MileageRange = &sale_offer.MinMax[uint]{Min: nil, Max: &max}
@@ -550,7 +550,7 @@ func TestGetFiltered_ValidMileageRangeMinNil(t *testing.T) {
 func TestGetFiltered_ValidMileageRangeMaxNil(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(1)
 	filter := sale_offer.NewOfferFilter()
 	filter.MileageRange = &sale_offer.MinMax[uint]{Min: &min, Max: nil}
@@ -562,7 +562,7 @@ func TestGetFiltered_ValidMileageRangeMaxNil(t *testing.T) {
 func TestGetFiltered_ValidMileageRangeBothNil(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.MileageRange = &sale_offer.MinMax[uint]{Min: nil, Max: nil}
 	filter.Pagination = *GetDefaultPaginationRequest()
@@ -573,7 +573,7 @@ func TestGetFiltered_ValidMileageRangeBothNil(t *testing.T) {
 func TestGetFiltered_ValidYearRange(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(1)
 	max := uint(2)
 	filter := sale_offer.NewOfferFilter()
@@ -586,7 +586,7 @@ func TestGetFiltered_ValidYearRange(t *testing.T) {
 func TestGetFiltered_ValidYearRangeMinNil(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	max := uint(2)
 	filter := sale_offer.NewOfferFilter()
 	filter.YearRange = &sale_offer.MinMax[uint]{Min: nil, Max: &max}
@@ -598,7 +598,7 @@ func TestGetFiltered_ValidYearRangeMinNil(t *testing.T) {
 func TestGetFiltered_ValidYearRangeMaxNil(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(1)
 	filter := sale_offer.NewOfferFilter()
 	filter.YearRange = &sale_offer.MinMax[uint]{Min: &min, Max: nil}
@@ -610,7 +610,7 @@ func TestGetFiltered_ValidYearRangeMaxNil(t *testing.T) {
 func TestGetFiltered_ValidYearRangeBothNil(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.YearRange = &sale_offer.MinMax[uint]{Min: nil, Max: nil}
 	filter.Pagination = *GetDefaultPaginationRequest()
@@ -621,7 +621,7 @@ func TestGetFiltered_ValidYearRangeBothNil(t *testing.T) {
 func TestGetFiltered_ValidEnginePowerRange(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(1)
 	max := uint(2)
 	filter := sale_offer.NewOfferFilter()
@@ -633,7 +633,7 @@ func TestGetFiltered_ValidEnginePowerRange(t *testing.T) {
 func TestGetFiltered_ValidEnginePowerRangeMinNil(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	max := uint(2)
 	filter := sale_offer.NewOfferFilter()
 	filter.EnginePowerRange = &sale_offer.MinMax[uint]{Min: nil, Max: &max}
@@ -645,7 +645,7 @@ func TestGetFiltered_ValidEnginePowerRangeMinNil(t *testing.T) {
 func TestGetFiltered_ValidEnginePowerRangeMaxNil(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(1)
 	filter := sale_offer.NewOfferFilter()
 	filter.EnginePowerRange = &sale_offer.MinMax[uint]{Min: &min, Max: nil}
@@ -656,7 +656,7 @@ func TestGetFiltered_ValidEnginePowerRangeMaxNil(t *testing.T) {
 func TestGetFiltered_ValidEnginePowerRangeBothNil(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.EnginePowerRange = &sale_offer.MinMax[uint]{Min: nil, Max: nil}
 	filter.Pagination = *GetDefaultPaginationRequest()
@@ -666,7 +666,7 @@ func TestGetFiltered_ValidEnginePowerRangeBothNil(t *testing.T) {
 func TestGetFiltered_ValidEngineCapacityRange(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(1)
 	max := uint(2)
 	filter := sale_offer.NewOfferFilter()
@@ -678,7 +678,7 @@ func TestGetFiltered_ValidEngineCapacityRange(t *testing.T) {
 func TestGetFiltered_ValidEngineCapacityRangeMinNil(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	max := uint(2)
 	filter := sale_offer.NewOfferFilter()
 	filter.EngineCapacityRange = &sale_offer.MinMax[uint]{Min: nil, Max: &max}
@@ -689,7 +689,7 @@ func TestGetFiltered_ValidEngineCapacityRangeMinNil(t *testing.T) {
 func TestGetFiltered_ValidEngineCapacityRangeMaxNil(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(1)
 	filter := sale_offer.NewOfferFilter()
 	filter.EngineCapacityRange = &sale_offer.MinMax[uint]{Min: &min, Max: nil}
@@ -700,7 +700,7 @@ func TestGetFiltered_ValidEngineCapacityRangeMaxNil(t *testing.T) {
 func TestGetFiltered_ValidEngineCapacityRangeBothNil(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.EngineCapacityRange = &sale_offer.MinMax[uint]{Min: nil, Max: nil}
 	filter.Pagination = *GetDefaultPaginationRequest()
@@ -711,7 +711,7 @@ func TestGetFiltered_ValidEngineCapacityRangeBothNil(t *testing.T) {
 func TestGetFiltered_ValidCarRegistrationDateRange(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := "2023-01-01"
 	max := "2023-01-02"
 	filter := sale_offer.NewOfferFilter()
@@ -724,7 +724,7 @@ func TestGetFiltered_ValidCarRegistrationDateRange(t *testing.T) {
 func TestGetFiltered_ValidCarRegistrationDateRangeMinNil(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	max := "2023-01-02"
 	filter := sale_offer.NewOfferFilter()
 	filter.CarRegistrationDateRagne = &sale_offer.MinMax[string]{Min: nil, Max: &max}
@@ -736,7 +736,7 @@ func TestGetFiltered_ValidCarRegistrationDateRangeMinNil(t *testing.T) {
 func TestGetFiltered_ValidCarRegistrationDateRangeMaxNil(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := "2023-01-01"
 	filter := sale_offer.NewOfferFilter()
 	filter.CarRegistrationDateRagne = &sale_offer.MinMax[string]{Min: &min, Max: nil}
@@ -748,7 +748,7 @@ func TestGetFiltered_ValidCarRegistrationDateRangeMaxNil(t *testing.T) {
 func TestGetFiltered_ValidCarRegistrationDateRangeBothNil(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.CarRegistrationDateRagne = &sale_offer.MinMax[string]{Min: nil, Max: nil}
 	filter.Pagination = *GetDefaultPaginationRequest()
@@ -759,7 +759,7 @@ func TestGetFiltered_ValidCarRegistrationDateRangeBothNil(t *testing.T) {
 func TestGetFiltered_ValidOfferCreationDateRange(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := "2023-01-01"
 	max := "2023-01-02"
 	filter := sale_offer.NewOfferFilter()
@@ -772,7 +772,7 @@ func TestGetFiltered_ValidOfferCreationDateRange(t *testing.T) {
 func TestGetFiltered_ValidOfferCreationDateRangeMinNil(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	max := "2023-01-02"
 	filter := sale_offer.NewOfferFilter()
 	filter.OfferCreationDateRange = &sale_offer.MinMax[string]{Min: nil, Max: &max}
@@ -784,7 +784,7 @@ func TestGetFiltered_ValidOfferCreationDateRangeMinNil(t *testing.T) {
 func TestGetFiltered_ValidOfferCreationDateRangeMaxNil(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := "2023-01-01"
 	filter := sale_offer.NewOfferFilter()
 	filter.OfferCreationDateRange = &sale_offer.MinMax[string]{Min: &min, Max: nil}
@@ -796,7 +796,7 @@ func TestGetFiltered_ValidOfferCreationDateRangeMaxNil(t *testing.T) {
 func TestGetFiltered_ValidOfferCreationDateRangeBothNil(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.OfferCreationDateRange = &sale_offer.MinMax[string]{Min: nil, Max: nil}
 	filter.Pagination = *GetDefaultPaginationRequest()
@@ -811,7 +811,7 @@ func TestGetFiltered_ValidOfferCreationDateRangeBothNil(t *testing.T) {
 func TestGetFiltered_NoFilterEmptyDB(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.Pagination = *GetDefaultPaginationRequest()
 	result, _, err := repo.GetFiltered(filter)
@@ -822,7 +822,7 @@ func TestGetFiltered_NoFilterEmptyDB(t *testing.T) {
 func TestGetFiltered_NoFilter(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1)}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.Pagination = *GetDefaultPaginationRequest()
 	result, _, err := repo.GetFiltered(filter)
@@ -833,7 +833,7 @@ func TestGetFiltered_NoFilter(t *testing.T) {
 func TestGetFiltered_OfferTypeRegularOffer(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1)}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	regularOffer := sale_offer.REGULAR_OFFER
 	filter := sale_offer.NewOfferFilter()
 	filter.OfferType = &regularOffer
@@ -846,7 +846,7 @@ func TestGetFiltered_OfferTypeRegularOffer(t *testing.T) {
 func TestGetFiltered_OfferTypeRegularOfferAuctionInDB(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithAuction(time.Now(), 0))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	regularOffer := sale_offer.REGULAR_OFFER
 	filter := sale_offer.NewOfferFilter()
 	filter.OfferType = &regularOffer
@@ -859,7 +859,7 @@ func TestGetFiltered_OfferTypeRegularOfferAuctionInDB(t *testing.T) {
 func TestGetFiltered_OfferTypeAuction(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithAuction(time.Now(), 0))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	auction := sale_offer.AUCTION
 	filter := sale_offer.NewOfferFilter()
 	filter.OfferType = &auction
@@ -872,7 +872,7 @@ func TestGetFiltered_OfferTypeAuction(t *testing.T) {
 func TestGetFiltered_OfferTypeAuctionRegularOfferInDB(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1)}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	auction := sale_offer.AUCTION
 	filter := sale_offer.NewOfferFilter()
 	filter.OfferType = &auction
@@ -885,7 +885,7 @@ func TestGetFiltered_OfferTypeAuctionRegularOfferInDB(t *testing.T) {
 func TestGetFiltered_OfferTypeBoth(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithAuction(time.Now(), 0)), *CreateOffer(2)}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	both := sale_offer.BOTH
 	filter := sale_offer.NewOfferFilter()
 	filter.OfferType = &both
@@ -898,7 +898,7 @@ func TestGetFiltered_OfferTypeBoth(t *testing.T) {
 func TestGetFiltered_SingleManufacturer(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1)}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.Constriants.Manufacturers = manufacturers
 	filter.Manufacturers = &[]string{"Audi"}
@@ -911,7 +911,7 @@ func TestGetFiltered_SingleManufacturer(t *testing.T) {
 func TestGetFiltered_MultipleManufacturers(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1), *CreateOffer(2)}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.Constriants.Manufacturers = manufacturers
 	filter.Manufacturers = &[]string{"Audi", "BMW"}
@@ -924,7 +924,7 @@ func TestGetFiltered_MultipleManufacturers(t *testing.T) {
 func TestGetFiltered_NoMatchingManufacturer(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1)}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.Constriants.Manufacturers = manufacturers
 	filter.Manufacturers = &[]string{"BMW"}
@@ -937,7 +937,7 @@ func TestGetFiltered_NoMatchingManufacturer(t *testing.T) {
 func TestGetFiltered_SingleColor(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("Color", car_params.RED))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.Colors = &[]car_params.Color{car_params.RED}
 	filter.Pagination = *GetDefaultPaginationRequest()
@@ -949,7 +949,7 @@ func TestGetFiltered_SingleColor(t *testing.T) {
 func TestGetFiltered_MultipleColors(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("Color", car_params.RED)), *CreateOffer(2, WithCarField("Color", car_params.BLUE))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.Colors = &[]car_params.Color{car_params.RED, car_params.BLUE}
 	filter.Pagination = *GetDefaultPaginationRequest()
@@ -961,7 +961,7 @@ func TestGetFiltered_MultipleColors(t *testing.T) {
 func TestGetFiltered_NoMatchingColor(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("Color", car_params.RED))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.Colors = &[]car_params.Color{car_params.GREEN}
 	filter.Pagination = *GetDefaultPaginationRequest()
@@ -973,7 +973,7 @@ func TestGetFiltered_NoMatchingColor(t *testing.T) {
 func TestGetFiltered_SingleDrive(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("Drive", car_params.FWD))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.Drives = &[]car_params.Drive{car_params.FWD}
 	filter.Pagination = *GetDefaultPaginationRequest()
@@ -984,7 +984,7 @@ func TestGetFiltered_SingleDrive(t *testing.T) {
 func TestGetFiltered_MultipleDrives(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("Drive", car_params.FWD)), *CreateOffer(2, WithCarField("Drive", car_params.RWD))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.Drives = &[]car_params.Drive{car_params.FWD, car_params.RWD}
 	filter.Pagination = *GetDefaultPaginationRequest()
@@ -996,7 +996,7 @@ func TestGetFiltered_MultipleDrives(t *testing.T) {
 func TestGetFiltered_OfferNoMatchingDrive(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("Drive", car_params.FWD))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.Drives = &[]car_params.Drive{car_params.AWD}
 	filter.Pagination = *GetDefaultPaginationRequest()
@@ -1008,7 +1008,7 @@ func TestGetFiltered_OfferNoMatchingDrive(t *testing.T) {
 func TestGetFiltered_SingleFuelType(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("FuelType", car_params.PETROL))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.FuelTypes = &[]car_params.FuelType{car_params.PETROL}
 	filter.Pagination = *GetDefaultPaginationRequest()
@@ -1020,7 +1020,7 @@ func TestGetFiltered_SingleFuelType(t *testing.T) {
 func TestGetFiltered_MultipleFuelTypes(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("FuelType", car_params.PETROL)), *CreateOffer(2, WithCarField("FuelType", car_params.DIESEL))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.FuelTypes = &[]car_params.FuelType{car_params.PETROL, car_params.DIESEL}
 	filter.Pagination = *GetDefaultPaginationRequest()
@@ -1032,7 +1032,7 @@ func TestGetFiltered_MultipleFuelTypes(t *testing.T) {
 func TestGetFiltered_OfferNoMatchingFuelType(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("FuelType", car_params.PETROL))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.FuelTypes = &[]car_params.FuelType{car_params.ELECTRIC}
 	filter.Pagination = *GetDefaultPaginationRequest()
@@ -1044,7 +1044,7 @@ func TestGetFiltered_OfferNoMatchingFuelType(t *testing.T) {
 func TestGetFiltered_SingleTransmission(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("Transmission", car_params.AUTOMATIC))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.Transmissions = &[]car_params.Transmission{car_params.AUTOMATIC}
 	filter.Pagination = *GetDefaultPaginationRequest()
@@ -1056,7 +1056,7 @@ func TestGetFiltered_SingleTransmission(t *testing.T) {
 func TestGetFiltered_MultipleTransmissions(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("Transmission", car_params.AUTOMATIC)), *CreateOffer(2, WithCarField("Transmission", car_params.MANUAL))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.Transmissions = &[]car_params.Transmission{car_params.AUTOMATIC, car_params.MANUAL}
 	filter.Pagination = *GetDefaultPaginationRequest()
@@ -1068,7 +1068,7 @@ func TestGetFiltered_MultipleTransmissions(t *testing.T) {
 func TestGetFiltered_OfferNoMatchingTransmission(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("Transmission", car_params.AUTOMATIC))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
 	filter.Transmissions = &[]car_params.Transmission{car_params.MANUAL}
 	filter.Pagination = *GetDefaultPaginationRequest()
@@ -1080,7 +1080,7 @@ func TestGetFiltered_OfferNoMatchingTransmission(t *testing.T) {
 func TestGetFiltered_PriceInRange(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithOfferField("Price", uint(100)))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(50)
 	max := uint(150)
 	filter := sale_offer.NewOfferFilter()
@@ -1094,7 +1094,7 @@ func TestGetFiltered_PriceInRange(t *testing.T) {
 func TestGetFiltered_PriceInRangeMinProvided(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithOfferField("Price", uint(100)))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(50)
 	filter := sale_offer.NewOfferFilter()
 	filter.PriceRange = &sale_offer.MinMax[uint]{Min: &min, Max: nil}
@@ -1107,7 +1107,7 @@ func TestGetFiltered_PriceInRangeMinProvided(t *testing.T) {
 func TestGetFiltered_PriceInRangeMaxProvided(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithOfferField("Price", uint(100)))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	max := uint(150)
 	filter := sale_offer.NewOfferFilter()
 	filter.PriceRange = &sale_offer.MinMax[uint]{Min: nil, Max: &max}
@@ -1120,7 +1120,7 @@ func TestGetFiltered_PriceInRangeMaxProvided(t *testing.T) {
 func TestGetFiltered_PriceGreater(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithOfferField("Price", uint(250)))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	max := uint(200)
 	filter := sale_offer.NewOfferFilter()
 	filter.PriceRange = &sale_offer.MinMax[uint]{Min: nil, Max: &max}
@@ -1133,7 +1133,7 @@ func TestGetFiltered_PriceGreater(t *testing.T) {
 func TestGetFiltered_PriceLower(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithOfferField("Price", uint(50)))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(100)
 	filter := sale_offer.NewOfferFilter()
 	filter.PriceRange = &sale_offer.MinMax[uint]{Min: &min, Max: nil}
@@ -1146,7 +1146,7 @@ func TestGetFiltered_PriceLower(t *testing.T) {
 func TestGetfiltered_PriceUpperBound(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithOfferField("Price", uint(100)))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	max := uint(100)
 	filter := sale_offer.NewOfferFilter()
 	filter.PriceRange = &sale_offer.MinMax[uint]{Min: nil, Max: &max}
@@ -1159,7 +1159,7 @@ func TestGetfiltered_PriceUpperBound(t *testing.T) {
 func TestGetFiltered_PriceLowerBound(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithOfferField("Price", uint(100)))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(100)
 	filter := sale_offer.NewOfferFilter()
 	filter.PriceRange = &sale_offer.MinMax[uint]{Min: &min, Max: nil}
@@ -1172,7 +1172,7 @@ func TestGetFiltered_PriceLowerBound(t *testing.T) {
 func TestGetFiltered_MileageInRange(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("Mileage", uint(100)))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(50)
 	max := uint(150)
 	filter := sale_offer.NewOfferFilter()
@@ -1186,7 +1186,7 @@ func TestGetFiltered_MileageInRange(t *testing.T) {
 func TestGetFiltered_MileageInRangeMinProvided(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("Mileage", uint(100)))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(50)
 	filter := sale_offer.NewOfferFilter()
 	filter.MileageRange = &sale_offer.MinMax[uint]{Min: &min, Max: nil}
@@ -1199,7 +1199,7 @@ func TestGetFiltered_MileageInRangeMinProvided(t *testing.T) {
 func TestGetFiltered_MileageInRangeMaxProvided(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("Mileage", uint(100)))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	max := uint(150)
 	filter := sale_offer.NewOfferFilter()
 	filter.MileageRange = &sale_offer.MinMax[uint]{Min: nil, Max: &max}
@@ -1212,7 +1212,7 @@ func TestGetFiltered_MileageInRangeMaxProvided(t *testing.T) {
 func TestGetFiltered_MileageGreater(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("Mileage", uint(250)))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	max := uint(200)
 	filter := sale_offer.NewOfferFilter()
 	filter.MileageRange = &sale_offer.MinMax[uint]{Min: nil, Max: &max}
@@ -1225,7 +1225,7 @@ func TestGetFiltered_MileageGreater(t *testing.T) {
 func TestGetFiltered_MileageLower(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("Mileage", uint(50)))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(100)
 	filter := sale_offer.NewOfferFilter()
 	filter.MileageRange = &sale_offer.MinMax[uint]{Min: &min, Max: nil}
@@ -1238,7 +1238,7 @@ func TestGetFiltered_MileageLower(t *testing.T) {
 func TestGetFiltered_MileageUpperBound(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("Mileage", uint(100)))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	max := uint(100)
 	filter := sale_offer.NewOfferFilter()
 	filter.MileageRange = &sale_offer.MinMax[uint]{Min: nil, Max: &max}
@@ -1251,7 +1251,7 @@ func TestGetFiltered_MileageUpperBound(t *testing.T) {
 func TestGetFiltered_MileageLowerBound(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("Mileage", uint(100)))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(100)
 	filter := sale_offer.NewOfferFilter()
 	filter.MileageRange = &sale_offer.MinMax[uint]{Min: &min, Max: nil}
@@ -1264,7 +1264,7 @@ func TestGetFiltered_MileageLowerBound(t *testing.T) {
 func TestGetFiltered_YearInRange(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("ProductionYear", uint(2025)))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(2025)
 	max := uint(2026)
 	filter := sale_offer.NewOfferFilter()
@@ -1278,7 +1278,7 @@ func TestGetFiltered_YearInRange(t *testing.T) {
 func TestGetFiltered_YearInRangeMinProvided(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("ProductionYear", uint(2024)))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(2023)
 	filter := sale_offer.NewOfferFilter()
 	filter.YearRange = &sale_offer.MinMax[uint]{Min: &min, Max: nil}
@@ -1291,7 +1291,7 @@ func TestGetFiltered_YearInRangeMinProvided(t *testing.T) {
 func TestGetFiltered_YearInRangeMaxProvided(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("ProductionYear", uint(2024)))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	max := uint(2025)
 	filter := sale_offer.NewOfferFilter()
 	filter.YearRange = &sale_offer.MinMax[uint]{Min: nil, Max: &max}
@@ -1304,7 +1304,7 @@ func TestGetFiltered_YearInRangeMaxProvided(t *testing.T) {
 func TestGetFiltered_YearGreater(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("ProductionYear", uint(2025)))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	max := uint(2024)
 	filter := sale_offer.NewOfferFilter()
 	filter.YearRange = &sale_offer.MinMax[uint]{Min: nil, Max: &max}
@@ -1317,7 +1317,7 @@ func TestGetFiltered_YearGreater(t *testing.T) {
 func TestGetFiltered_YearLower(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("ProductionYear", uint(2023)))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(2024)
 	filter := sale_offer.NewOfferFilter()
 	filter.YearRange = &sale_offer.MinMax[uint]{Min: &min, Max: nil}
@@ -1330,7 +1330,7 @@ func TestGetFiltered_YearLower(t *testing.T) {
 func TestGetFiltered_YearUpperBound(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("ProductionYear", uint(2025)))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	max := uint(2025)
 	filter := sale_offer.NewOfferFilter()
 	filter.YearRange = &sale_offer.MinMax[uint]{Min: nil, Max: &max}
@@ -1343,7 +1343,7 @@ func TestGetFiltered_YearUpperBound(t *testing.T) {
 func TestGetFiltered_YearLowerBound(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("ProductionYear", uint(2025)))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(2025)
 	filter := sale_offer.NewOfferFilter()
 	filter.YearRange = &sale_offer.MinMax[uint]{Min: &min, Max: nil}
@@ -1356,7 +1356,7 @@ func TestGetFiltered_YearLowerBound(t *testing.T) {
 func TestGetFiltered_EnginePowerInRange(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("EnginePower", uint(100)))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(50)
 	max := uint(150)
 	filter := sale_offer.NewOfferFilter()
@@ -1370,7 +1370,7 @@ func TestGetFiltered_EnginePowerInRange(t *testing.T) {
 func TestGetFiltered_EnginePowerInRangeMinProvided(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("EnginePower", uint(100)))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(50)
 	filter := sale_offer.NewOfferFilter()
 	filter.EnginePowerRange = &sale_offer.MinMax[uint]{Min: &min, Max: nil}
@@ -1383,7 +1383,7 @@ func TestGetFiltered_EnginePowerInRangeMinProvided(t *testing.T) {
 func TestGetFiltered_EnginePowerInRangeMaxProvided(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("EnginePower", uint(100)))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	max := uint(150)
 	filter := sale_offer.NewOfferFilter()
 	filter.EnginePowerRange = &sale_offer.MinMax[uint]{Min: nil, Max: &max}
@@ -1396,7 +1396,7 @@ func TestGetFiltered_EnginePowerInRangeMaxProvided(t *testing.T) {
 func TestGetFiltered_EnginePowerGreater(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("EnginePower", uint(250)))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	max := uint(200)
 	filter := sale_offer.NewOfferFilter()
 	filter.EnginePowerRange = &sale_offer.MinMax[uint]{Min: nil, Max: &max}
@@ -1409,7 +1409,7 @@ func TestGetFiltered_EnginePowerGreater(t *testing.T) {
 func TestGetFiltered_EnginePowerLower(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("EnginePower", uint(50)))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(100)
 	filter := sale_offer.NewOfferFilter()
 	filter.EnginePowerRange = &sale_offer.MinMax[uint]{Min: &min, Max: nil}
@@ -1422,7 +1422,7 @@ func TestGetFiltered_EnginePowerLower(t *testing.T) {
 func TestGetFiltered_EnginePowerUpperBound(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("EnginePower", uint(100)))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	max := uint(100)
 	filter := sale_offer.NewOfferFilter()
 	filter.EnginePowerRange = &sale_offer.MinMax[uint]{Min: nil, Max: &max}
@@ -1435,7 +1435,7 @@ func TestGetFiltered_EnginePowerUpperBound(t *testing.T) {
 func TestGetFiltered_EnginePowerLowerBound(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("EnginePower", uint(100)))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(100)
 	filter := sale_offer.NewOfferFilter()
 	filter.EnginePowerRange = &sale_offer.MinMax[uint]{Min: &min, Max: nil}
@@ -1448,7 +1448,7 @@ func TestGetFiltered_EnginePowerLowerBound(t *testing.T) {
 func TestGetFiltered_EngineCapacityInRange(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("EngineCapacity", uint(100)))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(50)
 	max := uint(150)
 	filter := sale_offer.NewOfferFilter()
@@ -1462,7 +1462,7 @@ func TestGetFiltered_EngineCapacityInRange(t *testing.T) {
 func TestGetFiltered_EngineCapacityInRangeMinProvided(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("EngineCapacity", uint(100)))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(50)
 	filter := sale_offer.NewOfferFilter()
 	filter.EngineCapacityRange = &sale_offer.MinMax[uint]{Min: &min, Max: nil}
@@ -1475,7 +1475,7 @@ func TestGetFiltered_EngineCapacityInRangeMinProvided(t *testing.T) {
 func TestGetFiltered_EngineCapacityInRangeMaxProvided(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("EngineCapacity", uint(100)))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	max := uint(150)
 	filter := sale_offer.NewOfferFilter()
 	filter.EngineCapacityRange = &sale_offer.MinMax[uint]{Min: nil, Max: &max}
@@ -1488,7 +1488,7 @@ func TestGetFiltered_EngineCapacityInRangeMaxProvided(t *testing.T) {
 func TestGetFiltered_EngineCapacityGreater(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("EngineCapacity", uint(250)))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	max := uint(200)
 	filter := sale_offer.NewOfferFilter()
 	filter.EngineCapacityRange = &sale_offer.MinMax[uint]{Min: nil, Max: &max}
@@ -1501,7 +1501,7 @@ func TestGetFiltered_EngineCapacityGreater(t *testing.T) {
 func TestGetFiltered_EngineCapacityLower(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("EngineCapacity", uint(50)))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(100)
 	filter := sale_offer.NewOfferFilter()
 	filter.EngineCapacityRange = &sale_offer.MinMax[uint]{Min: &min, Max: nil}
@@ -1514,7 +1514,7 @@ func TestGetFiltered_EngineCapacityLower(t *testing.T) {
 func TestGetFiltered_EngineCapacityUpperBound(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("EngineCapacity", uint(100)))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	max := uint(100)
 	filter := sale_offer.NewOfferFilter()
 	filter.EngineCapacityRange = &sale_offer.MinMax[uint]{Min: nil, Max: &max}
@@ -1527,7 +1527,7 @@ func TestGetFiltered_EngineCapacityUpperBound(t *testing.T) {
 func TestGetFiltered_EngineCapacityLowerBound(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("EngineCapacity", uint(100)))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := uint(100)
 	filter := sale_offer.NewOfferFilter()
 	filter.EngineCapacityRange = &sale_offer.MinMax[uint]{Min: &min, Max: nil}
@@ -1541,7 +1541,7 @@ func TestGetFiltered_CarRegistrationDateInRange(t *testing.T) {
 	date, _ := time.Parse(sale_offer.LAYOUT, "2025-05-13")
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("RegistrationDate", date))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := "2025-05-12"
 	max := "2025-05-14"
 	filter := sale_offer.NewOfferFilter()
@@ -1556,7 +1556,7 @@ func TestGetFiltered_CarRegistrationDateInRangeMinProvided(t *testing.T) {
 	date, _ := time.Parse(sale_offer.LAYOUT, "2025-05-13")
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("RegistrationDate", date))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := "2025-05-12"
 	filter := sale_offer.NewOfferFilter()
 	filter.CarRegistrationDateRagne = &sale_offer.MinMax[string]{Min: &min, Max: nil}
@@ -1570,7 +1570,7 @@ func TestGetFiltered_CarRegistrationDateInRangeMaxProvided(t *testing.T) {
 	date, _ := time.Parse(sale_offer.LAYOUT, "2025-05-13")
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("RegistrationDate", date))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	max := "2025-05-14"
 	filter := sale_offer.NewOfferFilter()
 	filter.CarRegistrationDateRagne = &sale_offer.MinMax[string]{Min: nil, Max: &max}
@@ -1584,7 +1584,7 @@ func TestGetFiltered_CarRegistrationDateGreater(t *testing.T) {
 	date, _ := time.Parse(sale_offer.LAYOUT, "2025-05-13")
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("RegistrationDate", date))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	max := "2025-05-12"
 	filter := sale_offer.NewOfferFilter()
 	filter.CarRegistrationDateRagne = &sale_offer.MinMax[string]{Min: nil, Max: &max}
@@ -1598,7 +1598,7 @@ func TestGetFiltered_CarRegistrationDateLower(t *testing.T) {
 	date, _ := time.Parse(sale_offer.LAYOUT, "2025-05-13")
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("RegistrationDate", date))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := "2025-05-14"
 	filter := sale_offer.NewOfferFilter()
 	filter.CarRegistrationDateRagne = &sale_offer.MinMax[string]{Min: &min, Max: nil}
@@ -1612,7 +1612,7 @@ func TestGetFiltered_CarRegistratoinDateUpperBound(t *testing.T) {
 	date, _ := time.Parse(sale_offer.LAYOUT, "2025-05-13")
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("RegistrationDate", date))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	max := "2025-05-13"
 	filter := sale_offer.NewOfferFilter()
 	filter.CarRegistrationDateRagne = &sale_offer.MinMax[string]{Min: nil, Max: &max}
@@ -1625,7 +1625,7 @@ func TestGetFiltered_CarRegistrationDateLowerBound(t *testing.T) {
 	date, _ := time.Parse(sale_offer.LAYOUT, "2025-05-13")
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithCarField("RegistrationDate", date))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := "2025-05-13"
 	filter := sale_offer.NewOfferFilter()
 	filter.CarRegistrationDateRagne = &sale_offer.MinMax[string]{Min: &min, Max: nil}
@@ -1639,7 +1639,7 @@ func TestGetFiltered_OfferCreationDateInRange(t *testing.T) {
 	date, _ := time.Parse(sale_offer.LAYOUT, "2025-05-13")
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithOfferField("DateOfIssue", date))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := "2025-05-12"
 	max := "2025-05-14"
 	filter := sale_offer.NewOfferFilter()
@@ -1654,7 +1654,7 @@ func TestGetFiltered_OfferCreationDateInRangeMinProvided(t *testing.T) {
 	date, _ := time.Parse(sale_offer.LAYOUT, "2025-05-13")
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithOfferField("DateOfIssue", date))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := "2025-05-12"
 	filter := sale_offer.NewOfferFilter()
 	filter.OfferCreationDateRange = &sale_offer.MinMax[string]{Min: &min, Max: nil}
@@ -1668,7 +1668,7 @@ func TestGetFiltered_OfferCreationDateInRangeMaxProvided(t *testing.T) {
 	date, _ := time.Parse(sale_offer.LAYOUT, "2025-05-13")
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithOfferField("DateOfIssue", date))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	max := "2025-05-14"
 	filter := sale_offer.NewOfferFilter()
 	filter.OfferCreationDateRange = &sale_offer.MinMax[string]{Min: nil, Max: &max}
@@ -1682,7 +1682,7 @@ func TestGetFiltered_OfferCreationDateGreater(t *testing.T) {
 	date, _ := time.Parse(sale_offer.LAYOUT, "2025-05-13")
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithOfferField("DateOfIssue", date))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	max := "2025-05-12"
 	filter := sale_offer.NewOfferFilter()
 	filter.OfferCreationDateRange = &sale_offer.MinMax[string]{Min: nil, Max: &max}
@@ -1696,7 +1696,7 @@ func TestGetFiltered_OfferCreationDateLower(t *testing.T) {
 	date, _ := time.Parse(sale_offer.LAYOUT, "2025-05-13")
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithOfferField("DateOfIssue", date))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := "2025-05-14"
 	filter := sale_offer.NewOfferFilter()
 	filter.OfferCreationDateRange = &sale_offer.MinMax[string]{Min: &min, Max: nil}
@@ -1710,7 +1710,7 @@ func TestGetFiltered_OfferCreationDateUpperBound(t *testing.T) {
 	date, _ := time.Parse(sale_offer.LAYOUT, "2025-05-13")
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithOfferField("DateOfIssue", date))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	max := "2025-05-13"
 	filter := sale_offer.NewOfferFilter()
 	filter.OfferCreationDateRange = &sale_offer.MinMax[string]{Min: nil, Max: &max}
@@ -1724,7 +1724,7 @@ func TestGetFiltered_OfferCreationDateLowerBound(t *testing.T) {
 	date, _ := time.Parse(sale_offer.LAYOUT, "2025-05-13")
 	offers := []sale_offer.SaleOffer{*CreateOffer(1, WithOfferField("DateOfIssue", date))}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	min := "2025-05-13"
 	filter := sale_offer.NewOfferFilter()
 	filter.OfferCreationDateRange = &sale_offer.MinMax[string]{Min: &min, Max: nil}
@@ -1741,7 +1741,7 @@ func TestGetFiltered_OfferCreationDateLowerBound(t *testing.T) {
 func TestGetFiltered_OrderByPriceNoRecords(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	key := "Price"
 	filter := sale_offer.NewOfferFilter()
 	filter.OrderKey = &key
@@ -1754,7 +1754,7 @@ func TestGetFiltered_OrderByPriceNoRecords(t *testing.T) {
 func TestGetFiltered_OrderByPriceSingleRecord(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1)}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	key := "Price"
 	filter := sale_offer.NewOfferFilter()
 	filter.OrderKey = &key
@@ -1770,7 +1770,7 @@ func TestGetFiltered_OrderByPriceMultipleRecordsDesc(t *testing.T) {
 		offers = append(offers, *CreateOffer(uint(i), WithOfferField("Price", uint(i))))
 	}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	key := "Price"
 	trueStm := true
 	filter := sale_offer.NewOfferFilter()
@@ -1790,7 +1790,7 @@ func TestGetFiltered_OrderByPriceMultipleRecordsAsc(t *testing.T) {
 		offers = append(offers, *CreateOffer(uint(i), WithOfferField("Price", uint(i))))
 	}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	key := "Price"
 	falseStm := false
 	filter := sale_offer.NewOfferFilter()
@@ -1807,7 +1807,7 @@ func TestGetFiltered_OrderByPriceMultipleRecordsAsc(t *testing.T) {
 func TestGetFiltered_OrderByMileageNoRecords(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	key := "Mileage"
 	filter := sale_offer.NewOfferFilter()
 	filter.OrderKey = &key
@@ -1820,7 +1820,7 @@ func TestGetFiltered_OrderByMileageNoRecords(t *testing.T) {
 func TestGetFiltered_OrderByMileageSingleRecord(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1)}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	key := "Mileage"
 	filter := sale_offer.NewOfferFilter()
 	filter.OrderKey = &key
@@ -1836,7 +1836,7 @@ func TestGetFiltered_OrderByMileageMultipleRecordsDesc(t *testing.T) {
 		offers = append(offers, *CreateOffer(uint(i), WithCarField("Mileage", uint(i))))
 	}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	key := "Mileage"
 	trueStm := true
 	filter := sale_offer.NewOfferFilter()
@@ -1856,7 +1856,7 @@ func TestGetFiltered_OrderByMileageMultipleRecordsAsc(t *testing.T) {
 		offers = append(offers, *CreateOffer(uint(i), WithCarField("Mileage", uint(i))))
 	}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	key := "Mileage"
 	falseStm := false
 	filter := sale_offer.NewOfferFilter()
@@ -1873,7 +1873,7 @@ func TestGetFiltered_OrderByMileageMultipleRecordsAsc(t *testing.T) {
 func TestGetFiltered_OrderByYearNoRecords(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	key := "Production year"
 	filter := sale_offer.NewOfferFilter()
 	filter.OrderKey = &key
@@ -1886,7 +1886,7 @@ func TestGetFiltered_OrderByYearNoRecords(t *testing.T) {
 func TestGetFiltered_OrderByYearSingleRecord(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1)}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	key := "Production year"
 	filter := sale_offer.NewOfferFilter()
 	filter.OrderKey = &key
@@ -1902,7 +1902,7 @@ func TestGetFiltered_OrderByYearMultipleRecordsDesc(t *testing.T) {
 		offers = append(offers, *CreateOffer(uint(i), WithCarField("ProductionYear", uint(i+2000))))
 	}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	key := "Production year"
 	trueStm := true
 	filter := sale_offer.NewOfferFilter()
@@ -1922,7 +1922,7 @@ func TestGetFiltered_OrderByYearMultipleRecordsAsc(t *testing.T) {
 		offers = append(offers, *CreateOffer(uint(i), WithCarField("ProductionYear", uint(i+2000))))
 	}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	key := "Production year"
 	falseStm := false
 	filter := sale_offer.NewOfferFilter()
@@ -1939,7 +1939,7 @@ func TestGetFiltered_OrderByYearMultipleRecordsAsc(t *testing.T) {
 func TestGetFiltered_OrderByEnginePowerNoRecords(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	key := "Engine power"
 	filter := sale_offer.NewOfferFilter()
 	filter.OrderKey = &key
@@ -1952,7 +1952,7 @@ func TestGetFiltered_OrderByEnginePowerNoRecords(t *testing.T) {
 func TestGetFiltered_OrderByEnginePowerSingleRecord(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1)}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	key := "Engine power"
 	filter := sale_offer.NewOfferFilter()
 	filter.OrderKey = &key
@@ -1968,7 +1968,7 @@ func TestGetFiltered_OrderByEnginePowerMultipleRecordsDesc(t *testing.T) {
 		offers = append(offers, *CreateOffer(uint(i), WithCarField("EnginePower", uint(i+100))))
 	}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	key := "Engine power"
 	trueStm := true
 	filter := sale_offer.NewOfferFilter()
@@ -1988,7 +1988,7 @@ func TestGetFiltered_OrderByEnginePowerMultipleRecordsAsc(t *testing.T) {
 		offers = append(offers, *CreateOffer(uint(i), WithCarField("EnginePower", uint(i+100))))
 	}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	key := "Engine power"
 	falseStm := false
 	filter := sale_offer.NewOfferFilter()
@@ -2005,7 +2005,7 @@ func TestGetFiltered_OrderByEnginePowerMultipleRecordsAsc(t *testing.T) {
 func TestGetFiltered_OrderByEngineCapacityNoRecords(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	key := "Engine capacity"
 	filter := sale_offer.NewOfferFilter()
 	filter.OrderKey = &key
@@ -2018,7 +2018,7 @@ func TestGetFiltered_OrderByEngineCapacityNoRecords(t *testing.T) {
 func TestGetFiltered_OrderByEngineCapacitySingleRecord(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1)}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	key := "Engine capacity"
 	filter := sale_offer.NewOfferFilter()
 	filter.OrderKey = &key
@@ -2034,7 +2034,7 @@ func TestGetFiltered_OrderByEngineCapacityMultipleRecordsDesc(t *testing.T) {
 		offers = append(offers, *CreateOffer(uint(i), WithCarField("EngineCapacity", uint(i+1000))))
 	}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	key := "Engine capacity"
 	trueStm := true
 	filter := sale_offer.NewOfferFilter()
@@ -2053,7 +2053,7 @@ func TestGetFiltered_OrderByEngineCapacityMultipleRecordsAsc(t *testing.T) {
 		offers = append(offers, *CreateOffer(uint(i), WithCarField("EngineCapacity", uint(1000+i))))
 	}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	key := "Engine capacity"
 	falseStm := false
 	filter := sale_offer.NewOfferFilter()
@@ -2070,7 +2070,7 @@ func TestGetFiltered_OrderByEngineCapacityMultipleRecordsAsc(t *testing.T) {
 func TestGetFiltered_OrderByDateOfIssueNoRecords(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	key := "Date of issue"
 	filter := sale_offer.NewOfferFilter()
 	filter.OrderKey = &key
@@ -2083,7 +2083,7 @@ func TestGetFiltered_OrderByDateOfIssueNoRecords(t *testing.T) {
 func TestGetFiltered_OrderByDateOfIssueSingleRecord(t *testing.T) {
 	offers := []sale_offer.SaleOffer{*CreateOffer(1)}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	key := "Date of issue"
 	filter := sale_offer.NewOfferFilter()
 	filter.OrderKey = &key
@@ -2099,7 +2099,7 @@ func TestGetFiltered_OrderByDateOfIssueMultipleRecordsDesc(t *testing.T) {
 		offers = append(offers, *CreateOffer(uint(i), WithOfferField("DateOfIssue", time.Date(2025, 5, 1+i, 0, 0, 0, 0, time.UTC))))
 	}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	key := "Date of issue"
 	trueStm := true
 	filter := sale_offer.NewOfferFilter()
@@ -2119,7 +2119,7 @@ func TestGetFiltered_OrderByDateOfIssueMultipleRecordsAsc(t *testing.T) {
 		offers = append(offers, *CreateOffer(uint(i), WithOfferField("DateOfIssue", time.Date(2025, 5, 1+i, 0, 0, 0, 0, time.UTC))))
 	}
 	db, _ := setupDB()
-	repo := getRepositoryWithUsers(db, offers)
+	repo := getRepositoryWithSaleOffers(db, offers)
 	key := "Date of issue"
 	falseStm := false
 	filter := sale_offer.NewOfferFilter()
