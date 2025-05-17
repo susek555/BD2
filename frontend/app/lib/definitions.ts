@@ -228,3 +228,13 @@ export interface Review {
   reviewer: ReviewUser;
   reviewee: ReviewUser;
 }
+
+export interface ReviewSearchParams {
+  is_order_desc: boolean;
+  order_key: 'rating' | 'date';
+  pagination: {
+    page: number;
+    page_size: number;
+  };
+  ratings?: number[];
+}
