@@ -1,12 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 export default function Sorting( {sortingOptions}: { sortingOptions: string[] }) {
     const searchParams = useSearchParams();
     const pathname = usePathname();
-    const { replace } = useRouter();
 
     const [isKeyDropdownOpen, setIsKeyDropdownOpen] = useState(false);
     const [isOrderDropdownOpen, setIsOrderDropdownOpen] = useState(false);
@@ -25,7 +24,7 @@ export default function Sorting( {sortingOptions}: { sortingOptions: string[] })
             params.set("sortKey", key);
         }
         params.set("page", "1"); // Reset to the first page
-        replace(`${pathname}?${params.toString()}`);
+        window.history.replaceState(null, '', `${pathname}?${params.toString()}`);
         setIsKeyDropdownOpen(false);
     };
 
@@ -37,7 +36,7 @@ export default function Sorting( {sortingOptions}: { sortingOptions: string[] })
             params.delete("isSortDesc");
         }
         params.set("page", "1"); // Reset to the first page
-        replace(`${pathname}?${params.toString()}`);
+        window.history.replaceState(null, '', `${pathname}?${params.toString()}`);
         setIsOrderDropdownOpen(false);
     };
 

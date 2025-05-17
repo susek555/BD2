@@ -3,14 +3,13 @@
 import { BaseFilterTemplate } from "@/app/ui/(home)/base-filter-template/base-filter-template";
 import { BaseRangeTemplate } from "./base-filter-template/base-range-template";
 import { FilterFieldData, RangeFieldData } from "@/app/lib/definitions";
-import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { syncFiltersWithParams, syncRangesWithParams } from "@/app/lib/(home)/syncWithParams";
 
 export default function Filters({ filtersData, rangesData }: { filtersData: FilterFieldData[]; rangesData: RangeFieldData[] }) {
 
     const searchParams = useSearchParams();
     const pathname = usePathname();
-    const { replace } = useRouter();
 
     const filters = syncFiltersWithParams(filtersData, searchParams);
     const ranges = syncRangesWithParams(rangesData, searchParams);
@@ -25,8 +24,7 @@ export default function Filters({ filtersData, rangesData }: { filtersData: Filt
         } else {
             params.delete(sanitizedName);
         }
-
-        replace(`${pathname}?${params.toString()}`);
+        window.history.replaceState(null, '', `${pathname}?${params.toString()}`);
     }
 
     function handleRangeChange(name: string, range: { min: number; max: number }) {
@@ -46,7 +44,7 @@ export default function Filters({ filtersData, rangesData }: { filtersData: Filt
             params.delete(`${sanitizedName}_max`);
         }
 
-        replace(`${pathname}?${params.toString()}`);
+        window.history.replaceState(null, '', `${pathname}?${params.toString()}`);
     }
 
     return (

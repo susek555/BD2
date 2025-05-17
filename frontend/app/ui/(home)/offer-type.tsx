@@ -1,12 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 export default function OfferType() {
     const searchParams = useSearchParams();
     const pathname = usePathname();
-    const { replace } = useRouter();
 
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const options = ["All", "Auctions", "Buy Now"];
@@ -24,7 +23,7 @@ export default function OfferType() {
             params.set("offerType", option);
         }
         params.set("page", "1"); // Reset to the first page
-        replace(`${pathname}?${params.toString()}`);
+        window.history.replaceState(null, '', `${pathname}?${params.toString()}`);
         setIsDropdownOpen(false);
 };
 

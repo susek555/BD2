@@ -3,7 +3,7 @@
 import { syncFiltersWithParams } from "@/app/lib/(home)/syncWithParams";
 import { ModelFieldData, FilterFieldData } from "@/app/lib/definitions";
 import { BaseFilterTemplate } from "@/app/ui/(home)/base-filter-template/base-filter-template";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 export function getAvailableModels(producersData: FilterFieldData, models: string[][]) : string[] {
@@ -22,7 +22,6 @@ export default function ProducersAndModels({ producersAndModels }: { producersAn
 
     const searchParams = useSearchParams();
     const pathname = usePathname();
-    const { replace } = useRouter();
 
     const producers = syncFiltersWithParams([producersAndModels.producers], searchParams)[0] as { fieldName: string; options: string[]; selected: string[] };
     const [models, setModels] = useState<FilterFieldData>(syncFiltersWithParams([{
@@ -112,7 +111,7 @@ export default function ProducersAndModels({ producersAndModels }: { producersAn
 
         params.delete("Models");
 
-        replace(`${pathname}?${params.toString()}`);
+        window.history.replaceState(null, '', `${pathname}?${params.toString()}`);
     }
 
     function handleModelChange(name: string, selected: string[]) {
@@ -126,7 +125,7 @@ export default function ProducersAndModels({ producersAndModels }: { producersAn
             params.delete(sanitizedName);
         }
 
-        replace(`${pathname}?${params.toString()}`);
+        window.history.replaceState(null, '', `${pathname}?${params.toString()}`);
     }
 
     return (
