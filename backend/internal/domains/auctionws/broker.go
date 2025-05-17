@@ -7,7 +7,7 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-func publishAuctionEvent(
+func PublishAuctionEvent(
 	ctx context.Context,
 	rdb *redis.Client,
 	auctionID string,
