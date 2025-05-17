@@ -91,17 +91,22 @@ func (offer *SaleOffer) prepareAuctionValues() (*uint, *time.Time) {
 }
 
 func (dto *CreateSaleOfferDTO) validateParams() error {
-	if !IsParamValid(dto.Color, car_params.Colors) {
-		return ErrInvalidColor
+	type EnumValidation struct {
+		value          interface{}
+		possibleValues interface{}
+		err            error
 	}
-	if !IsParamValid(dto.FuelType, car_params.Types) {
-		return ErrInvalidFuelType
+	validations := []EnumValidation{
+		{value: dto.Color, possibleValues: car_params.Colors, err: ErrInvalidColor},
+		{value: dto.FuelType, possibleValues: car_params.Types, err: ErrInvalidFuelType},
+		{value: dto.Transmission, possibleValues: car_params.Transmissions, err: ErrInvalidTransmission},
+		{value: dto.Drive, possibleValues: car_params.Drives, err: ErrInvalidDrive},
+		{value: dto.Margin, possibleValues: Margins, err: ErrInvalidMargin},
 	}
-	if !IsParamValid(dto.Transmission, car_params.Transmissions) {
-		return ErrInvalidTransmission
-	}
-	if !IsParamValid(dto.Drive, car_params.Drives) {
-		return ErrInvalidDrive
+	for _, validation := range validations {
+		if !IsParamValid(&validation.value, validation.possibleValues.([]*any)) {
+			return validation.err
+		}
 	}
 	return nil
 }
