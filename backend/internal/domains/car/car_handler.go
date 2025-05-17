@@ -15,6 +15,16 @@ func NewCarHandler(s CarServiceInterface) *Handler {
 	return &Handler{service: s}
 }
 
+// GetManufacturersModelsMap godoc
+//
+//	@Summary		Get manufacturers and models map
+//	@Description	Get manufacturers and models map. Each manufacturer has a list of models (the indices are coresponding).
+//	@Tags			car
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{object}	ManufacturerModelMap	"map of manufacturers and models"
+//	@Failure		404	{object}	custom_errors.HTTPError	"manufacturer of model not found"
+//	@Router			/car/manufacturer-model-map [get]
 func (h *Handler) GetManufacturersModelsMap(c *gin.Context) {
 	users, err := h.service.GetManufacturersModelsMap()
 	if err != nil {

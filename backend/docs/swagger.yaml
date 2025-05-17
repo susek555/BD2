@@ -59,6 +59,19 @@ definitions:
           type: array
         type: object
     type: object
+  car.ManufacturerModelMap:
+    properties:
+      manufacturers:
+        items:
+          type: string
+        type: array
+      models:
+        items:
+          items:
+            type: string
+          type: array
+        type: array
+    type: object
   car_params.Color:
     enum:
     - Red
@@ -449,11 +462,19 @@ definitions:
     type: object
   user.UpdateUserDTO:
     properties:
+      company_name:
+        type: string
+      company_nip:
+        type: string
       email:
         type: string
       id:
         type: integer
       password:
+        type: string
+      person_name:
+        type: string
+      person_surname:
         type: string
       username:
         type: string
@@ -628,6 +649,26 @@ paths:
               type: array
             type: object
       summary: Get all possible fuel types
+      tags:
+      - car
+  /car/manufacturer-model-map:
+    get:
+      consumes:
+      - application/json
+      description: Get manufacturers and models map. Each manufacturer has a list
+        of models (the indexes are coresponding).
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: map of manufacturers and models
+          schema:
+            $ref: '#/definitions/car.ManufacturerModelMap'
+        "404":
+          description: manufacturer of model not found
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Get manufacturers and models map
       tags:
       - car
   /car/manufacturers:

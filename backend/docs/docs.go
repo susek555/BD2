@@ -263,6 +263,35 @@ const docTemplate = `{
                 }
             }
         },
+        "/car/manufacturer-model-map": {
+            "get": {
+                "description": "Get manufacturers and models map. Each manufacturer has a list of models (the indexes are coresponding).",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "car"
+                ],
+                "summary": "Get manufacturers and models map",
+                "responses": {
+                    "200": {
+                        "description": "map of manufacturers and models",
+                        "schema": {
+                            "$ref": "#/definitions/car.ManufacturerModelMap"
+                        }
+                    },
+                    "404": {
+                        "description": "manufacturer of model not found",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/car/manufacturers": {
             "get": {
                 "description": "Returns a list of all manufacturers stored in the database.",
@@ -1350,6 +1379,26 @@ const docTemplate = `{
                 }
             }
         },
+        "car.ManufacturerModelMap": {
+            "type": "object",
+            "properties": {
+                "manufacturers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "models": {
+                    "type": "array",
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "car_params.Color": {
             "type": "string",
             "enum": [
@@ -1911,6 +1960,12 @@ const docTemplate = `{
         "user.UpdateUserDTO": {
             "type": "object",
             "properties": {
+                "company_name": {
+                    "type": "string"
+                },
+                "company_nip": {
+                    "type": "string"
+                },
                 "email": {
                     "type": "string"
                 },
@@ -1918,6 +1973,12 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "password": {
+                    "type": "string"
+                },
+                "person_name": {
+                    "type": "string"
+                },
+                "person_surname": {
                     "type": "string"
                 },
                 "username": {
