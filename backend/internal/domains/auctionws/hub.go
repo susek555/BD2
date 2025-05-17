@@ -84,13 +84,17 @@ func (h *Hub) removeClient(client *Client) {
 
 func (h *Hub) fanOut(msg outbound) {
 	h.mu.RLock()
-	defer h.mu.RUnlock()
+	room, ok := h.rooms[msg.auctionID]
+	h.mu.RUnlock()
+	if !ok {
+		return
+	}
 
-	for client := range h.rooms[msg.auctionID] {
+	for client := range room {
 		select {
 		case client.send <- msg.data:
 		default:
-			go func(cl *Client) { cl.conn.Close() }(client)
+			go client.conn.Close()
 		}
 	}
 }
