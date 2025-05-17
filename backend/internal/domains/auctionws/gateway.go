@@ -59,7 +59,6 @@ func (h *Hub) Run() {
 	}
 }
 
-
 func (h *Hub) addToRoom(auctionID string, client *Client) {
 	h.mu.Lock()
 	defer h.mu.Unlock()
@@ -82,4 +81,11 @@ func (h *Hub) removeFromRoom(auctionID string, client *Client) {
 		}
 	}
 	delete(client.rooms, auctionID)
+}
+
+func (h *Hub) removeClient(client *Client) {
+	for auctionID := range client.rooms {
+		h.removeFromRoom(auctionID, client)
+	}
+	close(client.send)
 }
