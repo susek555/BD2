@@ -23,5 +23,5 @@ type EndAuctionMessage struct {
 	Message
 	AuctionID string `json:"auction_id"`
 	Winner    string `json:"winner"`
-	Amount    int    `json:"amount"`
+	Amount    int64    `json:"amount"`
 }
