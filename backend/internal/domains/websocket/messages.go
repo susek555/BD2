@@ -1,5 +1,7 @@
 package websocket
 
+import "encoding/json"
+
 type MsgType string
 
 const (
@@ -24,4 +26,9 @@ type EndAuctionMessage struct {
 	AuctionID string `json:"auction_id"`
 	Winner    string `json:"winner"`
 	Amount    int64    `json:"amount"`
+}
+
+type Envelope struct {
+	MessageType MsgType `json:"type"`
+	Data json.RawMessage `json:"data,omitempty"`
 }
