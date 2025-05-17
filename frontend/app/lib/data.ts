@@ -1,3 +1,4 @@
+import { getColors } from "./api/filters";
 import { AddOfferFormData, FilterFieldData, ModelFieldData, RangeFieldData, SaleOffer, SaleOfferDetails, SearchParams } from "./definitions";
 
 // Sorting
@@ -20,6 +21,7 @@ async function fetchGearboxes() : Promise<string[]> {
 
     const data = ["Manual", "Sequential Manual", "Automatic"]
 
+
     return data;
 }
 
@@ -34,7 +36,11 @@ async function fetchFuelTypes() : Promise<string[]> {
 async function fetchColors() : Promise<string[]> {
     // TODO connect API
 
-    const data = ["Red", "Green", "Blue", "Black", "White", "Yellow"]
+    const data = getColors();
+
+    console.log("Colors data: ", data);
+
+    // const data = ["Red", "Green", "Blue", "Black", "White", "Yellow"]
 
     return data;
 }

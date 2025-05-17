@@ -5,7 +5,11 @@ export const PUBLIC_ROUTES = [
   "/",
   "/login",
   "/signup",
-  "/[id]"
+  "/[id]",
+  "/car/colors",
+  "/car/drives",
+  "/car/fuel-types",
+  "/car/transmissions"
 ];
 
 export const PROTECTED_ROUTES = [
