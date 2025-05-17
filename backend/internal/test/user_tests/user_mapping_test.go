@@ -296,6 +296,106 @@ func TestUpdateUserFromDTO_Username(t *testing.T) {
 	assert.Equal(t, user.Selector, new_user.Selector)
 }
 
+func TestUpdateUserFromDTO_CompanyNameAsCompany(t *testing.T) {
+	companyName := "new_name"
+	dto := u.UpdateUserDTO{
+		ID:          1,
+		CompanyName: &companyName,
+	}
+	user := createCompany(1)
+	new_user, _ := dto.UpdateUserFromDTO(user)
+	assert.Equal(t, user.Email, new_user.Email)
+	assert.Equal(t, user.Password, new_user.Password)
+	assert.Equal(t, user.Username, new_user.Username)
+	assert.Equal(t, companyName, new_user.Company.Name)
+}
+
+func TestUpdateUserFromDTO_CompanyNameAsPerson(t *testing.T) {
+	companyName := "new_name"
+	dto := u.UpdateUserDTO{
+		ID:          1,
+		CompanyName: &companyName,
+	}
+	user := createPerson(1)
+	_, err := dto.UpdateUserFromDTO(user)
+	assert.ErrorIs(t, err, u.ErrUpdateCompany)
+}
+
+func TestUpdateUserFromDTO_CompanyNIPAsCompany(t *testing.T) {
+	companyNIP := "new_nip"
+	dto := u.UpdateUserDTO{
+		ID:         1,
+		CompanyNIP: &companyNIP,
+	}
+	user := createCompany(1)
+	new_user, _ := dto.UpdateUserFromDTO(user)
+	assert.Equal(t, user.Email, new_user.Email)
+	assert.Equal(t, user.Password, new_user.Password)
+	assert.Equal(t, user.Username, new_user.Username)
+	assert.Equal(t, companyNIP, new_user.Company.NIP)
+}
+
+func TestUpdateUserFromDTO_CompanyNIPAsPerson(t *testing.T) {
+	companyNIP := "new_nip"
+	dto := u.UpdateUserDTO{
+		ID:         1,
+		CompanyNIP: &companyNIP,
+	}
+	user := createPerson(1)
+	_, err := dto.UpdateUserFromDTO(user)
+	assert.ErrorIs(t, err, u.ErrUpdateCompany)
+}
+
+func TestUpdateUserFromDTO_PersonNameAsPerson(t *testing.T) {
+	name := "new_name"
+	dto := u.UpdateUserDTO{
+		ID:         1,
+		PersonName: &name,
+	}
+	user := createPerson(1)
+	new_user, _ := dto.UpdateUserFromDTO(user)
+	assert.Equal(t, user.Email, new_user.Email)
+	assert.Equal(t, user.Password, new_user.Password)
+	assert.Equal(t, user.Username, new_user.Username)
+	assert.Equal(t, name, new_user.Person.Name)
+}
+
+func TestUpdateUserFromDTO_PersonNameAsCompany(t *testing.T) {
+	name := "new_name"
+	dto := u.UpdateUserDTO{
+		ID:         1,
+		PersonName: &name,
+	}
+	user := createCompany(1)
+	_, err := dto.UpdateUserFromDTO(user)
+	assert.ErrorIs(t, err, u.ErrUpdatePerson)
+}
+
+func TestUpdateUserFromDTO_PersonSurnameAsPerson(t *testing.T) {
+	surname := "new_surname"
+	dto := u.UpdateUserDTO{
+		ID:            1,
+		PersonSurname: &surname,
+	}
+	user := createPerson(1)
+	new_user, _ := dto.UpdateUserFromDTO(user)
+	assert.Equal(t, user.Email, new_user.Email)
+	assert.Equal(t, user.Password, new_user.Password)
+	assert.Equal(t, user.Username, new_user.Username)
+	assert.Equal(t, surname, new_user.Person.Surname)
+}
+
+func TestUpdateUserFromDTO_PersonSurnameAsCompany(t *testing.T) {
+	surname := "new_surname"
+	dto := u.UpdateUserDTO{
+		ID:            1,
+		PersonSurname: &surname,
+	}
+	user := createCompany(1)
+	_, err := dto.UpdateUserFromDTO(user)
+	assert.ErrorIs(t, err, u.ErrUpdatePerson)
+}
+
 func TestUpdateUserFromDTO_Empty(t *testing.T) {
 	dto := u.UpdateUserDTO{
 		ID: 1,
