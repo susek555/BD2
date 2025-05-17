@@ -165,12 +165,13 @@ func registerAuctionRoutes(router *gin.Engine) {
 }
 
 func registerBidRoutes(router *gin.Engine) {
+	verifier, _ := initializeVerifier()
 	redisClient, hub := RegisterWebsocket(router)
 	bidRepo := bid.NewBidRepository(initializers.DB)
 	bidService := bid.NewBidService(bidRepo)
 	bidHandler := bid.NewHandler(bidService, redisClient, hub)
 	bidRoutes := router.Group("/bid")
-	bidRoutes.POST("/", bidHandler.CreateBid)
+	bidRoutes.POST("/", middleware.Authenticate(verifier), bidHandler.CreateBid)
 	bidRoutes.GET("/", bidHandler.GetAllBids)
 	bidRoutes.GET("/:id", bidHandler.GetBidByID)
 	bidRoutes.GET("/bidder/:id", bidHandler.GetBidsByBidderId)
