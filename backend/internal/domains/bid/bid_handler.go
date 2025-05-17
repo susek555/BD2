@@ -54,8 +54,8 @@ func (h *Handler) CreateBid(c *gin.Context) {
 		return
 	}
 	h.hub.BroadcastLocal(auctionIDStr, data, userIDStr)
-
-	auctionws.PublishAuctionEvent(c, h.redisClient, auctionIDStr, env)
+	// TODO: think about the best way to do this
+	// auctionws.PublishAuctionEvent(c, h.redisClient, auctionIDStr, env)
 
 	h.hub.SubscribeUser(userIDStr, auctionIDStr)
 }
