@@ -127,7 +127,7 @@ func (h *Hub) StartRedisFanIn(ctx context.Context, rdb *redis.Client) {
 				}
 
 				if backoff < 30*time.Second {
-					backoff *= 2 // exponencialny back-off do 30 s
+					backoff *= 2
 				}
 			}
 		}
