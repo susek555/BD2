@@ -51,7 +51,7 @@ func (h *Handler) GetAllUsers(c *gin.Context) {
 func (h *Handler) GetUserById(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		custom_errors.HandleError(c, err, ErrorMap)
+		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
 	userDTO, err := h.service.GetById(uint(id))
@@ -104,11 +104,16 @@ func (h *Handler) UpdateUser(c *gin.Context) {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
+	userID, ok := c.Get("userID")
+	if !ok || userID != userDTO.ID {
+		custom_errors.HandleError(c, ErrForbidden, ErrorMap)
+		return
+	}
 	if err := h.service.Update(&userDTO); err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
-	c.JSON(http.StatusOK, userDTO)
+	c.Status(http.StatusOK)
 }
 
 // DeleteUser godoc
@@ -130,6 +135,11 @@ func (h *Handler) DeleteUser(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
+		return
+	}
+	userID, ok := c.Get("userID")
+	if !ok || userID != uint(id) {
+		custom_errors.HandleError(c, ErrForbidden, ErrorMap)
 		return
 	}
 	err = h.service.Delete(uint(id))
