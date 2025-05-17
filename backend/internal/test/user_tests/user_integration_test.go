@@ -528,3 +528,17 @@ func TestDeleteUser_Person(t *testing.T) {
 	_, err = personRepo.GetById(seedUsers[0].ID)
 	assert.Error(t, err, gorm.ErrRecordNotFound)
 }
+
+func TestDeleteUser_Company(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	seedUsers := []user.User{*createCompany(1)}
+	server, db, _ := newTestServer(seedUsers)
+	token, _ := u.GetValidToken(seedUsers[0].ID, seedUsers[0].Email)
+	_, recievedStatus := u.PerformRequest(server, http.MethodDelete, "/users/id/1", nil, &token)
+	assert.Equal(t, http.StatusNoContent, recievedStatus)
+	userRepo, _, companyRepo := getRepositories(db)
+	_, err := userRepo.GetById(seedUsers[0].ID)
+	assert.Error(t, err, gorm.ErrRecordNotFound)
+	_, err = companyRepo.GetById(seedUsers[0].ID)
+	assert.Error(t, err, gorm.ErrRecordNotFound)
+}
