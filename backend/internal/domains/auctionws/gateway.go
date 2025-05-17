@@ -58,3 +58,15 @@ func (h *Hub) Run() {
 		}
 	}
 }
+
+
+func (h *Hub) addToRoom(auctionID string, client *Client) {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+
+	if h.rooms[auctionID] == nil {
+		h.rooms[auctionID] = make(map[*Client]struct{})
+	}
+	h.rooms[auctionID][client] = struct{}{}
+	client.rooms[auctionID] = true
+}
