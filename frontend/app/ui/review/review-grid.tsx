@@ -1,3 +1,4 @@
+import { ReviewSearchParams } from '@/app/lib/definitions';
 import {
   fetchReviewsByReviewee,
   fetchReviewsByReviewer,
@@ -8,12 +9,14 @@ interface ReviewGridProps {
   variant: 'for' | 'by';
   userId: number;
   className?: string;
+  searchParams: ReviewSearchParams;
 }
 
 export async function ReviewGrid({
   variant,
   userId,
   className = '',
+  searchParams: serachParams,
 }: ReviewGridProps) {
   let fetchFunc;
 
@@ -23,7 +26,7 @@ export async function ReviewGrid({
     fetchFunc = fetchReviewsByReviewer;
   }
 
-  const reviews = await fetchFunc(userId);
+  const reviews = await fetchFunc(userId, serachParams);
 
   if (reviews.length === 0) {
     return (
