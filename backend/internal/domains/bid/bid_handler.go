@@ -5,16 +5,24 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/redis/go-redis/v9"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/auctionws"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auth"
 	"github.com/susek555/BD2/car-dealer-api/pkg/custom_errors"
 )
 
 type Handler struct {
-	service BidServiceInterface
+	service     BidServiceInterface
+	redisClient *redis.Client
+	hub         *auctionws.Hub
 }
 
-func NewHandler(service BidServiceInterface) *Handler {
-	return &Handler{service: service}
+func NewHandler(service BidServiceInterface, redisClient *redis.Client, hub *auctionws.Hub) *Handler {
+	return &Handler{
+		service:     service,
+		redisClient: redisClient,
+		hub:         hub,
+	}
 }
 
 func (h *Handler) CreateBid(c *gin.Context) {
@@ -34,6 +42,13 @@ func (h *Handler) CreateBid(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusCreated, dto)
+	auctionIDStr := strconv.FormatUint(uint64(dto.AuctionID), 10)
+	userIDStr := strconv.FormatUint(uint64(userId), 10)
+	amountInt64 := int64(dto.Amount)
+	env := auctionws.NewBidEnvelope(auctionIDStr, amountInt64, userIDStr)
+	auctionws.PublishAuctionEvent(c, h.redisClient, auctionIDStr, env)
+
+	h.hub.SubscribeUser(userIDStr, auctionIDStr)
 }
 
 func (h *Handler) GetAllBids(c *gin.Context) {
