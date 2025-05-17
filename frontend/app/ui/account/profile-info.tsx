@@ -1,4 +1,5 @@
 import { UserProfile } from '@/app/lib/definitions';
+import { fetchAverageRating } from '@/app/lib/reviews/data';
 import { UserCircleIcon } from '@heroicons/react/24/outline';
 import { AverageRatingCard } from '../review/average-rating-card';
 
@@ -6,11 +7,13 @@ interface ProfileInfoProps {
   user: UserProfile;
 }
 
-export default function ProfileInfo({ user }: ProfileInfoProps) {
+export default async function ProfileInfo({ user }: ProfileInfoProps) {
+  const rating = await fetchAverageRating(1);
+
   return (
     <div className='relative rounded-lg bg-white p-6 shadow'>
       <div className='absolute top-6 right-6'>
-        <AverageRatingCard id={1} />
+        <AverageRatingCard rating={rating} />
       </div>
 
       <div className='flex flex-col items-center gap-4 md:flex-row md:items-start'>
