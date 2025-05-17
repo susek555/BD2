@@ -70,3 +70,16 @@ func (h *Hub) addToRoom(auctionID string, client *Client) {
 	h.rooms[auctionID][client] = struct{}{}
 	client.rooms[auctionID] = true
 }
+
+func (h *Hub) removeFromRoom(auctionID string, client *Client) {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+
+	if room, ok := h.rooms[auctionID]; ok {
+		delete(room, client)
+		if len(room) == 0 {
+			delete(h.rooms, auctionID)
+		}
+	}
+	delete(client.rooms, auctionID)
+}
