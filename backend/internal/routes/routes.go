@@ -6,6 +6,7 @@ import (
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auction"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/bid"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/car"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
@@ -87,20 +88,23 @@ func registerReviewRoutes(router *gin.Engine) {
 func registerCarRoutes(router *gin.Engine) {
 	modelRepo := model.NewModelRepository(initializers.DB)
 	modelService := model.NewModelService(modelRepo)
-	modelHandler := model.NewHandler(modelService)
+	modelHandler := model.NewModelHandler(modelService)
 	manufacturerRepo := manufacturer.NewManufacturerRepository(initializers.DB)
 	manufacturerService := manufacturer.NewManufacturerService(manufacturerRepo)
-	manufacturerHandler := manufacturer.NewHandler(manufacturerService)
-	carHandler := car_params.NewHandler()
+	manufacturerHandler := manufacturer.NewManufacturerHandler(manufacturerService)
+	carParamHandler := car_params.NewHandler()
+	carService := car.NewCarService(manufacturerRepo, modelRepo)
+	carHandler := car.NewCarHandler(carService)
 	carRoutes := router.Group("/car")
 	{
-		carRoutes.GET("/colors", carHandler.GetPossibleColors)
-		carRoutes.GET("/transmissions", carHandler.GetPossibleTransmissions)
-		carRoutes.GET("/fuel-types", carHandler.GetPossibleFuelTypes)
-		carRoutes.GET("/drives", carHandler.GetPossibleDrives)
+		carRoutes.GET("/colors", carParamHandler.GetPossibleColors)
+		carRoutes.GET("/transmissions", carParamHandler.GetPossibleTransmissions)
+		carRoutes.GET("/fuel-types", carParamHandler.GetPossibleFuelTypes)
+		carRoutes.GET("/drives", carParamHandler.GetPossibleDrives)
 		carRoutes.GET("/manufactures", manufacturerHandler.GetAllManufactures)
 		carRoutes.GET("/models/id/:id", modelHandler.GetModelsByManufacturerID)
 		carRoutes.GET("/models/name/:name", modelHandler.GetModelsByManufacturerName)
+		carRoutes.GET("/manufacturer-model-map", carHandler.GetManufacturersModelsMap)
 	}
 }
 
