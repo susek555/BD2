@@ -1,6 +1,8 @@
 package bid
 
 import (
+	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -46,6 +48,13 @@ func (h *Handler) CreateBid(c *gin.Context) {
 	userIDStr := strconv.FormatUint(uint64(userId), 10)
 	amountInt64 := int64(dto.Amount)
 	env := auctionws.NewBidEnvelope(auctionIDStr, amountInt64, userIDStr)
+	data, err := json.Marshal(env)
+	if err != nil {
+		log.Println("Error marshalling envelope:", err)
+		return
+	}
+	h.hub.BroadcastLocal(auctionIDStr, data, userIDStr)
+
 	auctionws.PublishAuctionEvent(c, h.redisClient, auctionIDStr, env)
 
 	h.hub.SubscribeUser(userIDStr, auctionIDStr)
