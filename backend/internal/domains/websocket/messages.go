@@ -15,7 +15,7 @@ type Message struct {
 type BidMessage struct {
 	Message
 	AuctionID string `json:"auction_id"`
-	Amount    int    `json:"amount"`
+	Amount    int64    `json:"amount"`
 	UserID    string `json:"user_id"`
 }
 
