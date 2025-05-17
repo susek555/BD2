@@ -1,10 +1,12 @@
 package routes
 
 import (
+	"context"
 	"log"
 	"os"
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auction"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/auctionws"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/bid"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
@@ -30,6 +32,19 @@ func RegisterRoutes(router *gin.Engine) {
 	registerSaleOfferRoutes(router)
 	registerAuctionRoutes(router)
 	registerBidRoutes(router)
+}
+
+func RegisterWebsocket(router *gin.Engine) {
+	ctx := context.Background()
+	redisClient := initializers.ConnectToRedis(ctx)
+
+	hub := auctionws.NewHub()
+	go hub.Run()
+	hub.StartRedisFanIn(ctx, redisClient)
+	// Start the WebSocket server
+	verifier, _ := initializeVerifier()
+	wsHandler := gin.WrapH(auctionws.ServeWS(hub))
+	router.GET("/ws", middleware.Authenticate(verifier), wsHandler)
 }
 
 func initializeVerifier() (*jwt.JWTVerifier, []byte) {
