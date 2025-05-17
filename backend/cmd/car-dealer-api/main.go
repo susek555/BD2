@@ -39,8 +39,6 @@ func main() {
 	ctx := context.Background()
 	redisClient := redis.NewClient(&redis.Options{
 		Addr:     os.Getenv("REDIS_ADDR"),
-		Username: os.Getenv("REDIS_USER"),
-		Password: os.Getenv("REDIS_PASS"),
 	})
 	if err := redisClient.Ping(ctx).Err(); err != nil {
 		log.Fatalf("could not connect to redis: %v", err)
