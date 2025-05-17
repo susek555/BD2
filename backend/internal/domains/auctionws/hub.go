@@ -1,10 +1,9 @@
 package auctionws
 
 import (
+	"log"
 	"sync"
 )
-
-
 
 type Hub struct {
 	rooms       map[string]map[*Client]struct{}
@@ -38,7 +37,8 @@ func NewHub() *Hub {
 func (h *Hub) Run() {
 	for {
 		select {
-		case _ = <-h.register:
+		case client := <-h.register:
+			log.Println("Client registered:", client.userID)
 		case client := <-h.unregister:
 			h.removeClient(client)
 		case sub := <-h.subscribe:
@@ -89,9 +89,8 @@ func (h *Hub) fanOut(msg outbound) {
 	for client := range h.rooms[msg.auctionID] {
 		select {
 		case client.send <- msg.data:
-		default: 
+		default:
 			go func(cl *Client) { cl.conn.Close() }(client)
 		}
 	}
 }
-
