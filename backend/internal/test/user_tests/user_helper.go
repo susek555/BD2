@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/generic"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
-	"github.com/susek555/BD2/car-dealer-api/internal/test/test_utils"
 	u "github.com/susek555/BD2/car-dealer-api/internal/test/test_utils"
 	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
 	"github.com/susek555/BD2/car-dealer-api/pkg/middleware"
@@ -52,7 +51,7 @@ func newTestServer(seedUsers []user.User) (*gin.Engine, *gorm.DB, error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	verifier := jwt.NewJWTVerifier(test_utils.JWTSECRET)
+	verifier := jwt.NewJWTVerifier(u.JWTSECRET)
 	userRepo := getRepositoryWithUsers(db, seedUsers)
 	userService := user.NewUserService(userRepo)
 	userHandler := user.NewUserHandler(userService)
@@ -82,15 +81,6 @@ func createPerson(id uint) *user.User {
 		Person:   &user.Person{Name: "john person", Surname: "doe person"},
 	}
 	return &user
-}
-
-func withPersonField(opt u.Option[user.Person]) u.Option[user.User] {
-	return func(userObj *user.User) {
-		if userObj.Person == nil {
-			userObj.Person = &user.Person{}
-		}
-		opt(userObj.Person)
-	}
 }
 
 func createCompany(id uint) *user.User {
