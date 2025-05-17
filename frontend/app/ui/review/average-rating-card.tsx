@@ -1,32 +1,16 @@
 'use client';
-import { fetchAverageRating } from '@/app/lib/reviews/data';
 import { StarIcon as Star } from '@heroicons/react/20/solid';
-import { ReactElement, useEffect, useState } from 'react';
+import { ReactElement } from 'react';
 
 interface AverageRatingCardProps {
-  id: number;
+  rating: number;
   starSize?: number;
 }
 
 export function AverageRatingCard({
-  id,
+  rating,
   starSize = 20,
 }: AverageRatingCardProps) {
-  const [rating, setRating] = useState<number>(0);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchRating = async (): Promise<void> => {
-      try {
-        const rating = await fetchAverageRating(id);
-        setRating(rating);
-      } catch (err) {
-        setError('Failed to fetch rating data');
-      }
-    };
-    fetchRating();
-  }, [id]);
-
   const renderStars = (): ReactElement[] => {
     const stars: ReactElement[] = [];
     const fullStars = Math.floor(rating);
@@ -75,10 +59,6 @@ export function AverageRatingCard({
 
     return stars;
   };
-
-  if (error) {
-    return <div className='text-red-500'>{error}</div>;
-  }
 
   return (
     <div className='flex items-center gap-2'>
