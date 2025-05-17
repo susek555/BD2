@@ -35,7 +35,6 @@ func main() {
 	router := gin.Default()
 	router.Use(cors.New(middleware.CorsConfig))
 	routes.RegisterRoutes(router)
-	routes.RegisterWebsocket(router)
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	if err := router.Run(":8080"); err != nil {
 		log.Fatalf("server error: %v", err)
