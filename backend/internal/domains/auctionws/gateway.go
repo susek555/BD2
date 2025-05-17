@@ -42,3 +42,19 @@ func NewHub() *Hub {
 		broadcast:   make(chan outbound, 1024),
 	}
 }
+
+func (h *Hub) Run() {
+	for {
+		select {
+		case _ := <-h.register:
+		case client := <-h.unregister:
+			h.removeClient(client)
+		case sub := <-h.subscribe:
+			h.addToRoom(sub.auctionID, sub.client)
+		case sub := <-h.unsubscribe:
+			h.removeFromRoom(sub.auctionID, sub.client)
+		case msg := <-h.broadcast:
+			h.fanOut(msg)
+		}
+	}
+}
