@@ -93,7 +93,7 @@ func (r *UserRepository) Update(user *User) error {
 
 func (r *UserRepository) Delete(id uint) error {
 	return r.DB.Transaction(func(tx *gorm.DB) error {
-		return r.DB.Delete(&User{}, id).Error
+		return tx.Delete(&User{}, id).Error
 	})
 }
 
