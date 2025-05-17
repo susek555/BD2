@@ -3,7 +3,6 @@ const API_URL = process.env.API_URL;
 export async function getColors() {
   const response = await fetch(`${API_URL}/car/colors`, {
     method: "GET",
-    cache: "force-cache"
   });
 
   if (!response.ok) {
@@ -18,7 +17,6 @@ export async function getColors() {
 export async function getDrives() {
   const response = await fetch(`${API_URL}/car/drives`, {
     method: "GET",
-    cache: "force-cache"
   });
 
   if (!response.ok) {
@@ -33,7 +31,6 @@ export async function getDrives() {
 export async function getFuelTypes() {
   const response = await fetch(`${API_URL}/car/fuel-types`, {
     method: "GET",
-    cache: "force-cache"
   });
 
   if (!response.ok) {
@@ -48,7 +45,6 @@ return data["fuel-types"];
 export async function getTransmissions() {
   const response = await fetch(`${API_URL}/car/transmissions`, {
     method: "GET",
-    cache: "force-cache"
   });
 
   if (!response.ok) {

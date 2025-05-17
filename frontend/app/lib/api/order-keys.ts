@@ -3,7 +3,6 @@ const API_URL = process.env.API_URL;
 export async function getOrderKeys() {
   const response = await fetch(`${API_URL}/sale-offer/order-keys`, {
     method: "GET",
-    cache: "force-cache"
   });
 
   if (!response.ok) {
