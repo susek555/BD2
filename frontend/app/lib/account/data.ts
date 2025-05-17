@@ -15,6 +15,7 @@ export async function fetchSessionData(): Promise<UserProfile> {
   }
 
   const userProfile: UserProfile = {
+    id: user.id,
     username: user.username,
     email: user.email,
   };
