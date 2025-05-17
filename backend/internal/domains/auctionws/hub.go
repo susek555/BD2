@@ -118,7 +118,16 @@ func (h *Hub) StartRedisFanIn(ctx context.Context, rdb *redis.Client) {
 				}
 			}
 
-			time.Sleep(time.Second)
+			_ = pubsub.Close()
+			backoff := time.Second
+			for backoff < 30*time.Second {
+				select {
+				case <-ctx.Done():
+					return
+				case <-time.After(backoff):
+				}
+				backoff *= 2
+			}
 		}
 	}()
 }
