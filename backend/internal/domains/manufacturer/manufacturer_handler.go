@@ -10,7 +10,7 @@ type Handler struct {
 	service ManufacturerServiceInterface
 }
 
-func NewHandler(s ManufacturerServiceInterface) *Handler {
+func NewManufacturerHandler(s ManufacturerServiceInterface) *Handler {
 	return &Handler{service: s}
 }
 

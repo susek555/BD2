@@ -18,7 +18,7 @@ type Handler struct {
 	service ModelServiceInterace
 }
 
-func NewHandler(s ModelServiceInterace) *Handler {
+func NewModelHandler(s ModelServiceInterace) *Handler {
 	return &Handler{service: s}
 }
 
