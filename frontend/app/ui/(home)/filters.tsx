@@ -1,13 +1,10 @@
 'use client';
 
-import {
-  syncFiltersWithParams,
-  syncRangesWithParams,
-} from '@/app/lib/(home)/syncWithParams';
-import { FilterFieldData, RangeFieldData } from '@/app/lib/definitions';
-import { BaseFilterTemplate } from '@/app/ui/(home)/base-filter-template/base-filter-template';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { BaseRangeTemplate } from './base-filter-template/base-range-template';
+import { BaseFilterTemplate } from "@/app/ui/(home)/base-filter-template/base-filter-template";
+import { BaseRangeTemplate } from "./base-filter-template/base-range-template";
+import { FilterFieldData, RangeFieldData } from "@/app/lib/definitions";
+import { usePathname, useSearchParams } from "next/navigation";
+import { syncFiltersWithParams, syncRangesWithParams } from "@/app/lib/(home)/syncWithParams";
 
 export default function Filters({
   filtersData,
@@ -16,26 +13,24 @@ export default function Filters({
   filtersData: FilterFieldData[];
   rangesData: RangeFieldData[];
 }) {
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
-  const { replace } = useRouter();
+    const searchParams = useSearchParams();
+    const pathname = usePathname();
 
-  const filters = syncFiltersWithParams(filtersData, searchParams);
-  const ranges = syncRangesWithParams(rangesData, searchParams);
+    const filters = syncFiltersWithParams(filtersData, searchParams);
+    const ranges = syncRangesWithParams(rangesData, searchParams);
 
-  function handleFilterChange(name: string, selected: string[]) {
-    const params = new URLSearchParams(searchParams);
-    const sanitizedName = name.replace(/\s+/g, '');
+    function handleFilterChange(name: string, selected: string[]) {
+        const params = new URLSearchParams(searchParams);
+        const sanitizedName = name.replace(/\s+/g, ''); // Remove whitespaces from name
 
-    params.set('page', '1');
-    if (selected.length > 0) {
-      params.set(sanitizedName, selected.join(','));
-    } else {
-      params.delete(sanitizedName);
+        params.set('page', '1'); // Reset to the first page
+        if (selected.length > 0) {
+            params.set(sanitizedName, selected.join(","));
+        } else {
+            params.delete(sanitizedName);
+        }
+        window.history.replaceState(null, '', `${pathname}?${params.toString()}`);
     }
-
-    replace(`${pathname}?${params.toString()}`);
-  }
 
   function handleRangeChange(
     name: string,
@@ -57,7 +52,7 @@ export default function Filters({
       params.delete(`${sanitizedName}_max`);
     }
 
-    replace(`${pathname}?${params.toString()}`);
+    window.history.replaceState(null, '', `${pathname}?${params.toString()}`);
   }
 
   return (

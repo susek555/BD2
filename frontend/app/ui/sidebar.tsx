@@ -2,7 +2,8 @@ import Filters from '@/app/ui/(home)/filters';
 import Sorting from './sorting';
 import OfferType from './offer-type';
 import { fetchFilterFields, fetchProducersAndModels, fetchSortingOptions, prepareRangeFields } from '@/app/lib/data';
-import ProducersAndModels from '@/app/ui/producers-and-models';
+import ProducersAndModels from './producers-and-models';
+import ApplyButton from './apply-button';
 
 
 export default async function SideBar() {
@@ -20,6 +21,7 @@ export default async function SideBar() {
           <Sorting sortingOptions={sortingOptions}/>
           <ProducersAndModels producersAndModels={producersAndModels}/>
           <Filters filtersData={filters} rangesData={ranges}/>
+          <ApplyButton />
           <div className="hidden h-auto w-full grow rounded-md bg-gray-50 md:block"></div>
         </div>
       </div>
