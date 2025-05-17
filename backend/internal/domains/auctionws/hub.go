@@ -105,6 +105,9 @@ func (h *Hub) fanOut(msg outbound) {
 	}
 
 	for client := range room {
+		if msg.excludeID != "" && client.userID == msg.excludeID {
+			continue
+		}
 		select {
 		case client.send <- msg.data:
 		default:
