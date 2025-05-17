@@ -3,7 +3,6 @@ package sale_offer
 import (
 	"errors"
 	"net/http"
-	"strconv"
 
 	"gorm.io/gorm"
 )
@@ -14,11 +13,12 @@ var (
 	ErrInvalidTransmission  error = errors.New("invalid transmission")
 	ErrInvalidDrive         error = errors.New("invalid drive")
 	ErrInvalidSaleOfferType error = errors.New("invalid sale offer type")
+	ErrInvalidMargin        error = errors.New("invalid margin")
 	ErrInvalidRange         error = errors.New("the min value should be lower than max")
 	ErrInvalidDateFromat    error = errors.New("invalid date format, should be YYYY-MM-DD")
 	ErrInvalidOrderKey      error = errors.New("invalid order-key")
 	ErrInvalidManufacturer  error = errors.New("invalid manufacturer")
-	ErrNotLoggedIn          error = errors.New("you have to be logged in to create offer")
+	ErrAuthorization        error = errors.New("you have to be logged in to create an offer")
 )
 
 var ErrorMap = map[error]int{
@@ -27,11 +27,11 @@ var ErrorMap = map[error]int{
 	ErrInvalidFuelType:      http.StatusBadRequest,
 	ErrInvalidDrive:         http.StatusBadRequest,
 	ErrInvalidSaleOfferType: http.StatusBadRequest,
+	ErrInvalidMargin:        http.StatusBadRequest,
 	ErrInvalidRange:         http.StatusBadRequest,
 	ErrInvalidDateFromat:    http.StatusBadRequest,
 	ErrInvalidOrderKey:      http.StatusBadRequest,
 	ErrInvalidManufacturer:  http.StatusBadRequest,
-	ErrNotLoggedIn:          http.StatusUnauthorized,
+	ErrAuthorization:        http.StatusUnauthorized,
 	gorm.ErrRecordNotFound:  http.StatusNotFound,
-	strconv.ErrSyntax:       http.StatusBadRequest,
 }
