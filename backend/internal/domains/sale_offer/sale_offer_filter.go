@@ -154,9 +154,9 @@ func applyOrderFilter(query *gorm.DB, orderKey *string, isOrderDesc *bool) *gorm
 		orderDirection = "ASC"
 	}
 	if orderKey != nil {
-		return query.Order(OrderKeysMap[*orderKey] + " margin " + orderDirection)
+		return query.Order(OrderKeysMap[*orderKey] + " " + orderDirection + ", margin " + orderDirection)
 	}
-	return query
+	return query.Order("margin " + *orderKey)
 }
 
 func (of *OfferFilter) validateParams() error {
