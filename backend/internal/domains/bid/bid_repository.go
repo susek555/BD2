@@ -41,7 +41,7 @@ func (b *BidRepository) Create(bid *Bid) error {
 			Order("amount DESC").
 			Limit(1).
 			Take(&highest).Error
-		if err != nil {
+		if err != nil && err.Error() != gorm.ErrRecordNotFound.Error() {
 			return err
 		}
 		if highest.Amount >= bid.Amount {
