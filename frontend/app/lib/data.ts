@@ -1,4 +1,4 @@
-import { getColors } from "./api/filters";
+import { getColors, getDrives, getFuelTypes, getTransmissions } from "./api/filters";
 import { AddOfferFormData, FilterFieldData, ModelFieldData, RangeFieldData, SaleOffer, SaleOfferDetails, SearchParams } from "./definitions";
 
 // Sorting
@@ -17,38 +17,33 @@ export async function fetchSortingOptions(): Promise<string[]> {
 // Filters
 
 async function fetchGearboxes() : Promise<string[]> {
-    // TODO connect API
+    const data = getTransmissions();
 
-    const data = ["Manual", "Sequential Manual", "Automatic"]
-
+    console.log("Gearboxes data: ", data);
 
     return data;
 }
 
 async function fetchFuelTypes() : Promise<string[]> {
-    // TODO connect API
+    const data = getFuelTypes();
 
-    const data = ["Diesel", "Electric", "Gasoline"]
+    console.log("Fuel types data: ", data);
 
   return data;
 }
 
 async function fetchColors() : Promise<string[]> {
-    // TODO connect API
-
     const data = getColors();
 
     console.log("Colors data: ", data);
-
-    // const data = ["Red", "Green", "Blue", "Black", "White", "Yellow"]
 
     return data;
 }
 
 async function fetchDriveTypes() : Promise<string[]> {
-    // TODO connect API
+    const data = getDrives();
 
-    const data = ["FWD", "RWD", "AWD"]
+    console.log("Drive types data: ", data);
 
     return data;
 }
@@ -95,10 +90,6 @@ export async function fetchProducersAndModels() : Promise<ModelFieldData> {
 }
 
 export async function fetchFilterFields() : Promise<FilterFieldData[]> {
-
-    // TODO remove delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
     try{
         const data: FilterFieldData[] = await Promise.all([
             (async () => ({
