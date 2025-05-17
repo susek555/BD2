@@ -12,7 +12,6 @@ const (
 	MsgUnsubscribe MsgType = "unsubscribe"
 )
 
-
 type Envelope struct {
 	MessageType MsgType         `json:"type"`
 	Data        json.RawMessage `json:"data,omitempty"`
@@ -34,4 +33,17 @@ type SubscribePayload struct {
 }
 type UnsubscribePayload struct {
 	Auctions []string `json:"auctions"`
+}
+
+func NewBidEnvelope(auctionID string, amount int64, userID string) *Envelope {
+	payload := BidPayload{
+		AuctionID: auctionID,
+		Amount:    amount,
+		UserID:    userID,
+	}
+	data, _ := json.Marshal(payload)
+	return &Envelope{
+		MessageType: MsgBid,
+		Data:        data,
+	}
 }
