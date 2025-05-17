@@ -4,7 +4,9 @@ package main
 import (
 	"context"
 	"log"
+	"net/http"
 	"os"
+	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/redis/go-redis/v9"
@@ -38,7 +40,7 @@ func init() {
 func main() {
 	ctx := context.Background()
 	redisClient := redis.NewClient(&redis.Options{
-		Addr:     os.Getenv("REDIS_ADDR"),
+		Addr: os.Getenv("REDIS_ADDR"),
 	})
 	if err := redisClient.Ping(ctx).Err(); err != nil {
 		log.Fatalf("could not connect to redis: %v", err)
@@ -52,13 +54,22 @@ func main() {
 	router.Use(cors.New(middleware.CorsConfig))
 	routes.RegisterRoutes(router)
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	if err := router.Run(":8080"); err != nil {
-		log.Fatalf("server error: %v", err)
-	}
 
 	// Start the WebSocket server
 	verifier := jwt.NewJWTVerifier(os.Getenv("JWT_SECRET"))
 	wsHandler := gin.WrapH(auctionws.ServeWS(hub))
 	router.GET("/ws", middleware.Authenticate(verifier), wsHandler)
+	srv := &http.Server{
+		Addr:           ":8080",
+		Handler:        router,
+		ReadTimeout:    15 * time.Second,
+		WriteTimeout:   15 * time.Second,
+		MaxHeaderBytes: 1 << 20,
+	}
+	log.Println("Starting server on :8080")
+	if err := srv.ListenAndServe(); err != nil {
+		log.Fatalf("could not start server: %v", err)
+	}
+	defer redisClient.Close()
 
 }
