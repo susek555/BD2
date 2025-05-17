@@ -155,3 +155,11 @@ func (h *Hub) SubscribeUser(uid, auctionID string) {
 	}
 	h.subscribe <- subscription{auctionID, cl}
 }
+
+func (h *Hub) BroadcastLocal(auctionID string, data []byte, excludeID string) {
+	h.broadcast <- outbound{
+		auctionID: auctionID,
+		data:      data,
+		excludeID: excludeID,
+	}
+}
