@@ -1,8 +1,13 @@
 package auctionws
 
 import (
+	"context"
 	"log"
+	"strings"
 	"sync"
+	"time"
+
+	"github.com/redis/go-redis/v9"
 )
 
 type Hub struct {
@@ -97,4 +102,23 @@ func (h *Hub) fanOut(msg outbound) {
 			go client.conn.Close()
 		}
 	}
+}
+
+func (h *Hub) StartRedisFanIn(ctx context.Context, rdb *redis.Client) {
+	go func() {
+		for {
+			pubsub := rdb.PSubscribe(ctx, "auction.*")
+			ch := pubsub.Channel()
+
+			for msg := range ch {
+				id := strings.TrimPrefix(msg.Channel, "auction.")
+				h.broadcast <- outbound{
+					auctionID: id,
+					data:      []byte(msg.Payload),
+				}
+			}
+
+			time.Sleep(time.Second)
+		}
+	}()
 }
