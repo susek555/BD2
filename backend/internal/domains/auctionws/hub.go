@@ -2,17 +2,9 @@ package auctionws
 
 import (
 	"sync"
-
-	"github.com/gorilla/websocket"
 )
 
-type Client struct {
-	conn   *websocket.Conn
-	send   chan []byte
-	userID int64
-	hub    *Hub
-	rooms  map[string]bool
-}
+
 
 type Hub struct {
 	rooms       map[string]map[*Client]struct{}
@@ -46,7 +38,7 @@ func NewHub() *Hub {
 func (h *Hub) Run() {
 	for {
 		select {
-		case _ := <-h.register:
+		case _ = <-h.register:
 		case client := <-h.unregister:
 			h.removeClient(client)
 		case sub := <-h.subscribe:
@@ -102,3 +94,4 @@ func (h *Hub) fanOut(msg outbound) {
 		}
 	}
 }
+

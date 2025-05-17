@@ -5,9 +5,11 @@ import "encoding/json"
 type MsgType string
 
 const (
-	MsgBid        MsgType = "bid"
-	MsgEndAuction MsgType = "end_auction"
-	MsgError      MsgType = "error"
+	MsgBid         MsgType = "bid"
+	MsgEndAuction  MsgType = "end_auction"
+	MsgError       MsgType = "error"
+	MsgSubscribe   MsgType = "subscribe"
+	MsgUnsubscribe MsgType = "unsubscribe"
 )
 
 type Message struct {
@@ -28,4 +30,11 @@ type EndAuctionPayload struct {
 	AuctionID string `json:"auction_id"`
 	Winner    string `json:"winner"`
 	Amount    int64  `json:"amount"`
+}
+
+type SubscribePayload struct {
+	Auctions []string `json:"auctions"`
+}
+type UnsubscribePayload struct {
+	Auctions []string `json:"auctions"`
 }
