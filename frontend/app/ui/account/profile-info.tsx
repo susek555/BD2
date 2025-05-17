@@ -1,5 +1,6 @@
 import { UserProfile } from '@/app/lib/definitions';
 import { UserCircleIcon } from '@heroicons/react/24/outline';
+import { AverageRatingCard } from '../review/average-rating-card';
 
 interface ProfileInfoProps {
   user: UserProfile;
@@ -7,7 +8,11 @@ interface ProfileInfoProps {
 
 export default function ProfileInfo({ user }: ProfileInfoProps) {
   return (
-    <div className='rounded-lg bg-white p-6 shadow'>
+    <div className='relative rounded-lg bg-white p-6 shadow'>
+      <div className='absolute top-6 right-6'>
+        <AverageRatingCard id={1} />
+      </div>
+
       <div className='flex flex-col items-center gap-4 md:flex-row md:items-start'>
         <div className='flex h-24 w-24 items-center justify-center rounded-full bg-gray-200'>
           <UserCircleIcon className='h-20 w-20 text-gray-400' />
