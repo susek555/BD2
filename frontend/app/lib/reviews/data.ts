@@ -39,7 +39,7 @@ export async function fetchReviewsByReviewee(
 }
 
 export async function fetchAverageRating(id: number): Promise<number> {
-  const url = `/api/reviews/average/${id}`;
+  const url = `${process.env.URL}/api/reviews/average/${id}`;
 
   const response = await fetch(url, {
     method: 'GET',
