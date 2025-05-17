@@ -1,11 +1,12 @@
 package bid
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/susek555/BD2/car-dealer-api/pkg/custom_errors"
 	"net/http"
 	"strconv"
-	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/auth"
+	"github.com/susek555/BD2/car-dealer-api/pkg/custom_errors"
 )
 
 type Handler struct {
@@ -17,18 +18,22 @@ func NewHandler(service BidServiceInterface) *Handler {
 }
 
 func (h *Handler) CreateBid(c *gin.Context) {
-	var in Bid
+	var in CreateBidDTO
 	if err := c.ShouldBindJSON(&in); err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
-	in.CreatedAt = time.Now()
-	err := h.service.Create(&in)
+	userId, err := auth.GetUserId(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
-	c.JSON(http.StatusCreated, gin.H{})
+	dto, err := h.service.Create(&in, userId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+		return
+	}
+	c.JSON(http.StatusCreated, dto)
 }
 
 func (h *Handler) GetAllBids(c *gin.Context) {
