@@ -2,10 +2,16 @@
 package main
 
 import (
-	"github.com/gin-contrib/cors"
-	"github.com/susek555/BD2/car-dealer-api/pkg/middleware"
+	"context"
 	"log"
+	"os"
 
+	"github.com/gin-contrib/cors"
+	"github.com/redis/go-redis/v9"
+	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
+	"github.com/susek555/BD2/car-dealer-api/pkg/middleware"
+
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/auctionws"
 	"github.com/susek555/BD2/car-dealer-api/internal/routes"
 
 	"github.com/gin-gonic/gin"
@@ -30,6 +36,20 @@ func init() {
 // @host			localhost:8080
 // @schemes		http
 func main() {
+	ctx := context.Background()
+	redisClient := redis.NewClient(&redis.Options{
+		Addr:     os.Getenv("REDIS_ADDR"),
+		Username: os.Getenv("REDIS_USER"),
+		Password: os.Getenv("REDIS_PASS"),
+	})
+	if err := redisClient.Ping(ctx).Err(); err != nil {
+		log.Fatalf("could not connect to redis: %v", err)
+	}
+
+	hub := auctionws.NewHub()
+	go hub.Run()
+	hub.StartRedisFanIn(ctx, redisClient)
+
 	router := gin.Default()
 	router.Use(cors.New(middleware.CorsConfig))
 	routes.RegisterRoutes(router)
@@ -37,5 +57,10 @@ func main() {
 	if err := router.Run(":8080"); err != nil {
 		log.Fatalf("server error: %v", err)
 	}
+
+	// Start the WebSocket server
+	verifier := jwt.NewJWTVerifier(os.Getenv("JWT_SECRET"))
+	wsHandler := gin.WrapH(auctionws.ServeWS(hub))
+	router.GET("/ws", middleware.Authenticate(verifier), wsHandler)
 
 }
