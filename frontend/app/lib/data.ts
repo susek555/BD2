@@ -1,15 +1,13 @@
 import { getColors, getDrives, getFuelTypes, getTransmissions } from "./api/filters";
+import { getOrderKeys } from "./api/order-keys";
 import { AddOfferFormData, FilterFieldData, ModelFieldData, RangeFieldData, SaleOffer, SaleOfferDetails, SearchParams } from "./definitions";
 
 // Sorting
 
-export async function fetchSortingOptions(): Promise<string[]> {
+export async function fetchSortingOptions() : Promise<string[]> {
+    let data = await getOrderKeys();
 
-
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-  // TODO connect API and add Suspense
-  const data: string[] = ['Base', 'name', 'date', 'price'];
+    data = ["Base", ...data];
 
   return data;
 }
