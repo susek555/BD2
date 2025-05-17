@@ -37,3 +37,17 @@ export async function fetchReviewsByReviewee(
 
   return response.json();
 }
+
+export async function fetchAverageRating(id: number): Promise<number> {
+  const url = `/api/reviews/average/${id}`;
+
+  const response = await fetch(url, {
+    method: 'GET',
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch average rating');
+  }
+
+  return response.json();
+}
