@@ -43,7 +43,7 @@ func RegisterWebsocket(router *gin.Engine) {
 	hub.StartRedisFanIn(ctx, redisClient)
 	// Start the WebSocket server
 	verifier, _ := initializeVerifier()
-	wsHandler := gin.WrapH(auctionws.ServeWS(hub))
+	wsHandler := auctionws.ServeWS(hub)
 	router.GET("/ws", middleware.Authenticate(verifier), wsHandler)
 }
 
