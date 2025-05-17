@@ -46,11 +46,7 @@ func (h *Handler) CreateSaleOffer(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
-	userID, ok := c.Get("userID")
-	if !ok {
-		c.JSON(http.StatusUnauthorized, custom_errors.NewHTTPError(ErrNotLoggedIn.Error()))
-		return
-	}
+	userID, _ := c.Get("userID")
 	offerDTO.UserID = userID.(uint)
 	if err := h.service.Create(offerDTO); err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
@@ -140,11 +136,7 @@ func (h *Handler) GetSaleOfferByID(c *gin.Context) {
 //	@Router			/sale-offer/my-offers [get]
 //	@Security		Bearer
 func (h *Handler) GetMySaleOffers(c *gin.Context) {
-	userID, ok := c.Get("userID")
-	if !ok {
-		c.JSON(http.StatusUnauthorized, custom_errors.NewHTTPError(ErrNotLoggedIn.Error()))
-		return
-	}
+	userID, _ := c.Get("userID")
 	saleOffers, err := h.service.GetByUserID(userID.(uint))
 	if err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
