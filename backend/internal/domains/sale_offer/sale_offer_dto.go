@@ -11,7 +11,7 @@ type CreateSaleOfferDTO struct {
 	UserID             uint                    `json:"-"`
 	Description        string                  `json:"description"`
 	Price              uint                    `json:"price"`
-	Margin             uint                    `json:"margin"`
+	Margin             MarginValue             `json:"margin"`
 	Vin                string                  `json:"vin"`
 	DateOfIssue        time.Time               `json:"date_of_issue"`
 	ProductionYear     uint                    `json:"production_year"`
@@ -46,7 +46,7 @@ type RetrieveDetailedSaleOfferDTO struct {
 	Username           string                  `json:"username"`
 	Description        string                  `json:"description"`
 	Price              uint                    `json:"price"`
-	Margin             uint                    `json:"margin"`
+	Margin             MarginValue             `json:"margin"`
 	DateOfIssue        time.Time               `json:"date_of_issue"`
 	Vin                string                  `json:"vin"`
 	ProductionYear     uint                    `json:"production_year"`
