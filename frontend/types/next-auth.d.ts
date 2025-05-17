@@ -1,15 +1,15 @@
-import "next-auth";
-import { JWT } from "next-auth/jwt";
+import 'next-auth';
+import { JWT } from 'next-auth/jwt';
 
-
-declare module "next-auth" {
+declare module 'next-auth' {
   interface Session {
     user: {
       accessToken: string;
       refreshToken: string;
+      id: number;
       username: string;
       email: string;
-      selector: "P" | "C";
+      selector: 'P' | 'C';
       personName?: string;
       personSurname?: string;
       companyName?: string;
@@ -21,9 +21,10 @@ declare module "next-auth" {
   interface User {
     accessToken: string;
     refreshToken: string;
+    id: number;
     username: string;
     email: string;
-    selector: "P" | "C";
+    selector: 'P' | 'C';
     personName?: string;
     personSurname?: string;
     companyName?: string;
@@ -35,9 +36,10 @@ declare module "next-auth" {
 interface ExtendedJWT extends JWT {
   accessToken: string;
   refreshToken: string;
+  id: number;
   username: string;
   email: string;
-  selector: "P" | "C";
+  selector: 'P' | 'C';
   personName?: string;
   personSurname?: string;
   companyName?: string;
