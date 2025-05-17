@@ -12,6 +12,7 @@ import (
 
 type Hub struct {
 	rooms       map[string]map[*Client]struct{}
+	clients     map[string]*Client
 	register    chan *Client
 	unregister  chan *Client
 	subscribe   chan subscription
@@ -31,6 +32,7 @@ type outbound struct {
 func NewHub() *Hub {
 	return &Hub{
 		rooms:       make(map[string]map[*Client]struct{}),
+		clients:     make(map[string]*Client),
 		register:    make(chan *Client),
 		unregister:  make(chan *Client),
 		subscribe:   make(chan subscription),
@@ -43,8 +45,14 @@ func (h *Hub) Run() {
 	for {
 		select {
 		case client := <-h.register:
+			h.mu.Lock()
+			h.clients[client.userID] = client
+			h.mu.Unlock()
 			log.Println("Client registered:", client.userID)
 		case client := <-h.unregister:
+			h.mu.Lock()
+			delete(h.clients, client.userID)
+			h.mu.Unlock()
 			h.removeClient(client)
 		case sub := <-h.subscribe:
 			h.addToRoom(sub.auctionID, sub.client)
@@ -132,4 +140,14 @@ func (h *Hub) StartRedisFanIn(ctx context.Context, rdb *redis.Client) {
 			}
 		}
 	}()
+}
+
+func (h *Hub) SubscribeUser(uid, auctionID string) {
+	h.mu.RLock()
+	cl, ok := h.clients[uid]
+	h.mu.RUnlock()
+	if !ok {
+		return
+	}
+	h.subscribe <- subscription{auctionID, cl}
 }
