@@ -12,9 +12,6 @@ const (
 	MsgUnsubscribe MsgType = "unsubscribe"
 )
 
-type Message struct {
-	Type MsgType `json:"type"`
-}
 
 type Envelope struct {
 	MessageType MsgType         `json:"type"`
