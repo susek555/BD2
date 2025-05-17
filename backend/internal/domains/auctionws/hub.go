@@ -27,6 +27,7 @@ type subscription struct {
 type outbound struct {
 	auctionID string
 	data      []byte
+	excludeID string
 }
 
 func NewHub() *Hub {
