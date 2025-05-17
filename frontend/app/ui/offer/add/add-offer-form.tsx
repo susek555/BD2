@@ -366,7 +366,7 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                 <label htmlFor="images" className="text-lg font-semibold">
                     Images
                 </label>
-                //TODO
+                TODO
                 {/* <input type="file" id="images" name="images" className="border rounded p-2" multiple required /> */}
 
                 <div className="my-10"/>
