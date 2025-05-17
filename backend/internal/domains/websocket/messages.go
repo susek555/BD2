@@ -1,7 +1,15 @@
 package websocket
 
+type MsgType string
+
+const (
+	MsgBid        MsgType = "bid"
+	MsgEndAuction MsgType = "end_auction"
+	MsgError      MsgType = "error"
+)
+
 type Message struct {
-	Type string `json:"type"`
+	Type MsgType `json:"type"`
 }
 
 type BidMessage struct {
