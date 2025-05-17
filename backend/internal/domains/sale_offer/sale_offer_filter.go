@@ -10,15 +10,6 @@ import (
 )
 
 // Consts
-type OfferType string
-
-const (
-	REGULAR_OFFER OfferType = "Regular offer"
-	AUCTION       OfferType = "Auction"
-	BOTH          OfferType = "Both"
-)
-
-var OfferTypes = []OfferType{REGULAR_OFFER, AUCTION, BOTH}
 
 var OrderKeysMap = map[string]string{
 	"Price":           "price",
@@ -163,7 +154,7 @@ func applyOrderFilter(query *gorm.DB, orderKey *string, isOrderDesc *bool) *gorm
 		orderDirection = "ASC"
 	}
 	if orderKey != nil {
-		return query.Order(OrderKeysMap[*orderKey] + " " + orderDirection)
+		return query.Order(OrderKeysMap[*orderKey] + " margin " + orderDirection)
 	}
 	return query
 }
