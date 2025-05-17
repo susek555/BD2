@@ -7,6 +7,7 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/generic"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
 	"github.com/susek555/BD2/car-dealer-api/internal/test/test_utils"
+	u "github.com/susek555/BD2/car-dealer-api/internal/test/test_utils"
 	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
 	"github.com/susek555/BD2/car-dealer-api/pkg/middleware"
 	"gorm.io/driver/sqlite"
@@ -19,6 +20,7 @@ import (
 
 func setupDB() (*gorm.DB, error) {
 	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	db.Exec("PRAGMA foreign_keys = ON")
 	db.AutoMigrate(
 		&user.User{},
 		&user.Company{},
@@ -30,10 +32,11 @@ func setupDB() (*gorm.DB, error) {
 	return db, nil
 }
 
-func getSubtypesRepositories(db *gorm.DB) (generic.CRUDRepository[user.Company], generic.CRUDRepository[user.Person]) {
+func getRepositories(db *gorm.DB) (user.UserRepositoryInterface, generic.CRUDRepository[user.Company], generic.CRUDRepository[user.Person]) {
+	userRepo := user.NewUserRepository(db)
 	comapnyRepo := generic.GetGormRepository[user.Company](db)
 	personRepo := generic.GetGormRepository[user.Person](db)
-	return comapnyRepo, personRepo
+	return userRepo, comapnyRepo, personRepo
 }
 
 func getRepositoryWithUsers(db *gorm.DB, users []user.User) user.UserRepositoryInterface {
@@ -44,10 +47,10 @@ func getRepositoryWithUsers(db *gorm.DB, users []user.User) user.UserRepositoryI
 	return repo
 }
 
-func newTestServer(seedUsers []user.User) (*gin.Engine, error) {
+func newTestServer(seedUsers []user.User) (*gin.Engine, *gorm.DB, error) {
 	db, err := setupDB()
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	verifier := jwt.NewJWTVerifier(test_utils.JWTSECRET)
 	userRepo := getRepositoryWithUsers(db, seedUsers)
@@ -60,9 +63,9 @@ func newTestServer(seedUsers []user.User) (*gin.Engine, error) {
 		userRoutes.GET("/", userHandler.GetAllUsers)
 		userRoutes.GET("/id/:id", userHandler.GetUserById)
 		userRoutes.GET("/email/:email", userHandler.GetUserByEmail)
-		userRoutes.DELETE("/:id", middleware.Authenticate(verifier), userHandler.DeleteUser)
+		userRoutes.DELETE("/id/:id", middleware.Authenticate(verifier), userHandler.DeleteUser)
 	}
-	return r, nil
+	return r, db, nil
 }
 
 // ------------
@@ -81,6 +84,15 @@ func createPerson(id uint) *user.User {
 	return &user
 }
 
+func withPersonField(opt u.Option[user.Person]) u.Option[user.User] {
+	return func(userObj *user.User) {
+		if userObj.Person == nil {
+			userObj.Person = &user.Person{}
+		}
+		opt(userObj.Person)
+	}
+}
+
 func createCompany(id uint) *user.User {
 	user := user.User{
 		ID:       id,
@@ -91,6 +103,15 @@ func createCompany(id uint) *user.User {
 		Company:  &user.Company{Name: "john company", NIP: fmt.Sprintf("1234567890-%d", id)},
 	}
 	return &user
+}
+
+func withCompanyField(opt u.Option[user.Company]) u.Option[user.User] {
+	return func(userObj *user.User) {
+		if userObj.Company == nil {
+			userObj.Company = &user.Company{}
+		}
+		opt(userObj.Company)
+	}
 }
 
 func doesUserAndRetrieveUserDTOsMatch(user user.User, dto user.RetrieveUserDTO) bool {
