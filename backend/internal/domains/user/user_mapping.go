@@ -84,18 +84,63 @@ func (user *User) MapToDTO() *RetrieveUserDTO {
 }
 
 func (dto *UpdateUserDTO) UpdateUserFromDTO(user *User) (*User, error) {
+	if err := dto.updateMainFields(user); err != nil {
+		return nil, err
+	}
+	if err := dto.updatePersonFields(user); err != nil {
+		return nil, err
+	}
+	if err := dto.updateCompanyFields(user); err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+func (dto *UpdateUserDTO) updateMainFields(user *User) error {
 	if dto.Email != nil {
 		user.Email = *dto.Email
 	}
 	if dto.Password != nil {
 		newPassword, err := passwords.Hash(*dto.Password)
 		if err != nil {
-			return nil, ErrHashPassword
+			return ErrHashPassword
 		}
 		user.Password = newPassword
 	}
 	if dto.Username != nil {
 		user.Username = *dto.Username
 	}
-	return user, nil
+	return nil
+}
+
+func (dto *UpdateUserDTO) updatePersonFields(user *User) error {
+	if dto.PersonName == nil && dto.PersonSurname == nil {
+		return nil
+	}
+	if user.Selector != "P" {
+		return ErrUpdatePerson
+	}
+	if dto.PersonName != nil {
+		user.Person.Name = *dto.PersonName
+	}
+	if dto.PersonSurname != nil {
+		user.Person.Surname = *dto.PersonSurname
+	}
+	return nil
+}
+
+func (dto *UpdateUserDTO) updateCompanyFields(user *User) error {
+	if dto.CompanyName == nil && dto.CompanyNIP == nil {
+		return nil
+	}
+	if user.Selector != "C" {
+		return ErrUpdateCompany
+	}
+	if dto.CompanyName != nil {
+		user.Company.Name = *dto.CompanyName
+	}
+	if dto.CompanyNIP != nil {
+		user.Company.NIP = *dto.CompanyNIP
+	}
+	return nil
 }

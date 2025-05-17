@@ -81,7 +81,7 @@ func (s *UserService) Update(in *UpdateUserDTO) error {
 	}
 	updatedUser, err := in.UpdateUserFromDTO(user)
 	if err != nil {
-		return nil
+		return err
 	}
 	return s.repo.Update(updatedUser)
 }
