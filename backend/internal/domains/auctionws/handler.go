@@ -3,8 +3,11 @@ package auctionws
 import (
 	"log"
 	"net/http"
+	"strconv"
 
+	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/auth"
 )
 
 var upgrader = websocket.Upgrader{
@@ -13,18 +16,24 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-func ServeWS(hub *Hub) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		conn, err := upgrader.Upgrade(w, r, nil)
+func ServeWS(hub *Hub) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 		if err != nil {
 			log.Println("Error upgrading connection:", err)
 			return
 		}
-		uid := r.Context().Value("userID").(string)
+		uid, err := auth.GetUserId(c)
+		if err != nil {
+			log.Println("Error getting user ID:", err)
+			conn.Close()
+			return
+		}
+		uidStr := strconv.Itoa(int(uid))
 		client := &Client{
 			conn:   conn,
 			send:   make(chan []byte, 128),
-			userID: uid,
+			userID: uidStr,
 			hub:    hub,
 			rooms:  make(map[string]bool),
 		}
