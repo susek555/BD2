@@ -1,4 +1,4 @@
-package websocket
+package auctionws
 
 import "encoding/json"
 
