@@ -1,7 +1,10 @@
 import { UserProfile } from '@/app/lib/definitions';
-import { fetchAverageRating } from '@/app/lib/reviews/data';
+import {
+  fetchAverageRating,
+  fetchRatingDistribution,
+} from '@/app/lib/reviews/data';
 import { UserCircleIcon } from '@heroicons/react/24/outline';
-import { AverageRatingCard } from '../review/average-rating-card';
+import RatingDisplay from './rating-display';
 
 interface ProfileInfoProps {
   user: UserProfile;
@@ -9,11 +12,12 @@ interface ProfileInfoProps {
 
 export default async function ProfileInfo({ user }: ProfileInfoProps) {
   const rating = await fetchAverageRating(1);
+  const distribution = await fetchRatingDistribution(1);
 
   return (
     <div className='relative rounded-lg bg-white p-6 shadow'>
       <div className='absolute top-6 right-6'>
-        <AverageRatingCard rating={rating} />
+        <RatingDisplay distribution={distribution} rating={rating} />
       </div>
 
       <div className='flex flex-col items-center gap-4 md:flex-row md:items-start'>
