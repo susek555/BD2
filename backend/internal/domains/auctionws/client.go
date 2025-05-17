@@ -16,7 +16,7 @@ const (
 type Client struct {
 	conn   *websocket.Conn
 	send   chan []byte
-	userID int64
+	userID string
 	hub    *Hub
 	rooms  map[string]bool
 }
