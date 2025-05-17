@@ -7,6 +7,7 @@ import {
 } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
 import { ReviewToggle } from '../account/reviews/created-received-toggle';
 
 const orderOptions = [
@@ -15,6 +16,12 @@ const orderOptions = [
 ];
 
 const ratingOptions = [1, 2, 3, 4, 5];
+
+interface FilterState {
+  orderKey: string;
+  isOrderDesc: boolean;
+  selectedRatings: number[];
+}
 
 export function ReviewFilterBox({
   includeReviewToggle = false,
@@ -27,60 +34,134 @@ export function ReviewFilterBox({
 
   const orderKey = searchParams.get('orderKey') || 'date';
   const isOrderDesc = searchParams.get('isOrderDesc') !== 'false';
-
   const ratingsParam = searchParams.get('ratings');
   const selectedRatings = ratingsParam
     ? ratingsParam.split(',').map(Number)
     : [];
 
-  const updateFilters = (updates: Record<string, string | null>) => {
-    const params = new URLSearchParams(searchParams);
+  const [localFilters, setLocalFilters] = useState<FilterState>({
+    orderKey,
+    isOrderDesc,
+    selectedRatings,
+  });
 
-    Object.entries(updates).forEach(([key, value]) => {
-      if (value === null) {
-        params.delete(key);
-      } else {
-        params.set(key, value);
-      }
-    });
+  const [hasChanges, setHasChanges] = useState(false);
 
-    if (!('page' in updates)) {
-      params.set('page', '1');
+  useEffect(() => {
+    const urlOrderKey = searchParams.get('orderKey') || 'date';
+    const urlIsOrderDesc = searchParams.get('isOrderDesc') !== 'false';
+    const urlRatingsParam = searchParams.get('ratings');
+    const urlSelectedRatings = urlRatingsParam
+      ? urlRatingsParam.split(',').map(Number)
+      : [];
+
+    const currentRatings = [...localFilters.selectedRatings].sort().join(',');
+    const urlRatings = [...urlSelectedRatings].sort().join(',');
+
+    const filtersMatch =
+      urlOrderKey === localFilters.orderKey &&
+      urlIsOrderDesc === localFilters.isOrderDesc &&
+      currentRatings === urlRatings;
+
+    if (!filtersMatch) {
+      setLocalFilters({
+        orderKey: urlOrderKey,
+        isOrderDesc: urlIsOrderDesc,
+        selectedRatings: urlSelectedRatings,
+      });
+
+      setHasChanges(false);
     }
+  }, [searchParams]);
 
-    router.push(`${pathname}?${params.toString()}`);
-  };
+  const applyFilters = useCallback(() => {
+    const params = new URLSearchParams(searchParams.toString());
 
-  const toggleRating = (rating: number) => {
-    const newRatings = [...selectedRatings];
-    const index = newRatings.indexOf(rating);
+    params.set('orderKey', localFilters.orderKey);
+    params.set('isOrderDesc', localFilters.isOrderDesc.toString());
 
-    if (index >= 0) {
-      newRatings.splice(index, 1);
+    if (localFilters.selectedRatings.length > 0) {
+      params.set('ratings', localFilters.selectedRatings.join(','));
     } else {
-      newRatings.push(rating);
+      params.delete('ratings');
     }
 
-    updateFilters({
-      ratings: newRatings.length > 0 ? newRatings.join(',') : null,
+    params.set('page', '1');
+    router.push(`${pathname}?${params.toString()}`);
+    setHasChanges(false);
+  }, [localFilters, router, pathname, searchParams]);
+
+  const updateLocalFilters = useCallback((newFilters: FilterState) => {
+    setLocalFilters(newFilters);
+    setHasChanges(true);
+  }, []);
+
+  const toggleRating = useCallback(
+    (rating: number): void => {
+      const newRatings = [...localFilters.selectedRatings];
+      const index = newRatings.indexOf(rating);
+
+      if (index >= 0) {
+        newRatings.splice(index, 1);
+      } else {
+        newRatings.push(rating);
+      }
+
+      updateLocalFilters({
+        ...localFilters,
+        selectedRatings: newRatings,
+      });
+    },
+    [localFilters, updateLocalFilters],
+  );
+
+  const toggleSortDirection = useCallback((): void => {
+    updateLocalFilters({
+      ...localFilters,
+      isOrderDesc: !localFilters.isOrderDesc,
     });
-  };
+  }, [localFilters, updateLocalFilters]);
 
-  const toggleSortDirection = () => {
-    updateFilters({ isOrderDesc: (!isOrderDesc).toString() });
-  };
+  const changeOrderKey = useCallback(
+    (key: string): void => {
+      updateLocalFilters({
+        ...localFilters,
+        orderKey: key,
+      });
+    },
+    [localFilters, updateLocalFilters],
+  );
 
-  const changeOrderKey = (key: string) => {
-    updateFilters({ orderKey: key });
-  };
+  const clearRatings = useCallback((): void => {
+    updateLocalFilters({
+      ...localFilters,
+      selectedRatings: [],
+    });
+  }, [localFilters, updateLocalFilters]);
 
-  const clearFilters = () => {
-    updateFilters({
-      ratings: null,
+  const clearFilters = useCallback((): void => {
+    const defaultFilters = {
       orderKey: 'date',
-      isOrderDesc: 'true',
-    });
-  };
+      isOrderDesc: true,
+      selectedRatings: [],
+    };
+
+    setLocalFilters(defaultFilters);
+
+    const currentOrderKey = searchParams.get('orderKey') || 'date';
+    const currentIsOrderDesc = searchParams.get('isOrderDesc') !== 'false';
+    const currentRatings = searchParams.get('ratings')
+      ? searchParams.get('ratings')!.split(',').map(Number)
+      : [];
+
+    const filtersMatch =
+      defaultFilters.orderKey === currentOrderKey &&
+      defaultFilters.isOrderDesc === currentIsOrderDesc &&
+      defaultFilters.selectedRatings.length === currentRatings.length &&
+      defaultFilters.selectedRatings.every((r) => currentRatings.includes(r));
+
+    setHasChanges(!filtersMatch);
+  }, [searchParams, updateLocalFilters]);
 
   return (
     <div className='flex h-full flex-col rounded-lg border-2 border-gray-300 bg-white p-4'>
@@ -106,7 +187,7 @@ export function ReviewFilterBox({
                   onClick={() => changeOrderKey(option.value)}
                   className={clsx(
                     'border px-4 py-2 text-sm font-medium',
-                    option.value === orderKey
+                    option.value === localFilters.orderKey
                       ? 'z-10 border-blue-500 bg-blue-50 text-blue-700'
                       : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50',
                     orderOptions[0].value === option.value && 'rounded-l-md',
@@ -122,7 +203,7 @@ export function ReviewFilterBox({
               onClick={toggleSortDirection}
               className='rounded-md border border-gray-300 bg-white p-2 hover:bg-gray-50'
             >
-              {isOrderDesc ? (
+              {localFilters.isOrderDesc ? (
                 <ArrowDownIcon className='h-5 w-5 text-gray-500' />
               ) : (
                 <ArrowUpIcon className='h-5 w-5 text-gray-500' />
@@ -136,10 +217,10 @@ export function ReviewFilterBox({
             <h3 className='mb-2 text-sm font-medium text-gray-700'>
               Filter by rating
             </h3>
-            {selectedRatings.length > 0 && (
+            {localFilters.selectedRatings.length > 0 && (
               <button
                 className='mb-2 text-xs text-gray-500 hover:text-gray-700'
-                onClick={() => updateFilters({ ratings: null })}
+                onClick={clearRatings}
               >
                 Clear
               </button>
@@ -152,7 +233,7 @@ export function ReviewFilterBox({
                 onClick={() => toggleRating(rating)}
                 className={clsx(
                   'flex h-8 w-8 items-center justify-center rounded-md border text-sm font-medium',
-                  selectedRatings.includes(rating)
+                  localFilters.selectedRatings.includes(rating)
                     ? 'border-blue-500 bg-blue-500 text-white'
                     : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50',
                 )}
@@ -164,17 +245,36 @@ export function ReviewFilterBox({
         </div>
       </div>
 
-      <div className='mt-4 hidden justify-end md:flex'>
-        {(selectedRatings.length > 0 ||
-          orderKey !== 'date' ||
-          !isOrderDesc) && (
-          <button
-            className='flex items-center text-sm text-gray-500 hover:text-gray-700'
-            onClick={clearFilters}
-          >
-            <XMarkIcon className='mr-1 h-4 w-4' />
-            Clear all filters
-          </button>
+      <div className='mt-4 flex w-full items-center justify-between'>
+        <div>
+          {(localFilters.selectedRatings.length > 0 ||
+            localFilters.orderKey !== 'date' ||
+            !localFilters.isOrderDesc) && (
+            <button
+              className='flex items-center text-sm text-gray-500 hover:text-gray-700'
+              onClick={clearFilters}
+            >
+              <XMarkIcon className='mr-1 h-4 w-4' />
+              Clear all filters
+            </button>
+          )}
+        </div>
+
+        {hasChanges ? (
+          <div className='ml-auto'>
+            <button
+              onClick={applyFilters}
+              className={`rounded-md px-4 py-2 text-sm font-medium ${
+                hasChanges
+                  ? 'bg-blue-500 text-white hover:bg-blue-600'
+                  : 'cursor-not-allowed bg-gray-200 text-gray-500'
+              }`}
+            >
+              Apply Filters
+            </button>
+          </div>
+        ) : (
+          <></>
         )}
       </div>
     </div>
