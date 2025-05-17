@@ -31,3 +31,14 @@ type outbound struct {
 	auctionID string
 	data      []byte
 }
+
+func NewHub() *Hub {
+	return &Hub{
+		rooms:       make(map[string]map[*Client]struct{}),
+		register:    make(chan *Client),
+		unregister:  make(chan *Client),
+		subscribe:   make(chan subscription),
+		unsubscribe: make(chan subscription),
+		broadcast:   make(chan outbound, 1024),
+	}
+}
