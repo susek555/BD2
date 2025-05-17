@@ -14,21 +14,18 @@ type Message struct {
 	Type MsgType `json:"type"`
 }
 
-type BidMessage struct {
-	Message
+type Envelope struct {
+	MessageType MsgType         `json:"type"`
+	Data        json.RawMessage `json:"data,omitempty"`
+}
+type BidPayload struct {
 	AuctionID string `json:"auction_id"`
-	Amount    int64    `json:"amount"`
+	Amount    int64  `json:"amount"`
 	UserID    string `json:"user_id"`
 }
 
-type EndAuctionMessage struct {
-	Message
+type EndAuctionPayload struct {
 	AuctionID string `json:"auction_id"`
 	Winner    string `json:"winner"`
-	Amount    int64    `json:"amount"`
-}
-
-type Envelope struct {
-	MessageType MsgType `json:"type"`
-	Data json.RawMessage `json:"data,omitempty"`
+	Amount    int64  `json:"amount"`
 }
