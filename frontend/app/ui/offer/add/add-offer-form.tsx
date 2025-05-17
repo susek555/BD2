@@ -59,27 +59,27 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
         const formData = new FormData(event.currentTarget);
 
         formData.append("isAuction", liveState.values?.isAuction == null ? "false" : liveState.values.isAuction.toString());
-        const registraction_day = formData.get("dateOfFirstRegistration-day");
-        const registraction_month = formData.get("dateOfFirstRegistration-month");
-        const registraction_year = formData.get("dateOfFirstRegistration-year");
+        const registraction_day = formData.get("registration_date-day");
+        const registraction_month = formData.get("registration_date-month");
+        const registraction_year = formData.get("registration_date-year");
         if (registraction_day && registraction_month && registraction_year) {
             const date = `${registraction_year.toString().padStart(4, "0")}-${registraction_month.toString().padStart(2, "0")}-${registraction_day.toString().padStart(2, "0")}`;
-            formData.set("dateOfFirstRegistration", date);
-            formData.delete("dateOfFirstRegistration-day");
-            formData.delete("dateOfFirstRegistration-month");
-            formData.delete("dateOfFirstRegistration-year");
-            updateField("dateOfFirstRegistration", date);
+            formData.set("registration_date", date);
+            formData.delete("registration_date-day");
+            formData.delete("registration_date-month");
+            formData.delete("registration_date-year");
+            updateField("registration_date", date);
         }
-        const auction_day = formData.get("auctionEndDate-day");
-        const auction_month = formData.get("auctionEndDate-month");
-        const auction_year = formData.get("auctionEndDate-year");
+        const auction_day = formData.get("auction_end_date-day");
+        const auction_month = formData.get("auction_end_date-month");
+        const auction_year = formData.get("auction_end_date-year");
         if (auction_day && auction_month && auction_year) {
             const auctionDate = `${auction_year.toString().padStart(4, "0")}-${auction_month.toString().padStart(2, "0")}-${auction_day.toString().padStart(2, "0")}`;
-            formData.set("auctionEndDate", auctionDate);
-            formData.delete("auctionEndDate-day");
-            formData.delete("auctionEndDate-month");
-            formData.delete("auctionEndDate-year");
-            updateField("auctionEndDate", auctionDate);
+            formData.set("auction_end_date", auctionDate);
+            formData.delete("auction_end_date-day");
+            formData.delete("auction_end_date-month");
+            formData.delete("auction_end_date-year");
+            updateField("auction_end_date", auctionDate);
         }
 
         console.log("Old liveState:", liveState);
@@ -339,7 +339,7 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                 <NumberInputField id="number_of_gears" name="Number of gears" />
                 <NumberInputField id="production_year" name="Production Year" />
                 <NumberInputField id="mileage" name="Mileage" />
-                <NumberInputField id="number_of_doors?" name="Number of doors" />
+                <NumberInputField id="number_of_doors" name="Number of doors" />
                 <NumberInputField id="number_of_seats" name="Number of seats" />
                 <NumberInputField id="engine_power" name="Power" />
                 <NumberInputField id="engine_capacity" name="Engine displacement" />

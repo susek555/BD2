@@ -250,9 +250,15 @@ export const AddOfferFormSchema = z.object({
     .min(0, { message: 'Power must be greater than or equal to 0' })
     .max(2_000, { message: 'Power must be less than or equal to 1,000' }),
   registration_date: z
-    .date()
-    .refine((date) => date.getFullYear() >= 1900, { message: 'Date must be greater than 1900' })
-    .refine((date) => date <= new Date(), { message: 'Date must be less than or equal to the current date' }),
+  .string()
+  .refine((date) => {
+    const parsedDate = new Date(date);
+    return parsedDate.getFullYear() >= 1900;
+  }, { message: 'Date must be greater than 1900' })
+  .refine((date) => {
+    const parsedDate = new Date(date);
+    return parsedDate <= new Date();
+  }, { message: 'Date must be less than or equal to the current date' }),
   registration_number: z.string().min(1, { message: 'Plate number is required' }),
   engine_capacity: z
     .number()
@@ -270,9 +276,13 @@ export const AddOfferFormSchema = z.object({
     .max(10_000_000, { message: 'Price must be less than or equal to 10,000,000' }),
   is_auction: z.boolean(),
   auction_end_date: z
-    .date()
-    .optional()
-    .refine((date) => !date || date > new Date(), { message: 'Date must be greater than the current date' }),
+  .string()
+  .optional()
+  .refine((date) => {
+    if (!date) return true;
+    const parsedDate = new Date(date);
+    return parsedDate > new Date();
+  }, { message: 'Date must be in the future' }),
   buy_now_auction_price: z
     .number()
     .nullable()
@@ -345,14 +355,14 @@ export type AddOfferFormState = {
     buy_now_auction_price?: string[];
   }
   values?: {
-    [key: string]: string | number | boolean | Date | File[] | undefined;
+    [key: string]: string | number | boolean | File[] | undefined;
     producer?: string;
     model?: string;
     color?: string;
     fuel_type?: string;
     transmission?: string;
     drive?: string;
-    country?: string;
+    country?: string; //origin_country
     production_year?: number;
     mileage?: number;
     number_of_doors?: number;
@@ -367,6 +377,7 @@ export type AddOfferFormState = {
     description?: string;
     images?: File[]; // Array of image files
     price?: number;
+    margin?: number;
     is_auction?: boolean;
     auction_end_date?: string;
     buy_now_auction_price?: number;

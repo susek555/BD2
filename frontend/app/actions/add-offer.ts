@@ -11,22 +11,17 @@ export async function addOffer(
 
     const normalizedData = {
         ...formDataObj,
-        productionYear: parseInt(formDataObj.productionYear as string),
+        production_year: parseInt(formDataObj.production_year as string),
         mileage: parseInt(formDataObj.mileage as string),
-        numberOfDoors: parseInt(formDataObj.numberOfDoors as string),
-        numberOfSeats: parseInt(formDataObj.numberOfSeats as string),
-        power: parseInt(formDataObj.power as string),
-        engineDisplacement: parseInt(formDataObj.engineDisplacement as string),
-        dateOfFirstRegistration: formDataObj.dateOfFirstRegistration
-            ? new Date(formDataObj.dateOfFirstRegistration as string)
-            : undefined,
+        number_of_doors: parseInt(formDataObj.number_of_doors as string),
+        number_of_seats: parseInt(formDataObj.number_of_seats as string),
+        number_of_gears: parseInt(formDataObj.number_of_gears as string),
+        engine_power: parseInt(formDataObj.engine_power as string),
+        engine_capacity: parseInt(formDataObj.engine_capacity as string),
         price: parseInt(formDataObj.price as string),
-        isAuction: formDataObj.isAuction === "true" ? true : false,
-        auctionEndDate: formDataObj.auctionEndDate
-            ? new Date(formDataObj.auctionEndDate as string)
-            : undefined,
-        buyNowAuctionPrice: formDataObj.buyNowAuctionPrice
-            ? parseInt(formDataObj.buyNowAuctionPrice as string)
+        is_auction: formDataObj.is_auction === "true" ? true : false,
+        buy_now_auction_price: formDataObj.buy_now_auction_price
+            ? parseInt(formDataObj.buy_now_auction_price as string)
             : undefined
     }
 
