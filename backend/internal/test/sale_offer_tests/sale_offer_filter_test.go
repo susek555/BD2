@@ -1865,6 +1865,63 @@ func TestGetFiltered_OfferCreationDateLowerBound(t *testing.T) {
 // Order by tests
 // ----------------
 
+func TestGetFiltered_DeafultOrderNoRecords(t *testing.T) {
+	offers := []sale_offer.SaleOffer{}
+	db, _ := setupDB()
+	repo := getRepositoryWithSaleOffers(db, offers)
+	filter := sale_offer.NewOfferFilter()
+	filter.Pagination = *u.GetDefaultPaginationRequest()
+	result, _, err := repo.GetFiltered(filter)
+	assert.NoError(t, err)
+	assert.Equal(t, len(result), len(offers))
+}
+
+func TestGetFiltered_DefaultOrderSingleRecord(t *testing.T) {
+	offers := []sale_offer.SaleOffer{*createOffer(1)}
+	db, _ := setupDB()
+	repo := getRepositoryWithSaleOffers(db, offers)
+	filter := sale_offer.NewOfferFilter()
+	filter.Pagination = *u.GetDefaultPaginationRequest()
+	result, _, err := repo.GetFiltered(filter)
+	assert.NoError(t, err)
+	assert.Equal(t, len(result), len(offers))
+}
+func TestGetFiltered_DefaultOrderMultipleRecordsDesc(t *testing.T) {
+	offers := []sale_offer.SaleOffer{}
+	for i := 1; i <= 3; i++ {
+		offers = append(offers, *u.Build(createOffer(uint(i)), u.WithField[sale_offer.SaleOffer]("Margin", sale_offer.Margins[i-1])))
+	}
+	db, _ := setupDB()
+	repo := getRepositoryWithSaleOffers(db, offers)
+	filter := sale_offer.NewOfferFilter()
+	trueStm := true
+	filter.IsOrderDesc = &trueStm
+	filter.Pagination = *u.GetDefaultPaginationRequest()
+	result, _, err := repo.GetFiltered(filter)
+	assert.NoError(t, err)
+	for i := range offers {
+		assert.Equal(t, result[i].Margin, sale_offer.Margins[len(offers)-i-1])
+	}
+}
+
+func TestGetFiltered_DefaultOrderMultipleRecordsAsc(t *testing.T) {
+	offers := []sale_offer.SaleOffer{}
+	for i := 1; i <= 3; i++ {
+		offers = append(offers, *u.Build(createOffer(uint(i)), u.WithField[sale_offer.SaleOffer]("Margin", sale_offer.Margins[i-1])))
+	}
+	db, _ := setupDB()
+	repo := getRepositoryWithSaleOffers(db, offers)
+	filter := sale_offer.NewOfferFilter()
+	falseStm := false
+	filter.IsOrderDesc = &falseStm
+	filter.Pagination = *u.GetDefaultPaginationRequest()
+	result, _, err := repo.GetFiltered(filter)
+	assert.NoError(t, err)
+	for i := range offers {
+		assert.Equal(t, result[i].Margin, sale_offer.Margins[i])
+	}
+}
+
 func TestGetFiltered_OrderByPriceNoRecords(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
