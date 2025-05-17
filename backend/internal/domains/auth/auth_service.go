@@ -73,7 +73,7 @@ func (s *AuthService) Login(ctx context.Context, in LoginInput) (string, string,
 	if !passwords.Match(in.Password, u.Password) {
 		return "", "", &user.User{}, ErrInvalidCredentials
 	}
-	access, err := jwt.GenerateToken(u.Email, int64(u.ID), s.JwtKey, time.Now().Add(2*time.Minute))
+	access, err := jwt.GenerateToken(u.Email, int64(u.ID), s.JwtKey, time.Now().Add(AccessTokenExpirationTime))
 	if err != nil {
 		return "", "", &user.User{}, err
 	}
@@ -118,7 +118,7 @@ func (s *AuthService) Logout(ctx context.Context, userID uint, provided string, 
 }
 
 func (s *AuthService) newRefreshToken(ctx context.Context, userId uint, userEmail string) (string, error) {
-	token, _ := jwt.GenerateToken(userEmail, int64(userId), s.JwtKey, time.Now().Add(30*24*time.Hour))
+	token, _ := jwt.GenerateToken(userEmail, int64(userId), s.JwtKey, time.Now().Add(RefreshTokenExpirationTime))
 	refresh := refresh_token.RefreshToken{
 		Token:      token,
 		UserId:     userId,
