@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/redis/go-redis/v9"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auction"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auctionws"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/bid"
@@ -34,7 +35,7 @@ func RegisterRoutes(router *gin.Engine) {
 	registerBidRoutes(router)
 }
 
-func RegisterWebsocket(router *gin.Engine) {
+func RegisterWebsocket(router *gin.Engine) (*redis.Client, *auctionws.Hub) {
 	ctx := context.Background()
 	redisClient := initializers.ConnectToRedis(ctx)
 
@@ -45,6 +46,7 @@ func RegisterWebsocket(router *gin.Engine) {
 	verifier, _ := initializeVerifier()
 	wsHandler := auctionws.ServeWS(hub)
 	router.GET("/ws", middleware.Authenticate(verifier), wsHandler)
+	return redisClient, hub
 }
 
 func initializeVerifier() (*jwt.JWTVerifier, []byte) {
@@ -163,9 +165,10 @@ func registerAuctionRoutes(router *gin.Engine) {
 }
 
 func registerBidRoutes(router *gin.Engine) {
+	redisClient, hub := RegisterWebsocket(router)
 	bidRepo := bid.NewBidRepository(initializers.DB)
 	bidService := bid.NewBidService(bidRepo)
-	bidHandler := bid.NewHandler(bidService)
+	bidHandler := bid.NewHandler(bidService, redisClient, hub)
 	bidRoutes := router.Group("/bid")
 	bidRoutes.POST("/", bidHandler.CreateBid)
 	bidRoutes.GET("/", bidHandler.GetAllBids)
