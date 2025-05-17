@@ -8,7 +8,7 @@ export default function OfferType() {
     const pathname = usePathname();
 
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const options = ["All", "Auctions", "Buy Now"];
+    const options = ["All", "Auctions", "Buy Now", "Both"];
     const selectedOption = searchParams.get("offerType") || "All";
 
     const toggleDropdown = () => {

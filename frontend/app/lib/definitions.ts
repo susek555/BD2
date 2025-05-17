@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { number, z } from 'zod';
 
 export const SignupFormSchema = z
   .object({
@@ -221,11 +221,11 @@ export const AddOfferFormSchema = z.object({
   producer: z.string().min(1, { message: 'Producer is required' }),
   model: z.string().min(1, { message: 'Model is required' }),
   color: z.string().min(1, { message: 'Color is required' }),
-  fuelType: z.string().min(1, { message: 'Fuel type is required' }),
-  gearbox: z.string().min(1, { message: 'Gearbox is required' }),
-  driveType: z.string().min(1, { message: 'Drive type is required' }),
+  fuel_type: z.string().min(1, { message: 'Fuel type is required' }),
+  transmission: z.string().min(1, { message: 'Gearbox is required' }),
+  drive: z.string().min(1, { message: 'Drive type is required' }),
   country: z.string().min(1, { message: 'Country is required' }),
-  productionYear: z
+  production_year: z
     .number()
     .min(1900, { message: 'Year must be greater than 1900' })
     .max(new Date().getFullYear(), { message: 'Year must be less than or equal to the current year' }),
@@ -233,38 +233,47 @@ export const AddOfferFormSchema = z.object({
     .number()
     .min(0, { message: 'Mileage must be greater than or equal to 0' })
     .max(1_000_000, { message: 'Mileage must be less than or equal to 1,000,000' }),
-  numberOfDoors: z
+  number_of_doors: z
     .number()
     .min(0, { message: 'Number of doors must be greater than or equal to 0' })
     .max(100, { message: 'Number of doors must be less than or equal to 100' }),
-  numberOfSeats: z
+  number_of_seats: z
     .number()
     .min(1, { message: 'Number of seats must be greater than or equal to 1' })
     .max(100, { message: 'Number of seats must be less than or equal to 100' }),
-  power: z
+  number_of_gears: z
+    .number()
+    .min(0, { message: 'Number of gears must be greater than or equal to 0' })
+    .max(100, { message: 'Number of gears must be less than or equal to 100' }),
+  engine_power: z
     .number()
     .min(0, { message: 'Power must be greater than or equal to 0' })
     .max(2_000, { message: 'Power must be less than or equal to 1,000' }),
-  dateOfFirstRegistration: z
+  registration_date: z
     .date()
     .refine((date) => date.getFullYear() >= 1900, { message: 'Date must be greater than 1900' })
     .refine((date) => date <= new Date(), { message: 'Date must be less than or equal to the current date' }),
-  plateNumber: z.string().min(1, { message: 'Plate number is required' }),
-  engineDisplacement: z
+  registration_number: z.string().min(1, { message: 'Plate number is required' }),
+  engine_capacity: z
     .number()
     .min(0, { message: 'Engine displacement must be greater than or equal to 0' })
     .max(10_000, { message: 'Engine displacement must be less than or equal to 10,000' }),
+  vin: z
+    .string()
+    .min(17, { message: 'VIN must be 17 characters long' })
+    .max(17, { message: 'VIN must be 17 characters long' })
+    .regex(/^[A-HJ-NPR-Z0-9]+$/, { message: 'VIN must contain only valid characters' }),
   location: z.string().min(1, { message: 'Location is required' }),
   price: z
     .number()
     .min(0, { message: 'Price must be greater than or equal to 0' })
     .max(10_000_000, { message: 'Price must be less than or equal to 10,000,000' }),
-  isAuction: z.boolean(),
-  auctionEndDate: z
+  is_auction: z.boolean(),
+  auction_end_date: z
     .date()
     .optional()
     .refine((date) => !date || date > new Date(), { message: 'Date must be greater than the current date' }),
-  buyNowAuctionPrice: z
+  buy_now_auction_price: z
     .number()
     .nullable()
     .optional()
@@ -285,8 +294,8 @@ export const AddOfferFormSchema = z.object({
     //   message: 'Each image must be less than 5MB',
     // }),
 }).superRefine((data, ctx) => {
-  if (data.isAuction) {
-    if (!data.auctionEndDate) {
+  if (data.is_auction) {
+    if (!data.auction_end_date) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Auction end date is required when auction is enabled',
@@ -294,14 +303,14 @@ export const AddOfferFormSchema = z.object({
       });
     }
     if (
-      data.buyNowAuctionPrice !== null &&
-      data.buyNowAuctionPrice !== undefined &&
-      data.buyNowAuctionPrice <= data.price
+      data.buy_now_auction_price !== null &&
+      data.buy_now_auction_price !== undefined &&
+      data.buy_now_auction_price <= data.price
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Buy now auction price must be greater than the regular price',
-        path: ['buyNowAuctionPrice'],
+        path: ['buy_now_auction_price'],
       });
     }
   }
@@ -313,51 +322,54 @@ export type AddOfferFormState = {
     producer?: string[];
     model?: string[];
     color?: string[];
-    fuelType?: string[];
-    gearbox?: string[];
-    driveType?: string[];
+    fuel_type?: string[];
+    transmission?: string[];
+    drive?: string[];
     country?: string[];
-    productionYear?: string[];
+    production_year?: string[];
     mileage?: string[];
-    numberOfDoors?: string[];
-    numberOfSeats?: string[];
-    power?: string[];
-    dateOfFirstRegistration?: string[];
-    plateNumber?: string[];
-    engineDisplacement?: string[];
+    number_of_doors?: string[];
+    number_of_seats?: string[];
+    number_if_gears?: string[];
+    engine_power?: string[];
+    registration_date?: string[];
+    registration_number?: string[];
+    vin?: string[];
+    engine_capacity?: string[];
     location?: string[];
     price?: string[];
-    isAuction?: string[];
-    auctionEndDate?: string[];
-    auctionStartPrice?: string[];
+    is_auction?: string[];
+    auction_end_date?: string[];
     description?: string[];
     images?: string[];
-    buyNowAuctionPrice?: string[];
+    buy_now_auction_price?: string[];
   }
   values?: {
     [key: string]: string | number | boolean | Date | File[] | undefined;
     producer?: string;
     model?: string;
     color?: string;
-    fuelType?: string;
-    gearbox?: string;
-    driveType?: string;
+    fuel_type?: string;
+    transmission?: string;
+    drive?: string;
     country?: string;
-    productionYear?: number;
+    production_year?: number;
     mileage?: number;
-    numberOfDoors?: number;
-    numberOfSeats?: number;
-    power?: number;
-    engineDisplacement?: number;
-    dateOfFirstRegistration?: Date;
-    plateNumber?: string;
+    number_of_doors?: number;
+    number_of_seats?: number;
+    number_of_gears?: number;
+    engine_power?: number;
+    engine_capacity?: number;
+    registration_date?: string;
+    registration_number?: string;
+    vin?: string;
     location?: string;
     description?: string;
     images?: File[]; // Array of image files
     price?: number;
-    isAuction?: boolean;
-    auctionEndDate?: Date;
-    buyNowAuctionPrice?: number;
+    is_auction?: boolean;
+    auction_end_date?: string;
+    buy_now_auction_price?: number;
   }
 }
 

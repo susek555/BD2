@@ -84,7 +84,6 @@ export async function fetchProducersAndModels() : Promise<ModelFieldData> {
     };
 
     return data;
-
 }
 
 export async function fetchFilterFields() : Promise<FilterFieldData[]> {

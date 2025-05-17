@@ -9,7 +9,7 @@ import { useDebouncedCallback } from "use-debounce";
 export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFormData}) {
     const initialState: AddOfferFormState = {
         errors: {},
-        values: {isAuction: false},
+        values: {is_auction: false},
     };
 
     const [state, action] = useActionState(addOffer, initialState);
@@ -50,7 +50,7 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
     const [description, setDescription] = React.useState<string>(liveState.values?.description?.toString() ?? "");
 
     const changeOfferType = (isAuction: boolean) => {
-        updateField("isAuction", isAuction);
+        updateField("is_auction", isAuction);
     };
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -332,19 +332,21 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                 {/* <SelectionLabel id="producer" name="Producer" options={inputsData.producers} /> */}
                 <SelectionLabel id="model" name="Model" options={availableModels} />
                 <SelectionLabel id="color" name="Color" options={inputsData.colors} />
-                <SelectionLabel id="gearbox" name="Gearbox" options={inputsData.gearboxes} />
-                <SelectionLabel id="fuelType" name="Fuel Type" options={inputsData.fuelTypes} />
-                <SelectionLabel id="driveType" name="Drive Type" options={inputsData.driveTypes} />
+                <SelectionLabel id="fuel_type" name="Fuel Type" options={inputsData.fuelTypes} />
+                <SelectionLabel id="drive" name="Drive Type" options={inputsData.driveTypes} />
                 <SelectionLabel id="country" name="Country" options={inputsData.countries} />
-                <NumberInputField id="productionYear" name="Production Year" />
+                <SelectionLabel id="transmission" name="Transmission" options={inputsData.gearboxes} />
+                <NumberInputField id="number_of_gears" name="Number of gears" />
+                <NumberInputField id="production_year" name="Production Year" />
                 <NumberInputField id="mileage" name="Mileage" />
-                <NumberInputField id="numberOfDoors" name="Number of doors" />
-                <NumberInputField id="numberOfSeats" name="Number of seats" />
-                <NumberInputField id="power" name="Power" />
-                <NumberInputField id="engineDisplacement" name="Engine displacement" />
-                <DateSelectionField id="dateOfFirstRegistration" name="Date of first registration" />
-                <TextInputField id="plateNumber" name="Plate number" />
+                <NumberInputField id="number_of_doors?" name="Number of doors" />
+                <NumberInputField id="number_of_seats" name="Number of seats" />
+                <NumberInputField id="engine_power" name="Power" />
+                <NumberInputField id="engine_capacity" name="Engine displacement" />
+                <DateSelectionField id="registration_date" name="Date of first registration" />
+                <TextInputField id="registration_number" name="Plate number" />
                 <TextInputField id="location" name="Location" />
+                <TextInputField id="vin" name="VIN" />
 
                 <label htmlFor="description" className="text-lg font-semibold">
                     Description
@@ -378,7 +380,7 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                             id="standard offer"
                             type="radio"
                             value="P"
-                            checked={liveState.values?.isAuction === false}
+                            checked={liveState.values?.is_auction === false}
                             onChange={() => changeOfferType(false)}
                             className="h-4 w-4 text-blue-500 focus:ring-blue-400"
                         />
@@ -391,7 +393,7 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                             id="auction"
                             type="radio"
                             value="C"
-                            checked={liveState.values?.isAuction === true}
+                            checked={liveState.values?.is_auction === true}
                             onChange={() => changeOfferType(true)}
                             className="h-4 w-4 text-blue-500 focus:ring-blue-400"
                         />
@@ -401,18 +403,18 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                     </div>
                 </div>
                 <div id="username-error" aria-live="polite" aria-atomic="true">
-                    {state?.errors?.isAuction &&
-                        state.errors.isAuction.map((error: string) => (
+                    {state?.errors?.is_auction &&
+                        state.errors.is_auction.map((error: string) => (
                         <p className="mt-2 text-sm text-red-500" key={error}>
                             {error}
                         </p>
                     ))}
                 </div>
 
-                {liveState.values?.isAuction && (
+                {liveState.values?.is_auction && (
                     <>
-                        <DateSelectionField id="auctionEndDate" name="Auction end date" />
-                        <NumberInputField id="buyNowAuctionPrice" name="Buy now price" />
+                        <DateSelectionField id="auction_end_date" name="Auction end date" />
+                        <NumberInputField id="buy_now_auction_price" name="Buy now price" />
                     </>
                 )}
 
