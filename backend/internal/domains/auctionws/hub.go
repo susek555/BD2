@@ -119,14 +119,16 @@ func (h *Hub) StartRedisFanIn(ctx context.Context, rdb *redis.Client) {
 			}
 
 			_ = pubsub.Close()
-			backoff := time.Second
-			for backoff < 30*time.Second {
+			for backoff := time.Second; ; {
 				select {
 				case <-ctx.Done():
 					return
 				case <-time.After(backoff):
 				}
-				backoff *= 2
+
+				if backoff < 30*time.Second {
+					backoff *= 2 // exponencialny back-off do 30 s
+				}
 			}
 		}
 	}()
