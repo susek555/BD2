@@ -1,4 +1,4 @@
-import { Review, ReviewSearchParams } from '../definitions';
+import { RatingPercentages, Review, ReviewSearchParams } from '../definitions';
 
 export async function fetchReviewsByReviewer(
   id: number,
@@ -47,6 +47,22 @@ export async function fetchAverageRating(id: number): Promise<number> {
 
   if (!response.ok) {
     throw new Error('Failed to fetch average rating');
+  }
+
+  return response.json();
+}
+
+export async function fetchRatingDistribution(
+  id: number,
+): Promise<RatingPercentages> {
+  const url = `${process.env.URL}/api/reviews/distribution/${id}`;
+
+  const response = await fetch(url, {
+    method: 'GET',
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch rating distribution');
   }
 
   return response.json();
