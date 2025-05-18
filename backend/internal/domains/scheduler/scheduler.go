@@ -23,7 +23,7 @@ type SchedulerInterface interface {
 	Run(ctx context.Context)
 }
 
-func NewScheduler(db *gorm.DB, repo bid.BidRepositoryInterface, redisClient *redis.Client) *Scheduler {
+func NewScheduler(db *gorm.DB, repo bid.BidRepositoryInterface, redisClient *redis.Client) SchedulerInterface {
 	return &Scheduler{
 		heap:        make(timerHeap, 0),
 		repo:        repo,
