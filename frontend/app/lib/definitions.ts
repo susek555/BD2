@@ -1,4 +1,4 @@
-import { number, z } from 'zod';
+import { z } from 'zod';
 
 export const SignupFormSchema = z
   .object({
@@ -235,35 +235,35 @@ export const OfferDetailsFormSchema = z.object({
     .max(1_000_000, { message: 'Mileage must be less than or equal to 1,000,000' }),
   number_of_doors: z
     .number()
-    .min(0, { message: 'Number of doors must be greater than or equal to 0' })
-    .max(100, { message: 'Number of doors must be less than or equal to 100' }),
+    .min(1, { message: 'Number of doors must be greater than or equal to 0' })
+    .max(6, { message: 'Number of doors must be less than or equal to 100' }),
   number_of_seats: z
     .number()
-    .min(1, { message: 'Number of seats must be greater than or equal to 1' })
+    .min(2, { message: 'Number of seats must be greater than or equal to 1' })
     .max(100, { message: 'Number of seats must be less than or equal to 100' }),
   number_of_gears: z
     .number()
-    .min(0, { message: 'Number of gears must be greater than or equal to 0' })
-    .max(100, { message: 'Number of gears must be less than or equal to 100' }),
+    .min(1, { message: 'Number of gears must be greater than or equal to 0' })
+    .max(10, { message: 'Number of gears must be less than or equal to 100' }),
   engine_power: z
     .number()
     .min(0, { message: 'Power must be greater than or equal to 0' })
-    .max(2_000, { message: 'Power must be less than or equal to 1,000' }),
+    .max(9_999, { message: 'Power must be less than or equal to 1,000' }),
   registration_date: z
-  .string()
-  .refine((date) => {
-    const parsedDate = new Date(date);
-    return parsedDate.getFullYear() >= 1900;
-  }, { message: 'Date must be greater than 1900' })
-  .refine((date) => {
-    const parsedDate = new Date(date);
-    return parsedDate <= new Date();
-  }, { message: 'Date must be less than or equal to the current date' }),
+    .string()
+    .refine((date) => {
+      const parsedDate = new Date(date);
+      return parsedDate.getFullYear() >= 1900;
+    }, { message: 'Date must be greater than 1900' })
+    .refine((date) => {
+      const parsedDate = new Date(date);
+      return parsedDate <= new Date();
+    }, { message: 'Date must be less than or equal to the current date' }),
   registration_number: z.string().min(1, { message: 'Plate number is required' }),
   engine_capacity: z
     .number()
     .min(0, { message: 'Engine displacement must be greater than or equal to 0' })
-    .max(10_000, { message: 'Engine displacement must be less than or equal to 10,000' }),
+    .max(9_000, { message: 'Engine displacement must be less than or equal to 10,000' }),
   vin: z
     .string()
     .min(17, { message: 'VIN must be 17 characters long' })
@@ -278,6 +278,17 @@ export const OfferDetailsFormSchema = z.object({
     // .refine((files) => files.every(file => file.size <= 5 * 1024 * 1024), {
     //   message: 'Each image must be less than 5MB',
     // }),
+}).superRefine((data, ctx) => {
+  if (data.registration_date && data.production_year) {
+    const registrationDate = new Date(data.registration_date);
+    if (registrationDate.getFullYear() < data.production_year) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Registration date cannot be earlier than production year',
+        path: ['registration_date'],
+      });
+    }
+  }
 })
 
 export const OfferPricingFormSchema = z.object({
