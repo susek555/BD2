@@ -6,8 +6,10 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 	u "github.com/susek555/BD2/car-dealer-api/internal/test/test_utils"
+	"github.com/susek555/BD2/car-dealer-api/pkg/mapping"
 	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
 )
 
@@ -425,7 +427,7 @@ func TestGetFiltered_ValidManufacturer(t *testing.T) {
 	db, _ := setupDB()
 	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
-	filter.Constriants.Manufacturers = manufacturers
+	filter.Constriants.Manufacturers = mapping.MapSliceToDTOs(MANUFACTURERS, (*manufacturer.Manufacturer).MapToName)
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	_, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
@@ -901,7 +903,7 @@ func TestGetFiltered_SingleManufacturer(t *testing.T) {
 	db, _ := setupDB()
 	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
-	filter.Constriants.Manufacturers = manufacturers
+	filter.Constriants.Manufacturers = mapping.MapSliceToDTOs(MANUFACTURERS, (*manufacturer.Manufacturer).MapToName)
 	filter.Manufacturers = &[]string{"Audi"}
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	result, _, err := repo.GetFiltered(filter)
@@ -910,11 +912,14 @@ func TestGetFiltered_SingleManufacturer(t *testing.T) {
 }
 
 func TestGetFiltered_MultipleManufacturers(t *testing.T) {
-	offers := []sale_offer.SaleOffer{*createOffer(1), *createOffer(2)}
+	offers := []sale_offer.SaleOffer{
+		*u.Build(createOffer(1), withCarField(u.WithField[sale_offer.Car]("ModelID", uint(1)))), // Audi
+		*u.Build(createOffer(2), withCarField(u.WithField[sale_offer.Car]("ModelID", uint(2)))), // BMW
+	}
 	db, _ := setupDB()
 	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
-	filter.Constriants.Manufacturers = manufacturers
+	filter.Constriants.Manufacturers = mapping.MapSliceToDTOs(MANUFACTURERS, (*manufacturer.Manufacturer).MapToName)
 	filter.Manufacturers = &[]string{"Audi", "BMW"}
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	result, _, err := repo.GetFiltered(filter)
@@ -923,11 +928,12 @@ func TestGetFiltered_MultipleManufacturers(t *testing.T) {
 }
 
 func TestGetFiltered_NoMatchingManufacturer(t *testing.T) {
-	offers := []sale_offer.SaleOffer{*createOffer(1)}
+	offers := []sale_offer.SaleOffer{
+		*u.Build(createOffer(1), withCarField(u.WithField[sale_offer.Car]("ModelID", uint(1))))} // Audi
 	db, _ := setupDB()
 	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
-	filter.Constriants.Manufacturers = manufacturers
+	filter.Constriants.Manufacturers = mapping.MapSliceToDTOs(MANUFACTURERS, (*manufacturer.Manufacturer).MapToName)
 	filter.Manufacturers = &[]string{"BMW"}
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	result, _, err := repo.GetFiltered(filter)
