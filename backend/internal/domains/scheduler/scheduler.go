@@ -3,19 +3,22 @@ package scheduler
 import (
 	"container/heap"
 	"context"
+	"log"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/redis/go-redis/v9"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auctionws"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/bid"
-	"gorm.io/gorm"
 )
 
 type Scheduler struct {
+	mu          sync.Mutex
 	heap        timerHeap
 	repo        bid.BidRepositoryInterface
 	redisClient *redis.Client
+	addCh       chan *Item
 }
 
 type SchedulerInterface interface {
@@ -23,9 +26,10 @@ type SchedulerInterface interface {
 	Run(ctx context.Context)
 }
 
-func NewScheduler(db *gorm.DB, repo bid.BidRepositoryInterface, redisClient *redis.Client) SchedulerInterface {
+func NewScheduler(repo bid.BidRepositoryInterface, redisClient *redis.Client) SchedulerInterface {
 	return &Scheduler{
 		heap:        make(timerHeap, 0),
+		addCh:       make(chan *Item, 1024),
 		repo:        repo,
 		redisClient: redisClient,
 	}
@@ -36,37 +40,61 @@ func (s *Scheduler) AddAuction(auctionID string, endAt time.Time) {
 		AuctionID: auctionID,
 		EndAt:     endAt,
 	}
-	heap.Push(&s.heap, item)
+	s.addCh <- item
 }
 
 func (s *Scheduler) Run(ctx context.Context) {
+	var timer *time.Timer
 	for ctx.Err() == nil {
-		if len(s.heap) == 0 {
-			time.Sleep(time.Second)
-			continue
-		}
-		next := s.heap[0]
-		delay := time.Until(next.EndAt)
-		if delay > 0 {
-			select {
-			case <-ctx.Done():
-				return
-			case <-time.After(delay):
-			}
-		}
-		heap.Pop(&s.heap)
-		// TODO: Move the auction to transaction
-		auctionIDuint64, err := strconv.ParseUint(next.AuctionID, 10, 32)
-		if err != nil {
-			continue
-		}
-		auctionIDuint := uint(auctionIDuint64)
+		var timerC <-chan time.Time
 
-		highestBid, err := s.repo.GetHighestBid(auctionIDuint)
-		if err != nil {
-			continue
+		s.mu.Lock()
+		if len(s.heap) > 0 {
+			delay := max(time.Until(s.heap[0].EndAt), 0)
+			if timer == nil {
+				timer = time.NewTimer(delay)
+			} else {
+				timer.Stop()
+				timer.Reset(delay)
+			}
+			timerC = timer.C
 		}
-		env := auctionws.NewEndAuctionEnvelope(next.AuctionID, highestBid.Bidder.Username, int64(highestBid.Amount))
-		auctionws.PublishAuctionEvent(ctx, s.redisClient, next.AuctionID, env)
+		select {
+		case <-ctx.Done():
+			log.Println("scheduler: shutting down")
+			if timer != nil {
+				timer.Stop()
+			}
+			return
+		case item := <-s.addCh:
+			log.Printf("scheduler: adding auction %s", item.AuctionID)
+			s.mu.Lock()
+			heap.Push(&s.heap, item)
+			s.mu.Unlock()
+		case <-timerC:
+			log.Printf("scheduler: closing auction %s", s.heap[0].AuctionID)
+			s.mu.Lock()
+			next := heap.Pop(&s.heap).(*Item)
+			s.mu.Unlock()
+			s.closeAuction(ctx, next.AuctionID)
+		}
+	}
+}
+
+func (s *Scheduler) closeAuction(ctx context.Context, auctionID string) {
+	auctionIDInt, err := strconv.Atoi(auctionID)
+	if err != nil {
+		return
+	}
+	highest, err := s.repo.GetHighestBid(uint(auctionIDInt))
+	var winnerID string
+	var amount int64
+	if err == nil {
+		winnerID = strconv.FormatUint(uint64(highest.BidderID), 10)
+		amount = int64(highest.Amount)
+	}
+	env := auctionws.NewEndAuctionEnvelope(auctionID, winnerID, amount)
+	if err := auctionws.PublishAuctionEvent(ctx, s.redisClient, auctionID, env); err != nil {
+		log.Printf("failed to publish auction event: %v", err)
 	}
 }
