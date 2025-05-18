@@ -47,3 +47,16 @@ func NewBidEnvelope(auctionID string, amount int64, userID string) *Envelope {
 		Data:        data,
 	}
 }
+
+func NewEndAuctionEnvelope(auctionID string, winner string, amount int64) *Envelope {
+	payload := EndAuctionPayload{
+		AuctionID: auctionID,
+		Winner:    winner,
+		Amount:    amount,
+	}
+	data, _ := json.Marshal(payload)
+	return &Envelope{
+		MessageType: MsgEndAuction,
+		Data:        data,
+	}
+}
