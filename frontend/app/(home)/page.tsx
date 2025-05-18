@@ -81,7 +81,7 @@ export default async function Home(props: {
   : {
     query: null,
     pagination: {
-      page: null,
+      page: 1,
       page_size: 6,
     },
     order_key: null,
