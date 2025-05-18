@@ -13,12 +13,12 @@ type SaleOfferServiceInterface interface {
 }
 
 type SaleOfferService struct {
-	repo       SaleOfferRepositoryInterface
-	manService manufacturer.ManufacturerServiceInterface
+	repo    SaleOfferRepositoryInterface
+	manRepo manufacturer.ManufacturerRepositoryInterface
 }
 
-func NewSaleOfferService(saleOfferRepository SaleOfferRepositoryInterface, manufacturerService manufacturer.ManufacturerServiceInterface) SaleOfferServiceInterface {
-	return &SaleOfferService{repo: saleOfferRepository, manService: manufacturerService}
+func NewSaleOfferService(saleOfferRepository SaleOfferRepositoryInterface, manufacturerRepo manufacturer.ManufacturerRepositoryInterface) SaleOfferServiceInterface {
+	return &SaleOfferService{repo: saleOfferRepository, manRepo: manufacturerRepo}
 }
 
 func (s *SaleOfferService) Create(in CreateSaleOfferDTO) error {
@@ -30,11 +30,12 @@ func (s *SaleOfferService) Create(in CreateSaleOfferDTO) error {
 }
 
 func (s *SaleOfferService) GetFiltered(filter *OfferFilter) (*RetrieveOffersWithPagination, error) {
-	manufacturers, err := s.manService.GetAllAsNames()
+	manufacturers, err := s.manRepo.GetAll()
+
 	if err != nil {
 		return nil, err
 	}
-	filter.Constriants.Manufacturers = manufacturers
+	filter.Constriants.Manufacturers = mapping.MapSliceToDTOs(manufacturers, (*manufacturer.Manufacturer).MapToName)
 	offers, pagResponse, err := s.repo.GetFiltered(filter)
 	if err != nil {
 		return nil, err
