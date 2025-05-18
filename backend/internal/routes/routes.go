@@ -152,8 +152,10 @@ func registerSaleOfferRoutes(router *gin.Engine) {
 }
 
 func registerAuctionRoutes(router *gin.Engine) {
+	ctx := context.Background()
 	verifier, _ := initializeVerifier()
 	scheduler := scheduler.NewScheduler(initializers.DB, bid.NewBidRepository(initializers.DB), initializers.ConnectToRedis(context.Background()))
+	go scheduler.Run(ctx)
 	auctionRepo := auction.NewAuctionRepository(initializers.DB)
 	auctionService := auction.NewAuctionService(auctionRepo)
 	auctionHandler := auction.NewHandler(auctionService, scheduler)
