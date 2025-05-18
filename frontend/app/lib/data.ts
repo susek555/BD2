@@ -1,5 +1,5 @@
 import { getColors, getDrives, getFuelTypes, getTransmissions } from "./api/filters";
-import { getOrderKeys } from "./api/order-keys";
+import { getOrderKeys } from "./api/orderKeys";
 import { AddOfferFormData, FilterFieldData, ModelFieldData, RangeFieldData, SaleOffer, SaleOfferDetails, SearchParams } from "./definitions";
 
 // Sorting

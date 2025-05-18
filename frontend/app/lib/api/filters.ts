@@ -1,6 +1,6 @@
 const API_URL = process.env.API_URL;
 
-export async function getColors() {
+export async function getColors() : Promise<string[]> {
   const response = await fetch(`${API_URL}/car/colors`, {
     method: "GET",
   });
@@ -14,7 +14,7 @@ export async function getColors() {
   return data.colors;
 }
 
-export async function getDrives() {
+export async function getDrives() : Promise<string[]> {
   const response = await fetch(`${API_URL}/car/drives`, {
     method: "GET",
   });
@@ -28,7 +28,7 @@ export async function getDrives() {
   return data.drives;
 }
 
-export async function getFuelTypes() {
+export async function getFuelTypes() : Promise<string[]> {
   const response = await fetch(`${API_URL}/car/fuel-types`, {
     method: "GET",
   });
@@ -42,7 +42,7 @@ export async function getFuelTypes() {
 return data["fuel-types"];
 }
 
-export async function getTransmissions() {
+export async function getTransmissions() : Promise<string[]> {
   const response = await fetch(`${API_URL}/car/transmissions`, {
     method: "GET",
   });
