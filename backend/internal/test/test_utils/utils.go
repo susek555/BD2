@@ -8,8 +8,10 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/generic"
 	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
 	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
+	"gorm.io/gorm"
 )
 
 type Option[T any] func(*T)
@@ -54,4 +56,14 @@ const JWTSECRET = "secret"
 func GetValidToken(userId uint, email string) (string, error) {
 	secret := []byte("secret")
 	return jwt.GenerateToken(email, int64(userId), secret, time.Now().Add(1*time.Hour))
+}
+
+func InsertRecordsIntoDB[T any](db *gorm.DB, records []T) error {
+	repo := generic.GetGormRepository[T](db)
+	for _, record := range records {
+		if err := repo.Create(&record); err != nil {
+			return err
+		}
+	}
+	return nil
 }
