@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/susek555/BD2/car-dealer-api/pkg/custom_errors"
+	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
 )
 
 type Handler struct {
@@ -136,8 +137,13 @@ func (h *Handler) GetSaleOfferByID(c *gin.Context) {
 //	@Router			/sale-offer/my-offers [get]
 //	@Security		Bearer
 func (h *Handler) GetMySaleOffers(c *gin.Context) {
+	var pagRequest pagination.PaginationRequest
+	if err := c.ShouldBindJSON(&pagRequest); err != nil {
+		custom_errors.HandleError(c, err, ErrorMap)
+		return
+	}
 	userID, _ := c.Get("userID")
-	saleOffers, err := h.service.GetByUserID(userID.(uint))
+	saleOffers, err := h.service.GetByUserID(userID.(uint), &pagRequest)
 	if err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
