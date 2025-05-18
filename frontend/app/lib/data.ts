@@ -1,7 +1,9 @@
+import { get } from "http";
 import { getColors, getDrives, getFuelTypes, getTransmissions } from "./api/filters";
 import { getOfferTypes } from "./api/offerType";
 import { getOrderKeys } from "./api/orderKeys";
 import { AddOfferFormData, FilterFieldData, ModelFieldData, RangeFieldData, SaleOffer, SaleOfferDetails, SearchParams } from "./definitions";
+import { getHomePageData } from "./api/homePageData";
 
 // Offer types
 
@@ -27,7 +29,7 @@ export async function fetchSortingOptions() : Promise<string[]> {
 // Filters
 
 async function fetchGearboxes() : Promise<string[]> {
-    const data = getTransmissions();
+    const data = await getTransmissions();
 
     console.log("Gearboxes data: ", data);
 
@@ -35,7 +37,7 @@ async function fetchGearboxes() : Promise<string[]> {
 }
 
 async function fetchFuelTypes() : Promise<string[]> {
-    const data = getFuelTypes();
+    const data = await getFuelTypes();
 
     console.log("Fuel types data: ", data);
 
@@ -43,7 +45,7 @@ async function fetchFuelTypes() : Promise<string[]> {
 }
 
 async function fetchColors() : Promise<string[]> {
-    const data = getColors();
+    const data = await getColors();
 
     console.log("Colors data: ", data);
 
@@ -51,7 +53,7 @@ async function fetchColors() : Promise<string[]> {
 }
 
 async function fetchDriveTypes() : Promise<string[]> {
-    const data = getDrives();
+    const data = await getDrives();
 
     console.log("Drive types data: ", data);
 
@@ -233,25 +235,20 @@ export async function fetchOffers(params: SearchParams): Promise<SaleOffer[]> {
   return data;
 }
 
-export async function fetchHomePageData(
-  params: SearchParams,
-): Promise<{ totalPages: number; totalOffers: number; offers: SaleOffer[] }> {
-  try {
-    const totalPages = await fetchTotalPages(params);
-    const totalOffers = await fetchTotalOffers(params);
-    const offers = await fetchOffers(params);
+export async function fetchHomePageData(params: SearchParams) : Promise<{totalPages: number, totalOffers: number, offers: SaleOffer[]}> {
+    try{
+        const data = await getHomePageData(params);
 
-    const [totalPagesResult, totalOffersResult, offersResult] =
-      await Promise.all([totalPages, totalOffers, offers]);
-    return {
-      totalPages: totalPagesResult,
-      totalOffers: totalOffersResult,
-      offers: offersResult,
-    };
-  } catch (error) {
-    console.error('Api error:', error);
-    throw new Error('Failed to fetch home page data.');
-  }
+        return {
+            totalPages: data.pagination.total_pages,
+            totalOffers: data.pagination.total_records,
+            offers: data.offers
+        };
+
+    } catch (error) {
+        console.error("Api error:", error);
+        throw new Error('Failed to fetch home page data.');
+    }
 }
 
 
