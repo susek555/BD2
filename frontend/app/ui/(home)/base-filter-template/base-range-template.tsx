@@ -25,41 +25,41 @@ export function BaseRangeTemplate({ fieldName, rangeBase, onChange }: BaseRangeT
     return (
         <div className="base-range-template border border-black-300 rounded px-2 py-1">
             <button
-            className="flex justify-between items-center w-full"
-            onClick={toggleDropdown}
+                className="flex justify-between items-center w-full"
+                onClick={toggleDropdown}
             >
-            <span>{fieldName}</span>
-            <span>{isOpen ? '▲' : '▼'}</span>
+                <span>{fieldName}</span>
+                <span>{isOpen ? '▲' : '▼'}</span>
             </button>
             {isOpen && (
-            <div className="range-inputs mt-2 flex items-center justify-between w-full">
-                <input
-                type="number"
-                id="min"
-                name="min"
-                placeholder="Min"
-                value={range.min || ''}
-                onChange={handleInputChange}
-                className="border border-gray-300 rounded px-1 py-1 w-full"
-                step="1"
-                inputMode="numeric"
-                />
-                <span className="mx-2 text-center flex-shrink-0 px-2">-</span>
-                <input
-                type="number"
-                id="max"
-                name="max"
-                placeholder="Max"
-                value={range.max || ''}
-                onChange={handleInputChange}
-                className="border border-gray-300 rounded px-1 py-1 w-full"
-                step="1"
-                inputMode="numeric"
-                />
-            </div>
+                <div className="range-inputs mt-2 flex items-center justify-between w-full">
+                    <input
+                        type="number"
+                        id="min"
+                        name="min"
+                        placeholder="Min"
+                        value={range.min || ''}
+                        onChange={handleInputChange}
+                        className="border border-gray-300 rounded px-1 py-1 w-full"
+                        step="1"
+                        inputMode="numeric"
+                    />
+                    <span className="mx-2 text-center flex-shrink-0 px-2">-</span>
+                    <input
+                        type="number"
+                        id="max"
+                        name="max"
+                        placeholder="Max"
+                        value={range.max || ''}
+                        onChange={handleInputChange}
+                        className="border border-gray-300 rounded px-1 py-1 w-full"
+                        step="1"
+                        inputMode="numeric"
+                    />
+                </div>
             )}
-            {range.max < range.min && (
-            <p className="text-red-500 text-sm mt-1">Max value cannot be less than Min value.</p>
+            {range.min !== 0 && range.max !== 0 && range.max < range.min && (
+                <p className="text-red-500 text-sm mt-1">Max value cannot be less than Min value.</p>
             )}
         </div>
     );
