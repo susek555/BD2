@@ -321,7 +321,6 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
             </div>
             <div className={`rounded-lg bg-gray-50 px-6 pb-4 pt-8 flex flex-col gap-4 ${detailsPart ? "hidden" : "block"}`}>
                 <>
-                    <NumberInputField id="price" name="Price" />
                     <label htmlFor="offer type" className="text-lg font-semibold">
                         Offer Type
                     </label>
@@ -363,6 +362,7 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                             </p>
                         ))}
                     </div>
+                    <NumberInputField id="price" name="Price" />
 
                     {is_auction && (
                         <>
