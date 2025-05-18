@@ -1,6 +1,7 @@
 package auction
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -46,6 +47,7 @@ func (h *Handler) CreateAuction(c *gin.Context) {
 		// TODO: Do sth
 	}
 	h.sched.AddAuction(auctionID, dateEnd)
+	log.Printf("scheduler: added %s ends %s", auctionID, dateEnd)
 	c.JSON(http.StatusCreated, dto)
 }
 
