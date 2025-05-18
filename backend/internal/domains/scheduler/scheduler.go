@@ -18,6 +18,11 @@ type Scheduler struct {
 	redisClient *redis.Client
 }
 
+type SchedulerInterface interface {
+	AddAuction(auctionID string, end time.Time)
+	Run(ctx context.Context)
+}
+
 func NewScheduler(db *gorm.DB, repo bid.BidRepositoryInterface, redisClient *redis.Client) *Scheduler {
 	return &Scheduler{
 		heap:        make(timerHeap, 0),
