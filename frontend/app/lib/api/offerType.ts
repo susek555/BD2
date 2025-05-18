@@ -1,6 +1,6 @@
 const API_URL = process.env.API_URL;
 
-export async function getOrderKeys() : Promise<string[]> {
+export async function getOfferTypes() : Promise<string[]> {
   const response = await fetch(`${API_URL}/sale-offer/offer-types`, {
     method: "GET",
   });

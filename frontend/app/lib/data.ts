@@ -1,6 +1,18 @@
 import { getColors, getDrives, getFuelTypes, getTransmissions } from "./api/filters";
+import { getOfferTypes } from "./api/offerType";
 import { getOrderKeys } from "./api/orderKeys";
 import { AddOfferFormData, FilterFieldData, ModelFieldData, RangeFieldData, SaleOffer, SaleOfferDetails, SearchParams } from "./definitions";
+
+// Offer types
+
+export async function fetchOfferTypes() : Promise<string[]> {
+    let data = await getOfferTypes();
+
+    data = ["All", ...data];
+    console.log("Offer types data: ", data);
+
+    return data;
+}
 
 // Sorting
 

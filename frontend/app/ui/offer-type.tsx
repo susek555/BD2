@@ -3,12 +3,12 @@
 import React, { useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 
-export default function OfferType() {
+export default function OfferType({ offerTypes }: { offerTypes: string[] }) {
     const searchParams = useSearchParams();
     const pathname = usePathname();
 
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const options = ["All", "Auctions", "Buy Now", "Both"];
+    const options = offerTypes;
     const selectedOption = searchParams.get("offerType") || "All";
 
     const toggleDropdown = () => {
