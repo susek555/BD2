@@ -1,6 +1,6 @@
 import SideBar from '@/app/ui/sidebar';
 import { Suspense } from 'react';
-import { fetchOffers, fetchTotalPages } from '../lib/data';
+import { fetchHomePageData } from "../lib/data";
 import {
   parseArrayOrUndefined,
   parseIntOrUndefined,
@@ -45,7 +45,7 @@ export default async function Home(props: {
   ? {
       query: searchParams.query,
       pagination: {
-        page: searchParams.page ? parseInt(searchParams.page || "1", 10) : null,
+        page: searchParams.page ? parseInt(searchParams.page || "1", 10) : 1,
         page_size: 6,
       },
       order_key: searchParams.sortKey || null,
@@ -102,7 +102,7 @@ export default async function Home(props: {
 
   console.log('Search Params:', params);
 
-  const totalPages = await fetchTotalPages(params);
+  const { totalPages, totalOffers, offers } = await fetchHomePageData(params);
 
   return (
     <main>
@@ -114,11 +114,11 @@ export default async function Home(props: {
         </div>
         <div className='flex-grow p-6 md:overflow-y-auto md:px-12 md:py-8'>
           <Suspense fallback={<OffersFoundSkeleton />}>
-            <OffersFoundInfo params={params} />
+            <OffersFoundInfo totalOffers={totalOffers} />
           </Suspense>
           <div className='my-4' />
           <Suspense fallback={<OffersTableSkeleton />}>
-            <OffersTable params={params} fetchFunction={fetchOffers} />
+            <OffersTable offers={offers} />
           </Suspense>
           <div className='mt-5 flex w-full justify-center pr-20'>
             <Suspense>

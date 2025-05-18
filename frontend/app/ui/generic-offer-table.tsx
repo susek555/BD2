@@ -1,24 +1,21 @@
-import { BaseOffer, SearchParams } from '@/app/lib/definitions';
+import { BaseOffer } from '@/app/lib/definitions';
 import Link from 'next/link';
 
 interface GenericTableProps<T extends BaseOffer> {
-  fetchFunction: (params: SearchParams) => Promise<T[]>;
-  params: SearchParams;
+  offers: T[];
   ItemComponent: React.ComponentType<{ offer: T }>;
   className?: string;
 }
 
 export default async function GenericOffersTable<T extends BaseOffer>({
-  fetchFunction,
-  params,
+  offers,
   ItemComponent,
   className = '',
 }: GenericTableProps<T>) {
-  const offers = await fetchFunction(params);
 
   return (
     <div className={`flex flex-col gap-4 ${className}`}>
-      {offers.map((offer) => (
+      {offers && offers.map((offer) => (
         <Link
           key={offer.id}
           href={`/offer/${offer.id}`}
