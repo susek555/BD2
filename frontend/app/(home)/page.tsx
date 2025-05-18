@@ -21,12 +21,12 @@ export default async function Home(props: {
     sortKey?: string;
     isSortDesc?: string;
     offerType?: string;
-    Producer?: string[];
-    Model?: string[];
-    Color?: string[];
-    Drive?: string[];
-    Gearbox?: string[];
-    Fuel?: string[];
+    Producers?: string[];
+    Models?: string[];
+    Colors?: string[];
+    Drivetypes?: string[];
+    Gearboxes?: string[];
+    Fueltypes?: string[];
     Price_min?: string;
     Price_max?: string;
     Mileage_min?: string;
@@ -51,12 +51,12 @@ export default async function Home(props: {
       order_key: searchParams.sortKey || null,
       is_order_desc: searchParams.isSortDesc === "true" ? true : null,
       offer_type: searchParams.offerType || null,
-      manufacturers: parseArrayOrUndefined(searchParams.Producer),
-      models: parseArrayOrUndefined(searchParams.Model),
-      colors: parseArrayOrUndefined(searchParams.Color),
-      transmissions: parseArrayOrUndefined(searchParams.Gearbox),
-      fuel_types: parseArrayOrUndefined(searchParams.Fuel),
-      drives: parseArrayOrUndefined(searchParams.Drive),
+      manufacturers: parseArrayOrUndefined(searchParams.Producers),
+      models: parseArrayOrUndefined(searchParams.Models),
+      colors: parseArrayOrUndefined(searchParams.Colors),
+      transmissions: parseArrayOrUndefined(searchParams.Gearboxes),
+      fuel_types: parseArrayOrUndefined(searchParams.Fueltypes),
+      drives: parseArrayOrUndefined(searchParams.Drivetypes),
       price_range: {
         min: parseIntOrUndefined(searchParams.Price_min),
         max: parseIntOrUndefined(searchParams.Price_max),
