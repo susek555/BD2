@@ -211,7 +211,7 @@ func (of *OfferFilter) validateDates() error {
 }
 
 func (of *OfferFilter) validateOrderKey() error {
-	if of.OrderKey != nil && !slices.Contains(getKeysFromMap(OrderKeysMap), *of.OrderKey) {
+	if of.OrderKey != nil && !slices.Contains(GetKeysFromMap(OrderKeysMap), *of.OrderKey) {
 		return ErrInvalidOrderKey
 	}
 	return nil
@@ -263,7 +263,7 @@ func isMinMaxValidDates(minmax MinMax[time.Time]) bool {
 	return true
 }
 
-func getKeysFromMap[T comparable](m map[T]T) []T {
+func GetKeysFromMap[T comparable](m map[T]T) []T {
 	keys := make([]T, 0, len(m))
 	for k := range m {
 		keys = append(keys, k)

@@ -38,6 +38,7 @@ var MODELS []model.Model = []model.Model{
 
 var USERS []user.User = []user.User{
 	{ID: 1, Username: "john", Email: "john@example.com", Selector: "P"},
+	{ID: 2, Username: "jane", Email: "jane@example.com", Selector: "P"},
 }
 
 // ------
@@ -93,7 +94,7 @@ func newTestServer(seedOffers []sale_offer.SaleOffer) (*gin.Engine, *gorm.DB, er
 	{
 		saleOfferRoutes.POST("/", middleware.Authenticate(verifier), saleOfferHandler.CreateSaleOffer)
 		saleOfferRoutes.POST("/filtered", middleware.OptionalAuthenticate(verifier), saleOfferHandler.GetFilteredSaleOffers)
-		saleOfferRoutes.GET("/my-offers", middleware.Authenticate(verifier), saleOfferHandler.GetMySaleOffers)
+		saleOfferRoutes.POST("/my-offers", middleware.Authenticate(verifier), saleOfferHandler.GetMySaleOffers)
 		saleOfferRoutes.GET("/id/:id", saleOfferHandler.GetSaleOfferByID)
 		saleOfferRoutes.GET("/offer-types", saleOfferHandler.GetSaleOfferTypes)
 		saleOfferRoutes.GET("/order-keys", saleOfferHandler.GetOrderKeys)
