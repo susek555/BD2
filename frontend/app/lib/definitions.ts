@@ -296,6 +296,10 @@ export const OfferPricingFormSchema = z.object({
     .number()
     .min(0, { message: 'Price must be greater than or equal to 0' })
     .max(10_000_000, { message: 'Price must be less than or equal to 10,000,000' }),
+  margin: z
+    .number()
+    .min(8, { message: 'Margin must be greater than or equal to 0' })
+    .max(10,{ message: 'Margin must be less than or equal to 10' }),
   is_auction: z.boolean(),
   auction_end_date: z
     .string()

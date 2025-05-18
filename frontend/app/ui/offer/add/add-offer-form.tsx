@@ -57,9 +57,6 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
         setIsAuction(isAuction);
     };
 
-    console.log("Producer:", producer);
-    console.log("Is auction:", is_auction);
-
     const handleSubmit = (formData: FormData) => {
 
         // formData.append("isAuction", liveState.values?.isAuction == null ? "false" : liveState.values.isAuction.toString());
@@ -91,15 +88,17 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
         setIsAuction(isAuctionValue);
         formData.set("is_auction", isAuctionValue.toString());
 
-        console.log("Producer from submit:", producer);
-        console.log("Is auction from submit:", is_auction);
-
         action(formData)
     }
 
     // UI
 
-    function SelectionLabel({ id, name, options }: { id: string, name: string; options: string[] }) {
+    function SelectionLabel({ id, name, options, required = true }: {
+        id: string,
+        name: string;
+        options: string[]
+        required?: boolean;
+    }) {
         return (
             <>
                 <label htmlFor={id} className="text-lg font-semibold">
@@ -109,7 +108,7 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                     id={id}
                     name={id}
                     className="border rounded p-2"
-                    required
+                    required={required}
                     defaultValue={
                         typeof state?.values?.[id] === "string"
                             ? state.values[id]
@@ -363,11 +362,12 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                         ))}
                     </div>
                     <NumberInputField id="price" name="Price" />
+                    <SelectionLabel id="margin" name="Margin ( % )" options={["8", "9", "10"]} required={!detailsPart}/>
 
                     {is_auction && (
                         <>
                             <DateSelectionField id="auction_end_date" name="Auction end date" />
-                            <NumberInputField id="buy_now_auction_price" name="Buy now price" />
+                            <NumberInputField id="buy_now_auction_price" name="Buy now price [ optional ]" />
                         </>
                     )}
 
