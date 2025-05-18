@@ -217,7 +217,7 @@ export type OfferDetails = {
 
 // Add Offer
 
-export const AddOfferFormSchema = z.object({
+export const OfferDetailsFormSchema = z.object({
   producer: z.string().min(1, { message: 'Producer is required' }),
   model: z.string().min(1, { message: 'Model is required' }),
   color: z.string().min(1, { message: 'Color is required' }),
@@ -270,19 +270,30 @@ export const AddOfferFormSchema = z.object({
     .max(17, { message: 'VIN must be 17 characters long' })
     .regex(/^[A-HJ-NPR-Z0-9]+$/, { message: 'VIN must contain only valid characters' }),
   location: z.string().min(1, { message: 'Location is required' }),
+  description: z.string().min(1, { message: 'Description is required' }),
+  images: z
+    .array(z.instanceof(File)).optional()   //TODO remove optional and uncomment code below
+    // .min(1, { message: 'At least one image is required' })
+    // .max(10, { message: 'A maximum of 10 images is allowed' })
+    // .refine((files) => files.every(file => file.size <= 5 * 1024 * 1024), {
+    //   message: 'Each image must be less than 5MB',
+    // }),
+})
+
+export const OfferPricingFormSchema = z.object({
   price: z
     .number()
     .min(0, { message: 'Price must be greater than or equal to 0' })
     .max(10_000_000, { message: 'Price must be less than or equal to 10,000,000' }),
   is_auction: z.boolean(),
   auction_end_date: z
-  .string()
-  .optional()
-  .refine((date) => {
-    if (!date) return true;
-    const parsedDate = new Date(date);
-    return parsedDate > new Date();
-  }, { message: 'Date must be in the future' }),
+    .string()
+    .optional()
+    .refine((date) => {
+      if (!date) return true;
+      const parsedDate = new Date(date);
+      return parsedDate > new Date();
+    }, { message: 'Date must be in the future' }),
   buy_now_auction_price: z
     .number()
     .nullable()
@@ -295,14 +306,6 @@ export const AddOfferFormSchema = z.object({
       (price) => price === null || price === undefined || price < 10_000_000,
       { message: 'Price must be less than 10,000,000' }
     ),
-  description: z.string().min(1, { message: 'Description is required' }),
-  images: z
-    .array(z.instanceof(File)).optional()   //TODO remove optional and uncomment code below
-    // .min(1, { message: 'At least one image is required' })
-    // .max(10, { message: 'A maximum of 10 images is allowed' })
-    // .refine((files) => files.every(file => file.size <= 5 * 1024 * 1024), {
-    //   message: 'Each image must be less than 5MB',
-    // }),
 }).superRefine((data, ctx) => {
   if (data.is_auction) {
     if (!data.auction_end_date) {
@@ -312,19 +315,20 @@ export const AddOfferFormSchema = z.object({
         path: ['auctionEndDate'],
       });
     }
-    if (
-      data.buy_now_auction_price !== null &&
-      data.buy_now_auction_price !== undefined &&
-      data.buy_now_auction_price <= data.price
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Buy now auction price must be greater than the regular price',
-        path: ['buy_now_auction_price'],
-      });
-    }
+  }
+  if (
+    data.buy_now_auction_price !== null &&
+    data.buy_now_auction_price !== undefined &&
+    data.buy_now_auction_price <= data.price
+  ) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Buy now auction price must be greater than the regular price',
+      path: ['buy_now_auction_price'],
+    });
   }
 });
+
 
 export type AddOfferFormState = {
   errors?: {

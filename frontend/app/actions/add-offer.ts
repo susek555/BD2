@@ -1,9 +1,10 @@
-import { AddOfferFormSchema, AddOfferFormState } from "../lib/definitions";
+import { OfferDetailsFormSchema, AddOfferFormState, OfferPricingFormSchema } from "../lib/definitions";
 import { permanentRedirect } from "next/navigation";
 
 export async function addOffer(
     state: AddOfferFormState,
-    formData: FormData
+    formData: FormData,
+    detailsPart: boolean
 ): Promise<AddOfferFormState> {
     console.log("Add Offer form data:", Object.fromEntries(formData.entries()));
 
@@ -25,7 +26,14 @@ export async function addOffer(
             : undefined
     }
 
-    const validatedFields = AddOfferFormSchema.safeParse(normalizedData);
+    let validatedFields = null;
+
+    if (detailsPart) {
+        validatedFields = OfferDetailsFormSchema.safeParse(normalizedData);
+
+    } else {
+        validatedFields = OfferPricingFormSchema.safeParse(normalizedData);
+    }
     console.log("Add Offer validation result:", validatedFields);
 
 
@@ -33,6 +41,13 @@ export async function addOffer(
         console.log("Add Offer validation errors:", validatedFields.error.flatten().fieldErrors);
         return {
             errors: validatedFields.error.flatten().fieldErrors,
+            values: normalizedData as AddOfferFormState['values']
+        };
+    }
+
+    if (detailsPart) {
+        return {
+            errors: {},
             values: normalizedData as AddOfferFormState['values']
         };
     }
