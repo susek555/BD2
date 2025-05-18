@@ -68,12 +68,10 @@ func (s *Scheduler) Run(ctx context.Context) {
 			return
 		case item := <-s.addCh:
 			log.Printf("scheduler: adding auction %s", item.AuctionID)
-			s.mu.Lock()
 			heap.Push(&s.heap, item)
 			s.mu.Unlock()
 		case <-timerC:
 			log.Printf("scheduler: closing auction %s", s.heap[0].AuctionID)
-			s.mu.Lock()
 			next := heap.Pop(&s.heap).(*Item)
 			s.mu.Unlock()
 			s.closeAuction(ctx, next.AuctionID)
