@@ -2,8 +2,8 @@
 package main
 
 import (
+	"context"
 	"log"
-
 
 	"github.com/gin-contrib/cors"
 	"github.com/susek555/BD2/car-dealer-api/pkg/middleware"
@@ -22,6 +22,8 @@ func init() {
 	initializers.LoadEnvVariables()
 	initializers.ConnectToDatabase()
 	initializers.MigrateModels()
+	initializers.ConnectToRedis(context.Background())
+	initializers.InitializeScheduler()
 }
 
 // @title			Car‑Dealer API
