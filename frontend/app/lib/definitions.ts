@@ -108,27 +108,45 @@ export type RangeFieldData = {
 // SearchParams
 
 export type SearchParams = {
-  query?: string;
-  page?: number;
-  orderKey?: string;
-  isOrderDesc?: boolean;
-  offerType?: string;
-  producers?: string[];
-  gearboxes?: string[];
-  fuelTypes?: string[];
-  price?: {
-    min?: number;
-    max?: number;
+  query?: string | null;
+  pagination: {
+    page: number | null;
+    page_size: number | null;
+  }
+  order_key?: string | null;
+  is_order_desc?: boolean | null;
+  offer_type?: string | null;
+  manufacturers?: string[] | null;
+  models?: string[] | null;
+  drives?: string[] | null;
+  colors?: string[] | null;
+  transmissions?: string[] | null;
+  fuel_types?: string[] | null;
+  price_range?: {
+    min?: number | null;
+    max?: number | null;
   };
-  mileage?: {
-    min?: number;
-    max?: number;
+  mileage_range?: {
+    min?: number | null;
+    max?: number | null;
   };
-  year?: {
-    min?: number;
-    max?: number;
+  year_range?: {
+    min?: number | null;
+    max?: number | null;
   };
-};
+  engine_power_range?: {
+    min?: number | null;
+    max?: number | null;
+  };
+  engine_capacity_range?: {
+    min?: number | null;
+    max?: number | null;
+  };
+  // offer_creation_date_range: {
+  //   min: string | null;
+  //   max: string | null;
+  // };
+}
 
 export const parseIntOrUndefined = (
   value: string | undefined,

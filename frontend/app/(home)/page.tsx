@@ -22,6 +22,9 @@ export default async function Home(props: {
     isSortDesc?: string;
     offerType?: string;
     Producer?: string[];
+    Model?: string[];
+    Color?: string[];
+    Drive?: string[];
     Gearbox?: string[];
     Fuel?: string[];
     Price_min?: string;
@@ -30,34 +33,72 @@ export default async function Home(props: {
     Mileage_max?: string;
     Productionyear_min?: string;
     Productionyear_max?: string;
+    Enginecapacity_min?: string;
+    Enginecapacity_max?: string;
+    Enginepower_min?: string;
+    Enginepower_max?: string;
   }>;
 }) {
   const searchParams = await props.searchParams;
 
   const params: SearchParams = searchParams
-    ? {
-        query: searchParams.query,
-        page: parseIntOrUndefined(searchParams.page),
-        orderKey: searchParams.sortKey,
-        isOrderDesc: searchParams.isSortDesc === 'true',
-        offerType: searchParams.offerType,
-        producers: parseArrayOrUndefined(searchParams.Producer),
-        gearboxes: parseArrayOrUndefined(searchParams.Gearbox),
-        fuelTypes: parseArrayOrUndefined(searchParams.Fuel),
-        price: {
-          min: parseIntOrUndefined(searchParams.Price_min),
-          max: parseIntOrUndefined(searchParams.Price_max),
-        },
-        mileage: {
-          min: parseIntOrUndefined(searchParams.Mileage_min),
-          max: parseIntOrUndefined(searchParams.Mileage_max),
-        },
-        year: {
-          min: parseIntOrUndefined(searchParams.Productionyear_min),
-          max: parseIntOrUndefined(searchParams.Productionyear_max),
-        },
-      }
-    : {};
+  ? {
+      query: searchParams.query,
+      pagination: {
+        page: searchParams.page ? parseInt(searchParams.page || "1", 10) : null,
+        page_size: 6,
+      },
+      order_key: searchParams.sortKey || null,
+      is_order_desc: searchParams.isSortDesc === "true" ? true : null,
+      offer_type: searchParams.offerType || null,
+      manufacturers: parseArrayOrUndefined(searchParams.Producer),
+      models: parseArrayOrUndefined(searchParams.Model),
+      colors: parseArrayOrUndefined(searchParams.Color),
+      transmissions: parseArrayOrUndefined(searchParams.Gearbox),
+      fuel_types: parseArrayOrUndefined(searchParams.Fuel),
+      drives: parseArrayOrUndefined(searchParams.Drive),
+      price_range: {
+        min: parseIntOrUndefined(searchParams.Price_min),
+        max: parseIntOrUndefined(searchParams.Price_max),
+      },
+      mileage_range: {
+        min: parseIntOrUndefined(searchParams.Mileage_min),
+        max: parseIntOrUndefined(searchParams.Mileage_max),
+      },
+      year_range: {
+        min: parseIntOrUndefined(searchParams.Productionyear_min),
+        max: parseIntOrUndefined(searchParams.Productionyear_max),
+      },
+      engine_capacity_range: {
+        min: parseIntOrUndefined(searchParams.Enginecapacity_min),
+        max: parseIntOrUndefined(searchParams.Enginecapacity_max),
+      },
+      engine_power_range: {
+        min: parseIntOrUndefined(searchParams.Enginepower_min),
+        max: parseIntOrUndefined(searchParams.Enginepower_max),
+      },
+    }
+  : {
+    query: null,
+    pagination: {
+      page: null,
+      page_size: 6,
+    },
+    order_key: null,
+    is_order_desc: null,
+    offer_type: null,
+    manufacturers: null,
+    models: null,
+    colors: null,
+    drives: null,
+    transmissions: null,
+    fuel_types: null,
+    price_range: { min: null, max: null },
+    mileage_range: { min: null, max: null },
+    year_range: { min: null, max: null },
+    engine_capacity_range: { min: null, max: null },
+    engine_power_range: { min: null, max: null },
+    };
 
   console.log('Search Params:', params);
 
