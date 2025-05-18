@@ -13,7 +13,6 @@ type CreateSaleOfferDTO struct {
 	Price              uint                    `json:"price"`
 	Margin             MarginValue             `json:"margin"`
 	Vin                string                  `json:"vin"`
-	DateOfIssue        time.Time               `json:"date_of_issue"`
 	ProductionYear     uint                    `json:"production_year"`
 	Mileage            uint                    `json:"mileage"`
 	NumberOfDoors      uint                    `json:"number_of_doors"`
