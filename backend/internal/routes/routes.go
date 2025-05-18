@@ -151,13 +151,10 @@ func registerSaleOfferRoutes(router *gin.Engine) {
 }
 
 func registerAuctionRoutes(router *gin.Engine) {
-	ctx := context.Background()
 	verifier, _ := initializeVerifier()
-	scheduler := initializers.Sched
-	go scheduler.Run(ctx)
 	auctionRepo := auction.NewAuctionRepository(initializers.DB)
 	auctionService := auction.NewAuctionService(auctionRepo)
-	auctionHandler := auction.NewHandler(auctionService, scheduler)
+	auctionHandler := auction.NewHandler(auctionService, initializers.Sched)
 	auctionRoutes := router.Group("/auction")
 	auctionRoutes.GET("/", auctionHandler.GetAllAuctions)
 	auctionRoutes.GET("/:id", auctionHandler.GetAuctionById)
