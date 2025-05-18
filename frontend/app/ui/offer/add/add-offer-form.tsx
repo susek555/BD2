@@ -371,6 +371,7 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                         </>
                     )}
 
+                    <button type="button" className="bg-blue-600 text-white rounded p-2" onClick={() => setDetailsPart(true)}>Back to Details</button>
                     <button type="submit" className="bg-blue-600 text-white rounded p-2">Add Offer</button>
                 </>
             </div>
