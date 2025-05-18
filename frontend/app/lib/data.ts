@@ -133,30 +133,45 @@ export async function fetchFilterFields() : Promise<FilterFieldData[]> {
 
 // Ranges
 
-export function prepareRangeFields(): RangeFieldData[] {
-  const data: RangeFieldData[] = [
-    {
-      fieldName: 'Production year',
-      range: {
-        min: null,
-        max: null,
-      },
-    },
-    {
-      fieldName: 'Mileage',
-      range: {
-        min: null,
-        max: null,
-      },
-    },
-    {
-      fieldName: 'Price',
-      range: {
-        min: null,
-        max: null,
-      },
-    },
-  ];
+export function prepareRangeFields() : RangeFieldData[] {
+    const data: RangeFieldData[] =
+    [
+        {
+            fieldName: "Production year",
+            range: {
+                min: null,
+                max: null
+            }
+        },
+        {
+            fieldName: "Mileage",
+            range: {
+                min: null,
+                max: null
+            }
+        },
+        {
+            fieldName: "Price",
+            range: {
+                min: null,
+                max: null
+            }
+        },
+        {
+            fieldName: "Engine capacity",
+            range: {
+                min: null,
+                max: null
+            }
+        },
+        {
+            fieldName: "Engine power",
+            range: {
+                min: null,
+                max: null
+            }
+        }
+    ];
 
   return data;
 }
