@@ -104,7 +104,7 @@ func withCompanyField(opt u.Option[user.Company]) u.Option[user.User] {
 	}
 }
 
-func doesUserAndRetrieveUserDTOsMatch(user user.User, dto user.RetrieveUserDTO) bool {
+func doUserAndRetrieveUserDTOsMatch(user user.User, dto user.RetrieveUserDTO) bool {
 	if user.ID != dto.ID || user.Username != dto.Username || user.Email != dto.Email {
 		return false
 	}

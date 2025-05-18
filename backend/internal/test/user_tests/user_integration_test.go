@@ -40,7 +40,7 @@ func TestGetAllUsers_SinglePerson(t *testing.T) {
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
 	assert.Equal(t, len(got), len(seedUsers))
-	assert.Equal(t, doesUserAndRetrieveUserDTOsMatch(seedUsers[0], got[0]), true)
+	assert.Equal(t, doUserAndRetrieveUserDTOsMatch(seedUsers[0], got[0]), true)
 }
 
 func TestGetAllUsers_SingleCopany(t *testing.T) {
@@ -53,7 +53,7 @@ func TestGetAllUsers_SingleCopany(t *testing.T) {
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
 	assert.Equal(t, len(got), len(seedUsers))
-	assert.Equal(t, doesUserAndRetrieveUserDTOsMatch(seedUsers[0], got[0]), true)
+	assert.Equal(t, doUserAndRetrieveUserDTOsMatch(seedUsers[0], got[0]), true)
 }
 
 func TestGetAllUsers_MultiplePeople(t *testing.T) {
@@ -67,7 +67,7 @@ func TestGetAllUsers_MultiplePeople(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, len(got), len(seedUsers))
 	for i := range len(seedUsers) {
-		assert.Equal(t, doesUserAndRetrieveUserDTOsMatch(seedUsers[i], got[i]), true)
+		assert.Equal(t, doUserAndRetrieveUserDTOsMatch(seedUsers[i], got[i]), true)
 	}
 }
 
@@ -82,7 +82,7 @@ func TestGetAllUsers_MultipleCompanies(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, len(got), len(seedUsers))
 	for i := range len(seedUsers) {
-		assert.Equal(t, doesUserAndRetrieveUserDTOsMatch(seedUsers[i], got[i]), true)
+		assert.Equal(t, doUserAndRetrieveUserDTOsMatch(seedUsers[i], got[i]), true)
 	}
 }
 
@@ -97,7 +97,7 @@ func TestGetAllUsers_Mixed(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, len(got), len(seedUsers))
 	for i := range len(seedUsers) {
-		assert.Equal(t, doesUserAndRetrieveUserDTOsMatch(seedUsers[i], got[i]), true)
+		assert.Equal(t, doUserAndRetrieveUserDTOsMatch(seedUsers[i], got[i]), true)
 	}
 }
 
@@ -162,7 +162,7 @@ func TestGetUserByID_Person(t *testing.T) {
 	var got user.RetrieveUserDTO
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
-	assert.Equal(t, doesUserAndRetrieveUserDTOsMatch(seedUsers[0], got), true)
+	assert.Equal(t, doUserAndRetrieveUserDTOsMatch(seedUsers[0], got), true)
 }
 
 func TestGetUserByID_Company(t *testing.T) {
@@ -174,7 +174,7 @@ func TestGetUserByID_Company(t *testing.T) {
 	var got user.RetrieveUserDTO
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
-	assert.Equal(t, doesUserAndRetrieveUserDTOsMatch(seedUsers[0], got), true)
+	assert.Equal(t, doUserAndRetrieveUserDTOsMatch(seedUsers[0], got), true)
 }
 
 // -----------------------
@@ -214,7 +214,7 @@ func TestGetUserByEmail_Person(t *testing.T) {
 	var got user.RetrieveUserDTO
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
-	assert.Equal(t, doesUserAndRetrieveUserDTOsMatch(seedUsers[0], got), true)
+	assert.Equal(t, doUserAndRetrieveUserDTOsMatch(seedUsers[0], got), true)
 }
 
 func TestGetUserByEmail_Company(t *testing.T) {
@@ -226,7 +226,7 @@ func TestGetUserByEmail_Company(t *testing.T) {
 	var got user.RetrieveUserDTO
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
-	assert.Equal(t, doesUserAndRetrieveUserDTOsMatch(seedUsers[0], got), true)
+	assert.Equal(t, doUserAndRetrieveUserDTOsMatch(seedUsers[0], got), true)
 }
 
 // -----------------
