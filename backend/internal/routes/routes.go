@@ -16,7 +16,6 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/review"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/scheduler"
 
 	"github.com/gin-gonic/gin"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auth"
@@ -38,7 +37,7 @@ func RegisterRoutes(router *gin.Engine) {
 
 func RegisterWebsocket(router *gin.Engine) (*redis.Client, *auctionws.Hub) {
 	ctx := context.Background()
-	redisClient := initializers.ConnectToRedis(ctx)
+	redisClient := initializers.RedisClient
 
 	hub := auctionws.NewHub()
 	go hub.Run()
@@ -154,7 +153,7 @@ func registerSaleOfferRoutes(router *gin.Engine) {
 func registerAuctionRoutes(router *gin.Engine) {
 	ctx := context.Background()
 	verifier, _ := initializeVerifier()
-	scheduler := scheduler.NewScheduler(initializers.DB, bid.NewBidRepository(initializers.DB), initializers.ConnectToRedis(context.Background()))
+	scheduler := initializers.Sched
 	go scheduler.Run(ctx)
 	auctionRepo := auction.NewAuctionRepository(initializers.DB)
 	auctionService := auction.NewAuctionService(auctionRepo)
