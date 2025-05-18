@@ -1,4 +1,4 @@
-package auctionws
+package scheduler
 
 import "time"
 
