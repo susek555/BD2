@@ -53,7 +53,15 @@ export async function addOffer(
     }
 
 
-    return state;
+    // convert model from "producer model" to "model"
+    if ('model' in validatedFields.data) {
+        const firstSpaceIndex = validatedFields.data.model.indexOf(' ');
+        if (firstSpaceIndex !== -1) {
+            validatedFields.data.model = validatedFields.data.model.substring(firstSpaceIndex + 1);
+        }
+    }
+
+    
 
     // permanentRedirect("/");
     //TODO redirect to my offers
