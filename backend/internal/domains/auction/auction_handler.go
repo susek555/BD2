@@ -3,6 +3,7 @@ package auction
 import (
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auth"
@@ -39,6 +40,12 @@ func (h *Handler) CreateAuction(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
+	auctionID := strconv.FormatUint(uint64(dto.ID), 10)
+	dateEnd, err := time.Parse("15:04 02/01/2006", dto.DateEnd)
+	if err != nil {
+		// TODO: Do sth
+	}
+	h.sched.AddAuction(auctionID, dateEnd)
 	c.JSON(http.StatusCreated, dto)
 }
 
