@@ -6,16 +6,19 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auth"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/scheduler"
 	"github.com/susek555/BD2/car-dealer-api/pkg/custom_errors"
 )
 
 type Handler struct {
 	service AuctionServiceInterface
+	sched   scheduler.SchedulerInterface
 }
 
-func NewHandler(service AuctionServiceInterface) *Handler {
+func NewHandler(service AuctionServiceInterface, sched scheduler.SchedulerInterface) *Handler {
 	return &Handler{
 		service: service,
+		sched:   sched,
 	}
 }
 
