@@ -112,8 +112,7 @@ func registerSaleOfferRoutes(router *gin.Engine) {
 	verifier, _ := initializeVerifier()
 	saleOfferRepo := sale_offer.NewSaleOfferRepository(initializers.DB)
 	manufacturerRepo := manufacturer.NewManufacturerRepository(initializers.DB)
-	manufacturerService := manufacturer.NewManufacturerService(manufacturerRepo)
-	saleOfferService := sale_offer.NewSaleOfferService(saleOfferRepo, manufacturerService)
+	saleOfferService := sale_offer.NewSaleOfferService(saleOfferRepo, manufacturerRepo)
 	saleOfferHandler := sale_offer.NewSaleOfferHandler(saleOfferService)
 	saleOfferRoutes := router.Group("/sale-offer")
 	{
