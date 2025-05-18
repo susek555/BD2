@@ -9,7 +9,7 @@ import {
 import OffersFoundInfo from '../ui/offers-found-info';
 import OffersTable from '../ui/offers-table';
 import Pagination from '../ui/pagination';
-import { OffersFoundSkeleton, OffersTableSkeleton } from '../ui/skeletons';
+import { OffersFoundSkeleton, OffersTableSkeleton, SideBarSkeleton } from '../ui/skeletons';
 
 //TODO fix bug with filters not syncing when Home button clicked
 //TODO handle loading errors
@@ -108,7 +108,7 @@ export default async function Home(props: {
     <main>
       <div className='flex flex-grow flex-col md:flex-row'>
         <div className='h-full w-full flex-none py-4 md:w-80'>
-          <Suspense>
+          <Suspense fallback={<SideBarSkeleton />}>
             <SideBar />
           </Suspense>
         </div>

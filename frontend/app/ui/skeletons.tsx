@@ -18,6 +18,21 @@ export function OffersFoundSkeleton() {
     )
 }
 
+export function SideBarSkeleton() {
+    return (
+        <div className="flex h-full flex-col px-3 py-2 md:px-2 rounded-r-lg border-black border-[2px]">
+            <div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
+                <div className="h-20 w-full bg-gray-200 rounded animate-pulse" /> {/* OfferType */}
+                <div className="h-20 w-full bg-gray-200 rounded animate-pulse" /> {/* Sorting */}
+                <div className="h-40 w-full bg-gray-200 rounded animate-pulse" /> {/* ProducersAndModels */}
+                <div className="h-60 w-full bg-gray-200 rounded animate-pulse" /> {/* Filters */}
+                <div className="h-10 w-full bg-gray-200 rounded animate-pulse" /> {/* ApplyButton */}
+                <div className="hidden h-auto w-full grow rounded-md bg-gray-50 md:block"></div>
+            </div>
+        </div>
+    )
+};
+
 export function CarImageHomePageSkeleton() {
     return (
         <img src="/(home)/car_placeholder.png" alt="Car placeholder" className="h-35 w-70 object-cover rounded" />
