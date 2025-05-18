@@ -5,7 +5,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/generic"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
@@ -59,26 +58,16 @@ func setupDB() (*gorm.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	if err := insertRecordsIntoDB(db, MANUFACTURERS); err != nil {
+	if err := u.InsertRecordsIntoDB(db, MANUFACTURERS); err != nil {
 		return nil, err
 	}
-	if err := insertRecordsIntoDB(db, MODELS); err != nil {
+	if err := u.InsertRecordsIntoDB(db, MODELS); err != nil {
 		return nil, err
 	}
-	if err := insertRecordsIntoDB(db, USERS); err != nil {
+	if err := u.InsertRecordsIntoDB(db, USERS); err != nil {
 		return nil, err
 	}
 	return db, nil
-}
-
-func insertRecordsIntoDB[T any](db *gorm.DB, records []T) error {
-	repo := generic.GetGormRepository[T](db)
-	for _, record := range records {
-		if err := repo.Create(&record); err != nil {
-			return err
-		}
-	}
-	return nil
 }
 
 func getRepositoryWithSaleOffers(db *gorm.DB, offers []sale_offer.SaleOffer) sale_offer.SaleOfferRepositoryInterface {
@@ -134,10 +123,17 @@ func createOffer(id uint) *sale_offer.SaleOffer {
 		NumberOfGears:      6,
 		Drive:              car_params.FWD,
 		ModelID:            1,
+		Model: model.Model{
+			ID:             1,
+			Name:           MODELS[0].Name,
+			ManufacturerID: MODELS[0].ManufacturerID,
+			Manufacturer:   MANUFACTURERS[0],
+		},
 	}
 	offer := &sale_offer.SaleOffer{
 		ID:          id,
 		UserID:      1,
+		User:        &USERS[0],
 		Description: "offer",
 		Price:       1000,
 		Margin:      15,
@@ -181,5 +177,5 @@ func doSaleOfferAndRetrieveSaleOfferDTOsMatch(offer sale_offer.SaleOffer, dto sa
 		offer.Car.Mileage == dto.Mileage &&
 		offer.Car.ProductionYear == dto.ProductionYear &&
 		offer.Car.Color == dto.Color &&
-		(offer.Auction == nil) == dto.IsAuction
+		(offer.Auction != nil) == dto.IsAuction
 }
