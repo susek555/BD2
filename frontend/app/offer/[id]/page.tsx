@@ -22,6 +22,10 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     const session = await getServerSession(authConfig);
     const username = session?.user?.username;
 
+    console.log("username", username);
+    console.log("sellerName", offer.sellerName);
+    console.log("condition",  username === offer.sellerName);
+
     return (
         <>
             <div className="my-3" />
@@ -48,7 +52,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
                         </div>
                     </div>
                     <div className="my-10" />
-                        {offer.can_edit || offer.can_delete || username === offer.sellerName && (
+                        {offer.can_edit || offer.can_delete || username === offer.sellerName ? (
                             <>
                                 <OwnerView
                                     can_edit={offer.can_edit}
@@ -56,7 +60,10 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
                                     offer_id={id}
                                     isAuction={offer.isAuction}
                                 />
+                                <div className="my-5" />
                             </>
+                        ) : (
+                            <></>
                         ) }
                         <>
                             <Price data={{
