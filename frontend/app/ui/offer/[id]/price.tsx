@@ -13,12 +13,13 @@ type PriceData = {
     isAuction: boolean;
     auction?: AuctionData;
     isActive: boolean;
+    priceOnly: boolean;
 }
 
 export default async function Price( data : { data : PriceData}) {
     const session = await getServerSession(authConfig);
     const loggedIn = !!session;
-    const { id, price, isAuction, auction, isActive } = data.data;
+    const { id, price, isAuction, auction, isActive, priceOnly } = data.data;
 
     return (
         <>
@@ -38,7 +39,11 @@ export default async function Price( data : { data : PriceData}) {
                             </div>
                         </div>
                         {loggedIn ? (
-                            <BidForm currentBid={auction!.currentBid} />
+                            !priceOnly ? (
+                                <BidForm currentBid={auction!.currentBid} />
+                            ) : (
+                                <></>
+                            )
                         ) : (
                             <Link href="/login">
                                 <BasePriceButton>
@@ -52,12 +57,16 @@ export default async function Price( data : { data : PriceData}) {
                     <div className="flex justify-center items-center flex-col h-full gap-8">
                         <p className="font-bold text-3xl">{price.toString()} PLN</p>
                         {loggedIn ? (
-                            <Link href={`/offer/${id}/buynow`}>
-                                <BasePriceButton>
-                                    <p className="text-bold text-xl">Buy Now</p>
-                                    <CurrencyDollarIcon className="ml-auto w-5 text-gray-50" />
-                                </BasePriceButton>
-                            </Link>
+                            !priceOnly ? (
+                                <Link href={`/offer/${id}/buynow`}>
+                                    <BasePriceButton>
+                                        <p className="text-bold text-xl">Buy Now</p>
+                                        <CurrencyDollarIcon className="ml-auto w-5 text-gray-50" />
+                                    </BasePriceButton>
+                                </Link>
+                            ) : (
+                                <></>
+                            )
                         ) : (
                             <Link href="/login">
                                 <BasePriceButton>
@@ -78,16 +87,20 @@ export default async function Price( data : { data : PriceData}) {
             { isAuction && price && isActive ? (
                 <>
                     <div className="mt-4"></div>
-                    <div className="flex flex-col gap-4 w-full md:w-120 h-full md:h-63 border-blue-500 border-2">
+                    <div className="flex flex-col gap-4 w-full md:w-120 p-4 border-blue-500 border-2">
                         <div className="flex justify-center items-center flex-col h-full gap-8">
                             <p className="font-bold text-3xl">{price.toString()} PLN</p>
                             {loggedIn ? (
-                                <Link href={`/offer/${id}/buynow`}>
-                                    <BasePriceButton>
-                                        <p className="text-bold text-xl">Buy Now</p>
-                                        <CurrencyDollarIcon className="ml-auto w-5 text-gray-50" />
-                                    </BasePriceButton>
-                                </Link>
+                                !priceOnly ? (
+                                    <Link href={`/offer/${id}/buynow`}>
+                                        <BasePriceButton>
+                                            <p className="text-bold text-xl">Buy Now</p>
+                                            <CurrencyDollarIcon className="ml-auto w-5 text-gray-50" />
+                                        </BasePriceButton>
+                                    </Link>
+                                ) : (
+                                    <></>
+                                )
                             ) : (
                                 <Link href="/login">
                                     <BasePriceButton>

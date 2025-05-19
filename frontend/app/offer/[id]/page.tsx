@@ -48,16 +48,16 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
                         </div>
                     </div>
                     <div className="my-10" />
-                    {offer.can_edit || offer.can_delete || username === offer.sellerName? (
-                        <>
-                            <OwnerView
-                                can_edit={offer.can_edit}
-                                can_delete={offer.can_delete}
-                                offer_id={id}
-                                isAuction={offer.isAuction}
-                            />
-                        </>
-                    ) : (
+                        {offer.can_edit || offer.can_delete || username === offer.sellerName && (
+                            <>
+                                <OwnerView
+                                    can_edit={offer.can_edit}
+                                    can_delete={offer.can_delete}
+                                    offer_id={id}
+                                    isAuction={offer.isAuction}
+                                />
+                            </>
+                        ) }
                         <>
                             <Price data={{
                                 id: id,
@@ -65,9 +65,10 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
                                 isAuction: offer.isAuction,
                                 auction: offer.auctionData,
                                 isActive: offer.isActive,
+                                priceOnly: offer.can_edit || offer.can_delete || username === offer.sellerName,
                             }} />
                         </>
-                    )}
+
                     <div className="my-4" />
                     <UserDetails sellerName={offer.sellerName} />
                     {/* // TODO - maybe add google maps with location */}
