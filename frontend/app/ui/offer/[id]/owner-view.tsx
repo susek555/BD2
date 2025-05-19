@@ -1,12 +1,17 @@
 'use client'
 
-import { PencilSquareIcon } from "@heroicons/react/20/solid"
 import { BasePriceButton } from "@/app/ui/offer/[id]/price-buttons/base-price-button";
 import Link from "next/link";
+import { useState } from "react";
+import { PencilSquareIcon, TrashIcon } from "@heroicons/react/20/solid";
 
-export default function OwnerView( { can_edit, can_delete, offer_id, isAuction} : {can_edit: boolean, can_delete: boolean, offer_id: string, isAuction: boolean}) {
+export default function OwnerView({ can_edit, can_delete, offer_id, isAuction }: { can_edit: boolean, can_delete: boolean, offer_id: string, isAuction: boolean }) {
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
     function handleDelete() {
         console.log("Delete offer with ID:", offer_id);
+        //TODO
+        setShowDeleteConfirm(false);
     }
 
     return (
@@ -27,16 +32,39 @@ export default function OwnerView( { can_edit, can_delete, offer_id, isAuction} 
                         </Link>
                     )}
                     {can_delete && (
-                        <button onClick={() => handleDelete()}>
+                        <button onClick={() => setShowDeleteConfirm(true)}>
                             <BasePriceButton>
                                 <p className="text-bold text-xl">Delete</p>
-                                <PencilSquareIcon className="ml-auto w-5 text-gray-50" />
+                                <TrashIcon className="ml-auto w-5 text-gray-50" />
                             </BasePriceButton>
                         </button>
                     )}
                 </div>
             </div>
-        </>
 
+            {/* Delete Confirmation Modal */}
+            {showDeleteConfirm && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+                        <h2 className="text-xl font-bold mb-4">Confirm Delete</h2>
+                        <p className="mb-6">Are you sure you want to delete this offer? This action cannot be undone.</p>
+                        <div className="flex justify-end gap-3">
+                            <button
+                                onClick={() => setShowDeleteConfirm(false)}
+                                className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleDelete}
+                                className="px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600"
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </>
     )
 }
