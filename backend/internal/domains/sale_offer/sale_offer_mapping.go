@@ -3,6 +3,7 @@ package sale_offer
 import (
 	"time"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
 )
 
@@ -91,6 +92,11 @@ func (offer *SaleOffer) prepareAuctionValues() (*uint, *time.Time) {
 }
 
 func (dto *CreateSaleOfferDTO) validateParams() error {
+	validator := validator.New()
+	err := validator.Struct(dto)
+	if err != nil {
+		return ErrMissingFields
+	}
 	if !IsParamValid(dto.Color, car_params.Colors) {
 		return ErrInvalidColor
 	}
