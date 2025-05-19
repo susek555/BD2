@@ -13,12 +13,9 @@ type PriceData = {
     isAuction: boolean;
     auction?: AuctionData;
     isActive: boolean;
-    can_edit: boolean;
-    can_delete: boolean;
 }
 
 export default async function Price( data : { data : PriceData}) {
-
     const session = await getServerSession(authConfig);
     const loggedIn = !!session;
     const { id, price, isAuction, auction, isActive } = data.data;
@@ -26,8 +23,8 @@ export default async function Price( data : { data : PriceData}) {
     return (
         <>
             <div
-                className={`flex flex-col gap-4 w-full md:w-120 h-full md:h-63 ${
-                isAuction ? "border-blue-500 border-2" : "border-gray-300 border"
+                className={`flex flex-col gap-4 w-full md:w-120 border-2 p-4 ${
+                isAuction ? "border-blue-500" : "border-gray-300"
                 }`}
             >
                 {isActive ? (

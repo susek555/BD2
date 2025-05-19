@@ -5,6 +5,9 @@ import OfferDescription from "@/app/ui/offer/[id]/description";
 import OfferDetailsTable from "@/app/ui/offer/[id]/details-table";
 import UserDetails from "@/app/ui/offer/[id]/user-details";
 import Favourite from "@/app/ui/favourite";
+import { authConfig } from "@/app/lib/authConfig";
+import { getServerSession } from "next-auth/next";
+import OwnerView from "@/app/ui/offer/[id]/owner-view";
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
   const { params } = props;
@@ -15,6 +18,9 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   if (!offer) {
     throw new Error('Offer not found');
   }
+
+    const session = await getServerSession(authConfig);
+    const username = session?.user?.username;
 
     return (
         <>
@@ -36,19 +42,32 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
                     <div className="p-4">
                         <div className="flex flex-row gap-5">
                             <h1 className="text-3xl font-bold">{offer.name}</h1>
-                            <Favourite isFavourite={offer.is_favourite} id={id}/>
+                            {username !== offer.sellerName && (
+                                <Favourite isFavourite={offer.is_favourite} id={id}/>
+                            )}
                         </div>
                     </div>
                     <div className="my-10" />
-                    <Price data={{
-                        id: id,
-                        price: offer.price ?? 0,
-                        isAuction: offer.isAuction,
-                        auction: offer.auctionData,
-                        isActive: offer.isActive,
-                        can_delete: offer.can_delete,
-                        can_edit: offer.can_edit,
-                    }} />
+                    {offer.can_edit || offer.can_delete || username === offer.sellerName? (
+                        <>
+                            <OwnerView
+                                can_edit={offer.can_edit}
+                                can_delete={offer.can_delete}
+                                offer_id={id}
+                                isAuction={offer.isAuction}
+                            />
+                        </>
+                    ) : (
+                        <>
+                            <Price data={{
+                                id: id,
+                                price: offer.price ?? 0,
+                                isAuction: offer.isAuction,
+                                auction: offer.auctionData,
+                                isActive: offer.isActive,
+                            }} />
+                        </>
+                    )}
                     <div className="my-4" />
                     <UserDetails sellerName={offer.sellerName} />
                     {/* // TODO - maybe add google maps with location */}
