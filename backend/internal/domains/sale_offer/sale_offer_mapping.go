@@ -61,7 +61,7 @@ func (offer *SaleOffer) MapToDetailedDTO() *RetrieveDetailedSaleOfferDTO {
 		Description:        offer.Description,
 		Price:              offer.Price,
 		Margin:             offer.Margin,
-		DateOfIssue:        offer.DateOfIssue,
+		DateOfIssue:        offer.DateOfIssue.Format(LAYOUT),
 		Vin:                offer.Car.Vin,
 		ProductionYear:     offer.Car.ProductionYear,
 		Mileage:            offer.Car.Mileage,
