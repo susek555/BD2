@@ -25,5 +25,5 @@ type Car struct {
 	Drive              car_params.Drive        `json:"drive"`
 	ModelID            uint                    `json:"model_id"`
 	Model              model.Model             `gorm:"foreignKey:ModelID;references:ID;constraint:OnDelete:SET NULL,OnUpdate:CASCADE"`
-	SaleOffer          SaleOffer               `gorm:"foreignKey:OfferID;references:ID;constraint:OnDelete:CASCADE,OnUpdate;CASCADE"`
+	SaleOffer          SaleOffer               `gorm:"foreignKey:OfferID;references:ID"`
 }
