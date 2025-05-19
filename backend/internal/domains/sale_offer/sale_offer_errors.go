@@ -23,8 +23,8 @@ var (
 
 var ErrorMap = map[error]int{
 	ErrInvalidColor:         http.StatusBadRequest,
-	ErrInvalidDrive:         http.StatusBadRequest,
 	ErrInvalidFuelType:      http.StatusBadRequest,
+	ErrInvalidTransmission:  http.StatusBadRequest,
 	ErrInvalidDrive:         http.StatusBadRequest,
 	ErrInvalidSaleOfferType: http.StatusBadRequest,
 	ErrInvalidMargin:        http.StatusBadRequest,
