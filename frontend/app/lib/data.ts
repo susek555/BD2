@@ -242,7 +242,8 @@ export async function fetchHomePageData(params: SearchParams) : Promise<{totalPa
         return {
             totalPages: data.pagination.total_pages,
             totalOffers: data.pagination.total_records,
-            offers: data.offers
+            // offers: data.offers
+            offers: await fetchOffers(params)
         };
 
     } catch (error) {

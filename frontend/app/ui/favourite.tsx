@@ -2,11 +2,12 @@
 
 import { useState } from 'react';
 
-export default function Favourite({isFavourite}: {isFavourite: boolean}) {
+export default function Favourite({isFavourite, id}: {isFavourite: boolean, id: string}) {
     const [isFav, setIsFav] = useState(isFavourite);
 
     function handleChangeFavourite(newValue: boolean) {
         //TODO connect to API request
+        console.log("Favourite changed", id);
         setIsFav(newValue);
     }
 
