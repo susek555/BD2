@@ -34,11 +34,11 @@ func NewSaleOfferHandler(s SaleOfferServiceInterface) *Handler {
 //	@Tags			sale-offer
 //	@Accept			json
 //	@Produce		json
-//	@Param			offer	body		CreateSaleOfferDTO		true	"Sale offer form"
-//	@Success		201		{object}	CreateSaleOfferDTO		"Created - returns the created sale offer"
-//	@Failure		400		{object}	custom_errors.HTTPError	"Invalid input data"
-//	@Failure		401		{object}	custom_errors.HTTPError	"Unauthorized - user not logged in"
-//	@Failure		500		{object}	custom_errors.HTTPError	"Internal server error"
+//	@Param			offer	body		CreateSaleOfferDTO				true	"Sale offer form"
+//	@Success		201		{object}	RetrieveDetailedSaleOfferDTO	"Created - returns the created sale offer"
+//	@Failure		400		{object}	custom_errors.HTTPError			"Invalid input data"
+//	@Failure		401		{object}	custom_errors.HTTPError			"Unauthorized - user not logged in"
+//	@Failure		500		{object}	custom_errors.HTTPError			"Internal server error"
 //	@Router			/sale-offer [post]
 //	@Security		Bearer
 func (h *Handler) CreateSaleOffer(c *gin.Context) {
@@ -49,12 +49,12 @@ func (h *Handler) CreateSaleOffer(c *gin.Context) {
 	}
 	userID, _ := c.Get("userID")
 	offerDTO.UserID = userID.(uint)
-	dto, err := h.service.Create(offerDTO)
+	retrieveDTO, err := h.service.Create(offerDTO)
 	if err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
-	c.JSON(http.StatusCreated, dto)
+	c.JSON(http.StatusCreated, retrieveDTO)
 }
 
 // GetFilteredSaleOffers godoc
