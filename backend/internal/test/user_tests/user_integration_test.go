@@ -286,7 +286,7 @@ func TestUpdateUser_NotUniqueUsername(t *testing.T) {
 	assert.NoError(t, err)
 	token, _ := u.GetValidToken(seedUsers[0].ID, seedUsers[0].Email)
 	response, recievedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
-	assert.Equal(t, http.StatusInternalServerError, recievedStatus)
+	assert.Equal(t, http.StatusBadRequest, recievedStatus)
 	var got custom_errors.HTTPError
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -321,7 +321,7 @@ func TestUpdateUser_NotUniqueEmail(t *testing.T) {
 	assert.NoError(t, err)
 	token, _ := u.GetValidToken(seedUsers[0].ID, seedUsers[0].Email)
 	response, recievedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
-	assert.Equal(t, http.StatusInternalServerError, recievedStatus)
+	assert.Equal(t, http.StatusBadRequest, recievedStatus)
 	var got custom_errors.HTTPError
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -404,7 +404,7 @@ func TestUpdateUser_UpdateNIPAsCompanyNotUnique(t *testing.T) {
 	server, _, _ := newTestServer(seedUsers)
 	token, _ := u.GetValidToken(seedUsers[0].ID, seedUsers[0].Email)
 	response, recievedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
-	assert.Equal(t, http.StatusInternalServerError, recievedStatus)
+	assert.Equal(t, http.StatusBadRequest, recievedStatus)
 	var got custom_errors.HTTPError
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
