@@ -233,8 +233,6 @@ definitions:
     properties:
       color:
         $ref: '#/definitions/car_params.Color'
-      date_of_issue:
-        type: string
       description:
         type: string
       drive:
@@ -246,7 +244,7 @@ definitions:
       fuel_type:
         $ref: '#/definitions/car_params.FuelType'
       margin:
-        type: integer
+        $ref: '#/definitions/sale_offer.MarginValue'
       mileage:
         type: integer
       model_id:
@@ -270,6 +268,16 @@ definitions:
       vin:
         type: string
     type: object
+  sale_offer.MarginValue:
+    enum:
+    - 3
+    - 5
+    - 10
+    type: integer
+    x-enum-varnames:
+    - LOW_MARGIN
+    - MEDIUM_MARGIN
+    - HIGH_MARGIN
   sale_offer.MinMax-string:
     properties:
       max:
@@ -368,7 +376,7 @@ definitions:
       id:
         type: integer
       margin:
-        type: integer
+        $ref: '#/definitions/sale_offer.MarginValue'
       mileage:
         type: integer
       model:
@@ -656,7 +664,7 @@ paths:
       consumes:
       - application/json
       description: Get manufacturers and models map. Each manufacturer has a list
-        of models (the indexes are coresponding).
+        of models (the indices are coresponding).
       produces:
       - application/json
       responses:
@@ -1134,17 +1142,24 @@ paths:
       tags:
       - sale-offer
   /sale-offer/my-offers:
-    get:
+    post:
       consumes:
       - application/json
       description: Returns a list of all sale offers created by the logged-in user.
+      parameters:
+      - description: Pagination request
+        in: body
+        name: filter
+        required: true
+        schema:
+          $ref: '#/definitions/pagination.PaginationRequest'
       produces:
       - application/json
       responses:
         "200":
           description: List of sale offers
           schema:
-            $ref: '#/definitions/sale_offer.RetrieveSaleOfferDTO'
+            $ref: '#/definitions/sale_offer.RetrieveOffersWithPagination'
         "401":
           description: Unauthorized - user not logged in
           schema:

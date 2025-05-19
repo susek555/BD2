@@ -265,7 +265,7 @@ const docTemplate = `{
         },
         "/car/manufacturer-model-map": {
             "get": {
-                "description": "Get manufacturers and models map. Each manufacturer has a list of models (the indexes are coresponding).",
+                "description": "Get manufacturers and models map. Each manufacturer has a list of models (the indices are coresponding).",
                 "consumes": [
                     "application/json"
                 ],
@@ -955,7 +955,7 @@ const docTemplate = `{
             }
         },
         "/sale-offer/my-offers": {
-            "get": {
+            "post": {
                 "security": [
                     {
                         "Bearer": []
@@ -972,11 +972,22 @@ const docTemplate = `{
                     "sale-offer"
                 ],
                 "summary": "Get my sale offers",
+                "parameters": [
+                    {
+                        "description": "Pagination request",
+                        "name": "filter",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pagination.PaginationRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "List of sale offers",
                         "schema": {
-                            "$ref": "#/definitions/sale_offer.RetrieveSaleOfferDTO"
+                            "$ref": "#/definitions/sale_offer.RetrieveOffersWithPagination"
                         }
                     },
                     "401": {
@@ -1614,9 +1625,6 @@ const docTemplate = `{
                 "color": {
                     "$ref": "#/definitions/car_params.Color"
                 },
-                "date_of_issue": {
-                    "type": "string"
-                },
                 "description": {
                     "type": "string"
                 },
@@ -1633,7 +1641,7 @@ const docTemplate = `{
                     "$ref": "#/definitions/car_params.FuelType"
                 },
                 "margin": {
-                    "type": "integer"
+                    "$ref": "#/definitions/sale_offer.MarginValue"
                 },
                 "mileage": {
                     "type": "integer"
@@ -1669,6 +1677,19 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "sale_offer.MarginValue": {
+            "type": "integer",
+            "enum": [
+                3,
+                5,
+                10
+            ],
+            "x-enum-varnames": [
+                "LOW_MARGIN",
+                "MEDIUM_MARGIN",
+                "HIGH_MARGIN"
+            ]
         },
         "sale_offer.MinMax-string": {
             "type": "object",
@@ -1816,7 +1837,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "margin": {
-                    "type": "integer"
+                    "$ref": "#/definitions/sale_offer.MarginValue"
                 },
                 "mileage": {
                     "type": "integer"

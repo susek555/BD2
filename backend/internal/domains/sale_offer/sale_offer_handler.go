@@ -131,10 +131,11 @@ func (h *Handler) GetSaleOfferByID(c *gin.Context) {
 //	@Tags			sale-offer
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{object}	RetrieveSaleOfferDTO	"List of sale offers"
-//	@Failure		401	{object}	custom_errors.HTTPError	"Unauthorized - user not logged in"
-//	@Failure		500	{object}	custom_errors.HTTPError	"Internal server error"
-//	@Router			/sale-offer/my-offers [get]
+//	@Param			filter	body		pagination.PaginationRequest	true	"Pagination request"
+//	@Success		200		{object}	RetrieveOffersWithPagination	"List of sale offers"
+//	@Failure		401		{object}	custom_errors.HTTPError			"Unauthorized - user not logged in"
+//	@Failure		500		{object}	custom_errors.HTTPError			"Internal server error"
+//	@Router			/sale-offer/my-offers [post]
 //	@Security		Bearer
 func (h *Handler) GetMySaleOffers(c *gin.Context) {
 	var pagRequest pagination.PaginationRequest
