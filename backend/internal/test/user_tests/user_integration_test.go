@@ -21,7 +21,8 @@ import (
 func TestGetAllUsers_EmptyDatabase(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{}
-	server, _, _ := newTestServer(seedUsers)
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedUsers)
 	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/users/", nil, nil)
 	assert.Equal(t, http.StatusOK, recievedStatus)
 	var got []user.RetrieveUserDTO
@@ -33,7 +34,8 @@ func TestGetAllUsers_EmptyDatabase(t *testing.T) {
 func TestGetAllUsers_SinglePerson(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{*createPerson(1)}
-	server, _, _ := newTestServer(seedUsers)
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedUsers)
 	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/users/", nil, nil)
 	assert.Equal(t, http.StatusOK, recievedStatus)
 	var got []user.RetrieveUserDTO
@@ -46,7 +48,8 @@ func TestGetAllUsers_SinglePerson(t *testing.T) {
 func TestGetAllUsers_SingleCopany(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{*createCompany(1)}
-	server, _, _ := newTestServer(seedUsers)
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedUsers)
 	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/users/", nil, nil)
 	assert.Equal(t, http.StatusOK, recievedStatus)
 	var got []user.RetrieveUserDTO
@@ -59,7 +62,8 @@ func TestGetAllUsers_SingleCopany(t *testing.T) {
 func TestGetAllUsers_MultiplePeople(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{*createPerson(1), *createPerson(2)}
-	server, _, _ := newTestServer(seedUsers)
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedUsers)
 	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/users/", nil, nil)
 	assert.Equal(t, http.StatusOK, recievedStatus)
 	var got []user.RetrieveUserDTO
@@ -74,7 +78,8 @@ func TestGetAllUsers_MultiplePeople(t *testing.T) {
 func TestGetAllUsers_MultipleCompanies(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{*createCompany(1), *createCompany(2)}
-	server, _, _ := newTestServer(seedUsers)
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedUsers)
 	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/users/", nil, nil)
 	assert.Equal(t, http.StatusOK, recievedStatus)
 	var got []user.RetrieveUserDTO
@@ -89,7 +94,8 @@ func TestGetAllUsers_MultipleCompanies(t *testing.T) {
 func TestGetAllUsers_Mixed(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{*createPerson(1), *createCompany(2), *createPerson(3), *createCompany(4)}
-	server, _, _ := newTestServer(seedUsers)
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedUsers)
 	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/users/", nil, nil)
 	assert.Equal(t, http.StatusOK, recievedStatus)
 	var got []user.RetrieveUserDTO
@@ -108,7 +114,8 @@ func TestGetAllUsers_Mixed(t *testing.T) {
 func TestGetUserByID_EmptyDatabase(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{}
-	server, _, _ := newTestServer(seedUsers)
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedUsers)
 	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/users/id/1", nil, nil)
 	assert.Equal(t, http.StatusNotFound, recievedStatus)
 	var got custom_errors.HTTPError
@@ -120,7 +127,8 @@ func TestGetUserByID_EmptyDatabase(t *testing.T) {
 func TestGetByUserID_NonExistentID(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{*createPerson(1)}
-	server, _, _ := newTestServer(seedUsers)
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedUsers)
 	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/users/id/2", nil, nil)
 	assert.Equal(t, http.StatusNotFound, recievedStatus)
 	var got custom_errors.HTTPError
@@ -132,7 +140,8 @@ func TestGetByUserID_NonExistentID(t *testing.T) {
 func TestGetUserByID_NegativeID(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{*createPerson(1)}
-	server, _, _ := newTestServer(seedUsers)
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedUsers)
 	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/users/id/-1", nil, nil)
 	assert.Equal(t, http.StatusBadRequest, recievedStatus)
 	var got custom_errors.HTTPError
@@ -144,7 +153,8 @@ func TestGetUserByID_NegativeID(t *testing.T) {
 func TestGetUserByID_StringID(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{*createPerson(1)}
-	server, _, _ := newTestServer(seedUsers)
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedUsers)
 	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/users/id/abc", nil, nil)
 	assert.Equal(t, http.StatusBadRequest, recievedStatus)
 	var got custom_errors.HTTPError
@@ -156,7 +166,8 @@ func TestGetUserByID_StringID(t *testing.T) {
 func TestGetUserByID_Person(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{*createPerson(1)}
-	server, _, _ := newTestServer(seedUsers)
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedUsers)
 	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/users/id/1", nil, nil)
 	assert.Equal(t, http.StatusOK, recievedStatus)
 	var got user.RetrieveUserDTO
@@ -168,7 +179,8 @@ func TestGetUserByID_Person(t *testing.T) {
 func TestGetUserByID_Company(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{*createCompany(1)}
-	server, _, _ := newTestServer(seedUsers)
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedUsers)
 	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/users/id/1", nil, nil)
 	assert.Equal(t, http.StatusOK, recievedStatus)
 	var got user.RetrieveUserDTO
@@ -184,7 +196,8 @@ func TestGetUserByID_Company(t *testing.T) {
 func TestGetUserByEmail_EmptyDatabase(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{}
-	server, _, _ := newTestServer(seedUsers)
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedUsers)
 	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/users/email/john1@gmail.com", nil, nil)
 	assert.Equal(t, http.StatusNotFound, recievedStatus)
 	var got custom_errors.HTTPError
@@ -196,7 +209,8 @@ func TestGetUserByEmail_EmptyDatabase(t *testing.T) {
 func TestGetUserByEmail_NonExistentEmail(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{*createPerson(1)}
-	server, _, _ := newTestServer(seedUsers)
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedUsers)
 	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/users/email/john99@gmail.com", nil, nil)
 	assert.Equal(t, http.StatusNotFound, recievedStatus)
 	var got custom_errors.HTTPError
@@ -208,7 +222,8 @@ func TestGetUserByEmail_NonExistentEmail(t *testing.T) {
 func TestGetUserByEmail_Person(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{*createPerson(1)}
-	server, _, _ := newTestServer(seedUsers)
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedUsers)
 	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/users/email/john1@gmail.com", nil, nil)
 	assert.Equal(t, http.StatusOK, recievedStatus)
 	var got user.RetrieveUserDTO
@@ -220,7 +235,8 @@ func TestGetUserByEmail_Person(t *testing.T) {
 func TestGetUserByEmail_Company(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{*createCompany(1)}
-	server, _, _ := newTestServer(seedUsers)
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedUsers)
 	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/users/email/john1@gmail.com", nil, nil)
 	assert.Equal(t, http.StatusOK, recievedStatus)
 	var got user.RetrieveUserDTO
@@ -236,7 +252,8 @@ func TestGetUserByEmail_Company(t *testing.T) {
 func TestUpdateUser_NotAuthorized(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{*createPerson(1)}
-	server, _, _ := newTestServer(seedUsers)
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedUsers)
 	body, err := json.Marshal(user.UpdateUserDTO{ID: 1})
 	assert.NoError(t, err)
 	_, recievedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, nil)
@@ -246,7 +263,8 @@ func TestUpdateUser_NotAuthorized(t *testing.T) {
 func TestUpdateUser_Forbidden(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{*createPerson(1), *createPerson(2)}
-	server, _, _ := newTestServer(seedUsers)
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedUsers)
 	body, err := json.Marshal(user.UpdateUserDTO{ID: 2})
 	assert.NoError(t, err)
 	token, _ := u.GetValidToken(seedUsers[0].ID, seedUsers[0].Email)
@@ -261,7 +279,8 @@ func TestUpdateUser_Forbidden(t *testing.T) {
 func TestUpdateUser_UpdateUsername(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{*createPerson(1)}
-	server, db, _ := newTestServer(seedUsers)
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedUsers)
 	newUsername := "new_username"
 	body, err := json.Marshal(user.UpdateUserDTO{ID: seedUsers[0].ID, Username: &newUsername})
 	assert.NoError(t, err)
@@ -281,7 +300,8 @@ func TestUpdateUser_NotUniqueUsername(t *testing.T) {
 		*createPerson(1),
 		*u.Build(createPerson(2), u.WithField[user.User]("Username", newUsername)),
 	}
-	server, _, _ := newTestServer(seedUsers)
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedUsers)
 	body, err := json.Marshal(user.UpdateUserDTO{ID: seedUsers[0].ID, Username: &newUsername})
 	assert.NoError(t, err)
 	token, _ := u.GetValidToken(seedUsers[0].ID, seedUsers[0].Email)
@@ -296,7 +316,8 @@ func TestUpdateUser_NotUniqueUsername(t *testing.T) {
 func TestUpdateUser_UpdateEmail(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{*createPerson(1)}
-	server, db, _ := newTestServer(seedUsers)
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedUsers)
 	newEmail := "newEmail@gmail.com"
 	body, err := json.Marshal(user.UpdateUserDTO{ID: seedUsers[0].ID, Email: &newEmail})
 	assert.NoError(t, err)
@@ -316,7 +337,8 @@ func TestUpdateUser_NotUniqueEmail(t *testing.T) {
 		*createPerson(1),
 		*u.Build(createPerson(2), u.WithField[user.User]("Email", newEmail)),
 	}
-	server, _, _ := newTestServer(seedUsers)
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedUsers)
 	body, err := json.Marshal(user.UpdateUserDTO{ID: seedUsers[0].ID, Email: &newEmail})
 	assert.NoError(t, err)
 	token, _ := u.GetValidToken(seedUsers[0].ID, seedUsers[0].Email)
@@ -331,7 +353,8 @@ func TestUpdateUser_NotUniqueEmail(t *testing.T) {
 func TestUpdateUser_UpdatePassword(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{*createPerson(1)}
-	server, db, _ := newTestServer(seedUsers)
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedUsers)
 	newPassword := "new_password"
 	body, err := json.Marshal(user.UpdateUserDTO{ID: seedUsers[0].ID, Password: &newPassword})
 	assert.NoError(t, err)
@@ -347,7 +370,8 @@ func TestUpdateUser_UpdatePassword(t *testing.T) {
 func TestUpdateUser_UpdateCompanyNameAsCompany(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{*createCompany(1)}
-	server, db, _ := newTestServer(seedUsers)
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedUsers)
 	newCompanyName := "new_company_name"
 	body, err := json.Marshal(user.UpdateUserDTO{ID: seedUsers[0].ID, CompanyName: &newCompanyName})
 	assert.NoError(t, err)
@@ -363,7 +387,8 @@ func TestUpdateUser_UpdateCompanyNameAsCompany(t *testing.T) {
 func TestUpdateUser_UpdateCompanyNameAsPerson(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{*createPerson(1)}
-	server, _, _ := newTestServer(seedUsers)
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedUsers)
 	newCompanyName := "new_company_name"
 	body, err := json.Marshal(user.UpdateUserDTO{ID: seedUsers[0].ID, CompanyName: &newCompanyName})
 	assert.NoError(t, err)
@@ -379,7 +404,8 @@ func TestUpdateUser_UpdateCompanyNameAsPerson(t *testing.T) {
 func TestUpdateUser_UpdateNIPAsCompany(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{*createCompany(1)}
-	server, db, _ := newTestServer(seedUsers)
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedUsers)
 	newNIP := "1234567890"
 	body, err := json.Marshal(user.UpdateUserDTO{ID: seedUsers[0].ID, CompanyNIP: &newNIP})
 	assert.NoError(t, err)
@@ -401,7 +427,8 @@ func TestUpdateUser_UpdateNIPAsCompanyNotUnique(t *testing.T) {
 	}
 	body, err := json.Marshal(user.UpdateUserDTO{ID: seedUsers[0].ID, CompanyNIP: &newNIP})
 	assert.NoError(t, err)
-	server, _, _ := newTestServer(seedUsers)
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedUsers)
 	token, _ := u.GetValidToken(seedUsers[0].ID, seedUsers[0].Email)
 	response, recievedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
 	assert.Equal(t, http.StatusBadRequest, recievedStatus)
@@ -414,7 +441,8 @@ func TestUpdateUser_UpdateNIPAsCompanyNotUnique(t *testing.T) {
 func TestUpdateUser_UpdateNIPAsPerson(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{*createPerson(1)}
-	server, _, _ := newTestServer(seedUsers)
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedUsers)
 	newNIP := "1234567890"
 	body, err := json.Marshal(user.UpdateUserDTO{ID: seedUsers[0].ID, CompanyNIP: &newNIP})
 	assert.NoError(t, err)
@@ -430,7 +458,8 @@ func TestUpdateUser_UpdateNIPAsPerson(t *testing.T) {
 func TestUpdateUser_UpdatePersonNameAsPerson(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{*createPerson(1)}
-	server, db, _ := newTestServer(seedUsers)
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedUsers)
 	newName := "new_name"
 	body, err := json.Marshal(user.UpdateUserDTO{ID: seedUsers[0].ID, PersonName: &newName})
 	assert.NoError(t, err)
@@ -446,7 +475,8 @@ func TestUpdateUser_UpdatePersonNameAsPerson(t *testing.T) {
 func TestUpdateUser_UpdatePersonNameAsCompany(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{*createCompany(1)}
-	server, _, _ := newTestServer(seedUsers)
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedUsers)
 	newName := "new_name"
 	body, err := json.Marshal(user.UpdateUserDTO{ID: seedUsers[0].ID, PersonName: &newName})
 	assert.NoError(t, err)
@@ -462,7 +492,8 @@ func TestUpdateUser_UpdatePersonNameAsCompany(t *testing.T) {
 func TestUpdateUser_UpdatePersonSurnameAsPerson(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{*createPerson(1)}
-	server, db, _ := newTestServer(seedUsers)
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedUsers)
 	newSurname := "new_surname"
 	body, err := json.Marshal(user.UpdateUserDTO{ID: seedUsers[0].ID, PersonSurname: &newSurname})
 	assert.NoError(t, err)
@@ -478,7 +509,8 @@ func TestUpdateUser_UpdatePersonSurnameAsPerson(t *testing.T) {
 func TestUpdateUser_UpdatePersonSurnameAsCompany(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{*createCompany(1)}
-	server, _, _ := newTestServer(seedUsers)
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedUsers)
 	newSurname := "new_surname"
 	body, err := json.Marshal(user.UpdateUserDTO{ID: seedUsers[0].ID, PersonSurname: &newSurname})
 	assert.NoError(t, err)
@@ -497,7 +529,8 @@ func TestUpdateUser_UpdatePersonSurnameAsCompany(t *testing.T) {
 func TestDeleteUser_NotAuthorized(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{*createPerson(1)}
-	server, _, _ := newTestServer(seedUsers)
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedUsers)
 	_, recievedStatus := u.PerformRequest(server, http.MethodDelete, "/users/id/1", nil, nil)
 	assert.Equal(t, http.StatusUnauthorized, recievedStatus)
 }
@@ -505,7 +538,8 @@ func TestDeleteUser_NotAuthorized(t *testing.T) {
 func TestDeleteUser_Forbidden(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{*createPerson(1), *createPerson(2)}
-	server, _, _ := newTestServer(seedUsers)
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedUsers)
 	token, _ := u.GetValidToken(seedUsers[0].ID, seedUsers[0].Email)
 	response, recievedStatus := u.PerformRequest(server, http.MethodDelete, "/users/id/2", nil, &token)
 	assert.Equal(t, http.StatusForbidden, recievedStatus)
@@ -518,7 +552,8 @@ func TestDeleteUser_Forbidden(t *testing.T) {
 func TestDeleteUser_Person(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{*createPerson(1)}
-	server, db, _ := newTestServer(seedUsers)
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedUsers)
 	token, _ := u.GetValidToken(seedUsers[0].ID, seedUsers[0].Email)
 	_, recievedStatus := u.PerformRequest(server, http.MethodDelete, "/users/id/1", nil, &token)
 	assert.Equal(t, http.StatusNoContent, recievedStatus)
@@ -532,7 +567,8 @@ func TestDeleteUser_Person(t *testing.T) {
 func TestDeleteUser_Company(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{*createCompany(1)}
-	server, db, _ := newTestServer(seedUsers)
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedUsers)
 	token, _ := u.GetValidToken(seedUsers[0].ID, seedUsers[0].Email)
 	_, recievedStatus := u.PerformRequest(server, http.MethodDelete, "/users/id/1", nil, &token)
 	assert.Equal(t, http.StatusNoContent, recievedStatus)

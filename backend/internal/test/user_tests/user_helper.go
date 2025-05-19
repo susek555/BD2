@@ -46,11 +46,7 @@ func getRepositoryWithUsers(db *gorm.DB, users []user.User) user.UserRepositoryI
 	return repo
 }
 
-func newTestServer(seedUsers []user.User) (*gin.Engine, *gorm.DB, error) {
-	db, err := setupDB()
-	if err != nil {
-		return nil, nil, err
-	}
+func newTestServer(db *gorm.DB, seedUsers []user.User) (*gin.Engine, error) {
 	verifier := jwt.NewJWTVerifier(u.JWTSECRET)
 	userRepo := getRepositoryWithUsers(db, seedUsers)
 	userService := user.NewUserService(userRepo)
@@ -64,7 +60,7 @@ func newTestServer(seedUsers []user.User) (*gin.Engine, *gorm.DB, error) {
 		userRoutes.GET("/email/:email", userHandler.GetUserByEmail)
 		userRoutes.DELETE("/id/:id", middleware.Authenticate(verifier), userHandler.DeleteUser)
 	}
-	return r, db, nil
+	return r, nil
 }
 
 // ------------
