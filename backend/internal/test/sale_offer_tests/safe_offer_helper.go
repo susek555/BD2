@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/generic"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
@@ -79,11 +80,7 @@ func getRepositoryWithSaleOffers(db *gorm.DB, offers []sale_offer.SaleOffer) sal
 	return repo
 }
 
-func newTestServer(seedOffers []sale_offer.SaleOffer) (*gin.Engine, sale_offer.SaleOfferServiceInterface, error) {
-	db, err := setupDB()
-	if err != nil {
-		return nil, nil, err
-	}
+func newTestServer(db *gorm.DB, seedOffers []sale_offer.SaleOffer) (*gin.Engine, sale_offer.SaleOfferServiceInterface, error) {
 	verifier := jwt.NewJWTVerifier(u.JWTSECRET)
 	saleOfferRepo := getRepositoryWithSaleOffers(db, seedOffers)
 	manufacturerRepo := manufacturer.NewManufacturerRepository(db)
@@ -203,4 +200,10 @@ func doSaleOfferAndRetrieveSaleOfferDTOsMatch(offer sale_offer.SaleOffer, dto sa
 		offer.Car.ProductionYear == dto.ProductionYear &&
 		offer.Car.Color == dto.Color &&
 		(offer.Auction != nil) == dto.IsAuction
+}
+
+func wasEntityAddedToDB[T any](db *gorm.DB, id uint) bool {
+	repo := generic.GetGormRepository[T](db)
+	_, err := repo.GetById(id)
+	return err == nil
 }
