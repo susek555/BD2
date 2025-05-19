@@ -7,7 +7,7 @@ import (
 )
 
 type SaleOfferServiceInterface interface {
-	Create(in CreateSaleOfferDTO) error
+	Create(in CreateSaleOfferDTO) (*RetrieveDetailedSaleOfferDTO, error)
 	GetFiltered(filter *OfferFilter) (*RetrieveOffersWithPagination, error)
 	GetByID(id uint) (*RetrieveDetailedSaleOfferDTO, error)
 	GetByUserID(id uint, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error)
@@ -22,12 +22,15 @@ func NewSaleOfferService(saleOfferRepository SaleOfferRepositoryInterface, manuf
 	return &SaleOfferService{repo: saleOfferRepository, manRepo: manufacturerRepo}
 }
 
-func (s *SaleOfferService) Create(in CreateSaleOfferDTO) error {
+func (s *SaleOfferService) Create(in CreateSaleOfferDTO) (*RetrieveDetailedSaleOfferDTO, error) {
 	offer, err := in.MapToSaleOffer()
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return s.repo.Create(offer)
+	if err := s.repo.Create(offer); err != nil {
+		return nil, err
+	}
+	return s.GetByID(offer.ID)
 }
 
 func (s *SaleOfferService) GetFiltered(filter *OfferFilter) (*RetrieveOffersWithPagination, error) {
