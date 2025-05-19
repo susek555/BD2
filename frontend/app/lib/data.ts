@@ -243,6 +243,7 @@ export async function fetchHomePageData(params: SearchParams) : Promise<{totalPa
             totalPages: data.pagination.total_pages,
             totalOffers: data.pagination.total_records,
             // offers: data.offers
+            //TODO - remove mock data
             offers: await fetchOffers(params)
         };
 
