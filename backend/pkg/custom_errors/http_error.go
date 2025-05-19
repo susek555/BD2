@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/mattn/go-sqlite3"
 )
 
 type HTTPError struct {
@@ -15,6 +16,15 @@ func NewHTTPError(description string) *HTTPError {
 }
 
 func GetStatusCode(err error, errorMap map[error]int) int {
+	if err == nil {
+		return http.StatusOK
+	}
+	// TODO Replace with POSTGRESQL error handling
+	if sqliteErr, ok := err.(sqlite3.Error); ok {
+		if sqliteErr.Code == sqlite3.ErrConstraint {
+			return http.StatusBadRequest
+		}
+	}
 	if statusCode, ok := errorMap[err]; ok {
 		return statusCode
 	}
