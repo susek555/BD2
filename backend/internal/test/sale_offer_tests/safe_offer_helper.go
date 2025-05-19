@@ -79,7 +79,7 @@ func getRepositoryWithSaleOffers(db *gorm.DB, offers []sale_offer.SaleOffer) sal
 	return repo
 }
 
-func newTestServer(seedOffers []sale_offer.SaleOffer) (*gin.Engine, *gorm.DB, error) {
+func newTestServer(seedOffers []sale_offer.SaleOffer) (*gin.Engine, sale_offer.SaleOfferServiceInterface, error) {
 	db, err := setupDB()
 	if err != nil {
 		return nil, nil, err
@@ -99,7 +99,7 @@ func newTestServer(seedOffers []sale_offer.SaleOffer) (*gin.Engine, *gorm.DB, er
 		saleOfferRoutes.GET("/offer-types", saleOfferHandler.GetSaleOfferTypes)
 		saleOfferRoutes.GET("/order-keys", saleOfferHandler.GetOrderKeys)
 	}
-	return r, db, nil
+	return r, saleOfferService, nil
 }
 
 // ------------
@@ -137,7 +137,7 @@ func createOffer(id uint) *sale_offer.SaleOffer {
 		User:        &USERS[0],
 		Description: "offer",
 		Price:       1000,
-		Margin:      15,
+		Margin:      sale_offer.LOW_MARGIN,
 		DateOfIssue: time.Now(),
 		Car:         car,
 	}
@@ -168,6 +168,30 @@ func createAuctionSaleOffer(id uint) *sale_offer.SaleOffer {
 		withAuctionField(u.WithField[sale_offer.Auction]("DateEnd", time.Now())),
 		withAuctionField(u.WithField[sale_offer.Auction]("BuyNowPrice", uint(0))))
 	return &offer
+}
+
+func createSaleOfferDTO() *sale_offer.CreateSaleOfferDTO {
+	return &sale_offer.CreateSaleOfferDTO{
+		UserID:             1,
+		Description:        "offer",
+		Price:              1000,
+		Margin:             sale_offer.LOW_MARGIN,
+		Vin:                "vin",
+		ProductionYear:     2025,
+		Mileage:            1000,
+		NumberOfDoors:      4,
+		NumberOfSeats:      5,
+		EnginePower:        100,
+		EngineCapacity:     2000,
+		RegistrationNumber: "default",
+		RegistrationDate:   time.Now().Format("2006-01-02"),
+		Color:              car_params.BLACK,
+		FuelType:           car_params.PETROL,
+		Transmission:       car_params.MANUAL,
+		NumberOfGears:      6,
+		Drive:              car_params.FWD,
+		ModelID:            1,
+	}
 }
 
 func doSaleOfferAndRetrieveSaleOfferDTOsMatch(offer sale_offer.SaleOffer, dto sale_offer.RetrieveSaleOfferDTO) bool {
