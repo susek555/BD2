@@ -1,5 +1,5 @@
 import { BaseOffer } from '@/app/lib/definitions';
-import { CarImageSkeleton } from '@/app/ui/skeletons';
+import { CarImageHomePageSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
 
 export type OfferVariant = 'default' | 'history';
@@ -33,8 +33,8 @@ export default function GenericOfferCard<T extends BaseOffer = BaseOffer>({
   return (
     <div className={`flex flex-row gap-4 ${className}`}>
       <div className='p-2.5'>
-        <Suspense fallback={<CarImageSkeleton />}>
-          <CarImageSkeleton />
+        <Suspense fallback={<CarImageHomePageSkeleton />}>
+          <CarImageHomePageSkeleton />
           {/* TODO implement fetching image from internet */}
         </Suspense>
       </div>
