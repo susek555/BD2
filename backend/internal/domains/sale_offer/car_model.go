@@ -15,7 +15,7 @@ type Car struct {
 	NumberOfDoors      uint                    `json:"number_of_door" gorm:"check:number_of_doors BETWEEN 1 AND 6"`
 	NumberOfSeats      uint                    `json:"number_of_seats" gorm:"check:number_of_seats BETWEEN 2 AND 100"`
 	EnginePower        uint                    `json:"engine_power" gorm:"check:engine_power BETWEEN 1 AND 9999"`
-	EngineCapacity     uint                    `json:"engine_capacity" gorm:"check engine_capacity BETWEEN 1 AND 9000"`
+	EngineCapacity     uint                    `json:"engine_capacity" gorm:"check:engine_capacity BETWEEN 1 AND 9000"`
 	RegistrationNumber string                  `json:"registration_number"`
 	RegistrationDate   time.Time               `json:"registration_date"`
 	Color              car_params.Color        `json:"color"`
