@@ -42,10 +42,19 @@ func (h *Handler) CreateAuction(c *gin.Context) {
 		return
 	}
 	auctionID := strconv.FormatUint(uint64(dto.ID), 10)
-	dateEnd, err := time.Parse("15:04 02/01/2006", dto.DateEnd)
+	loc, err := time.LoadLocation("Europe/Warsaw")
+	if err != nil {
+		return
+	}
+	dateEndLocal, err := time.ParseInLocation(
+		"15:04 02/01/2006",
+		dto.DateEnd,
+		loc,
+	)
 	if err != nil {
 		// TODO: Do sth
 	}
+	dateEnd := dateEndLocal.UTC()
 	h.sched.AddAuction(auctionID, dateEnd)
 	log.Printf("scheduler: added %s ends %s", auctionID, dateEnd)
 	c.JSON(http.StatusCreated, dto)
