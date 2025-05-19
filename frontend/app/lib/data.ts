@@ -293,7 +293,10 @@ export async function fetchOfferDetails(id: string) : Promise<SaleOfferDetails |
                     value: "Blue"
                 }
             ],
-            sellerName: "Zwinny Ambrozy"
+            sellerName: "Zwinny Ambrozy",
+            is_favourite: true,
+            can_delete: true,
+            can_edit: true,
         };
     }
 

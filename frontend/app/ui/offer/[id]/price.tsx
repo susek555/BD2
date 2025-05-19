@@ -13,6 +13,8 @@ type PriceData = {
     isAuction: boolean;
     auction?: AuctionData;
     isActive: boolean;
+    can_edit: boolean;
+    can_delete: boolean;
 }
 
 export default async function Price( data : { data : PriceData}) {
@@ -76,7 +78,7 @@ export default async function Price( data : { data : PriceData}) {
                 )}
             </div>
             {/* If the offer is an auction and has a price, show the buy now button */}
-            { isAuction && price ? (
+            { isAuction && price && isActive ? (
                 <>
                     <div className="mt-4"></div>
                     <div className="flex flex-col gap-4 w-full md:w-120 h-full md:h-63 border-blue-500 border-2">

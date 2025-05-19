@@ -221,6 +221,9 @@ export type SaleOfferDetails = {
   description: string;
   // location: string;
   sellerName: string;
+  is_favourite: boolean;
+  can_edit: boolean;
+  can_delete: boolean;
 }
 
 export type AuctionData = {
