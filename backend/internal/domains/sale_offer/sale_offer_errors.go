@@ -8,6 +8,7 @@ import (
 )
 
 var (
+	ErrMissingFields        error = errors.New("some fields are missing - ensure that all required fields are present")
 	ErrInvalidColor         error = errors.New("invalid color")
 	ErrInvalidFuelType      error = errors.New("invalid fuel type")
 	ErrInvalidTransmission  error = errors.New("invalid transmission")
@@ -22,6 +23,7 @@ var (
 )
 
 var ErrorMap = map[error]int{
+	ErrMissingFields:        http.StatusBadRequest,
 	ErrInvalidColor:         http.StatusBadRequest,
 	ErrInvalidFuelType:      http.StatusBadRequest,
 	ErrInvalidTransmission:  http.StatusBadRequest,

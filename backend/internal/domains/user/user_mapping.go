@@ -1,6 +1,7 @@
 package user
 
 import (
+	"github.com/go-playground/validator/v10"
 	"github.com/susek555/BD2/car-dealer-api/pkg/passwords"
 )
 
@@ -9,8 +10,10 @@ func (dto *CreateUserDTO) MapToUser() (*User, error) {
 	if err != nil {
 		return nil, ErrHashPassword
 	}
-	if err := dto.validate(); err != nil {
-		return nil, err
+	validator := validator.New()
+	err = validator.Struct(dto)
+	if err != nil {
+		return nil, ErrCreateUser
 	}
 	switch dto.Selector {
 	case "P":
@@ -40,12 +43,6 @@ func (dto *CreateUserDTO) MapToUser() (*User, error) {
 	default:
 		return nil, ErrInvalidSelector
 	}
-}
-func (dto *CreateUserDTO) validate() error {
-	if dto.Username == "" || dto.Password == "" || dto.Email == "" || dto.Selector == "" {
-		return ErrCreateUser
-	}
-	return nil
 }
 func (dto *CreateUserDTO) validateP() error {
 	if dto.PersonName == nil || dto.PersonSurname == nil {
