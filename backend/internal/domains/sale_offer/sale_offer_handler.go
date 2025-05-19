@@ -49,11 +49,12 @@ func (h *Handler) CreateSaleOffer(c *gin.Context) {
 	}
 	userID, _ := c.Get("userID")
 	offerDTO.UserID = userID.(uint)
-	if err := h.service.Create(offerDTO); err != nil {
+	dto, err := h.service.Create(offerDTO)
+	if err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
-	c.JSON(http.StatusCreated, offerDTO)
+	c.JSON(http.StatusCreated, dto)
 }
 
 // GetFilteredSaleOffers godoc
@@ -94,7 +95,7 @@ func (h *Handler) GetFilteredSaleOffers(c *gin.Context) {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
-	c.JSON(http.StatusOK, *saleOffers)
+	c.JSON(http.StatusOK, saleOffers)
 }
 
 // GetSaleOfferByID godoc
