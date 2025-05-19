@@ -293,10 +293,10 @@ export async function fetchOfferDetails(id: string) : Promise<SaleOfferDetails |
                     value: "Blue"
                 }
             ],
-            sellerName: "msuski",
+            sellerName: "Zwinny Ambroży",
             is_favourite: true,
-            can_delete: true,
-            can_edit: true,
+            can_delete: false,
+            can_edit: false,
         };
     }
 

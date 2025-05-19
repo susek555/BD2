@@ -32,12 +32,10 @@ export default function OwnerView({ can_edit, can_delete, offer_id, isAuction }:
                         </Link>
                     )}
                     {can_delete && (
-                        <button onClick={() => setShowDeleteConfirm(true)}>
-                            <BasePriceButton>
-                                <p className="text-bold text-xl">Delete</p>
-                                <TrashIcon className="ml-auto w-5 text-gray-50" />
-                            </BasePriceButton>
-                        </button>
+                        <BasePriceButton onClick={() => setShowDeleteConfirm(true)}>
+                            <p className="text-bold text-xl">Delete</p>
+                            <TrashIcon className="ml-auto w-5 text-gray-50" />
+                        </BasePriceButton>
                     )}
                 </div>
             </div>
