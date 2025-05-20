@@ -13,7 +13,7 @@ type LikedOfferReposisotry struct {
 	DB *gorm.DB
 }
 
-func NewLikedOfferRepostiortyy(db *gorm.DB) LikedOfferReposisotryInterface {
+func NewLikedOfferRepository(db *gorm.DB) LikedOfferReposisotryInterface {
 	return &LikedOfferReposisotry{DB: db}
 }
 
