@@ -38,6 +38,7 @@ type RetrieveSaleOfferDTO struct {
 	ProductionYear uint             `json:"production_year"`
 	Color          car_params.Color `json:"color"`
 	IsAuction      bool             `json:"is_auction"`
+	IsLiked        bool             `json:"is_liked"`
 }
 
 type RetrieveDetailedSaleOfferDTO struct {
@@ -65,6 +66,8 @@ type RetrieveDetailedSaleOfferDTO struct {
 	Model              string                  `json:"model"`
 	DateEnd            *time.Time              `json:"date_end,omitempty"`
 	BuyNowPrice        *uint                   `json:"buy_now_price,omitempty"`
+	IsAuction          bool                    `json:"is_auction"`
+	IsLiked            bool                    `json:"is_liked"`
 }
 
 type RetrieveOffersWithPagination struct {

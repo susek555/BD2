@@ -81,6 +81,7 @@ func (offer *SaleOffer) MapToDetailedDTO() *RetrieveDetailedSaleOfferDTO {
 		Model:              offer.Car.Model.Name,
 		DateEnd:            endDate,
 		BuyNowPrice:        buyNow,
+		IsAuction:          offer.Auction != nil,
 	}
 }
 
