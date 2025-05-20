@@ -1,5 +1,5 @@
 import { registerResult, registerUser } from "@/app/lib/api/auth";
-import { SignupFormSchema, SignupFormState } from "@/app/lib/definitions/reviews";
+import { SignupFormSchema, SignupFormState } from "@/app/lib/definitions/signup";
 import { permanentRedirect } from "next/navigation";
 
 
