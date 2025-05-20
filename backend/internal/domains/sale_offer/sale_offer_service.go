@@ -1,6 +1,7 @@
 package sale_offer
 
 import (
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/liked_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
 	"github.com/susek555/BD2/car-dealer-api/pkg/mapping"
 	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
@@ -14,8 +15,9 @@ type SaleOfferServiceInterface interface {
 }
 
 type SaleOfferService struct {
-	repo    SaleOfferRepositoryInterface
-	manRepo manufacturer.ManufacturerRepositoryInterface
+	repo           SaleOfferRepositoryInterface
+	manRepo        manufacturer.ManufacturerRepositoryInterface
+	likedOfferRepo liked_offer.LikedOfferReposisotry
 }
 
 func NewSaleOfferService(saleOfferRepository SaleOfferRepositoryInterface, manufacturerRepo manufacturer.ManufacturerRepositoryInterface) SaleOfferServiceInterface {
@@ -35,7 +37,6 @@ func (s *SaleOfferService) Create(in CreateSaleOfferDTO) (*RetrieveDetailedSaleO
 
 func (s *SaleOfferService) GetFiltered(filter *OfferFilter) (*RetrieveOffersWithPagination, error) {
 	manufacturers, err := s.manRepo.GetAll()
-
 	if err != nil {
 		return nil, err
 	}
@@ -44,8 +45,8 @@ func (s *SaleOfferService) GetFiltered(filter *OfferFilter) (*RetrieveOffersWith
 	if err != nil {
 		return nil, err
 	}
-	offersDTOs := mapping.MapSliceToDTOs(offers, (*SaleOffer).MapToDTO)
-	return &RetrieveOffersWithPagination{Offers: offersDTOs, PaginationResponse: pagResponse}, nil
+	offerDTOs := s.mapSliceWithIsLikedField(offers)
+	return &RetrieveOffersWithPagination{Offers: offerDTOs, PaginationResponse: pagResponse}, nil
 }
 
 func (s *SaleOfferService) GetByID(id uint) (*RetrieveDetailedSaleOfferDTO, error) {
@@ -54,6 +55,7 @@ func (s *SaleOfferService) GetByID(id uint) (*RetrieveDetailedSaleOfferDTO, erro
 		return nil, err
 	}
 	offerDTO := offer.MapToDetailedDTO()
+	offerDTO.IsLiked = s.likedOfferRepo.IsOfferLikedByUser(offer.ID, offer.UserID)
 	return offerDTO, nil
 }
 
@@ -62,6 +64,16 @@ func (s *SaleOfferService) GetByUserID(id uint, pagRequest *pagination.Paginatio
 	if err != nil {
 		return nil, err
 	}
-	offersDTOs := mapping.MapSliceToDTOs(offers, (*SaleOffer).MapToDTO)
-	return &RetrieveOffersWithPagination{Offers: offersDTOs, PaginationResponse: pagResponse}, nil
+	offerDTOs := s.mapSliceWithIsLikedField(offers)
+	return &RetrieveOffersWithPagination{Offers: offerDTOs, PaginationResponse: pagResponse}, nil
+}
+
+func (s *SaleOfferService) mapSliceWithIsLikedField(offers []SaleOffer) []RetrieveSaleOfferDTO {
+	offerDTOs := make([]RetrieveSaleOfferDTO, 0, len(offers))
+	for _, offer := range offers {
+		dto := offer.MapToDTO()
+		dto.IsLiked = s.likedOfferRepo.IsOfferLikedByUser(offer.ID, offer.UserID)
+		offerDTOs = append(offerDTOs, *dto)
+	}
+	return offerDTOs
 }
