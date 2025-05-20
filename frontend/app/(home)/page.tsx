@@ -41,64 +41,42 @@ export default async function Home(props: {
 }) {
   const searchParams = await props.searchParams;
 
-  const params: SearchParams = searchParams
-  ? {
-      query: searchParams.query,
-      pagination: {
-        page: searchParams.page ? parseInt(searchParams.page || "1", 10) : 1,
-        page_size: 6,
-      },
-      order_key: searchParams.sortKey || null,
-      is_order_desc: searchParams.isSortDesc === "true" ? true : null,
-      offer_type: searchParams.offerType || null,
-      manufacturers: parseArrayOrUndefined(searchParams.Producers),
-      models: parseArrayOrUndefined(searchParams.Models),
-      colors: parseArrayOrUndefined(searchParams.Colors),
-      transmissions: parseArrayOrUndefined(searchParams.Gearboxes),
-      fuel_types: parseArrayOrUndefined(searchParams.Fueltypes),
-      drives: parseArrayOrUndefined(searchParams.Drivetypes),
-      price_range: {
-        min: parseIntOrUndefined(searchParams.Price_min),
-        max: parseIntOrUndefined(searchParams.Price_max),
-      },
-      mileage_range: {
-        min: parseIntOrUndefined(searchParams.Mileage_min),
-        max: parseIntOrUndefined(searchParams.Mileage_max),
-      },
-      year_range: {
-        min: parseIntOrUndefined(searchParams.Productionyear_min),
-        max: parseIntOrUndefined(searchParams.Productionyear_max),
-      },
-      engine_capacity_range: {
-        min: parseIntOrUndefined(searchParams.Enginecapacity_min),
-        max: parseIntOrUndefined(searchParams.Enginecapacity_max),
-      },
-      engine_power_range: {
-        min: parseIntOrUndefined(searchParams.Enginepower_min),
-        max: parseIntOrUndefined(searchParams.Enginepower_max),
-      },
-    }
-  : {
-    query: null,
+  const params: SearchParams = {
+    query: searchParams?.query,
     pagination: {
-      page: 1,
+      page: searchParams?.page ? parseInt(searchParams.page, 10) : 1,
       page_size: 6,
     },
-    order_key: null,
-    is_order_desc: null,
-    offer_type: null,
-    manufacturers: null,
-    models: null,
-    colors: null,
-    drives: null,
-    transmissions: null,
-    fuel_types: null,
-    price_range: { min: null, max: null },
-    mileage_range: { min: null, max: null },
-    year_range: { min: null, max: null },
-    engine_capacity_range: { min: null, max: null },
-    engine_power_range: { min: null, max: null },
-    };
+    order_key: searchParams?.sortKey,
+    is_order_desc: searchParams?.isSortDesc === "true" ? true : undefined,
+    offer_type: searchParams?.offerType,
+    manufacturers: parseArrayOrUndefined(searchParams?.Producers),
+    models: parseArrayOrUndefined(searchParams?.Models),
+    colors: parseArrayOrUndefined(searchParams?.Colors),
+    transmissions: parseArrayOrUndefined(searchParams?.Gearboxes),
+    fuel_types: parseArrayOrUndefined(searchParams?.Fueltypes),
+    drives: parseArrayOrUndefined(searchParams?.Drivetypes),
+    price_range: parseIntOrUndefined(searchParams?.Price_min) || parseIntOrUndefined(searchParams?.Price_max) ? {
+      min: parseIntOrUndefined(searchParams?.Price_min),
+      max: parseIntOrUndefined(searchParams?.Price_max),
+    } : undefined,
+    mileage_range: parseIntOrUndefined(searchParams?.Mileage_min) || parseIntOrUndefined(searchParams?.Mileage_max) ? {
+      min: parseIntOrUndefined(searchParams?.Mileage_min),
+      max: parseIntOrUndefined(searchParams?.Mileage_max),
+    } : undefined,
+    year_range: parseIntOrUndefined(searchParams?.Productionyear_min) || parseIntOrUndefined(searchParams?.Productionyear_max) ? {
+      min: parseIntOrUndefined(searchParams?.Productionyear_min),
+      max: parseIntOrUndefined(searchParams?.Productionyear_max),
+    } : undefined,
+    engine_capacity_range: parseIntOrUndefined(searchParams?.Enginecapacity_min) || parseIntOrUndefined(searchParams?.Enginecapacity_max) ? {
+      min: parseIntOrUndefined(searchParams?.Enginecapacity_min),
+      max: parseIntOrUndefined(searchParams?.Enginecapacity_max),
+    } : undefined,
+    engine_power_range: parseIntOrUndefined(searchParams?.Enginepower_min) || parseIntOrUndefined(searchParams?.Enginepower_max) ? {
+      min: parseIntOrUndefined(searchParams?.Enginepower_min),
+      max: parseIntOrUndefined(searchParams?.Enginepower_max),
+    } : undefined,
+  };
 
   console.log('Search Params:', params);
 

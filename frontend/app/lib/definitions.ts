@@ -108,39 +108,39 @@ export type RangeFieldData = {
 // SearchParams
 
 export type SearchParams = {
-  query?: string | null;
+  query?: string;
   pagination: {
-    page: number | null;
-    page_size: number | null;
+    page: number;
+    page_size: number;
   }
-  order_key?: string | null;
-  is_order_desc?: boolean | null;
-  offer_type?: string | null;
-  manufacturers?: string[] | null;
-  models?: string[] | null;
-  drives?: string[] | null;
-  colors?: string[] | null;
-  transmissions?: string[] | null;
-  fuel_types?: string[] | null;
+  order_key?: string;
+  is_order_desc?: boolean;
+  offer_type?: string;
+  manufacturers?: string[];
+  models?: string[];
+  drives?: string[];
+  colors?: string[];
+  transmissions?: string[];
+  fuel_types?: string[];
   price_range?: {
-    min?: number | null;
-    max?: number | null;
+    min?: number;
+    max?: number;
   };
   mileage_range?: {
-    min?: number | null;
-    max?: number | null;
+    min?: number;
+    max?: number;
   };
   year_range?: {
-    min?: number | null;
-    max?: number | null;
+    min?: number;
+    max?: number;
   };
   engine_power_range?: {
-    min?: number | null;
-    max?: number | null;
+    min?: number;
+    max?: number;
   };
   engine_capacity_range?: {
-    min?: number | null;
-    max?: number | null;
+    min?: number;
+    max?: number;
   };
   // offer_creation_date_range: {
   //   min: string | null;

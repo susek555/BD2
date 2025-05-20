@@ -57,7 +57,6 @@ export default function Filters({
 
   return (
     <div>
-      <h2 className='mb-2 text-sm font-semibold text-gray-700'>Filters</h2>
       <div className='space-y-3'>
         {filters.map((filter, index) => (
           <BaseFilterTemplate
