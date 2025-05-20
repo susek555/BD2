@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/car"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
 )
 
@@ -21,7 +22,7 @@ func (dto *CreateSaleOfferDTO) MapToSaleOffer() (*SaleOffer, error) {
 		Price:       dto.Price,
 		Margin:      dto.Margin,
 		DateOfIssue: time.Now().UTC(),
-		Car: &Car{
+		Car: &car.Car{
 			Vin:                dto.Vin,
 			ProductionYear:     dto.ProductionYear,
 			Mileage:            dto.Mileage,

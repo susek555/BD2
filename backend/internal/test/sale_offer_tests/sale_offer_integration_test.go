@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/car"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 	u "github.com/susek555/BD2/car-dealer-api/internal/test/test_utils"
@@ -159,7 +160,7 @@ func TestCreateOffer_ValidNumberOfDoors(t *testing.T) {
 	offer, err := svc.GetByID(1)
 	assert.NoError(t, err)
 	assert.Equal(t, *offer, got)
-	assert.True(t, wasEntityAddedToDB[sale_offer.Car](db, uint(1)))
+	assert.True(t, wasEntityAddedToDB[car.Car](db, uint(1)))
 	assert.False(t, wasEntityAddedToDB[sale_offer.Auction](db, uint(1)))
 }
 
@@ -214,7 +215,7 @@ func TestCreateOffer_ValidNumberOfSeats(t *testing.T) {
 	offer, err := svc.GetByID(1)
 	assert.NoError(t, err)
 	assert.Equal(t, *offer, got)
-	assert.True(t, wasEntityAddedToDB[sale_offer.Car](db, uint(1)))
+	assert.True(t, wasEntityAddedToDB[car.Car](db, uint(1)))
 	assert.False(t, wasEntityAddedToDB[sale_offer.Auction](db, uint(1)))
 }
 
@@ -268,7 +269,7 @@ func TestCreateOffer_ValidEnginePower(t *testing.T) {
 	offer, err := svc.GetByID(1)
 	assert.NoError(t, err)
 	assert.Equal(t, *offer, got)
-	assert.True(t, wasEntityAddedToDB[sale_offer.Car](db, uint(1)))
+	assert.True(t, wasEntityAddedToDB[car.Car](db, uint(1)))
 	assert.False(t, wasEntityAddedToDB[sale_offer.Auction](db, uint(1)))
 }
 
@@ -323,7 +324,7 @@ func TestCreateOffer_ValidEngineCapacity(t *testing.T) {
 	offer, err := svc.GetByID(1)
 	assert.NoError(t, err)
 	assert.Equal(t, *offer, got)
-	assert.True(t, wasEntityAddedToDB[sale_offer.Car](db, uint(1)))
+	assert.True(t, wasEntityAddedToDB[car.Car](db, uint(1)))
 	assert.False(t, wasEntityAddedToDB[sale_offer.Auction](db, uint(1)))
 }
 
@@ -378,7 +379,7 @@ func TestCreateOffer_ValidNumberOfGears(t *testing.T) {
 	offer, err := svc.GetByID(1)
 	assert.NoError(t, err)
 	assert.Equal(t, *offer, got)
-	assert.True(t, wasEntityAddedToDB[sale_offer.Car](db, uint(1)))
+	assert.True(t, wasEntityAddedToDB[car.Car](db, uint(1)))
 	assert.False(t, wasEntityAddedToDB[sale_offer.Auction](db, uint(1)))
 }
 
@@ -416,7 +417,7 @@ func TestCreateOffer_ValidColor(t *testing.T) {
 	offer, err := svc.GetByID(1)
 	assert.NoError(t, err)
 	assert.Equal(t, *offer, got)
-	assert.True(t, wasEntityAddedToDB[sale_offer.Car](db, uint(1)))
+	assert.True(t, wasEntityAddedToDB[car.Car](db, uint(1)))
 	assert.False(t, wasEntityAddedToDB[sale_offer.Auction](db, uint(1)))
 }
 
@@ -454,7 +455,7 @@ func TestCreateOffer_ValidFuelType(t *testing.T) {
 	offer, err := svc.GetByID(1)
 	assert.NoError(t, err)
 	assert.Equal(t, *offer, got)
-	assert.True(t, wasEntityAddedToDB[sale_offer.Car](db, uint(1)))
+	assert.True(t, wasEntityAddedToDB[car.Car](db, uint(1)))
 	assert.False(t, wasEntityAddedToDB[sale_offer.Auction](db, uint(1)))
 }
 
@@ -492,7 +493,7 @@ func TestCreateOffer_ValidTransmission(t *testing.T) {
 	offer, err := svc.GetByID(1)
 	assert.NoError(t, err)
 	assert.Equal(t, *offer, got)
-	assert.True(t, wasEntityAddedToDB[sale_offer.Car](db, uint(1)))
+	assert.True(t, wasEntityAddedToDB[car.Car](db, uint(1)))
 	assert.False(t, wasEntityAddedToDB[sale_offer.Auction](db, uint(1)))
 }
 
@@ -530,7 +531,7 @@ func TestCreateOffer_ValidDrive(t *testing.T) {
 	offer, err := svc.GetByID(1)
 	assert.NoError(t, err)
 	assert.Equal(t, *offer, got)
-	assert.True(t, wasEntityAddedToDB[sale_offer.Car](db, uint(1)))
+	assert.True(t, wasEntityAddedToDB[car.Car](db, uint(1)))
 	assert.False(t, wasEntityAddedToDB[sale_offer.Auction](db, uint(1)))
 }
 

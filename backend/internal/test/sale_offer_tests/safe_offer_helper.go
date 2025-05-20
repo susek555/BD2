@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/car"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/generic"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
@@ -53,7 +54,7 @@ func setupDB() (*gorm.DB, error) {
 		&user.User{},
 		&manufacturer.Manufacturer{},
 		&model.Model{},
-		&sale_offer.Car{},
+		&car.Car{},
 		&sale_offer.Auction{},
 		&sale_offer.SaleOffer{},
 	)
@@ -104,7 +105,7 @@ func newTestServer(db *gorm.DB, seedOffers []sale_offer.SaleOffer) (*gin.Engine,
 // ------------
 
 func createOffer(id uint) *sale_offer.SaleOffer {
-	car := &sale_offer.Car{
+	car := &car.Car{
 		OfferID:            id,
 		Vin:                "vin",
 		ProductionYear:     2025,
@@ -141,10 +142,10 @@ func createOffer(id uint) *sale_offer.SaleOffer {
 	return offer
 }
 
-func withCarField(opt u.Option[sale_offer.Car]) u.Option[sale_offer.SaleOffer] {
+func withCarField(opt u.Option[car.Car]) u.Option[sale_offer.SaleOffer] {
 	return func(offer *sale_offer.SaleOffer) {
 		if offer.Car == nil {
-			offer.Car = &sale_offer.Car{}
+			offer.Car = &car.Car{}
 		}
 		opt(offer.Car)
 	}
