@@ -44,7 +44,7 @@ func (h *Handler) GetAllUsers(c *gin.Context) {
 //	@Produce		json
 //	@Param			id	path		int						true	"User ID"
 //	@Success		200	{object}	RetrieveUserDTO			"User"
-//	@Failure		400	{object}	custom_errors.HTTPError	"Id is not a number"
+//	@Failure		400	{object}	custom_errors.HTTPError	"ID is not a number"
 //	@Failure		404	{object}	custom_errors.HTTPError	"User not found"
 //	@Failure		500	{object}	custom_errors.HTTPError	"Internal server error"
 //	@Router			/users/id/{id} [get]
@@ -87,7 +87,7 @@ func (h *Handler) GetUserByEmail(c *gin.Context) {
 // UpdateUser godoc
 //
 //	@Summary		Update user
-//	@Description	Updates user's data in database from given form. Currently you can only change basic fields (email, username, password), not the subtype.
+//	@Description	Updates user's data in database from given form. Currently, you can only change basic fields (email, username, password), not the subtype.
 //	@Tags			users
 //	@Accept			json
 //	@Produce		json
@@ -124,8 +124,8 @@ func (h *Handler) UpdateUser(c *gin.Context) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			id	path	int	true	"User ID"
-//	@Success		204	"User sucessfully deleted"
-//	@Failure		400	{object}	custom_errors.HTTPError	"Id is not a number"
+//	@Success		204	"User successfully deleted"
+//	@Failure		400	{object}	custom_errors.HTTPError	"ID is not a number"
 //	@Failure		404	{object}	custom_errors.HTTPError	"User not found"
 //	@Failure		500	{object}	custom_errors.HTTPError	"Internal server error"
 //	@Router			/users/{id} [delete]

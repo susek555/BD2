@@ -9,7 +9,7 @@ const (
 	ETHANOL  FuelType = "Ethanol"
 	LPG      FuelType = "LPG"
 	BIOFUEL  FuelType = "Biofuel"
-	HYBRID   FuelType = "Hybird"
+	HYBRID   FuelType = "Hybrid"
 	HYDROGEN FuelType = "Hydrogen"
 )
 

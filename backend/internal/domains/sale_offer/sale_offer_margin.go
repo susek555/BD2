@@ -8,4 +8,4 @@ const (
 	HIGH_MARGIN   MarginValue = 10
 )
 
-var Margins []MarginValue = []MarginValue{LOW_MARGIN, MEDIUM_MARGIN, HIGH_MARGIN}
+var Margins = []MarginValue{LOW_MARGIN, MEDIUM_MARGIN, HIGH_MARGIN}

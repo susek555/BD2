@@ -23,7 +23,7 @@ import (
 // Constants
 // ---------
 
-var MANUFACTURERS []manufacturer.Manufacturer = []manufacturer.Manufacturer{
+var MANUFACTURERS = []manufacturer.Manufacturer{
 	{ID: 1, Name: "Audi"},
 	{ID: 2, Name: "BMW"},
 	{ID: 3, Name: "Opel"},
@@ -31,7 +31,7 @@ var MANUFACTURERS []manufacturer.Manufacturer = []manufacturer.Manufacturer{
 	{ID: 5, Name: "Skoda"},
 }
 
-var MODELS []model.Model = []model.Model{
+var MODELS = []model.Model{
 	{ID: 1, Name: "A3", ManufacturerID: 1},
 	{ID: 2, Name: "M3", ManufacturerID: 2},
 	{ID: 3, Name: "Astra", ManufacturerID: 3},
@@ -39,7 +39,7 @@ var MODELS []model.Model = []model.Model{
 	{ID: 5, Name: "Octavia", ManufacturerID: 5},
 }
 
-var USERS []user.User = []user.User{
+var USERS = []user.User{
 	{ID: 1, Username: "john", Email: "john@example.com", Selector: "P"},
 	{ID: 2, Username: "jane", Email: "jane@example.com", Selector: "P"},
 }
@@ -87,8 +87,8 @@ func newTestServer(db *gorm.DB, seedOffers []sale_offer.SaleOffer) (*gin.Engine,
 	verifier := jwt.NewJWTVerifier(u.JWTSECRET)
 	saleOfferRepo := getRepositoryWithSaleOffers(db, seedOffers)
 	manufacturerRepo := manufacturer.NewManufacturerRepository(db)
-	likedOfferReposisotry := liked_offer.NewLikedOfferRepository(db)
-	saleOfferService := sale_offer.NewSaleOfferService(saleOfferRepo, manufacturerRepo, likedOfferReposisotry)
+	likedOfferRepository := liked_offer.NewLikedOfferRepository(db)
+	saleOfferService := sale_offer.NewSaleOfferService(saleOfferRepo, manufacturerRepo, likedOfferRepository)
 	saleOfferHandler := sale_offer.NewSaleOfferHandler(saleOfferService)
 	r := gin.Default()
 	saleOfferRoutes := r.Group("/sale-offer")
@@ -108,7 +108,7 @@ func newTestServer(db *gorm.DB, seedOffers []sale_offer.SaleOffer) (*gin.Engine,
 // ------------
 
 func createOffer(id uint) *sale_offer.SaleOffer {
-	car := &car.Car{
+	c := &car.Car{
 		OfferID:            id,
 		Vin:                "vin",
 		ProductionYear:     2025,
@@ -140,7 +140,7 @@ func createOffer(id uint) *sale_offer.SaleOffer {
 		Price:       1000,
 		Margin:      sale_offer.LOW_MARGIN,
 		DateOfIssue: time.Now(),
-		Car:         car,
+		Car:         c,
 	}
 	return offer
 }

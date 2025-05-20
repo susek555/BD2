@@ -6,10 +6,10 @@ type LikeOfferServiceInterface interface {
 }
 
 type LikedOfferService struct {
-	repo LikedOfferReposisotryInterface
+	repo LikedOfferRepositoryInterface
 }
 
-func NewLikedOfferService(likedOfferRepo LikedOfferReposisotryInterface) LikeOfferServiceInterface {
+func NewLikedOfferService(likedOfferRepo LikedOfferRepositoryInterface) LikeOfferServiceInterface {
 	return &LikedOfferService{repo: likedOfferRepo}
 }
 

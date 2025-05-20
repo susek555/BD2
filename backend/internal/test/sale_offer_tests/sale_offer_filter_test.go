@@ -18,7 +18,7 @@ import (
 // Pagination tests
 // ----------------
 
-func TestGetFiltered_PaginationNegaitvePage(t *testing.T) {
+func TestGetFiltered_PaginationNegativePage(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
 	repo := getRepositoryWithSaleOffers(db, offers)
@@ -157,7 +157,7 @@ func TestGetFiltered_InvalidColor(t *testing.T) {
 	db, _ := setupDB()
 	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
-	filter.Colors = &[]car_params.Color{"invaid"}
+	filter.Colors = &[]car_params.Color{"invalid"}
 	_, _, err := repo.GetFiltered(filter)
 	assert.ErrorIs(t, err, sale_offer.ErrInvalidColor)
 }
@@ -167,7 +167,7 @@ func TestGetFiltered_InvalidDrive(t *testing.T) {
 	db, _ := setupDB()
 	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
-	filter.Drives = &[]car_params.Drive{"invaid"}
+	filter.Drives = &[]car_params.Drive{"invalid"}
 	_, _, err := repo.GetFiltered(filter)
 	assert.ErrorIs(t, err, sale_offer.ErrInvalidDrive)
 }
@@ -177,7 +177,7 @@ func TestGetFiltered_InvalidFuelType(t *testing.T) {
 	db, _ := setupDB()
 	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
-	filter.FuelTypes = &[]car_params.FuelType{"invaid"}
+	filter.FuelTypes = &[]car_params.FuelType{"invalid"}
 	_, _, err := repo.GetFiltered(filter)
 	assert.ErrorIs(t, err, sale_offer.ErrInvalidFuelType)
 }
@@ -187,7 +187,7 @@ func TestGetFiltered_InvalidTransmission(t *testing.T) {
 	db, _ := setupDB()
 	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
-	filter.Transmissions = &[]car_params.Transmission{"invaid"}
+	filter.Transmissions = &[]car_params.Transmission{"invalid"}
 	_, _, err := repo.GetFiltered(filter)
 	assert.ErrorIs(t, err, sale_offer.ErrInvalidTransmission)
 }
@@ -319,7 +319,7 @@ func TestGetFiltered_InvalidCarRegistrationDateRange(t *testing.T) {
 	min := "2023-01-01"
 	max := "2022-01-01"
 	filter := sale_offer.NewOfferFilter()
-	filter.CarRegistrationDateRagne = &sale_offer.MinMax[string]{Min: &min, Max: &max}
+	filter.CarRegistrationDateRange = &sale_offer.MinMax[string]{Min: &min, Max: &max}
 	_, _, err := repo.GetFiltered(filter)
 	assert.ErrorIs(t, err, sale_offer.ErrInvalidRange)
 }
@@ -331,7 +331,7 @@ func TestGetFiltered_InvalidCarRegistrationDateRangeBothValues(t *testing.T) {
 	min := "2023-01-01"
 	max := "2023-01-01"
 	filter := sale_offer.NewOfferFilter()
-	filter.CarRegistrationDateRagne = &sale_offer.MinMax[string]{Min: &min, Max: &max}
+	filter.CarRegistrationDateRange = &sale_offer.MinMax[string]{Min: &min, Max: &max}
 	_, _, err := repo.GetFiltered(filter)
 	assert.ErrorIs(t, err, sale_offer.ErrInvalidRange)
 }
@@ -343,9 +343,9 @@ func TestGetFiltered_InvalidCarRegistrationDateFormat(t *testing.T) {
 	min := "2023-01-01"
 	max := "2022/01/01"
 	filter := sale_offer.NewOfferFilter()
-	filter.CarRegistrationDateRagne = &sale_offer.MinMax[string]{Min: &min, Max: &max}
+	filter.CarRegistrationDateRange = &sale_offer.MinMax[string]{Min: &min, Max: &max}
 	_, _, err := repo.GetFiltered(filter)
-	assert.ErrorIs(t, err, sale_offer.ErrInvalidDateFromat)
+	assert.ErrorIs(t, err, sale_offer.ErrInvalidDateFormat)
 }
 
 func TestGetFiltered_InvalidOfferCreationDateRange(t *testing.T) {
@@ -381,14 +381,14 @@ func TestGetFiltered_InvalidOfferCreationDateFormat(t *testing.T) {
 	filter := sale_offer.NewOfferFilter()
 	filter.OfferCreationDateRange = &sale_offer.MinMax[string]{Min: &min, Max: &max}
 	_, _, err := repo.GetFiltered(filter)
-	assert.ErrorIs(t, err, sale_offer.ErrInvalidDateFromat)
+	assert.ErrorIs(t, err, sale_offer.ErrInvalidDateFormat)
 }
 
 // ---------------------
 // Valid arguments tests
 // ---------------------
 
-func TestGetFiltered_ValidOfferTypeAutcion(t *testing.T) {
+func TestGetFiltered_ValidOfferTypeAuction(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
 	repo := getRepositoryWithSaleOffers(db, offers)
@@ -428,7 +428,7 @@ func TestGetFiltered_ValidManufacturer(t *testing.T) {
 	db, _ := setupDB()
 	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
-	filter.Constriants.Manufacturers = mapping.MapSliceToDTOs(MANUFACTURERS, (*manufacturer.Manufacturer).MapToName)
+	filter.Constraints.Manufacturers = mapping.MapSliceToDTOs(MANUFACTURERS, (*manufacturer.Manufacturer).MapToName)
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	_, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
@@ -719,7 +719,7 @@ func TestGetFiltered_ValidCarRegistrationDateRange(t *testing.T) {
 	min := "2023-01-01"
 	max := "2023-01-02"
 	filter := sale_offer.NewOfferFilter()
-	filter.CarRegistrationDateRagne = &sale_offer.MinMax[string]{Min: &min, Max: &max}
+	filter.CarRegistrationDateRange = &sale_offer.MinMax[string]{Min: &min, Max: &max}
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	_, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
@@ -731,7 +731,7 @@ func TestGetFiltered_ValidCarRegistrationDateRangeMinNil(t *testing.T) {
 	repo := getRepositoryWithSaleOffers(db, offers)
 	max := "2023-01-02"
 	filter := sale_offer.NewOfferFilter()
-	filter.CarRegistrationDateRagne = &sale_offer.MinMax[string]{Min: nil, Max: &max}
+	filter.CarRegistrationDateRange = &sale_offer.MinMax[string]{Min: nil, Max: &max}
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	_, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
@@ -743,7 +743,7 @@ func TestGetFiltered_ValidCarRegistrationDateRangeMaxNil(t *testing.T) {
 	repo := getRepositoryWithSaleOffers(db, offers)
 	min := "2023-01-01"
 	filter := sale_offer.NewOfferFilter()
-	filter.CarRegistrationDateRagne = &sale_offer.MinMax[string]{Min: &min, Max: nil}
+	filter.CarRegistrationDateRange = &sale_offer.MinMax[string]{Min: &min, Max: nil}
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	_, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
@@ -754,7 +754,7 @@ func TestGetFiltered_ValidCarRegistrationDateRangeBothNil(t *testing.T) {
 	db, _ := setupDB()
 	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
-	filter.CarRegistrationDateRagne = &sale_offer.MinMax[string]{Min: nil, Max: nil}
+	filter.CarRegistrationDateRange = &sale_offer.MinMax[string]{Min: nil, Max: nil}
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	_, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
@@ -904,7 +904,7 @@ func TestGetFiltered_SingleManufacturer(t *testing.T) {
 	db, _ := setupDB()
 	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
-	filter.Constriants.Manufacturers = mapping.MapSliceToDTOs(MANUFACTURERS, (*manufacturer.Manufacturer).MapToName)
+	filter.Constraints.Manufacturers = mapping.MapSliceToDTOs(MANUFACTURERS, (*manufacturer.Manufacturer).MapToName)
 	filter.Manufacturers = &[]string{"Audi"}
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	result, _, err := repo.GetFiltered(filter)
@@ -920,7 +920,7 @@ func TestGetFiltered_MultipleManufacturers(t *testing.T) {
 	db, _ := setupDB()
 	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
-	filter.Constriants.Manufacturers = mapping.MapSliceToDTOs(MANUFACTURERS, (*manufacturer.Manufacturer).MapToName)
+	filter.Constraints.Manufacturers = mapping.MapSliceToDTOs(MANUFACTURERS, (*manufacturer.Manufacturer).MapToName)
 	filter.Manufacturers = &[]string{"Audi", "BMW"}
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	result, _, err := repo.GetFiltered(filter)
@@ -934,7 +934,7 @@ func TestGetFiltered_NoMatchingManufacturer(t *testing.T) {
 	db, _ := setupDB()
 	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
-	filter.Constriants.Manufacturers = mapping.MapSliceToDTOs(MANUFACTURERS, (*manufacturer.Manufacturer).MapToName)
+	filter.Constraints.Manufacturers = mapping.MapSliceToDTOs(MANUFACTURERS, (*manufacturer.Manufacturer).MapToName)
 	filter.Manufacturers = &[]string{"BMW"}
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	result, _, err := repo.GetFiltered(filter)
@@ -1189,7 +1189,7 @@ func TestGetFiltered_PriceLower(t *testing.T) {
 	assert.Equal(t, len(result), 0)
 }
 
-func TestGetfiltered_PriceUpperBound(t *testing.T) {
+func TestGetFiltered_PriceUpperBound(t *testing.T) {
 	offers := []sale_offer.SaleOffer{
 		*u.Build(createOffer(1), u.WithField[sale_offer.SaleOffer]("Price", uint(100))),
 	}
@@ -1653,7 +1653,7 @@ func TestGetFiltered_CarRegistrationDateInRange(t *testing.T) {
 	min := "2025-05-12"
 	max := "2025-05-14"
 	filter := sale_offer.NewOfferFilter()
-	filter.CarRegistrationDateRagne = &sale_offer.MinMax[string]{Min: &min, Max: &max}
+	filter.CarRegistrationDateRange = &sale_offer.MinMax[string]{Min: &min, Max: &max}
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	result, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
@@ -1669,7 +1669,7 @@ func TestGetFiltered_CarRegistrationDateInRangeMinProvided(t *testing.T) {
 	repo := getRepositoryWithSaleOffers(db, offers)
 	min := "2025-05-12"
 	filter := sale_offer.NewOfferFilter()
-	filter.CarRegistrationDateRagne = &sale_offer.MinMax[string]{Min: &min, Max: nil}
+	filter.CarRegistrationDateRange = &sale_offer.MinMax[string]{Min: &min, Max: nil}
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	result, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
@@ -1685,7 +1685,7 @@ func TestGetFiltered_CarRegistrationDateInRangeMaxProvided(t *testing.T) {
 	repo := getRepositoryWithSaleOffers(db, offers)
 	max := "2025-05-14"
 	filter := sale_offer.NewOfferFilter()
-	filter.CarRegistrationDateRagne = &sale_offer.MinMax[string]{Min: nil, Max: &max}
+	filter.CarRegistrationDateRange = &sale_offer.MinMax[string]{Min: nil, Max: &max}
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	result, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
@@ -1701,7 +1701,7 @@ func TestGetFiltered_CarRegistrationDateGreater(t *testing.T) {
 	repo := getRepositoryWithSaleOffers(db, offers)
 	max := "2025-05-12"
 	filter := sale_offer.NewOfferFilter()
-	filter.CarRegistrationDateRagne = &sale_offer.MinMax[string]{Min: nil, Max: &max}
+	filter.CarRegistrationDateRange = &sale_offer.MinMax[string]{Min: nil, Max: &max}
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	result, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
@@ -1717,14 +1717,14 @@ func TestGetFiltered_CarRegistrationDateLower(t *testing.T) {
 	repo := getRepositoryWithSaleOffers(db, offers)
 	min := "2025-05-14"
 	filter := sale_offer.NewOfferFilter()
-	filter.CarRegistrationDateRagne = &sale_offer.MinMax[string]{Min: &min, Max: nil}
+	filter.CarRegistrationDateRange = &sale_offer.MinMax[string]{Min: &min, Max: nil}
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	result, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
 	assert.Equal(t, len(result), 0)
 }
 
-func TestGetFiltered_CarRegistratoinDateUpperBound(t *testing.T) {
+func TestGetFiltered_CarRegistrationDateUpperBound(t *testing.T) {
 	date, _ := time.Parse(sale_offer.LAYOUT, "2025-05-13")
 	offers := []sale_offer.SaleOffer{
 		*u.Build(createOffer(1), withCarField(u.WithField[car.Car]("RegistrationDate", date))),
@@ -1733,7 +1733,7 @@ func TestGetFiltered_CarRegistratoinDateUpperBound(t *testing.T) {
 	repo := getRepositoryWithSaleOffers(db, offers)
 	max := "2025-05-13"
 	filter := sale_offer.NewOfferFilter()
-	filter.CarRegistrationDateRagne = &sale_offer.MinMax[string]{Min: nil, Max: &max}
+	filter.CarRegistrationDateRange = &sale_offer.MinMax[string]{Min: nil, Max: &max}
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	result, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
@@ -1748,7 +1748,7 @@ func TestGetFiltered_CarRegistrationDateLowerBound(t *testing.T) {
 	repo := getRepositoryWithSaleOffers(db, offers)
 	min := "2025-05-13"
 	filter := sale_offer.NewOfferFilter()
-	filter.CarRegistrationDateRagne = &sale_offer.MinMax[string]{Min: &min, Max: nil}
+	filter.CarRegistrationDateRange = &sale_offer.MinMax[string]{Min: &min, Max: nil}
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	result, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
@@ -1872,7 +1872,7 @@ func TestGetFiltered_OfferCreationDateLowerBound(t *testing.T) {
 // Order by tests
 // ----------------
 
-func TestGetFiltered_DeafultOrderNoRecords(t *testing.T) {
+func TestGetFiltered_DefaultOrderNoRecords(t *testing.T) {
 	offers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
 	repo := getRepositoryWithSaleOffers(db, offers)

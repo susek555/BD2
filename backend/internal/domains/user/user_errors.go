@@ -9,17 +9,16 @@ import (
 )
 
 var (
-	ErrInvalidSelector error = errors.New("user selector has to be P (person) or C (company)")
-	ErrHashPassword    error = errors.New("error occured while hashing password")
-	ErrCreateUser      error = errors.New("not all required fields (username, password, email) provided ")
-	ErrCreateCompany   error = errors.New("company_name and company_nip must be provided")
-	ErrCreatePerson    error = errors.New("person_name and person_surname must be provided")
-	ErrUpdatePerson    error = errors.New("you cannot update person fields if user is not person")
-	ErrUpdateCompany   error = errors.New("you cannot update company fields if user is not company")
-	ErrForbidden       error = errors.New("provided id does not match the id of the logged in user")
+	ErrInvalidSelector = errors.New("user selector has to be P (person) or C (company)")
+	ErrHashPassword    = errors.New("error occurred while hashing password")
+	ErrCreateUser      = errors.New("not all required fields (username, password, email) provided ")
+	ErrCreateCompany   = errors.New("company_name and company_nip must be provided")
+	ErrCreatePerson    = errors.New("person_name and person_surname must be provided")
+	ErrUpdatePerson    = errors.New("you cannot update person fields if user is not person")
+	ErrUpdateCompany   = errors.New("you cannot update company fields if user is not company")
+	ErrForbidden       = errors.New("provided id does not match the id of the logged in user")
 )
 
-// Map to return error code based on catched error
 var ErrorMap = map[error]int{
 	ErrInvalidSelector:     http.StatusBadRequest,
 	ErrCreateCompany:       http.StatusBadRequest,

@@ -8,18 +8,18 @@ import (
 )
 
 var (
-	ErrMissingFields        error = errors.New("some fields are missing - ensure that all required fields are present")
-	ErrInvalidColor         error = errors.New("invalid color")
-	ErrInvalidFuelType      error = errors.New("invalid fuel type")
-	ErrInvalidTransmission  error = errors.New("invalid transmission")
-	ErrInvalidDrive         error = errors.New("invalid drive")
-	ErrInvalidSaleOfferType error = errors.New("invalid sale offer type")
-	ErrInvalidMargin        error = errors.New("invalid margin")
-	ErrInvalidRange         error = errors.New("the min value should be lower than max")
-	ErrInvalidDateFromat    error = errors.New("invalid date format, should be YYYY-MM-DD")
-	ErrInvalidOrderKey      error = errors.New("invalid order-key")
-	ErrInvalidManufacturer  error = errors.New("invalid manufacturer")
-	ErrAuthorization        error = errors.New("you have to be logged in to create an offer")
+	ErrMissingFields        = errors.New("some fields are missing - ensure that all required fields are present")
+	ErrInvalidColor         = errors.New("invalid color")
+	ErrInvalidFuelType      = errors.New("invalid fuel type")
+	ErrInvalidTransmission  = errors.New("invalid transmission")
+	ErrInvalidDrive         = errors.New("invalid drive")
+	ErrInvalidSaleOfferType = errors.New("invalid sale offer type")
+	ErrInvalidMargin        = errors.New("invalid margin")
+	ErrInvalidRange         = errors.New("the min value should be lower than max")
+	ErrInvalidDateFormat    = errors.New("invalid date format, should be YYYY-MM-DD")
+	ErrInvalidOrderKey      = errors.New("invalid order-key")
+	ErrInvalidManufacturer  = errors.New("invalid manufacturer")
+	ErrAuthorization        = errors.New("you have to be logged in to create an offer")
 )
 
 var ErrorMap = map[error]int{
@@ -31,7 +31,7 @@ var ErrorMap = map[error]int{
 	ErrInvalidSaleOfferType: http.StatusBadRequest,
 	ErrInvalidMargin:        http.StatusBadRequest,
 	ErrInvalidRange:         http.StatusBadRequest,
-	ErrInvalidDateFromat:    http.StatusBadRequest,
+	ErrInvalidDateFormat:    http.StatusBadRequest,
 	ErrInvalidOrderKey:      http.StatusBadRequest,
 	ErrInvalidManufacturer:  http.StatusBadRequest,
 	ErrAuthorization:        http.StatusUnauthorized,

@@ -18,10 +18,10 @@ type SaleOfferServiceInterface interface {
 type SaleOfferService struct {
 	repo           SaleOfferRepositoryInterface
 	manRepo        manufacturer.ManufacturerRepositoryInterface
-	likedOfferRepo liked_offer.LikedOfferReposisotryInterface
+	likedOfferRepo liked_offer.LikedOfferRepositoryInterface
 }
 
-func NewSaleOfferService(saleOfferRepository SaleOfferRepositoryInterface, manufacturerRepo manufacturer.ManufacturerRepositoryInterface, likedOfferRepo liked_offer.LikedOfferReposisotryInterface) SaleOfferServiceInterface {
+func NewSaleOfferService(saleOfferRepository SaleOfferRepositoryInterface, manufacturerRepo manufacturer.ManufacturerRepositoryInterface, likedOfferRepo liked_offer.LikedOfferRepositoryInterface) SaleOfferServiceInterface {
 	return &SaleOfferService{repo: saleOfferRepository, manRepo: manufacturerRepo, likedOfferRepo: likedOfferRepo}
 }
 
@@ -41,7 +41,7 @@ func (s *SaleOfferService) GetFiltered(filter *OfferFilter) (*RetrieveOffersWith
 	if err != nil {
 		return nil, err
 	}
-	filter.Constriants.Manufacturers = mapping.MapSliceToDTOs(manufacturers, (*manufacturer.Manufacturer).MapToName)
+	filter.Constraints.Manufacturers = mapping.MapSliceToDTOs(manufacturers, (*manufacturer.Manufacturer).MapToName)
 	offers, pagResponse, err := s.repo.GetFiltered(filter)
 	if err != nil {
 		return nil, err

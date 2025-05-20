@@ -26,8 +26,8 @@ func TestCreateOffer_NotAuthorized(t *testing.T) {
 	server, _, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*createSaleOfferDTO())
 	assert.NoError(t, err)
-	_, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, nil)
-	assert.Equal(t, http.StatusUnauthorized, recievedStatus)
+	_, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, nil)
+	assert.Equal(t, http.StatusUnauthorized, receivedStatus)
 }
 
 func TestCreateOffer_InvalidToken(t *testing.T) {
@@ -38,8 +38,8 @@ func TestCreateOffer_InvalidToken(t *testing.T) {
 	body, err := json.Marshal(*createSaleOfferDTO())
 	assert.NoError(t, err)
 	token := "invalid_token"
-	_, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
-	assert.Equal(t, http.StatusForbidden, recievedStatus)
+	_, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
+	assert.Equal(t, http.StatusForbidden, receivedStatus)
 }
 
 func TestCreateOffer_EmptyBody(t *testing.T) {
@@ -51,8 +51,8 @@ func TestCreateOffer_EmptyBody(t *testing.T) {
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
-	assert.Equal(t, http.StatusBadRequest, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
+	assert.Equal(t, http.StatusBadRequest, receivedStatus)
 	var got custom_errors.HTTPError
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -68,8 +68,8 @@ func TestCreateOffer_EmptyStruct(t *testing.T) {
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
-	assert.Equal(t, http.StatusBadRequest, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
+	assert.Equal(t, http.StatusBadRequest, receivedStatus)
 	var got custom_errors.HTTPError
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -85,8 +85,8 @@ func TestCreateOffer_SettingUserIDManually(t *testing.T) {
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
-	assert.Equal(t, http.StatusCreated, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
+	assert.Equal(t, http.StatusCreated, receivedStatus)
 	var got sale_offer.RetrieveDetailedSaleOfferDTO
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -102,8 +102,8 @@ func TestCreateOffer_NonExistentModel(t *testing.T) {
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
-	assert.Equal(t, http.StatusBadRequest, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
+	assert.Equal(t, http.StatusBadRequest, receivedStatus)
 	var got custom_errors.HTTPError
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -119,8 +119,8 @@ func TestCreateOffer_InvalidNumberOfDoorsGreater(t *testing.T) {
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
-	assert.Equal(t, http.StatusBadRequest, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
+	assert.Equal(t, http.StatusBadRequest, receivedStatus)
 	var got custom_errors.HTTPError
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -136,8 +136,8 @@ func TestCreateOffer_InvalidNumberOfDoorsLower(t *testing.T) {
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
-	assert.Equal(t, http.StatusBadRequest, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
+	assert.Equal(t, http.StatusBadRequest, receivedStatus)
 	var got custom_errors.HTTPError
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -152,8 +152,8 @@ func TestCreateOffer_ValidNumberOfDoors(t *testing.T) {
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
-	assert.Equal(t, http.StatusCreated, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
+	assert.Equal(t, http.StatusCreated, receivedStatus)
 	var got sale_offer.RetrieveDetailedSaleOfferDTO
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -173,8 +173,8 @@ func TestCreateOffer_InvalidNumberOfSeatsGreater(t *testing.T) {
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
-	assert.Equal(t, http.StatusBadRequest, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
+	assert.Equal(t, http.StatusBadRequest, receivedStatus)
 	var got custom_errors.HTTPError
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -190,8 +190,8 @@ func TestCreateOffer_InvalidNumberOfSeatsLower(t *testing.T) {
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
-	assert.Equal(t, http.StatusBadRequest, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
+	assert.Equal(t, http.StatusBadRequest, receivedStatus)
 	var got custom_errors.HTTPError
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -207,8 +207,8 @@ func TestCreateOffer_ValidNumberOfSeats(t *testing.T) {
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
-	assert.Equal(t, http.StatusCreated, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
+	assert.Equal(t, http.StatusCreated, receivedStatus)
 	var got sale_offer.RetrieveDetailedSaleOfferDTO
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -228,8 +228,8 @@ func TestCreateOffer_InvalidEnginePowerGreater(t *testing.T) {
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
-	assert.Equal(t, http.StatusBadRequest, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
+	assert.Equal(t, http.StatusBadRequest, receivedStatus)
 	var got custom_errors.HTTPError
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -244,8 +244,8 @@ func TestCreateOffer_InvalidEnginePowerLower(t *testing.T) {
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
-	assert.Equal(t, http.StatusBadRequest, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
+	assert.Equal(t, http.StatusBadRequest, receivedStatus)
 	var got custom_errors.HTTPError
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -261,8 +261,8 @@ func TestCreateOffer_ValidEnginePower(t *testing.T) {
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
-	assert.Equal(t, http.StatusCreated, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
+	assert.Equal(t, http.StatusCreated, receivedStatus)
 	var got sale_offer.RetrieveDetailedSaleOfferDTO
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -282,8 +282,8 @@ func TestCreateOffer_InvalidEngineCapacityGreater(t *testing.T) {
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
-	assert.Equal(t, http.StatusBadRequest, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
+	assert.Equal(t, http.StatusBadRequest, receivedStatus)
 	var got custom_errors.HTTPError
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -299,8 +299,8 @@ func TestCreateOffer_InvalidEngineCapacityLower(t *testing.T) {
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
-	assert.Equal(t, http.StatusBadRequest, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
+	assert.Equal(t, http.StatusBadRequest, receivedStatus)
 	var got custom_errors.HTTPError
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -316,8 +316,8 @@ func TestCreateOffer_ValidEngineCapacity(t *testing.T) {
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
-	assert.Equal(t, http.StatusCreated, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
+	assert.Equal(t, http.StatusCreated, receivedStatus)
 	var got sale_offer.RetrieveDetailedSaleOfferDTO
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -337,8 +337,8 @@ func TestCreateOffer_InvalidNumberOfGearsGreater(t *testing.T) {
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
-	assert.Equal(t, http.StatusBadRequest, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
+	assert.Equal(t, http.StatusBadRequest, receivedStatus)
 	var got custom_errors.HTTPError
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -354,8 +354,8 @@ func TestCreateOffer_InvalidNumberOfGearsLower(t *testing.T) {
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
-	assert.Equal(t, http.StatusBadRequest, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
+	assert.Equal(t, http.StatusBadRequest, receivedStatus)
 	var got custom_errors.HTTPError
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -371,8 +371,8 @@ func TestCreateOffer_ValidNumberOfGears(t *testing.T) {
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
-	assert.Equal(t, http.StatusCreated, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
+	assert.Equal(t, http.StatusCreated, receivedStatus)
 	var got sale_offer.RetrieveDetailedSaleOfferDTO
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -392,8 +392,8 @@ func TestCreateOffer_InvalidColor(t *testing.T) {
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
-	assert.Equal(t, http.StatusBadRequest, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
+	assert.Equal(t, http.StatusBadRequest, receivedStatus)
 	var got custom_errors.HTTPError
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -409,8 +409,8 @@ func TestCreateOffer_ValidColor(t *testing.T) {
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
-	assert.Equal(t, http.StatusCreated, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
+	assert.Equal(t, http.StatusCreated, receivedStatus)
 	var got sale_offer.RetrieveDetailedSaleOfferDTO
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -430,8 +430,8 @@ func TestCreateOffer_InvalidFuelType(t *testing.T) {
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
-	assert.Equal(t, http.StatusBadRequest, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
+	assert.Equal(t, http.StatusBadRequest, receivedStatus)
 	var got custom_errors.HTTPError
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -447,8 +447,8 @@ func TestCreateOffer_ValidFuelType(t *testing.T) {
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
-	assert.Equal(t, http.StatusCreated, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
+	assert.Equal(t, http.StatusCreated, receivedStatus)
 	var got sale_offer.RetrieveDetailedSaleOfferDTO
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -468,8 +468,8 @@ func TestCreateOffer_InvalidTransmission(t *testing.T) {
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
-	assert.Equal(t, http.StatusBadRequest, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
+	assert.Equal(t, http.StatusBadRequest, receivedStatus)
 	var got custom_errors.HTTPError
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -485,8 +485,8 @@ func TestCreateOffer_ValidTransmission(t *testing.T) {
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
-	assert.Equal(t, http.StatusCreated, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
+	assert.Equal(t, http.StatusCreated, receivedStatus)
 	var got sale_offer.RetrieveDetailedSaleOfferDTO
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -506,8 +506,8 @@ func TestCreateOffer_InvalidDrive(t *testing.T) {
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
-	assert.Equal(t, http.StatusBadRequest, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
+	assert.Equal(t, http.StatusBadRequest, receivedStatus)
 	var got custom_errors.HTTPError
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -523,8 +523,8 @@ func TestCreateOffer_ValidDrive(t *testing.T) {
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
-	assert.Equal(t, http.StatusCreated, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
+	assert.Equal(t, http.StatusCreated, receivedStatus)
 	var got sale_offer.RetrieveDetailedSaleOfferDTO
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -537,7 +537,7 @@ func TestCreateOffer_ValidDrive(t *testing.T) {
 
 // ------------------------------
 // Get filtered sale offers tests
-// For more get filtred tests see: sale_offer_filter_test.go
+// For more get filtered tests see: sale_offer_filter_test.go
 // ------------------------------
 
 func TestGetFiltered_EmptyDatabase(t *testing.T) {
@@ -549,8 +549,8 @@ func TestGetFiltered_EmptyDatabase(t *testing.T) {
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	body, err := json.Marshal(filter)
 	assert.NoError(t, err)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/filtered", body, nil)
-	assert.Equal(t, http.StatusOK, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/filtered", body, nil)
+	assert.Equal(t, http.StatusOK, receivedStatus)
 	var got sale_offer.RetrieveOffersWithPagination
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -566,8 +566,8 @@ func TestGetFiltered_OneRegularOffer(t *testing.T) {
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	body, err := json.Marshal(filter)
 	assert.NoError(t, err)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/filtered", body, nil)
-	assert.Equal(t, http.StatusOK, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/filtered", body, nil)
+	assert.Equal(t, http.StatusOK, receivedStatus)
 	var got sale_offer.RetrieveOffersWithPagination
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -584,8 +584,8 @@ func TestGetFiltered_OneAuction(t *testing.T) {
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	body, err := json.Marshal(filter)
 	assert.NoError(t, err)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/filtered", body, nil)
-	assert.Equal(t, http.StatusOK, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/filtered", body, nil)
+	assert.Equal(t, http.StatusOK, receivedStatus)
 	var got sale_offer.RetrieveOffersWithPagination
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -607,8 +607,8 @@ func TestGetFiltered_AuctionsAndOffersCombined(t *testing.T) {
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	body, err := json.Marshal(filter)
 	assert.NoError(t, err)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/filtered", body, nil)
-	assert.Equal(t, http.StatusOK, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/filtered", body, nil)
+	assert.Equal(t, http.StatusOK, receivedStatus)
 	var got sale_offer.RetrieveOffersWithPagination
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -634,8 +634,8 @@ func TestGetFiltered_AuthorizedOtherUserOffers(t *testing.T) {
 	assert.NoError(t, err)
 	user := USERS[1]
 	token, _ := u.GetValidToken(user.ID, user.Email)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/filtered", body, &token)
-	assert.Equal(t, http.StatusOK, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/filtered", body, &token)
+	assert.Equal(t, http.StatusOK, receivedStatus)
 	var got sale_offer.RetrieveOffersWithPagination
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -661,8 +661,8 @@ func TestGetFiltered_AuthorizedMyOffers(t *testing.T) {
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/filtered", body, &token)
-	assert.Equal(t, http.StatusOK, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/filtered", body, &token)
+	assert.Equal(t, http.StatusOK, receivedStatus)
 	var got sale_offer.RetrieveOffersWithPagination
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -670,7 +670,7 @@ func TestGetFiltered_AuthorizedMyOffers(t *testing.T) {
 }
 
 // ----------------------
-// Get offfer by id tests
+// Get offer by id tests
 // ----------------------
 
 func TestGetSaleOfferById_EmptyDatabase(t *testing.T) {
@@ -678,21 +678,21 @@ func TestGetSaleOfferById_EmptyDatabase(t *testing.T) {
 	seedOffers := []sale_offer.SaleOffer{}
 	db, _ := setupDB()
 	server, _, _ := newTestServer(db, seedOffers)
-	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/sale-offer/id/1", nil, nil)
-	assert.Equal(t, http.StatusNotFound, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/sale-offer/id/1", nil, nil)
+	assert.Equal(t, http.StatusNotFound, receivedStatus)
 	var got custom_errors.HTTPError
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
 	assert.Equal(t, got.Description, gorm.ErrRecordNotFound.Error())
 }
 
-func TestGetSaleOfferById_NonExstientID(t *testing.T) {
+func TestGetSaleOfferById_NonExistentID(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedOffers := []sale_offer.SaleOffer{*createOffer(1)}
 	db, _ := setupDB()
 	server, _, _ := newTestServer(db, seedOffers)
-	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/sale-offer/id/2", nil, nil)
-	assert.Equal(t, http.StatusNotFound, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/sale-offer/id/2", nil, nil)
+	assert.Equal(t, http.StatusNotFound, receivedStatus)
 	var got custom_errors.HTTPError
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -704,8 +704,8 @@ func TestGetSaleOfferById_NegativeID(t *testing.T) {
 	seedOffers := []sale_offer.SaleOffer{*createOffer(1)}
 	db, _ := setupDB()
 	server, _, _ := newTestServer(db, seedOffers)
-	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/sale-offer/id/-1", nil, nil)
-	assert.Equal(t, http.StatusInternalServerError, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/sale-offer/id/-1", nil, nil)
+	assert.Equal(t, http.StatusInternalServerError, receivedStatus)
 	var got custom_errors.HTTPError
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -717,8 +717,8 @@ func TestGetSaleOfferById_StringID(t *testing.T) {
 	seedOffers := []sale_offer.SaleOffer{*createOffer(1)}
 	db, _ := setupDB()
 	server, _, _ := newTestServer(db, seedOffers)
-	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/sale-offer/id/abc", nil, nil)
-	assert.Equal(t, http.StatusInternalServerError, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/sale-offer/id/abc", nil, nil)
+	assert.Equal(t, http.StatusInternalServerError, receivedStatus)
 	var got custom_errors.HTTPError
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -730,8 +730,8 @@ func TestGetById_RegularOffer(t *testing.T) {
 	seedOffers := []sale_offer.SaleOffer{*createOffer(1)}
 	db, _ := setupDB()
 	server, _, _ := newTestServer(db, seedOffers)
-	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/sale-offer/id/1", nil, nil)
-	assert.Equal(t, http.StatusOK, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/sale-offer/id/1", nil, nil)
+	assert.Equal(t, http.StatusOK, receivedStatus)
 	var got sale_offer.RetrieveSaleOfferDTO
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -743,8 +743,8 @@ func TestGetById_AuctionOffer(t *testing.T) {
 	seedOffers := []sale_offer.SaleOffer{*createAuctionSaleOffer(1)}
 	db, _ := setupDB()
 	server, _, _ := newTestServer(db, seedOffers)
-	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/sale-offer/id/1", nil, nil)
-	assert.Equal(t, http.StatusOK, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/sale-offer/id/1", nil, nil)
+	assert.Equal(t, http.StatusOK, receivedStatus)
 	var got sale_offer.RetrieveSaleOfferDTO
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -760,8 +760,8 @@ func TestGetMyOffers_NotAuthorized(t *testing.T) {
 	seedOffers := []sale_offer.SaleOffer{*createOffer(1)}
 	db, _ := setupDB()
 	server, _, _ := newTestServer(db, seedOffers)
-	_, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/my-offers", nil, nil)
-	assert.Equal(t, http.StatusUnauthorized, recievedStatus)
+	_, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/my-offers", nil, nil)
+	assert.Equal(t, http.StatusUnauthorized, receivedStatus)
 }
 
 func TestGetMyOffers_NoOffers(t *testing.T) {
@@ -774,8 +774,8 @@ func TestGetMyOffers_NoOffers(t *testing.T) {
 	pagRequest := *u.GetDefaultPaginationRequest()
 	body, err := json.Marshal(pagRequest)
 	assert.NoError(t, err)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/my-offers", body, &token)
-	assert.Equal(t, http.StatusOK, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/my-offers", body, &token)
+	assert.Equal(t, http.StatusOK, receivedStatus)
 	var got sale_offer.RetrieveOffersWithPagination
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -792,8 +792,8 @@ func TestGetMyOffers_OneRegularOffer(t *testing.T) {
 	pagRequest := *u.GetDefaultPaginationRequest()
 	body, err := json.Marshal(pagRequest)
 	assert.NoError(t, err)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/my-offers", body, &token)
-	assert.Equal(t, http.StatusOK, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/my-offers", body, &token)
+	assert.Equal(t, http.StatusOK, receivedStatus)
 	var got sale_offer.RetrieveOffersWithPagination
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -811,8 +811,8 @@ func TestGetMyOffers_OneAuctionOffer(t *testing.T) {
 	pagRequest := *u.GetDefaultPaginationRequest()
 	body, err := json.Marshal(pagRequest)
 	assert.NoError(t, err)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/my-offers", body, &token)
-	assert.Equal(t, http.StatusOK, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/my-offers", body, &token)
+	assert.Equal(t, http.StatusOK, receivedStatus)
 	var got sale_offer.RetrieveOffersWithPagination
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -835,8 +835,8 @@ func TestGetMyOffers_AuctionsAndOffersCombined(t *testing.T) {
 	pagRequest := *u.GetDefaultPaginationRequest()
 	body, err := json.Marshal(pagRequest)
 	assert.NoError(t, err)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/my-offers", body, &token)
-	assert.Equal(t, http.StatusOK, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/my-offers", body, &token)
+	assert.Equal(t, http.StatusOK, receivedStatus)
 	var got sale_offer.RetrieveOffersWithPagination
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -851,8 +851,8 @@ func TestGetOfferTypes_Successful(t *testing.T) {
 	seedOffers := []sale_offer.SaleOffer{*createOffer(1)}
 	db, _ := setupDB()
 	server, _, _ := newTestServer(db, seedOffers)
-	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/sale-offer/offer-types", nil, nil)
-	assert.Equal(t, http.StatusOK, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/sale-offer/offer-types", nil, nil)
+	assert.Equal(t, http.StatusOK, receivedStatus)
 	var got map[string][]sale_offer.OfferType
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -864,8 +864,8 @@ func TestGetOrderKeys_Successful(t *testing.T) {
 	seedOffers := []sale_offer.SaleOffer{*createOffer(1)}
 	db, _ := setupDB()
 	server, _, _ := newTestServer(db, seedOffers)
-	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/sale-offer/order-keys", nil, nil)
-	assert.Equal(t, http.StatusOK, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/sale-offer/order-keys", nil, nil)
+	assert.Equal(t, http.StatusOK, receivedStatus)
 	var got map[string][]string
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)

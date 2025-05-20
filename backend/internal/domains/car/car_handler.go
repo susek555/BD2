@@ -18,7 +18,7 @@ func NewCarHandler(s CarServiceInterface) *Handler {
 // GetManufacturersModelsMap godoc
 //
 //	@Summary		Get manufacturers and models map
-//	@Description	Get manufacturers and models map. Each manufacturer has a list of models (the indices are coresponding).
+//	@Description	Get manufacturers and models map. Each manufacturer has a list of models (the indices are corresponding).
 //	@Tags			car
 //	@Accept			json
 //	@Produce		json
