@@ -14,7 +14,7 @@ import {
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useActionState, useState } from 'react';
-import { Button } from './button';
+import { Button } from '../(common)/button';
 
 export default function SignupForm({
   baseAccountType,

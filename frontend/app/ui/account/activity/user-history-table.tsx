@@ -1,5 +1,5 @@
 import { HistoryOffer } from '@/app/lib/definitions/SaleOffer';
-import GenericOffersTable from '@/app/ui/generic-offer-table';
+import GenericOffersTable from '@/app/ui/(offers-table)/generic-offer-table';
 import SingleHistoryOffer from './history-offer-card';
 
 export default async function OffersHistory({

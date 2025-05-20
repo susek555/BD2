@@ -1,4 +1,4 @@
-import SideBar from '@/app/ui/sidebar';
+import SideBar from '@/app/ui/(filters-sidebar)/sidebar';
 import { Suspense } from 'react';
 import { fetchHomePageData } from "@/app/lib/data/(home)/data";
 import {
@@ -7,9 +7,9 @@ import {
   trimAllAfterFirstSpace,
   SearchParams,
 } from '../lib/definitions/SearchParams';
-import OffersFoundInfo from '../ui/offers-found-info';
-import OffersTable from '../ui/offers-table';
-import Pagination from '../ui/pagination';
+import OffersFoundInfo from '../ui/(offers-table)/offers-found-info';
+import OffersTable from '../ui/(offers-table)/offers-table';
+import Pagination from '../ui/(offers-table)/pagination';
 import { OffersFoundSkeleton, OffersTableSkeleton, SideBarSkeleton } from '../ui/skeletons';
 
 //TODO fix bug with filters not syncing when Home button clicked

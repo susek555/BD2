@@ -6,9 +6,9 @@ import {
   trimAllAfterFirstSpace,
 } from '@/app/lib/definitions/SearchParams';
 import UsersListingsTable from '@/app/ui/account/listings/user-listings-table';
-import OffersFoundInfo from '@/app/ui/offers-found-info';
-import Pagination from '@/app/ui/pagination';
-import SideBar from '@/app/ui/sidebar';
+import OffersFoundInfo from '@/app/ui/(offers-table)/offers-found-info';
+import Pagination from '@/app/ui/(offers-table)/pagination';
+import SideBar from '@/app/ui/(filters-sidebar)/sidebar';
 import { OffersFoundSkeleton, OffersTableSkeleton } from '@/app/ui/skeletons';
 import { PlusIcon } from '@heroicons/react/20/solid';
 import Link from 'next/link';

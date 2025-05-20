@@ -1,9 +1,9 @@
-import Filters from '@/app/ui/(home)/filters';
-import Sorting from './sorting';
-import OfferType from './offer-type';
+import Filters from '@/app/ui/(filters-sidebar)/filters';
+import Sorting from '@/app/ui/(filters-sidebar)/sorting';
+import OfferType from '@/app/ui/(filters-sidebar)/offer-type';
 import { fetchFilterFields, fetchOfferTypes, fetchProducersAndModels, fetchSortingOptions, prepareRangeFields } from '@/app/lib/data/filters-sidebar/data';
-import ProducersAndModels from './producers-and-models';
-import ApplyButton from './apply-button';
+import ProducersAndModels from '@/app/ui/(filters-sidebar)/producers-and-models';
+import ApplyButton from '@/app/ui/(filters-sidebar)/apply-button';
 
 
 export default async function SideBar() {

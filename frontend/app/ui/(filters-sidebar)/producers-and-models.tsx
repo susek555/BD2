@@ -2,7 +2,7 @@
 
 import { syncFiltersWithParams } from "@/app/lib/data/(home)/syncWithParams";
 import { ModelFieldData, FilterFieldData } from "@/app/lib/definitions/reviews";
-import { BaseFilterTemplate } from "@/app/ui/(home)/base-filter-template/base-filter-template";
+import { BaseFilterTemplate } from "@/app/ui/(filters-sidebar)/base-filter-template/base-filter-template";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useState } from "react";
 

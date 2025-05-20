@@ -1,6 +1,6 @@
 import { fetchSessionData } from '@/app/lib/data/account/data';
 import { ReviewSearchParams } from '@/app/lib/definitions/reviews';
-import Pagination from '@/app/ui/pagination';
+import Pagination from '@/app/ui/(offers-table)/pagination';
 import { ReviewFilterBox } from '@/app/ui/review/review-filters';
 import { ReviewGrid } from '@/app/ui/review/review-grid';
 import { ReviewGridSkeleton } from '@/app/ui/review/skeletons';

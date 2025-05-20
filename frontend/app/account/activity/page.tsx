@@ -6,9 +6,9 @@ import {
   SearchParams,
 } from '@/app/lib/definitions/SearchParams';
 import OffersHistory from '@/app/ui/account/activity/user-history-table';
-import OffersFoundInfo from '@/app/ui/offers-found-info';
-import Pagination from '@/app/ui/pagination';
-import SideBar from '@/app/ui/sidebar';
+import OffersFoundInfo from '@/app/ui/(offers-table)/offers-found-info';
+import Pagination from '@/app/ui/(offers-table)/pagination';
+import SideBar from '@/app/ui/(filters-sidebar)/sidebar';
 import { OffersFoundSkeleton, OffersTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
 

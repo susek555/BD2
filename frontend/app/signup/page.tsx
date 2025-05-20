@@ -1,4 +1,4 @@
-import SignupForm from '@/app/ui/signup-form';
+import SignupForm from '@/app/ui/signup/signup-form';
 import { Suspense } from 'react';
 
 export default async function SignupPage(props: {

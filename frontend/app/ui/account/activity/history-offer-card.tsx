@@ -1,5 +1,5 @@
 import { HistoryOffer } from '@/app/lib/definitions/reviews';
-import GenericOfferCard from '@/app/ui/generic-offer-card';
+import GenericOfferCard from '@/app/ui/(offers-table)/generic-offer-card';
 
 export default function SingleHistoryOffer({ offer }: { offer: HistoryOffer }) {
   const formatDate = (dateString: string) => {

@@ -4,7 +4,7 @@ import Price from "@/app/ui/offer/[id]/price";
 import OfferDescription from "@/app/ui/offer/[id]/description";
 import OfferDetailsTable from "@/app/ui/offer/[id]/details-table";
 import UserDetails from "@/app/ui/offer/[id]/user-details";
-import Favourite from "@/app/ui/favourite";
+import Favourite from "@/app/ui/offer/[id]/favourite";
 import { authConfig } from "@/app/lib/authConfig";
 import { getServerSession } from "next-auth/next";
 import OwnerView from "@/app/ui/offer/[id]/owner-view";

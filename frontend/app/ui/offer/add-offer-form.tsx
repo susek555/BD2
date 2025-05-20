@@ -2,7 +2,7 @@
 
 import { AddOfferFormData, AddOfferFormState } from "@/app/lib/definitions/offer-form";
 import React, { useActionState, useEffect } from "react";
-import { getAvailableModels } from "@/app/ui/producers-and-models";
+import { getAvailableModels } from "@/app/ui/(filters-sidebar)/producers-and-models";
 import { addOffer } from "@/app/actions/add-offer";
 
 export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFormData}) {

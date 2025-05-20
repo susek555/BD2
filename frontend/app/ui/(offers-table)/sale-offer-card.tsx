@@ -1,15 +1,15 @@
 'use client';
 
 import { updateFavoriteStatus } from '@/app/lib/api/listing/requests';
-import { SaleOffer } from '@/app/lib/definitions/reviews';
+import { SaleOffer } from '@/app/lib/definitions/SaleOffer';
 import GenericOfferCard, {
   GenericOfferProps,
-} from '@/app/ui/generic-offer-card';
+} from '@/app/ui/(offers-table)/generic-offer-card';
 import { StarIcon as StarOutline } from '@heroicons/react/24/outline';
 import { StarIcon as StarSolid } from '@heroicons/react/24/solid';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
-import { AuthRequiredButton } from './auth-required-button';
+import { AuthRequiredButton } from '../signup/auth-required-button';
 
 export default function SaleOfferCard({
   offer,
