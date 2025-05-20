@@ -1,8 +1,8 @@
-import { getFavorites } from '@/app/lib/account/data';
-import { fetchTotalPages } from '@/app/lib/data';
+import { fetchFavorites } from '@/app/lib/account/data';
 import {
   parseArrayOrUndefined,
   parseIntOrUndefined,
+  trimAllAfterFirstSpace,
   SearchParams,
 } from '@/app/lib/definitions';
 import OffersFoundInfo from '@/app/ui/offers-found-info';
@@ -19,47 +19,66 @@ export default async function ActivityPage(props: {
     sortKey?: string;
     isSortDesc?: string;
     offerType?: string;
-    Producer?: string[];
-    Gearbox?: string[];
-    Fuel?: string[];
+    Producers?: string[];
+    Models?: string[];
+    Colors?: string[];
+    Drivetypes?: string[];
+    Gearboxes?: string[];
+    Fueltypes?: string[];
     Price_min?: string;
     Price_max?: string;
     Mileage_min?: string;
     Mileage_max?: string;
     Productionyear_min?: string;
     Productionyear_max?: string;
+    Enginecapacity_min?: string;
+    Enginecapacity_max?: string;
+    Enginepower_min?: string;
+    Enginepower_max?: string;
   }>;
 }) {
   const searchParams = await props.searchParams;
 
-  const params: SearchParams = searchParams
-    ? {
-        query: searchParams.query,
-        page: parseIntOrUndefined(searchParams.page),
-        orderKey: searchParams.sortKey,
-        isOrderDesc: searchParams.isSortDesc === 'true',
-        offerType: searchParams.offerType,
-        producers: parseArrayOrUndefined(searchParams.Producer),
-        gearboxes: parseArrayOrUndefined(searchParams.Gearbox),
-        fuelTypes: parseArrayOrUndefined(searchParams.Fuel),
-        price: {
-          min: parseIntOrUndefined(searchParams.Price_min),
-          max: parseIntOrUndefined(searchParams.Price_max),
-        },
-        mileage: {
-          min: parseIntOrUndefined(searchParams.Mileage_min),
-          max: parseIntOrUndefined(searchParams.Mileage_max),
-        },
-        year: {
-          min: parseIntOrUndefined(searchParams.Productionyear_min),
-          max: parseIntOrUndefined(searchParams.Productionyear_max),
-        },
-      }
-    : {};
+  const params: SearchParams = {
+    query: searchParams?.query,
+    pagination: {
+      page: searchParams?.page ? parseInt(searchParams.page, 10) : 1,
+      page_size: 6,
+    },
+    order_key: searchParams?.sortKey,
+    is_order_desc: searchParams?.isSortDesc === "true" ? true : undefined,
+    offer_type: searchParams?.offerType,
+    manufacturers: parseArrayOrUndefined(searchParams?.Producers),
+    models: trimAllAfterFirstSpace(parseArrayOrUndefined(searchParams?.Models)),
+    colors: parseArrayOrUndefined(searchParams?.Colors),
+    transmissions: parseArrayOrUndefined(searchParams?.Gearboxes),
+    fuel_types: parseArrayOrUndefined(searchParams?.Fueltypes),
+    drives: parseArrayOrUndefined(searchParams?.Drivetypes),
+    price_range: parseIntOrUndefined(searchParams?.Price_min) || parseIntOrUndefined(searchParams?.Price_max) ? {
+      min: parseIntOrUndefined(searchParams?.Price_min),
+      max: parseIntOrUndefined(searchParams?.Price_max),
+    } : undefined,
+    mileage_range: parseIntOrUndefined(searchParams?.Mileage_min) || parseIntOrUndefined(searchParams?.Mileage_max) ? {
+      min: parseIntOrUndefined(searchParams?.Mileage_min),
+      max: parseIntOrUndefined(searchParams?.Mileage_max),
+    } : undefined,
+    year_range: parseIntOrUndefined(searchParams?.Productionyear_min) || parseIntOrUndefined(searchParams?.Productionyear_max) ? {
+      min: parseIntOrUndefined(searchParams?.Productionyear_min),
+      max: parseIntOrUndefined(searchParams?.Productionyear_max),
+    } : undefined,
+    engine_capacity_range: parseIntOrUndefined(searchParams?.Enginecapacity_min) || parseIntOrUndefined(searchParams?.Enginecapacity_max) ? {
+      min: parseIntOrUndefined(searchParams?.Enginecapacity_min),
+      max: parseIntOrUndefined(searchParams?.Enginecapacity_max),
+    } : undefined,
+    engine_power_range: parseIntOrUndefined(searchParams?.Enginepower_min) || parseIntOrUndefined(searchParams?.Enginepower_max) ? {
+      min: parseIntOrUndefined(searchParams?.Enginepower_min),
+      max: parseIntOrUndefined(searchParams?.Enginepower_max),
+    } : undefined,
+  };
 
   console.log('Search Params:', params);
 
-  const totalPages = await fetchTotalPages(params);
+  const { totalPages, totalOffers, offers } = await fetchFavorites(params);
 
   return (
     <div className='flex flex-grow flex-col md:flex-row'>
@@ -70,11 +89,11 @@ export default async function ActivityPage(props: {
       </div>
       <div className='flex-grow p-6 md:px-12 md:py-8'>
         <Suspense fallback={<OffersFoundSkeleton />}>
-          <OffersFoundInfo params={params} />
+          <OffersFoundInfo totalOffers={totalOffers} />
         </Suspense>
         <div className='my-4' />
         <Suspense fallback={<OffersTableSkeleton />}>
-          <OffersTable params={params} fetchFunction={getFavorites} />
+          <OffersTable offers={offers} />
         </Suspense>
         <div className='mt-5 flex w-full justify-center'>
           <Suspense>

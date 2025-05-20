@@ -2,7 +2,7 @@ import { BaseOffer } from '@/app/lib/definitions';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
-  const data: BaseOffer[] = [
+  const offers: BaseOffer[] = [
     {
       id: '1',
       name: 'Audi A4',
@@ -58,6 +58,13 @@ export async function GET(request: Request) {
       isAuction: true,
     },
   ];
+  const pagination = {
+    total_pages: 1,
+    total_records: 6,
+  };
 
-  return NextResponse.json(data);
+  return NextResponse.json({
+    offers,
+    pagination
+  });
 }

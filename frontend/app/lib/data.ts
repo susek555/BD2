@@ -237,8 +237,6 @@ export async function fetchOffers(params: SearchParams): Promise<SaleOffer[]> {
 
 export async function fetchHomePageData(params: SearchParams) : Promise<{totalPages: number, totalOffers: number, offers: SaleOffer[]}> {
     try{
-        console.log("Home page params: ", params);
-
         const data = await getHomePageData(params);
 
         return {

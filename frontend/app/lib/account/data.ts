@@ -55,7 +55,13 @@ export async function getHistory(
 
 export async function getListings(
   params: SearchParams = {},
-): Promise<HistoryOffer[]> {
+): Promise<{
+  offers: HistoryOffer[];
+  pagination: {
+    total_pages: number;
+    total_records: number;
+  };
+}> {
   const url = `${process.env.URL}/api/account/listings`;
 
   const response = await fetch(url, {
@@ -71,7 +77,13 @@ export async function getListings(
 
 export async function getFavorites(
   params: SearchParams = {},
-): Promise<SaleOffer[]> {
+): Promise<{
+  offers: SaleOffer[];
+  pagination: {
+    total_pages: number;
+    total_records: number;
+  };
+}> {
   const url = `${process.env.URL}/api/account/favorites`;
 
   const response = await fetch(url, {
@@ -87,11 +99,8 @@ export async function getFavorites(
 
 export async function fetchHistory(params: SearchParams) : Promise<{totalPages: number, totalOffers: number, offers: HistoryOffer[]}> {
     try{
-        console.log("History page params: ", params);
-
         const data = await getHistory(params);
 
-      
         console.log("History page data: ", data);
 
         return {
@@ -101,6 +110,40 @@ export async function fetchHistory(params: SearchParams) : Promise<{totalPages: 
         };
 
 
+    } catch (error) {
+        console.error("Api error:", error);
+        throw new Error('Failed to fetch home page data.');
+    }
+}
+
+export async function fetchListings(params: SearchParams) : Promise<{totalPages: number, totalOffers: number, offers: HistoryOffer[]}> {
+    try{
+        const data = await getListings(params);
+
+        console.log("Listings page data: ", data);
+
+        return {
+            totalPages: data.pagination.total_pages,
+            totalOffers: data.pagination.total_records,
+            offers: data.offers
+        };
+    } catch (error) {
+        console.error("Api error:", error);
+        throw new Error('Failed to fetch home page data.');
+    }
+}
+
+export async function fetchFavorites(params: SearchParams) : Promise<{totalPages: number, totalOffers: number, offers: SaleOffer[]}> {
+    try{
+        const data = await getFavorites(params);
+
+        console.log("Favorites page data: ", data);
+
+        return {
+            totalPages: data.pagination.total_pages,
+            totalOffers: data.pagination.total_records,
+            offers: data.offers
+        };
     } catch (error) {
         console.error("Api error:", error);
         throw new Error('Failed to fetch home page data.');
