@@ -1,7 +1,7 @@
 'use client';
 
 import { updateFavoriteStatus } from '@/app/lib/api/listing/requests';
-import { SaleOffer } from '@/app/lib/definitions';
+import { SaleOffer } from '@/app/lib/definitions/reviews';
 import GenericOfferCard, {
   GenericOfferProps,
 } from '@/app/ui/generic-offer-card';

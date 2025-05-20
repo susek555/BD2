@@ -1,4 +1,4 @@
-import { BaseOffer } from '@/app/lib/definitions';
+import { BaseOffer } from '@/app/lib/definitions/reviews';
 import Link from 'next/link';
 
 interface GenericTableProps<T extends BaseOffer> {

@@ -1,4 +1,4 @@
-import { BaseOffer } from '@/app/lib/definitions';
+import { BaseOffer } from '@/app/lib/definitions/SaleOffer';
 import GenericOffersTable from '@/app/ui/generic-offer-table';
 import SingleListingsOffer from './listings-offer-card';
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { profileTabs, Tab } from '@/app/lib/definitions';
+import { profileTabs, Tab } from '@/app/lib/definitions/user';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';

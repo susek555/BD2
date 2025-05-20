@@ -1,4 +1,4 @@
-import { RatingPercentages, Review, ReviewSearchParams } from '../../definitions';
+import { RatingPercentages, Review, ReviewSearchParams } from '../../definitions/reviews';
 
 export async function fetchReviewsByReviewer(
   id: number,

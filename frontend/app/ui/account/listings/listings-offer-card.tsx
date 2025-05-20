@@ -1,7 +1,7 @@
 'use client';
 
 import { deleteListing } from '@/app/lib/api/listing/requests';
-import { BaseOffer } from '@/app/lib/definitions';
+import { BaseOffer } from '@/app/lib/definitions/reviews';
 import ConfirmationModal from '@/app/ui/confirm-modal';
 import GenericOfferCard from '@/app/ui/generic-offer-card';
 import { PencilIcon, TrashIcon } from '@heroicons/react/20/solid';

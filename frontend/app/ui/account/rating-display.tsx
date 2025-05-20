@@ -1,5 +1,5 @@
 'use client';
-import { RatingPercentages } from '@/app/lib/definitions';
+import { RatingPercentages } from '@/app/lib/definitions/reviews';
 import { useRef, useState } from 'react';
 import { AverageRatingCard } from '../review/average-rating-card';
 import { RatingDistribution } from '../review/rating-distribution';

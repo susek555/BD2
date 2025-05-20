@@ -1,4 +1,5 @@
-import { SaleOffer, SearchParams } from "../../definitions";
+import { SaleOffer } from "@/app/lib/definitions/SaleOffer";
+import { SearchParams } from "@/app/lib/definitions/SearchParams";
 
 const API_URL = process.env.API_URL;
 

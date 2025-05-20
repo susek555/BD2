@@ -6,7 +6,7 @@ import {
   parseIntOrUndefined,
   trimAllAfterFirstSpace,
   SearchParams,
-} from '../lib/definitions';
+} from '../lib/definitions/SearchParams';
 import OffersFoundInfo from '../ui/offers-found-info';
 import OffersTable from '../ui/offers-table';
 import Pagination from '../ui/pagination';

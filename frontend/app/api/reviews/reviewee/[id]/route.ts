@@ -1,4 +1,4 @@
-import { Review } from '@/app/lib/definitions';
+import { Review } from '@/app/lib/definitions/reviews';
 import { NextResponse } from 'next/server';
 
 /**

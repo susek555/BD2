@@ -1,6 +1,6 @@
 'use client';
 
-import { Review } from '@/app/lib/definitions';
+import { Review } from '@/app/lib/definitions/reviews';
 import { PencilIcon, StarIcon } from '@heroicons/react/20/solid';
 
 interface ReviewCardProps {

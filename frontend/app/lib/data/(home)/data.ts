@@ -1,4 +1,5 @@
-import { SaleOffer, SearchParams } from "@/app/lib/definitions";
+import { SaleOffer } from "@/app/lib/definitions/SaleOffer";
+import { SearchParams } from "@/app/lib/definitions/SearchParams";
 import { getHomePageData } from "@/app/lib/api/(home)/homePageData";
 
 // Home page

@@ -1,4 +1,4 @@
-import { HistoryOffer } from '@/app/lib/definitions';
+import { HistoryOffer } from '@/app/lib/definitions/SaleOffer';
 import GenericOffersTable from '@/app/ui/generic-offer-table';
 import SingleHistoryOffer from './history-offer-card';
 

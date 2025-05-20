@@ -1,4 +1,4 @@
-import { FilterFieldData, RangeFieldData } from "@/app/lib/definitions";
+import { FilterFieldData, RangeFieldData } from "@/app/lib/definitions/reviews";
 
 export function syncFiltersWithParams(
   filters: FilterFieldData[],

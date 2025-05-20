@@ -6,7 +6,7 @@ import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
-import { LoginError } from '../lib/definitions';
+import { LoginError } from '../lib/definitions/signup';
 import { Button } from './button';
 
 export default function LoginForm({

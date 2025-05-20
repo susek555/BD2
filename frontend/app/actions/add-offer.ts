@@ -1,4 +1,4 @@
-import { OfferDetailsFormSchema, AddOfferFormState, OfferPricingFormSchema } from "../lib/definitions";
+import { OfferDetailsFormSchema, AddOfferFormState, OfferPricingFormSchema } from "@/app/lib/definitions/offer-form";
 import { permanentRedirect } from "next/navigation";
 
 export async function addOffer(

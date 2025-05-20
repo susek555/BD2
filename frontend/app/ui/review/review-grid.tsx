@@ -1,4 +1,4 @@
-import { ReviewSearchParams } from '@/app/lib/definitions';
+import { ReviewSearchParams } from '@/app/lib/definitions/reviews';
 import {
   fetchReviewsByReviewee,
   fetchReviewsByReviewer,

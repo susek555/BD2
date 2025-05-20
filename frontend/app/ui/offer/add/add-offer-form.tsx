@@ -1,6 +1,6 @@
 "use client"
 
-import { AddOfferFormData, AddOfferFormState } from "@/app/lib/definitions";
+import { AddOfferFormData, AddOfferFormState } from "@/app/lib/definitions/offer-form";
 import React, { useActionState, useEffect } from "react";
 import { getAvailableModels } from "@/app/ui/producers-and-models";
 import { addOffer } from "@/app/actions/add-offer";

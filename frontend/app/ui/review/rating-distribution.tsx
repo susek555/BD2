@@ -1,5 +1,5 @@
 'use client';
-import { RatingPercentages } from '@/app/lib/definitions';
+import { RatingPercentages } from '@/app/lib/definitions/reviews';
 
 interface RatingDistributionProps {
   averageRating: number;

@@ -1,4 +1,4 @@
-import { OfferDetails } from "@/app/lib/definitions";
+import { OfferDetails } from "@/app/lib/definitions/reviews";
 
 export default function OfferDetailsTable( details: { details: OfferDetails[] }) {
     return (

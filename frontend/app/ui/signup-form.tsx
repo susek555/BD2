@@ -1,7 +1,7 @@
 "use client";
 
 import { signup } from '@/app/actions/signup';
-import { SignupFormState } from '@/app/lib/definitions';
+import { SignupFormState } from '@/app/lib/definitions/signup';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import {
   AtSymbolIcon,

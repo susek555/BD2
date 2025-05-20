@@ -5,7 +5,7 @@ import {
   SaleOffer,
   SearchParams,
   UserProfile,
-} from '../../definitions';
+} from '../../definitions/reviews';
 
 export async function fetchSessionData(): Promise<UserProfile> {
   const user = (await getServerSession(authConfig))?.user;

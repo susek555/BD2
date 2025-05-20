@@ -1,4 +1,4 @@
-import { BaseOffer } from '@/app/lib/definitions';
+import { BaseOffer } from '@/app/lib/definitions/reviews';
 import { CarImageHomePageSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
 

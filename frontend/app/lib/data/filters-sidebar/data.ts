@@ -1,7 +1,8 @@
 import { getColors, getDrives, getFuelTypes, getTransmissions } from "@/app/lib/api/filters";
 import { getOfferTypes } from "@/app/lib//api/offerType";
 import { getOrderKeys } from "@/app/lib//api/orderKeys";
-import { FilterFieldData, ModelFieldData, RangeFieldData,AddOfferFormData } from "@/app/lib//definitions";
+import { FilterFieldData, ModelFieldData, RangeFieldData } from "@/app/lib//definitions/filters-sidebar";
+import { AddOfferFormData } from "@/app/lib/definitions/offer-form";
 
 // Offer types
 

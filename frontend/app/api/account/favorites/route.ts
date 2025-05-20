@@ -1,4 +1,4 @@
-import { SaleOffer } from '@/app/lib/definitions';
+import { SaleOffer } from '@/app/lib/definitions/SaleOffer';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {

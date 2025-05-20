@@ -1,4 +1,4 @@
-import { SaleOfferDetails } from "../../definitions";
+import { SaleOfferDetails } from "@/app/lib/definitions/sale-offer-details";
 
 // Offer page
 

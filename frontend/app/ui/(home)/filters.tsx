@@ -2,7 +2,7 @@
 
 import { BaseFilterTemplate } from "@/app/ui/(home)/base-filter-template/base-filter-template";
 import { BaseRangeTemplate } from "./base-filter-template/base-range-template";
-import { FilterFieldData, RangeFieldData } from "@/app/lib/definitions";
+import { FilterFieldData, RangeFieldData } from "@/app/lib/definitions/filters-sidebar";
 import { usePathname, useSearchParams } from "next/navigation";
 import { syncFiltersWithParams, syncRangesWithParams } from "@/app/lib/data/(home)/syncWithParams";
 
