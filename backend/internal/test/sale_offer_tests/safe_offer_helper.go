@@ -7,6 +7,7 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/generic"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/liked_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
@@ -57,6 +58,7 @@ func setupDB() (*gorm.DB, error) {
 		&car.Car{},
 		&sale_offer.Auction{},
 		&sale_offer.SaleOffer{},
+		&liked_offer.LikedOffer{},
 	)
 	if err != nil {
 		return nil, err
@@ -85,7 +87,8 @@ func newTestServer(db *gorm.DB, seedOffers []sale_offer.SaleOffer) (*gin.Engine,
 	verifier := jwt.NewJWTVerifier(u.JWTSECRET)
 	saleOfferRepo := getRepositoryWithSaleOffers(db, seedOffers)
 	manufacturerRepo := manufacturer.NewManufacturerRepository(db)
-	saleOfferService := sale_offer.NewSaleOfferService(saleOfferRepo, manufacturerRepo)
+	likedOfferReposisotry := liked_offer.NewLikedOfferRepository(db)
+	saleOfferService := sale_offer.NewSaleOfferService(saleOfferRepo, manufacturerRepo, likedOfferReposisotry)
 	saleOfferHandler := sale_offer.NewSaleOfferHandler(saleOfferService)
 	r := gin.Default()
 	saleOfferRoutes := r.Group("/sale-offer")
@@ -93,7 +96,7 @@ func newTestServer(db *gorm.DB, seedOffers []sale_offer.SaleOffer) (*gin.Engine,
 		saleOfferRoutes.POST("/", middleware.Authenticate(verifier), saleOfferHandler.CreateSaleOffer)
 		saleOfferRoutes.POST("/filtered", middleware.OptionalAuthenticate(verifier), saleOfferHandler.GetFilteredSaleOffers)
 		saleOfferRoutes.POST("/my-offers", middleware.Authenticate(verifier), saleOfferHandler.GetMySaleOffers)
-		saleOfferRoutes.GET("/id/:id", saleOfferHandler.GetSaleOfferByID)
+		saleOfferRoutes.GET("/id/:id", middleware.OptionalAuthenticate(verifier), saleOfferHandler.GetSaleOfferByID)
 		saleOfferRoutes.GET("/offer-types", saleOfferHandler.GetSaleOfferTypes)
 		saleOfferRoutes.GET("/order-keys", saleOfferHandler.GetOrderKeys)
 	}
@@ -192,7 +195,7 @@ func createSaleOfferDTO() *sale_offer.CreateSaleOfferDTO {
 	}
 }
 
-func doSaleOfferAndRetrieveSaleOfferDTOsMatch(offer sale_offer.SaleOffer, dto sale_offer.RetrieveSaleOfferDTO) bool {
+func doSaleOfferAndRetrieveSaleOfferDTOsMatch(offer sale_offer.SaleOffer, dto sale_offer.RetrieveSaleOfferDTO, s sale_offer.SaleOfferServiceInterface) bool {
 	return offer.ID == dto.ID &&
 		offer.User.Username == dto.Username &&
 		offer.Car.Model.Manufacturer.Name+" "+offer.Car.Model.Name == dto.Name &&
@@ -200,7 +203,8 @@ func doSaleOfferAndRetrieveSaleOfferDTOsMatch(offer sale_offer.SaleOffer, dto sa
 		offer.Car.Mileage == dto.Mileage &&
 		offer.Car.ProductionYear == dto.ProductionYear &&
 		offer.Car.Color == dto.Color &&
-		(offer.Auction != nil) == dto.IsAuction
+		(offer.Auction != nil) == dto.IsAuction &&
+		(s.IsOfferLikedByUser(offer.ID, offer.User.ID)) == dto.IsLiked
 }
 
 func wasEntityAddedToDB[T any](db *gorm.DB, id uint) bool {
