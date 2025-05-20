@@ -23,7 +23,7 @@ func NewSaleOfferHandler(s SaleOfferServiceInterface) *Handler {
 //	@Description	Creates a new sale offer in the database. To create a sale offer, the user must be logged in. There are several constraints on the offer fields, such as:
 //	@Description	- Color must be one of the predefined colors (endpoint: /car/colors)
 //	@Description	- Fuel type must be one of the predefined fuel types (endpoint: /car/fuel_types)
-//	@Description	- Transmission must be one of the predefined transmission types (endpotin: /car/transmissions)
+//	@Description	- Transmission must be one of the predefined transmission types (endpoint: /car/transmissions)
 //	@Description	- Drive must be one of the predefined drive types (endpoint: /car/drives)
 //	@Description	- Model must be one of the predefined models (endpoint: /car/models or /car/models/:id)
 //	@Description	- Number of doors must be between 1 and 6
@@ -60,11 +60,11 @@ func (h *Handler) CreateSaleOffer(c *gin.Context) {
 // GetFilteredSaleOffers godoc
 //
 //	@Summary		Get filtered sale offers
-//	@Description	Returns a list of sale offers in paginated form. If the user is logged in, the results are not containing the offers created by the user. The results are filtered based on request's body. There are several constraints on the filter fields, such as:
+//	@Description	Returns a list of sale offers in paginated form. If the user is logged in, the results contain he offers created by the user. The results are filtered based on request's body. There are several constraints on the filter fields, such as:
 //	@Description	- Offer type must be one of the predefined offer types (endpoint: /sale-offer/offer-types)
 //	@Description	- Order key must be one of the predefined order keys (endpoint: /sale-offer/order-keys)
 //	@Description	- List of manufacturers must contain only predefined manufacturers (endpoint: /car/manufacturers)
-//	@Description	- List of colors must containonly predefined colors (endpoint: /car/colors)
+//	@Description	- List of colors must contain only predefined colors (endpoint: /car/colors)
 //	@Description	- List of drives must contain only predefined drives (endpoint: /car/drives)
 //	@Description	- List of fuel types must contain only predefined fuel types (endpoint: /car/fuel_types)
 //	@Description	- List of transmissions must contain only predefined transmission types (endpoint: /car/transmissions)
@@ -83,7 +83,7 @@ func (h *Handler) GetFilteredSaleOffers(c *gin.Context) {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
-	filter.UserID = getOptinalUserID(c)
+	filter.UserID = getOptionalUserID(c)
 	saleOffers, err := h.service.GetFiltered(filter)
 	if err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
@@ -111,7 +111,7 @@ func (h *Handler) GetSaleOfferByID(c *gin.Context) {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
-	offerDTO, err := h.service.GetByID(uint(id), getOptinalUserID(c))
+	offerDTO, err := h.service.GetByID(uint(id), getOptionalUserID(c))
 	if err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
@@ -147,7 +147,7 @@ func (h *Handler) GetMySaleOffers(c *gin.Context) {
 	c.JSON(http.StatusOK, saleOffers)
 }
 
-// GetOfferTypes godoc
+// GetSaleOfferTypes godoc
 //
 //	@Summary		Get offer types
 //	@Description	Returns a list of all possible offer types that are accepted when using filtering. If you choose both the auctions and regular offers will be found.
@@ -177,7 +177,7 @@ func (h *Handler) GetOrderKeys(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"order_keys": keys})
 }
 
-func getOptinalUserID(c *gin.Context) *uint {
+func getOptionalUserID(c *gin.Context) *uint {
 	var id *uint
 	userID, ok := c.Get("userID")
 	if !ok {

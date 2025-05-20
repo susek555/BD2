@@ -94,8 +94,8 @@ func (offer *SaleOffer) prepareAuctionValues() (*uint, *time.Time) {
 }
 
 func (dto *CreateSaleOfferDTO) validateParams() error {
-	validator := validator.New()
-	err := validator.Struct(dto)
+	v := validator.New()
+	err := v.Struct(dto)
 	if err != nil {
 		return ErrMissingFields
 	}

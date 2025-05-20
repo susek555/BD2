@@ -33,9 +33,9 @@ func setupDB() (*gorm.DB, error) {
 
 func getRepositories(db *gorm.DB) (user.UserRepositoryInterface, generic.CRUDRepository[user.Company], generic.CRUDRepository[user.Person]) {
 	userRepo := user.NewUserRepository(db)
-	comapnyRepo := generic.GetGormRepository[user.Company](db)
+	companyRepo := generic.GetGormRepository[user.Company](db)
 	personRepo := generic.GetGormRepository[user.Person](db)
-	return userRepo, comapnyRepo, personRepo
+	return userRepo, companyRepo, personRepo
 }
 
 func getRepositoryWithUsers(db *gorm.DB, users []user.User) user.UserRepositoryInterface {

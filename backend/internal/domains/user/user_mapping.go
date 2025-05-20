@@ -10,8 +10,8 @@ func (dto *CreateUserDTO) MapToUser() (*User, error) {
 	if err != nil {
 		return nil, ErrHashPassword
 	}
-	validator := validator.New()
-	err = validator.Struct(dto)
+	v := validator.New()
+	err = v.Struct(dto)
 	if err != nil {
 		return nil, ErrCreateUser
 	}

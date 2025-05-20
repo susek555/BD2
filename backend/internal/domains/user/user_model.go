@@ -10,12 +10,12 @@ type User struct {
 	Company  *Company `gorm:"foreignKey:UserID;references:ID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE"`
 }
 
-func (u *User) GetSubtype() UserSubtype {
-	switch u.Selector {
+func (user *User) GetSubtype() UserSubtype {
+	switch user.Selector {
 	case "P":
-		return u.Person
+		return user.Person
 	case "C":
-		return u.Company
+		return user.Company
 	default:
 		return nil
 	}

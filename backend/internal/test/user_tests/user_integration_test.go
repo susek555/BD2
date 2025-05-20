@@ -23,8 +23,8 @@ func TestGetAllUsers_EmptyDatabase(t *testing.T) {
 	seedUsers := []user.User{}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedUsers)
-	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/users/", nil, nil)
-	assert.Equal(t, http.StatusOK, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/users/", nil, nil)
+	assert.Equal(t, http.StatusOK, receivedStatus)
 	var got []user.RetrieveUserDTO
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -36,8 +36,8 @@ func TestGetAllUsers_SinglePerson(t *testing.T) {
 	seedUsers := []user.User{*createPerson(1)}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedUsers)
-	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/users/", nil, nil)
-	assert.Equal(t, http.StatusOK, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/users/", nil, nil)
+	assert.Equal(t, http.StatusOK, receivedStatus)
 	var got []user.RetrieveUserDTO
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -45,13 +45,13 @@ func TestGetAllUsers_SinglePerson(t *testing.T) {
 	assert.Equal(t, doUserAndRetrieveUserDTOsMatch(seedUsers[0], got[0]), true)
 }
 
-func TestGetAllUsers_SingleCopany(t *testing.T) {
+func TestGetAllUsers_SingleCompany(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []user.User{*createCompany(1)}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedUsers)
-	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/users/", nil, nil)
-	assert.Equal(t, http.StatusOK, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/users/", nil, nil)
+	assert.Equal(t, http.StatusOK, receivedStatus)
 	var got []user.RetrieveUserDTO
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -64,8 +64,8 @@ func TestGetAllUsers_MultiplePeople(t *testing.T) {
 	seedUsers := []user.User{*createPerson(1), *createPerson(2)}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedUsers)
-	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/users/", nil, nil)
-	assert.Equal(t, http.StatusOK, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/users/", nil, nil)
+	assert.Equal(t, http.StatusOK, receivedStatus)
 	var got []user.RetrieveUserDTO
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -80,8 +80,8 @@ func TestGetAllUsers_MultipleCompanies(t *testing.T) {
 	seedUsers := []user.User{*createCompany(1), *createCompany(2)}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedUsers)
-	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/users/", nil, nil)
-	assert.Equal(t, http.StatusOK, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/users/", nil, nil)
+	assert.Equal(t, http.StatusOK, receivedStatus)
 	var got []user.RetrieveUserDTO
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -96,8 +96,8 @@ func TestGetAllUsers_Mixed(t *testing.T) {
 	seedUsers := []user.User{*createPerson(1), *createCompany(2), *createPerson(3), *createCompany(4)}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedUsers)
-	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/users/", nil, nil)
-	assert.Equal(t, http.StatusOK, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/users/", nil, nil)
+	assert.Equal(t, http.StatusOK, receivedStatus)
 	var got []user.RetrieveUserDTO
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -116,8 +116,8 @@ func TestGetUserByID_EmptyDatabase(t *testing.T) {
 	seedUsers := []user.User{}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedUsers)
-	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/users/id/1", nil, nil)
-	assert.Equal(t, http.StatusNotFound, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/users/id/1", nil, nil)
+	assert.Equal(t, http.StatusNotFound, receivedStatus)
 	var got custom_errors.HTTPError
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -129,8 +129,8 @@ func TestGetByUserID_NonExistentID(t *testing.T) {
 	seedUsers := []user.User{*createPerson(1)}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedUsers)
-	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/users/id/2", nil, nil)
-	assert.Equal(t, http.StatusNotFound, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/users/id/2", nil, nil)
+	assert.Equal(t, http.StatusNotFound, receivedStatus)
 	var got custom_errors.HTTPError
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -142,8 +142,8 @@ func TestGetUserByID_NegativeID(t *testing.T) {
 	seedUsers := []user.User{*createPerson(1)}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedUsers)
-	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/users/id/-1", nil, nil)
-	assert.Equal(t, http.StatusBadRequest, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/users/id/-1", nil, nil)
+	assert.Equal(t, http.StatusBadRequest, receivedStatus)
 	var got custom_errors.HTTPError
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -155,8 +155,8 @@ func TestGetUserByID_StringID(t *testing.T) {
 	seedUsers := []user.User{*createPerson(1)}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedUsers)
-	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/users/id/abc", nil, nil)
-	assert.Equal(t, http.StatusBadRequest, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/users/id/abc", nil, nil)
+	assert.Equal(t, http.StatusBadRequest, receivedStatus)
 	var got custom_errors.HTTPError
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -168,8 +168,8 @@ func TestGetUserByID_Person(t *testing.T) {
 	seedUsers := []user.User{*createPerson(1)}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedUsers)
-	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/users/id/1", nil, nil)
-	assert.Equal(t, http.StatusOK, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/users/id/1", nil, nil)
+	assert.Equal(t, http.StatusOK, receivedStatus)
 	var got user.RetrieveUserDTO
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -181,8 +181,8 @@ func TestGetUserByID_Company(t *testing.T) {
 	seedUsers := []user.User{*createCompany(1)}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedUsers)
-	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/users/id/1", nil, nil)
-	assert.Equal(t, http.StatusOK, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/users/id/1", nil, nil)
+	assert.Equal(t, http.StatusOK, receivedStatus)
 	var got user.RetrieveUserDTO
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -198,8 +198,8 @@ func TestGetUserByEmail_EmptyDatabase(t *testing.T) {
 	seedUsers := []user.User{}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedUsers)
-	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/users/email/john1@gmail.com", nil, nil)
-	assert.Equal(t, http.StatusNotFound, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/users/email/john1@gmail.com", nil, nil)
+	assert.Equal(t, http.StatusNotFound, receivedStatus)
 	var got custom_errors.HTTPError
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -211,8 +211,8 @@ func TestGetUserByEmail_NonExistentEmail(t *testing.T) {
 	seedUsers := []user.User{*createPerson(1)}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedUsers)
-	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/users/email/john99@gmail.com", nil, nil)
-	assert.Equal(t, http.StatusNotFound, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/users/email/john99@gmail.com", nil, nil)
+	assert.Equal(t, http.StatusNotFound, receivedStatus)
 	var got custom_errors.HTTPError
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -224,8 +224,8 @@ func TestGetUserByEmail_Person(t *testing.T) {
 	seedUsers := []user.User{*createPerson(1)}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedUsers)
-	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/users/email/john1@gmail.com", nil, nil)
-	assert.Equal(t, http.StatusOK, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/users/email/john1@gmail.com", nil, nil)
+	assert.Equal(t, http.StatusOK, receivedStatus)
 	var got user.RetrieveUserDTO
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -237,8 +237,8 @@ func TestGetUserByEmail_Company(t *testing.T) {
 	seedUsers := []user.User{*createCompany(1)}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedUsers)
-	response, recievedStatus := u.PerformRequest(server, http.MethodGet, "/users/email/john1@gmail.com", nil, nil)
-	assert.Equal(t, http.StatusOK, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/users/email/john1@gmail.com", nil, nil)
+	assert.Equal(t, http.StatusOK, receivedStatus)
 	var got user.RetrieveUserDTO
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -256,8 +256,8 @@ func TestUpdateUser_NotAuthorized(t *testing.T) {
 	server, _ := newTestServer(db, seedUsers)
 	body, err := json.Marshal(user.UpdateUserDTO{ID: 1})
 	assert.NoError(t, err)
-	_, recievedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, nil)
-	assert.Equal(t, http.StatusUnauthorized, recievedStatus)
+	_, receivedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, nil)
+	assert.Equal(t, http.StatusUnauthorized, receivedStatus)
 }
 
 func TestUpdateUser_Forbidden(t *testing.T) {
@@ -268,8 +268,8 @@ func TestUpdateUser_Forbidden(t *testing.T) {
 	body, err := json.Marshal(user.UpdateUserDTO{ID: 2})
 	assert.NoError(t, err)
 	token, _ := u.GetValidToken(seedUsers[0].ID, seedUsers[0].Email)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
-	assert.Equal(t, http.StatusForbidden, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
+	assert.Equal(t, http.StatusForbidden, receivedStatus)
 	var got custom_errors.HTTPError
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -285,8 +285,8 @@ func TestUpdateUser_UpdateUsername(t *testing.T) {
 	body, err := json.Marshal(user.UpdateUserDTO{ID: seedUsers[0].ID, Username: &newUsername})
 	assert.NoError(t, err)
 	token, _ := u.GetValidToken(seedUsers[0].ID, seedUsers[0].Email)
-	_, recievedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
-	assert.Equal(t, http.StatusOK, recievedStatus)
+	_, receivedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
+	assert.Equal(t, http.StatusOK, receivedStatus)
 	userRepo, _, _ := getRepositories(db)
 	got, err := userRepo.GetById(seedUsers[0].ID)
 	assert.NoError(t, err)
@@ -305,8 +305,8 @@ func TestUpdateUser_NotUniqueUsername(t *testing.T) {
 	body, err := json.Marshal(user.UpdateUserDTO{ID: seedUsers[0].ID, Username: &newUsername})
 	assert.NoError(t, err)
 	token, _ := u.GetValidToken(seedUsers[0].ID, seedUsers[0].Email)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
-	assert.Equal(t, http.StatusBadRequest, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
+	assert.Equal(t, http.StatusBadRequest, receivedStatus)
 	var got custom_errors.HTTPError
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -322,8 +322,8 @@ func TestUpdateUser_UpdateEmail(t *testing.T) {
 	body, err := json.Marshal(user.UpdateUserDTO{ID: seedUsers[0].ID, Email: &newEmail})
 	assert.NoError(t, err)
 	token, _ := u.GetValidToken(seedUsers[0].ID, seedUsers[0].Email)
-	_, recievedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
-	assert.Equal(t, http.StatusOK, recievedStatus)
+	_, receivedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
+	assert.Equal(t, http.StatusOK, receivedStatus)
 	userRepo, _, _ := getRepositories(db)
 	got, err := userRepo.GetById(seedUsers[0].ID)
 	assert.NoError(t, err)
@@ -342,8 +342,8 @@ func TestUpdateUser_NotUniqueEmail(t *testing.T) {
 	body, err := json.Marshal(user.UpdateUserDTO{ID: seedUsers[0].ID, Email: &newEmail})
 	assert.NoError(t, err)
 	token, _ := u.GetValidToken(seedUsers[0].ID, seedUsers[0].Email)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
-	assert.Equal(t, http.StatusBadRequest, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
+	assert.Equal(t, http.StatusBadRequest, receivedStatus)
 	var got custom_errors.HTTPError
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -359,8 +359,8 @@ func TestUpdateUser_UpdatePassword(t *testing.T) {
 	body, err := json.Marshal(user.UpdateUserDTO{ID: seedUsers[0].ID, Password: &newPassword})
 	assert.NoError(t, err)
 	token, _ := u.GetValidToken(seedUsers[0].ID, seedUsers[0].Email)
-	_, recievedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
-	assert.Equal(t, http.StatusOK, recievedStatus)
+	_, receivedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
+	assert.Equal(t, http.StatusOK, receivedStatus)
 	userRepo, _, _ := getRepositories(db)
 	got, err := userRepo.GetById(seedUsers[0].ID)
 	assert.NoError(t, err)
@@ -376,8 +376,8 @@ func TestUpdateUser_UpdateCompanyNameAsCompany(t *testing.T) {
 	body, err := json.Marshal(user.UpdateUserDTO{ID: seedUsers[0].ID, CompanyName: &newCompanyName})
 	assert.NoError(t, err)
 	token, _ := u.GetValidToken(seedUsers[0].ID, seedUsers[0].Email)
-	_, recievedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
-	assert.Equal(t, http.StatusOK, recievedStatus)
+	_, receivedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
+	assert.Equal(t, http.StatusOK, receivedStatus)
 	_, companyRepo, _ := getRepositories(db)
 	got, err := companyRepo.GetById(1)
 	assert.NoError(t, err)
@@ -393,8 +393,8 @@ func TestUpdateUser_UpdateCompanyNameAsPerson(t *testing.T) {
 	body, err := json.Marshal(user.UpdateUserDTO{ID: seedUsers[0].ID, CompanyName: &newCompanyName})
 	assert.NoError(t, err)
 	token, _ := u.GetValidToken(seedUsers[0].ID, seedUsers[0].Email)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
-	assert.Equal(t, http.StatusBadRequest, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
+	assert.Equal(t, http.StatusBadRequest, receivedStatus)
 	var got custom_errors.HTTPError
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -410,8 +410,8 @@ func TestUpdateUser_UpdateNIPAsCompany(t *testing.T) {
 	body, err := json.Marshal(user.UpdateUserDTO{ID: seedUsers[0].ID, CompanyNIP: &newNIP})
 	assert.NoError(t, err)
 	token, _ := u.GetValidToken(seedUsers[0].ID, seedUsers[0].Email)
-	_, recievedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
-	assert.Equal(t, http.StatusOK, recievedStatus)
+	_, receivedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
+	assert.Equal(t, http.StatusOK, receivedStatus)
 	_, companyRepo, _ := getRepositories(db)
 	got, err := companyRepo.GetById(1)
 	assert.NoError(t, err)
@@ -430,8 +430,8 @@ func TestUpdateUser_UpdateNIPAsCompanyNotUnique(t *testing.T) {
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedUsers)
 	token, _ := u.GetValidToken(seedUsers[0].ID, seedUsers[0].Email)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
-	assert.Equal(t, http.StatusBadRequest, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
+	assert.Equal(t, http.StatusBadRequest, receivedStatus)
 	var got custom_errors.HTTPError
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -447,8 +447,8 @@ func TestUpdateUser_UpdateNIPAsPerson(t *testing.T) {
 	body, err := json.Marshal(user.UpdateUserDTO{ID: seedUsers[0].ID, CompanyNIP: &newNIP})
 	assert.NoError(t, err)
 	token, _ := u.GetValidToken(seedUsers[0].ID, seedUsers[0].Email)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
-	assert.Equal(t, http.StatusBadRequest, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
+	assert.Equal(t, http.StatusBadRequest, receivedStatus)
 	var got custom_errors.HTTPError
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -464,8 +464,8 @@ func TestUpdateUser_UpdatePersonNameAsPerson(t *testing.T) {
 	body, err := json.Marshal(user.UpdateUserDTO{ID: seedUsers[0].ID, PersonName: &newName})
 	assert.NoError(t, err)
 	token, _ := u.GetValidToken(seedUsers[0].ID, seedUsers[0].Email)
-	_, recievedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
-	assert.Equal(t, http.StatusOK, recievedStatus)
+	_, receivedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
+	assert.Equal(t, http.StatusOK, receivedStatus)
 	userRepo, _, _ := getRepositories(db)
 	got, err := userRepo.GetById(seedUsers[0].ID)
 	assert.NoError(t, err)
@@ -481,8 +481,8 @@ func TestUpdateUser_UpdatePersonNameAsCompany(t *testing.T) {
 	body, err := json.Marshal(user.UpdateUserDTO{ID: seedUsers[0].ID, PersonName: &newName})
 	assert.NoError(t, err)
 	token, _ := u.GetValidToken(seedUsers[0].ID, seedUsers[0].Email)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
-	assert.Equal(t, http.StatusBadRequest, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
+	assert.Equal(t, http.StatusBadRequest, receivedStatus)
 	var got custom_errors.HTTPError
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -498,8 +498,8 @@ func TestUpdateUser_UpdatePersonSurnameAsPerson(t *testing.T) {
 	body, err := json.Marshal(user.UpdateUserDTO{ID: seedUsers[0].ID, PersonSurname: &newSurname})
 	assert.NoError(t, err)
 	token, _ := u.GetValidToken(seedUsers[0].ID, seedUsers[0].Email)
-	_, recievedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
-	assert.Equal(t, http.StatusOK, recievedStatus)
+	_, receivedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
+	assert.Equal(t, http.StatusOK, receivedStatus)
 	userRepo, _, _ := getRepositories(db)
 	got, err := userRepo.GetById(seedUsers[0].ID)
 	assert.NoError(t, err)
@@ -515,8 +515,8 @@ func TestUpdateUser_UpdatePersonSurnameAsCompany(t *testing.T) {
 	body, err := json.Marshal(user.UpdateUserDTO{ID: seedUsers[0].ID, PersonSurname: &newSurname})
 	assert.NoError(t, err)
 	token, _ := u.GetValidToken(seedUsers[0].ID, seedUsers[0].Email)
-	response, recievedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
-	assert.Equal(t, http.StatusBadRequest, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
+	assert.Equal(t, http.StatusBadRequest, receivedStatus)
 	var got custom_errors.HTTPError
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -531,8 +531,8 @@ func TestDeleteUser_NotAuthorized(t *testing.T) {
 	seedUsers := []user.User{*createPerson(1)}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedUsers)
-	_, recievedStatus := u.PerformRequest(server, http.MethodDelete, "/users/id/1", nil, nil)
-	assert.Equal(t, http.StatusUnauthorized, recievedStatus)
+	_, receivedStatus := u.PerformRequest(server, http.MethodDelete, "/users/id/1", nil, nil)
+	assert.Equal(t, http.StatusUnauthorized, receivedStatus)
 }
 
 func TestDeleteUser_Forbidden(t *testing.T) {
@@ -541,8 +541,8 @@ func TestDeleteUser_Forbidden(t *testing.T) {
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedUsers)
 	token, _ := u.GetValidToken(seedUsers[0].ID, seedUsers[0].Email)
-	response, recievedStatus := u.PerformRequest(server, http.MethodDelete, "/users/id/2", nil, &token)
-	assert.Equal(t, http.StatusForbidden, recievedStatus)
+	response, receivedStatus := u.PerformRequest(server, http.MethodDelete, "/users/id/2", nil, &token)
+	assert.Equal(t, http.StatusForbidden, receivedStatus)
 	var got custom_errors.HTTPError
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -555,8 +555,8 @@ func TestDeleteUser_Person(t *testing.T) {
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedUsers)
 	token, _ := u.GetValidToken(seedUsers[0].ID, seedUsers[0].Email)
-	_, recievedStatus := u.PerformRequest(server, http.MethodDelete, "/users/id/1", nil, &token)
-	assert.Equal(t, http.StatusNoContent, recievedStatus)
+	_, receivedStatus := u.PerformRequest(server, http.MethodDelete, "/users/id/1", nil, &token)
+	assert.Equal(t, http.StatusNoContent, receivedStatus)
 	userRepo, _, personRepo := getRepositories(db)
 	_, err := userRepo.GetById(seedUsers[0].ID)
 	assert.Error(t, err, gorm.ErrRecordNotFound)
@@ -570,8 +570,8 @@ func TestDeleteUser_Company(t *testing.T) {
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedUsers)
 	token, _ := u.GetValidToken(seedUsers[0].ID, seedUsers[0].Email)
-	_, recievedStatus := u.PerformRequest(server, http.MethodDelete, "/users/id/1", nil, &token)
-	assert.Equal(t, http.StatusNoContent, recievedStatus)
+	_, receivedStatus := u.PerformRequest(server, http.MethodDelete, "/users/id/1", nil, &token)
+	assert.Equal(t, http.StatusNoContent, receivedStatus)
 	userRepo, _, companyRepo := getRepositories(db)
 	_, err := userRepo.GetById(seedUsers[0].ID)
 	assert.Error(t, err, gorm.ErrRecordNotFound)

@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-var LAYOUT string = "2006-01-02"
+var LAYOUT = "2006-01-02"
 
 func ParseDate(date string) (*time.Time, error) {
 	t, err := time.Parse(LAYOUT, date)

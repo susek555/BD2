@@ -11,16 +11,16 @@ type CarServiceInterface interface {
 }
 
 type CarService struct {
-	manufactuterRepo manufacturer.ManufacturerRepositoryInterface
+	manufacturerRepo manufacturer.ManufacturerRepositoryInterface
 	modelRepo        model.ModelRepositoryInterface
 }
 
-func NewCarService(manufacuterR manufacturer.ManufacturerRepositoryInterface, modelR model.ModelRepositoryInterface) CarServiceInterface {
-	return &CarService{manufactuterRepo: manufacuterR, modelRepo: modelR}
+func NewCarService(manufacturerR manufacturer.ManufacturerRepositoryInterface, modelR model.ModelRepositoryInterface) CarServiceInterface {
+	return &CarService{manufacturerRepo: manufacturerR, modelRepo: modelR}
 }
 
 func (s *CarService) GetManufacturersModelsMap() (*ManufacturerModelMap, error) {
-	manufacturers, err := s.manufactuterRepo.GetAll()
+	manufacturers, err := s.manufacturerRepo.GetAll()
 	if err != nil {
 		return nil, err
 	}

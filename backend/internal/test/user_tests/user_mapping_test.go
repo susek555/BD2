@@ -228,7 +228,7 @@ func TestMapToUser_CompanyWithAllFields(t *testing.T) {
 }
 
 // ----------------------------------
-// Test map to retireve dto from user
+// Test map to retrieve dto from user
 // ----------------------------------
 
 func TestMapToDTO_Person(t *testing.T) {
