@@ -35,5 +35,5 @@ func (r *LikedOfferReposisotry) GetByUserID(id uint) ([]LikedOffer, error) {
 func (r *LikedOfferReposisotry) IsOfferLikedByUser(offerID, userID uint) bool {
 	var likedOffer LikedOffer
 	err := r.DB.Where("offer_id = ? AND user_id = ?", offerID, userID).First(&likedOffer).Error
-	return err != nil
+	return err == nil
 }
