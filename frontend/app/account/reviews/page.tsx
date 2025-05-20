@@ -1,4 +1,4 @@
-import { fetchSessionData } from '@/app/lib/account/data';
+import { fetchSessionData } from '@/app/lib/data/account/data';
 import { ReviewSearchParams } from '@/app/lib/definitions';
 import Pagination from '@/app/ui/pagination';
 import { ReviewFilterBox } from '@/app/ui/review/review-filters';

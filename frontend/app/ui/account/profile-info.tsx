@@ -2,7 +2,7 @@ import { UserProfile } from '@/app/lib/definitions';
 import {
   fetchAverageRating,
   fetchRatingDistribution,
-} from '@/app/lib/reviews/data';
+} from '@/app/lib/data/reviews/data';
 import { UserCircleIcon } from '@heroicons/react/24/outline';
 import RatingDisplay from './rating-display';
 

@@ -1,7 +1,7 @@
 import Filters from '@/app/ui/(home)/filters';
 import Sorting from './sorting';
 import OfferType from './offer-type';
-import { fetchFilterFields, fetchOfferTypes, fetchProducersAndModels, fetchSortingOptions, prepareRangeFields } from '@/app/lib/data';
+import { fetchFilterFields, fetchOfferTypes, fetchProducersAndModels, fetchSortingOptions, prepareRangeFields } from '@/app/lib/data/filters-sidebar/data';
 import ProducersAndModels from './producers-and-models';
 import ApplyButton from './apply-button';
 

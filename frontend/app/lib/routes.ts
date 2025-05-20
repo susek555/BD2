@@ -11,6 +11,7 @@ export const PUBLIC_ROUTES = [
   "/car/fuel-types",
   "/car/transmissions",
   "/sale-offer/order-keys",
+  "/sale-offer/filtered",
 ];
 
 export const PROTECTED_ROUTES = [

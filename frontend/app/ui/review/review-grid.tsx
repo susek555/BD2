@@ -2,7 +2,7 @@ import { ReviewSearchParams } from '@/app/lib/definitions';
 import {
   fetchReviewsByReviewee,
   fetchReviewsByReviewer,
-} from '@/app/lib/reviews/data';
+} from '@/app/lib/data/reviews/data';
 import { ReviewCard } from './review-card';
 
 interface ReviewGridProps {

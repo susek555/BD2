@@ -1,4 +1,4 @@
-import { fetchListings } from '@/app/lib/account/data';
+import { fetchListings } from '@/app/lib/data/account/data';
 import {
   parseArrayOrUndefined,
   parseIntOrUndefined,

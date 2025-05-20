@@ -1,4 +1,4 @@
-import { fetchSessionData } from '@/app/lib/account/data';
+import { fetchSessionData } from '@/app/lib/data/account/data';
 import ProfileInfo from '@/app/ui/account/profile-info';
 import {
   ProfileInfoSkeleton,

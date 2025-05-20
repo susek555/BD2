@@ -1,6 +1,6 @@
 import SideBar from '@/app/ui/sidebar';
 import { Suspense } from 'react';
-import { fetchHomePageData } from "../lib/data";
+import { fetchHomePageData } from "@/app/lib/data/(home)/data";
 import {
   parseArrayOrUndefined,
   parseIntOrUndefined,

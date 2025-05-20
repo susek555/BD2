@@ -4,7 +4,7 @@ import { BaseFilterTemplate } from "@/app/ui/(home)/base-filter-template/base-fi
 import { BaseRangeTemplate } from "./base-filter-template/base-range-template";
 import { FilterFieldData, RangeFieldData } from "@/app/lib/definitions";
 import { usePathname, useSearchParams } from "next/navigation";
-import { syncFiltersWithParams, syncRangesWithParams } from "@/app/lib/(home)/syncWithParams";
+import { syncFiltersWithParams, syncRangesWithParams } from "@/app/lib/data/(home)/syncWithParams";
 
 export default function Filters({
   filtersData,

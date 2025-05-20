@@ -1,4 +1,4 @@
-import { fetchHistory } from '@/app/lib/account/data';
+import { fetchHistory } from '@/app/lib/data/account/data';
 import {
   parseArrayOrUndefined,
   parseIntOrUndefined,

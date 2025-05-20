@@ -1,4 +1,4 @@
-import { fetchFavorites } from '@/app/lib/account/data';
+import { fetchFavorites } from '@/app/lib/data/account/data';
 import {
   parseArrayOrUndefined,
   parseIntOrUndefined,

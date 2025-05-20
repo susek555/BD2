@@ -1,4 +1,4 @@
-import { fetchOfferDetails } from "@/app/lib/data";
+import { fetchOfferDetails } from "@/app/lib/data/offer/data";
 import Photos from "@/app/ui/offer/[id]/photos";
 import Price from "@/app/ui/offer/[id]/price";
 import OfferDescription from "@/app/ui/offer/[id]/description";

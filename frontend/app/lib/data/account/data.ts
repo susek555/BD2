@@ -1,11 +1,11 @@
 import { getServerSession } from 'next-auth';
-import { authConfig } from '../authConfig';
+import { authConfig } from '../../authConfig';
 import {
   HistoryOffer,
   SaleOffer,
   SearchParams,
   UserProfile,
-} from '../definitions';
+} from '../../definitions';
 
 export async function fetchSessionData(): Promise<UserProfile> {
   const user = (await getServerSession(authConfig))?.user;
