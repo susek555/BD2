@@ -1,6 +1,7 @@
 package auction
 
 import (
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/car"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/generic"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 	"gorm.io/gorm"
@@ -77,7 +78,7 @@ func (a *AuctionRepository) Update(auction *sale_offer.Auction) error {
 func (a *AuctionRepository) Delete(id uint) error {
 	return a.DB.
 		Transaction(func(tx *gorm.DB) error {
-			if err := tx.Delete(&sale_offer.Car{}, id).Error; err != nil {
+			if err := tx.Delete(&car.Car{}, id).Error; err != nil {
 				return err
 			}
 			return nil
