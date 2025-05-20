@@ -162,7 +162,7 @@ func registerLikedOfferRoutes(router *gin.Engine) {
 	likedOfferHandler := liked_offer.NewLikedOfferHandler(likedOfferService)
 	likedOfferRoutes := router.Group("/sale-offer")
 	{
-		likedOfferRoutes.POST("/like", middleware.Authenticate(verifier), likedOfferHandler.LikeNewOffer)
-		likedOfferRoutes.DELETE("/dislike", middleware.Authenticate(verifier), likedOfferHandler.DislikeOffer)
+		likedOfferRoutes.POST("/like/:id", middleware.Authenticate(verifier), likedOfferHandler.LikeNewOffer)
+		likedOfferRoutes.DELETE("/dislike/:id", middleware.Authenticate(verifier), likedOfferHandler.DislikeOffer)
 	}
 }
