@@ -83,13 +83,7 @@ func (h *Handler) GetFilteredSaleOffers(c *gin.Context) {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
-	userID, ok := c.Get("userID")
-	if !ok {
-		filter.UserID = nil
-	} else {
-		uid := userID.(uint)
-		filter.UserID = &uid
-	}
+	filter.UserID = getOptinalUserID(c)
 	saleOffers, err := h.service.GetFiltered(filter)
 	if err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
@@ -117,7 +111,7 @@ func (h *Handler) GetSaleOfferByID(c *gin.Context) {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
-	offerDTO, err := h.service.GetByID(uint(id))
+	offerDTO, err := h.service.GetByID(uint(id), getOptinalUserID(c))
 	if err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
@@ -181,4 +175,16 @@ func (h *Handler) GetOrderKeys(c *gin.Context) {
 		keys = append(keys, k)
 	}
 	c.JSON(http.StatusOK, gin.H{"order_keys": keys})
+}
+
+func getOptinalUserID(c *gin.Context) *uint {
+	var id *uint
+	userID, ok := c.Get("userID")
+	if !ok {
+		id = nil
+	} else {
+		uid := userID.(uint)
+		id = &uid
+	}
+	return id
 }
