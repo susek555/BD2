@@ -160,7 +160,21 @@ export const parseArrayOrUndefined = (
   value: string | string[] | undefined,
 ): string[] | undefined => {
   if (!value) return undefined;
-  return Array.isArray(value) ? value : [value];
+  if (Array.isArray(value)) {
+    return value.flatMap((v) => v.split(',').map(s => s.trim()).filter(Boolean));
+  }
+  return value.split(',').map(s => s.trim()).filter(Boolean);
+};
+
+export const trimAllAfterFirstSpace = (
+  values: string[] | undefined,
+): string[] | undefined => {
+  if (!values) return undefined;
+  return values.map(value => {
+    const spaceIndex = value.indexOf(' ');
+    if (spaceIndex === -1) return value;
+    return value.substring(spaceIndex + 1);
+  });
 };
 
 // SaleOffer

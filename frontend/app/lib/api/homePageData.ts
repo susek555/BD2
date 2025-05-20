@@ -3,6 +3,7 @@ import { SaleOffer, SearchParams } from "../definitions";
 const API_URL = process.env.API_URL;
 
 export async function getHomePageData(params : SearchParams) : Promise<
+
     {
         pagination: {
             total_pages: number;
@@ -20,7 +21,7 @@ export async function getHomePageData(params : SearchParams) : Promise<
   });
 
   if (!response.ok) {
-    throw new Error("Failed to fetch order keys");
+    throw new Error("Failed to fetch home page data");
   }
 
   const data = await response.json();

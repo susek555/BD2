@@ -4,6 +4,7 @@ import { fetchHomePageData } from "../lib/data";
 import {
   parseArrayOrUndefined,
   parseIntOrUndefined,
+  trimAllAfterFirstSpace,
   SearchParams,
 } from '../lib/definitions';
 import OffersFoundInfo from '../ui/offers-found-info';
@@ -51,7 +52,7 @@ export default async function Home(props: {
     is_order_desc: searchParams?.isSortDesc === "true" ? true : undefined,
     offer_type: searchParams?.offerType,
     manufacturers: parseArrayOrUndefined(searchParams?.Producers),
-    models: parseArrayOrUndefined(searchParams?.Models),
+    models: trimAllAfterFirstSpace(parseArrayOrUndefined(searchParams?.Models)),
     colors: parseArrayOrUndefined(searchParams?.Colors),
     transmissions: parseArrayOrUndefined(searchParams?.Gearboxes),
     fuel_types: parseArrayOrUndefined(searchParams?.Fueltypes),

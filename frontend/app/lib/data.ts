@@ -1,4 +1,3 @@
-import { get } from "http";
 import { getColors, getDrives, getFuelTypes, getTransmissions } from "./api/filters";
 import { getOfferTypes } from "./api/offerType";
 import { getOrderKeys } from "./api/orderKeys";
@@ -179,20 +178,21 @@ export function prepareRangeFields() : RangeFieldData[] {
 }
 
 // Home page
-export async function fetchTotalPages(params: SearchParams): Promise<number> {
 
-  // TODO connect API
-  return 10;
-}
+// export async function fetchTotalPages(params: SearchParams): Promise<number> {
 
-export async function fetchTotalOffers(params: SearchParams): Promise<number> {
+//   // TODO connect API
+//   return 10;
+// }
+
+// export async function fetchTotalOffers(params: SearchParams): Promise<number> {
 
 
-    await new Promise(resolve => setTimeout(resolve, 1000));
+//     await new Promise(resolve => setTimeout(resolve, 1000));
 
-  // TODO connect API
-  return 100;
-}
+//   // TODO connect API
+//   return 100;
+// }
 
 export async function fetchOffers(params: SearchParams): Promise<SaleOffer[]> {
 
@@ -237,6 +237,8 @@ export async function fetchOffers(params: SearchParams): Promise<SaleOffer[]> {
 
 export async function fetchHomePageData(params: SearchParams) : Promise<{totalPages: number, totalOffers: number, offers: SaleOffer[]}> {
     try{
+        console.log("Home page params: ", params);
+
         const data = await getHomePageData(params);
 
         return {
