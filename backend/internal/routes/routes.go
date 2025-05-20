@@ -8,6 +8,7 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/bid"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/liked_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/review"
@@ -29,6 +30,7 @@ func RegisterRoutes(router *gin.Engine) {
 	registerSaleOfferRoutes(router)
 	registerAuctionRoutes(router)
 	registerBidRoutes(router)
+	registerLikedOfferRoutes(router)
 }
 
 func initializeVerifier() (*jwt.JWTVerifier, []byte) {
@@ -150,4 +152,16 @@ func registerBidRoutes(router *gin.Engine) {
 	bidRoutes.GET("/auction/:id", bidHandler.GetBidsByAuctionId)
 	bidRoutes.GET("/highest/:id", bidHandler.GetHighestBid)
 	bidRoutes.GET("/highest/auction/:auctionId/bidder/:bidderId", bidHandler.GetHighestBidByUserId)
+}
+
+func registerLikedOfferRoutes(router *gin.Engine) {
+	verifier, _ := initializeVerifier()
+	likedOfferRepo := liked_offer.NewLikedOfferRepository(initializers.DB)
+	likedOfferService := liked_offer.NewLikedOfferService(likedOfferRepo)
+	likedOfferHandler := liked_offer.NewLikedOfferHandler(likedOfferService)
+	likedOfferRoutes := router.Group("/sale-offer")
+	{
+		likedOfferRoutes.POST("/like", middleware.Authenticate(verifier), likedOfferHandler.LikeNewOffer)
+		likedOfferRoutes.DELETE("/dislike", middleware.Authenticate(verifier), likedOfferHandler.DislikeOffer)
+	}
 }
