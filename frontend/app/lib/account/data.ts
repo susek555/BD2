@@ -32,7 +32,12 @@ export async function fetchSessionData(): Promise<UserProfile> {
 }
 
 export async function getHistory(
-  params: SearchParams = {},
+  params: SearchParams = {
+    pagination: {
+      page: 1,
+      page_size: 6,
+    },
+  },
 ): Promise<{
   offers: HistoryOffer[];
   pagination: {
@@ -54,7 +59,12 @@ export async function getHistory(
 }
 
 export async function getListings(
-  params: SearchParams = {},
+  params: SearchParams = {
+    pagination: {
+      page: 1,
+      page_size: 6,
+    },
+  },
 ): Promise<{
   offers: HistoryOffer[];
   pagination: {
@@ -76,7 +86,12 @@ export async function getListings(
 }
 
 export async function getFavorites(
-  params: SearchParams = {},
+  params: SearchParams = {
+    pagination: {
+      page: 1,
+      page_size: 6,
+    },
+  },
 ): Promise<{
   offers: SaleOffer[];
   pagination: {
