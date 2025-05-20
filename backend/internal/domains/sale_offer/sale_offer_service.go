@@ -10,18 +10,18 @@ import (
 type SaleOfferServiceInterface interface {
 	Create(in CreateSaleOfferDTO) (*RetrieveDetailedSaleOfferDTO, error)
 	GetFiltered(filter *OfferFilter) (*RetrieveOffersWithPagination, error)
-	GetByID(id uint) (*RetrieveDetailedSaleOfferDTO, error)
+	GetByID(id uint, userID *uint) (*RetrieveDetailedSaleOfferDTO, error)
 	GetByUserID(id uint, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error)
 }
 
 type SaleOfferService struct {
 	repo           SaleOfferRepositoryInterface
 	manRepo        manufacturer.ManufacturerRepositoryInterface
-	likedOfferRepo liked_offer.LikedOfferReposisotry
+	likedOfferRepo liked_offer.LikedOfferReposisotryInterface
 }
 
-func NewSaleOfferService(saleOfferRepository SaleOfferRepositoryInterface, manufacturerRepo manufacturer.ManufacturerRepositoryInterface) SaleOfferServiceInterface {
-	return &SaleOfferService{repo: saleOfferRepository, manRepo: manufacturerRepo}
+func NewSaleOfferService(saleOfferRepository SaleOfferRepositoryInterface, manufacturerRepo manufacturer.ManufacturerRepositoryInterface, likedOfferRepo liked_offer.LikedOfferReposisotryInterface) SaleOfferServiceInterface {
+	return &SaleOfferService{repo: saleOfferRepository, manRepo: manufacturerRepo, likedOfferRepo: likedOfferRepo}
 }
 
 func (s *SaleOfferService) Create(in CreateSaleOfferDTO) (*RetrieveDetailedSaleOfferDTO, error) {
@@ -32,7 +32,7 @@ func (s *SaleOfferService) Create(in CreateSaleOfferDTO) (*RetrieveDetailedSaleO
 	if err := s.repo.Create(offer); err != nil {
 		return nil, err
 	}
-	return s.GetByID(offer.ID)
+	return s.GetByID(offer.ID, &offer.UserID)
 }
 
 func (s *SaleOfferService) GetFiltered(filter *OfferFilter) (*RetrieveOffersWithPagination, error) {
@@ -45,17 +45,21 @@ func (s *SaleOfferService) GetFiltered(filter *OfferFilter) (*RetrieveOffersWith
 	if err != nil {
 		return nil, err
 	}
-	offerDTOs := s.mapSliceWithIsLikedField(offers)
+	offerDTOs := s.mapSliceWithIsLikedField(offers, filter.UserID)
 	return &RetrieveOffersWithPagination{Offers: offerDTOs, PaginationResponse: pagResponse}, nil
 }
 
-func (s *SaleOfferService) GetByID(id uint) (*RetrieveDetailedSaleOfferDTO, error) {
+func (s *SaleOfferService) GetByID(id uint, userID *uint) (*RetrieveDetailedSaleOfferDTO, error) {
 	offer, err := s.repo.GetByID(id)
 	if err != nil {
 		return nil, err
 	}
 	offerDTO := offer.MapToDetailedDTO()
-	offerDTO.IsLiked = s.likedOfferRepo.IsOfferLikedByUser(offer.ID, offer.UserID)
+	if userID == nil {
+		offerDTO.IsLiked = false
+	} else {
+		offerDTO.IsLiked = s.likedOfferRepo.IsOfferLikedByUser(offer.ID, *userID)
+	}
 	return offerDTO, nil
 }
 
@@ -64,15 +68,19 @@ func (s *SaleOfferService) GetByUserID(id uint, pagRequest *pagination.Paginatio
 	if err != nil {
 		return nil, err
 	}
-	offerDTOs := s.mapSliceWithIsLikedField(offers)
+	offerDTOs := s.mapSliceWithIsLikedField(offers, &id)
 	return &RetrieveOffersWithPagination{Offers: offerDTOs, PaginationResponse: pagResponse}, nil
 }
 
-func (s *SaleOfferService) mapSliceWithIsLikedField(offers []SaleOffer) []RetrieveSaleOfferDTO {
+func (s *SaleOfferService) mapSliceWithIsLikedField(offers []SaleOffer, userID *uint) []RetrieveSaleOfferDTO {
 	offerDTOs := make([]RetrieveSaleOfferDTO, 0, len(offers))
 	for _, offer := range offers {
 		dto := offer.MapToDTO()
-		dto.IsLiked = s.likedOfferRepo.IsOfferLikedByUser(offer.ID, offer.UserID)
+		if userID == nil {
+			dto.IsLiked = false
+		} else {
+			dto.IsLiked = s.likedOfferRepo.IsOfferLikedByUser(offer.ID, *userID)
+		}
 		offerDTOs = append(offerDTOs, *dto)
 	}
 	return offerDTOs

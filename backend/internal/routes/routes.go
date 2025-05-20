@@ -114,14 +114,15 @@ func registerSaleOfferRoutes(router *gin.Engine) {
 	verifier, _ := initializeVerifier()
 	saleOfferRepo := sale_offer.NewSaleOfferRepository(initializers.DB)
 	manufacturerRepo := manufacturer.NewManufacturerRepository(initializers.DB)
-	saleOfferService := sale_offer.NewSaleOfferService(saleOfferRepo, manufacturerRepo)
+	likedOfferReposisotry := liked_offer.NewLikedOfferRepository(initializers.DB)
+	saleOfferService := sale_offer.NewSaleOfferService(saleOfferRepo, manufacturerRepo, likedOfferReposisotry)
 	saleOfferHandler := sale_offer.NewSaleOfferHandler(saleOfferService)
 	saleOfferRoutes := router.Group("/sale-offer")
 	{
 		saleOfferRoutes.POST("/", middleware.Authenticate(verifier), saleOfferHandler.CreateSaleOffer)
-		saleOfferRoutes.POST("/filtered", middleware.OptionalAuthenticate(verifier), saleOfferHandler.GetFilteredSaleOffers)
 		saleOfferRoutes.POST("/my-offers", middleware.Authenticate(verifier), saleOfferHandler.GetMySaleOffers)
-		saleOfferRoutes.GET("/id/:id", saleOfferHandler.GetSaleOfferByID)
+		saleOfferRoutes.POST("/filtered", middleware.OptionalAuthenticate(verifier), saleOfferHandler.GetFilteredSaleOffers)
+		saleOfferRoutes.GET("/id/:id", middleware.OptionalAuthenticate(verifier), saleOfferHandler.GetSaleOfferByID)
 		saleOfferRoutes.GET("/offer-types", saleOfferHandler.GetSaleOfferTypes)
 		saleOfferRoutes.GET("/order-keys", saleOfferHandler.GetOrderKeys)
 	}
