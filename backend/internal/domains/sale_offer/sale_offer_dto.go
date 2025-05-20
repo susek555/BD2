@@ -8,7 +8,7 @@ import (
 )
 
 type CreateSaleOfferDTO struct {
-	UserID             uint                    `json:"-" validate:"required"`
+	UserID             uint                    `json:"-"`
 	Description        string                  `json:"description" validate:"required"`
 	Price              uint                    `json:"price" validate:"required"`
 	Margin             MarginValue             `json:"margin" validate:"required"`
