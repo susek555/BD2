@@ -53,7 +53,6 @@ export default function ProducersAndModels({ producersAndModels }: { producersAn
 
         return (
             <>
-                <h2 className='mb-2 text-sm font-semibold text-gray-700'>Filters</h2>
                 <div className="base-filter-template border border-black-300 rounded px-2 py-1">
                     <button
                     className="flex justify-between items-center w-full"
@@ -133,7 +132,7 @@ export default function ProducersAndModels({ producersAndModels }: { producersAn
 
     return (
         <>
-            <p className="px-2">Filters:</p>
+            <h2 className='mb-2 text-sm font-semibold text-gray-700'>Filters</h2>
             <BaseFilterTemplate
                 name={producers.fieldName}
                 options={producers.options}

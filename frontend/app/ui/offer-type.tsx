@@ -29,7 +29,7 @@ export default function OfferType({ offerTypes }: { offerTypes: string[] }) {
 
 return (
         <div>
-            <h2 className="text-bg px-2">Offer Type:</h2>
+            <h2 className='mb-2 text-sm font-semibold text-gray-700'>Offer Type</h2>
             <div style={{ display: 'flex', gap: '1rem' }}>
                 <div
                     className="base-filter-template border border-black-300 rounded px-2 py-1 relative"
