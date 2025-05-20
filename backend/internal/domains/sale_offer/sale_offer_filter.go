@@ -39,6 +39,7 @@ type OfferFilter struct {
 	Query                    *string                      `json:"query"`
 	OrderKey                 *string                      `json:"order_key"`
 	IsOrderDesc              *bool                        `json:"is_order_desc"`
+	LikedOnly                *bool                        `json:"liked_only"`
 	OfferType                *OfferType                   `json:"offer_type"`
 	Manufacturers            *[]string                    `json:"manufacturers"`
 	Colors                   *[]car_params.Color          `json:"colors"`
@@ -71,6 +72,7 @@ func (of *OfferFilter) ApplyOfferFilters(query *gorm.DB) (*gorm.DB, error) {
 	}
 	query = applyUserFilter(query, of.UserID)
 	query = applyOfferTypeFilter(query, of.OfferType)
+	query = applyLikedOnlyFilter(query, of.LikedOnly, of.UserID)
 	query = applyManufacturersFilter(query, of.Manufacturers)
 	query = applyInSliceFilter(query, "cars.color", of.Colors)
 	query = applyInSliceFilter(query, "cars.drive", of.Drives)
@@ -89,7 +91,7 @@ func (of *OfferFilter) ApplyOfferFilters(query *gorm.DB) (*gorm.DB, error) {
 
 func applyUserFilter(query *gorm.DB, userID *uint) *gorm.DB {
 	if userID != nil {
-		query = query.Where("user_id != ?", *userID)
+		query = query.Where("sale_offers.user_id != ?", *userID)
 	}
 	return query
 }
@@ -114,6 +116,15 @@ func applyManufacturersFilter(query *gorm.DB, values *[]string) *gorm.DB {
 			Joins("JOIN models ON models.id = cars.model_id").
 			Joins("JOIN manufacturers ON manufacturers.id = models.manufacturer_id").
 			Where("manufacturers.name IN ?", *values)
+	}
+	return query
+}
+
+func applyLikedOnlyFilter(query *gorm.DB, likedOnly *bool, userID *uint) *gorm.DB {
+	if likedOnly != nil && userID != nil {
+		query = query.
+			Joins("JOIN liked_offers ON liked_offers.offer_id = sale_offers.id").
+			Where("liked_offers.user_id = ?", *userID)
 	}
 	return query
 }
