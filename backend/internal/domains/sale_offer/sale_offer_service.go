@@ -12,6 +12,7 @@ type SaleOfferServiceInterface interface {
 	GetFiltered(filter *OfferFilter) (*RetrieveOffersWithPagination, error)
 	GetByID(id uint, userID *uint) (*RetrieveDetailedSaleOfferDTO, error)
 	GetByUserID(id uint, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error)
+	IsOfferLikedByUser(userID, offerID uint) bool
 }
 
 type SaleOfferService struct {
@@ -58,7 +59,7 @@ func (s *SaleOfferService) GetByID(id uint, userID *uint) (*RetrieveDetailedSale
 	if userID == nil {
 		offerDTO.IsLiked = false
 	} else {
-		offerDTO.IsLiked = s.likedOfferRepo.IsOfferLikedByUser(offer.ID, *userID)
+		offerDTO.IsLiked = s.IsOfferLikedByUser(*userID, offer.ID)
 	}
 	return offerDTO, nil
 }
@@ -79,9 +80,13 @@ func (s *SaleOfferService) mapSliceWithIsLikedField(offers []SaleOffer, userID *
 		if userID == nil {
 			dto.IsLiked = false
 		} else {
-			dto.IsLiked = s.likedOfferRepo.IsOfferLikedByUser(offer.ID, *userID)
+			dto.IsLiked = s.IsOfferLikedByUser(*userID, offer.ID)
 		}
 		offerDTOs = append(offerDTOs, *dto)
 	}
 	return offerDTOs
+}
+
+func (s *SaleOfferService) IsOfferLikedByUser(offerID, userID uint) bool {
+	return s.likedOfferRepo.IsOfferLikedByUser(userID, offerID)
 }
