@@ -2,7 +2,7 @@ import { HistoryOffer } from '@/app/lib/definitions';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
-  const data: HistoryOffer[] = [
+  const offers: HistoryOffer[] = [
     {
       id: '1',
       name: 'Audi A4',
@@ -64,6 +64,13 @@ export async function GET(request: Request) {
       dateEnd: '2024-11-11',
     },
   ];
+  const pagination = {
+    total_pages: 1,
+    total_records: 6,
+  };
 
-  return NextResponse.json(data);
+  return NextResponse.json({
+    offers,
+    pagination
+  });
 }

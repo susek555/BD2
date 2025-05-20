@@ -1,4 +1,4 @@
-import { fetchFavorites } from '@/app/lib/account/data';
+import { getFavorites } from '@/app/lib/account/data';
 import { fetchTotalPages } from '@/app/lib/data';
 import {
   parseArrayOrUndefined,
@@ -74,7 +74,7 @@ export default async function ActivityPage(props: {
         </Suspense>
         <div className='my-4' />
         <Suspense fallback={<OffersTableSkeleton />}>
-          <OffersTable params={params} fetchFunction={fetchFavorites} />
+          <OffersTable params={params} fetchFunction={getFavorites} />
         </Suspense>
         <div className='mt-5 flex w-full justify-center'>
           <Suspense>

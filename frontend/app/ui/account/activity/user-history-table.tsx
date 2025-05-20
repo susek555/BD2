@@ -1,17 +1,15 @@
-import { fetchHistory } from '@/app/lib/account/data';
-import { HistoryOffer, SearchParams } from '@/app/lib/definitions';
+import { HistoryOffer } from '@/app/lib/definitions';
 import GenericOffersTable from '@/app/ui/generic-offer-table';
 import SingleHistoryOffer from './history-offer-card';
 
 export default async function OffersHistory({
-  params,
+  offers, // TODO: remove this prop
 }: {
-  params: SearchParams;
+  offers: HistoryOffer[];
 }) {
   return (
     <GenericOffersTable<HistoryOffer>
-      fetchFunction={fetchHistory}
-      params={params}
+      offers={offers}
       ItemComponent={SingleHistoryOffer}
     />
   );

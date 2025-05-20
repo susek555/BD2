@@ -31,9 +31,15 @@ export async function fetchSessionData(): Promise<UserProfile> {
   return userProfile;
 }
 
-export async function fetchHistory(
+export async function getHistory(
   params: SearchParams = {},
-): Promise<HistoryOffer[]> {
+): Promise<{
+  offers: HistoryOffer[];
+  pagination: {
+    total_pages: number;
+    total_records: number;
+  };
+}> {
   const url = `${process.env.URL}/api/account/history`;
 
   const response = await fetch(url, {
@@ -47,7 +53,7 @@ export async function fetchHistory(
   return response.json();
 }
 
-export async function fetchListings(
+export async function getListings(
   params: SearchParams = {},
 ): Promise<HistoryOffer[]> {
   const url = `${process.env.URL}/api/account/listings`;
@@ -63,7 +69,7 @@ export async function fetchListings(
   return response.json();
 }
 
-export async function fetchFavorites(
+export async function getFavorites(
   params: SearchParams = {},
 ): Promise<SaleOffer[]> {
   const url = `${process.env.URL}/api/account/favorites`;
@@ -77,4 +83,26 @@ export async function fetchFavorites(
   }
 
   return response.json();
+}
+
+export async function fetchHistory(params: SearchParams) : Promise<{totalPages: number, totalOffers: number, offers: HistoryOffer[]}> {
+    try{
+        console.log("History page params: ", params);
+
+        const data = await getHistory(params);
+
+      
+        console.log("History page data: ", data);
+
+        return {
+            totalPages: data.pagination.total_pages,
+            totalOffers: data.pagination.total_records,
+            offers: data.offers
+        };
+
+
+    } catch (error) {
+        console.error("Api error:", error);
+        throw new Error('Failed to fetch home page data.');
+    }
 }
