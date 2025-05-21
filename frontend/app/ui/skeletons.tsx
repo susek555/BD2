@@ -1,3 +1,21 @@
+import { BellAlertIcon } from "@heroicons/react/20/solid";
+import { BaseAccountButton } from "@/app/ui/(topbar)/base-account-buttons/base-account-button";
+
+export function NotificationsButtonSkeleton() {
+    return (
+        <>
+            <BaseAccountButton
+                className="w-12 flex items-center justify-center relative"
+            >
+                <BellAlertIcon className="w-5 text-gray-50" />
+                <div className="absolute -top-1 -right-1 bg-gray-200 text-white rounded-full w-5 h-5 flex items-center justify-center">
+                    <div className="w-3 h-3 border-2 border-gray-400 border-t-gray-600 rounded-full animate-spin"></div>
+                </div>
+            </BaseAccountButton>
+        </>
+    )
+}
+
 export function OffersTableSkeleton() {
     return (
         <div className="flex flex-col gap-4">
