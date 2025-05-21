@@ -6,6 +6,7 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/liked_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/notification"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/refresh_token"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/review"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
@@ -26,5 +27,7 @@ func MigrateModels() {
 		&sale_offer.Auction{},
 		&bid.Bid{},
 		&liked_offer.LikedOffer{},
+		&notification.Notification{},
+		&notification.ClientNotification{},
 	)
 }
