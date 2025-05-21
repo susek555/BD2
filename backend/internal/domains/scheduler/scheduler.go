@@ -11,14 +11,16 @@ import (
 	"github.com/redis/go-redis/v9"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auctionws"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/bid"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/notification"
 )
 
 type Scheduler struct {
-	mu          sync.Mutex
-	heap        timerHeap
-	repo        bid.BidRepositoryInterface
-	redisClient *redis.Client
-	addCh       chan *Item
+	mu                  sync.Mutex
+	heap                timerHeap
+	repo                bid.BidRepositoryInterface
+	notificationService notification.NotificationServiceInterface
+	redisClient         *redis.Client
+	addCh               chan *Item
 }
 
 type SchedulerInterface interface {
@@ -26,12 +28,13 @@ type SchedulerInterface interface {
 	Run(ctx context.Context)
 }
 
-func NewScheduler(repo bid.BidRepositoryInterface, redisClient *redis.Client) SchedulerInterface {
+func NewScheduler(repo bid.BidRepositoryInterface, redisClient *redis.Client, notificationService notification.NotificationServiceInterface) SchedulerInterface {
 	return &Scheduler{
-		heap:        make(timerHeap, 0),
-		addCh:       make(chan *Item, 1024),
-		repo:        repo,
-		redisClient: redisClient,
+		heap:                make(timerHeap, 0),
+		addCh:               make(chan *Item, 1024),
+		notificationService: notificationService,
+		repo:                repo,
+		redisClient:         redisClient,
 	}
 }
 
@@ -91,7 +94,15 @@ func (s *Scheduler) closeAuction(ctx context.Context, auctionID string) {
 		winnerID = strconv.FormatUint(uint64(highest.BidderID), 10)
 		amount = int64(highest.Amount)
 	}
-	env := auctionws.NewEndAuctionEnvelope(auctionID, winnerID, amount)
+	notification := notification.Notification{
+		OfferID: uint(auctionIDInt),
+	}
+	err = s.notificationService.CreateEndAuctionNotification(&notification, winnerID, amount)
+	if err != nil {
+		log.Println("Error creating notification:", err)
+		return
+	}
+	env := auctionws.NewNotificationEnvelope(&notification)
 	if err := auctionws.PublishAuctionEvent(ctx, s.redisClient, auctionID, env); err != nil {
 		log.Printf("failed to publish auction event: %v", err)
 	}
