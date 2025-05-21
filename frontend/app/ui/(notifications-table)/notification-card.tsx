@@ -17,14 +17,34 @@ export default function NotificationCard({
     // TODO send API request to update notification status
   }
 
+  const handleClick = () => {
+    console.log(`Notification clicked: ${notification.id}`);
+  }
+
 
   return (
-    <div className={`flex flex-col gap-1.5 p-3 bg-white rounded-lg shadow-md border-3 ${isRead ? 'border-gray-300' : 'border-gray-800'} relative`}>
-      <div className="absolute top-2 right-3" onClick={handleReadChange} role="button" tabIndex={0}>
-        {isRead ?
-          <EnvelopeOpenIcon className="h-6 w-6 text-gray-500 cursor-pointer" /> :
-          <EnvelopeIcon className="h-6 w-6 text-gray-500 cursor-pointer" />
-        }
+    <div
+      className={`flex flex-col gap-1.5 p-3 bg-white rounded-lg shadow-md border-3 ${
+          isRead ? 'border-gray-300' : 'border-gray-800'
+        } relative hover:bg-gray-100 transition-colors duration-200 ease-in-out cursor-pointer`}
+      onClick={handleClick}
+      role="button"
+      tabIndex={0}
+    >
+      <div
+        className="absolute top-2 right-3"
+        onClick={(e) => {
+          e.stopPropagation();
+          handleReadChange();
+        }}
+        role="button"
+        tabIndex={0}
+      >
+        {isRead ? (
+          <EnvelopeOpenIcon className="h-6 w-6 text-gray-500 cursor-pointer hover:text-gray-700" />
+        ) : (
+          <EnvelopeIcon className="h-6 w-6 text-gray-500 cursor-pointer hover:text-gray-700" />
+        )}
       </div>
       <h3 className="text-lg font-semibold">{notification.title}</h3>
       <p className="text-gray-600">{notification.description}</p>
