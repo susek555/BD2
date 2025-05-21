@@ -1,31 +1,23 @@
 package auctionws
 
-import "encoding/json"
+import (
+	"encoding/json"
+
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/notification"
+)
 
 type MsgType string
 
 const (
-	MsgBid         MsgType = "bid"
-	MsgEndAuction  MsgType = "end_auction"
-	MsgError       MsgType = "error"
-	MsgSubscribe   MsgType = "subscribe"
-	MsgUnsubscribe MsgType = "unsubscribe"
+	MsgNotification MsgType = "notification"
+	MsgError        MsgType = "error"
+	MsgSubscribe    MsgType = "subscribe"
+	MsgUnsubscribe  MsgType = "unsubscribe"
 )
 
 type Envelope struct {
 	MessageType MsgType         `json:"type"`
 	Data        json.RawMessage `json:"data,omitempty"`
-}
-type BidPayload struct {
-	AuctionID string `json:"auction_id"`
-	Amount    int64  `json:"amount"`
-	UserID    string `json:"user_id"`
-}
-
-type EndAuctionPayload struct {
-	AuctionID string `json:"auction_id"`
-	Winner    string `json:"winner"`
-	Amount    int64  `json:"amount"`
 }
 
 type SubscribePayload struct {
@@ -35,28 +27,13 @@ type UnsubscribePayload struct {
 	Auctions []string `json:"auctions"`
 }
 
-func NewBidEnvelope(auctionID string, amount int64, userID string) *Envelope {
-	payload := BidPayload{
-		AuctionID: auctionID,
-		Amount:    amount,
-		UserID:    userID,
+func NewNotificationEnvelope(notification *notification.Notification) *Envelope {
+	data, err := json.Marshal(notification)
+	if err != nil {
+		return nil
 	}
-	data, _ := json.Marshal(payload)
 	return &Envelope{
-		MessageType: MsgBid,
-		Data:        data,
-	}
-}
-
-func NewEndAuctionEnvelope(auctionID string, winner string, amount int64) *Envelope {
-	payload := EndAuctionPayload{
-		AuctionID: auctionID,
-		Winner:    winner,
-		Amount:    amount,
-	}
-	data, _ := json.Marshal(payload)
-	return &Envelope{
-		MessageType: MsgEndAuction,
+		MessageType: MsgNotification,
 		Data:        data,
 	}
 }
