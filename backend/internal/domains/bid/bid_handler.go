@@ -10,20 +10,23 @@ import (
 	"github.com/redis/go-redis/v9"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auctionws"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auth"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/notification"
 	"github.com/susek555/BD2/car-dealer-api/pkg/custom_errors"
 )
 
 type Handler struct {
-	service     BidServiceInterface
-	redisClient *redis.Client
-	hub         *auctionws.Hub
+	bidService          BidServiceInterface
+	redisClient         *redis.Client
+	hub                 *auctionws.Hub
+	notificationService notification.NotificationServiceInterface
 }
 
-func NewHandler(service BidServiceInterface, redisClient *redis.Client, hub *auctionws.Hub) *Handler {
+func NewHandler(service BidServiceInterface, redisClient *redis.Client, hub *auctionws.Hub, notificationService notification.NotificationServiceInterface) *Handler {
 	return &Handler{
-		service:     service,
-		redisClient: redisClient,
-		hub:         hub,
+		bidService:          service,
+		redisClient:         redisClient,
+		hub:                 hub,
+		notificationService: notificationService,
 	}
 }
 
@@ -38,7 +41,7 @@ func (h *Handler) CreateBid(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
-	dto, err := h.service.Create(&in, userId)
+	dto, err := h.bidService.Create(&in, userId)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
@@ -47,7 +50,15 @@ func (h *Handler) CreateBid(c *gin.Context) {
 	auctionIDStr := strconv.FormatUint(uint64(dto.AuctionID), 10)
 	userIDStr := strconv.FormatUint(uint64(userId), 10)
 	amountInt64 := int64(dto.Amount)
-	env := auctionws.NewBidEnvelope(auctionIDStr, amountInt64, userIDStr)
+	notification := &notification.Notification{
+		OfferID: dto.AuctionID,
+	}
+	err = h.notificationService.CreateOutbidNotification(notification, amountInt64)
+	if err != nil {
+		log.Println("Error creating notification:", err)
+		return
+	}
+	env := auctionws.NewNotificationEnvelope(notification)
 	data, err := json.Marshal(env)
 	if err != nil {
 		log.Println("Error marshalling envelope:", err)
@@ -61,7 +72,7 @@ func (h *Handler) CreateBid(c *gin.Context) {
 }
 
 func (h *Handler) GetAllBids(c *gin.Context) {
-	bids, err := h.service.GetAll()
+	bids, err := h.bidService.GetAll()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
@@ -73,7 +84,7 @@ func (h *Handler) GetBidByID(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
-	bid, err := h.service.GetById(uint(bidID))
+	bid, err := h.bidService.GetById(uint(bidID))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
@@ -85,7 +96,7 @@ func (h *Handler) GetBidsByBidderId(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
-	bids, err := h.service.GetByBidderId(uint(bidderId))
+	bids, err := h.bidService.GetByBidderId(uint(bidderId))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
@@ -97,7 +108,7 @@ func (h *Handler) GetBidsByAuctionId(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
-	bids, err := h.service.GetByAuctionId(uint(auctionId))
+	bids, err := h.bidService.GetByAuctionId(uint(auctionId))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
@@ -109,7 +120,7 @@ func (h *Handler) GetHighestBid(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
-	bid, err := h.service.GetHighestBid(uint(auctionId))
+	bid, err := h.bidService.GetHighestBid(uint(auctionId))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
@@ -125,7 +136,7 @@ func (h *Handler) GetHighestBidByUserId(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
-	bid, err := h.service.GetHighestBidByUserId(uint(auctionId), uint(bidderId))
+	bid, err := h.bidService.GetHighestBidByUserId(uint(auctionId), uint(bidderId))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
