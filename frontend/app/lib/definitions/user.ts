@@ -15,6 +15,7 @@ export const profileTabs: Tab[] = [
 ];
 
 export interface UserProfile {
+  selector: 'P' | 'C'
   id: number;
   username: string;
   email: string;
