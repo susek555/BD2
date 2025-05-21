@@ -4,7 +4,7 @@ import { ClientLogoutButton } from "@/app/ui/(topbar)/client-logout-button";
 import { ArrowRightIcon, UserCircleIcon } from '@heroicons/react/20/solid';
 import { getServerSession } from "next-auth/next";
 import Link from "next/link";
-import NotificationsButton from "./notifications-button";
+import NotificationsButton from "./notifications/notifications-button";
 
 export default async function LoginButtons() {
   const session = await getServerSession(authConfig);
