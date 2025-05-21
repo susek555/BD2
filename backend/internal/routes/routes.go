@@ -14,6 +14,7 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/liked_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/notification"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/review"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 
@@ -169,7 +170,13 @@ func registerBidRoutes(router *gin.Engine) {
 	redisClient, hub := RegisterWebsocket(router)
 	bidRepo := bid.NewBidRepository(initializers.DB)
 	bidService := bid.NewBidService(bidRepo)
-	bidHandler := bid.NewHandler(bidService, redisClient, hub)
+	notificationRepo := notification.NewNotificationRepository(initializers.DB)
+	saleOfferRepo := sale_offer.NewSaleOfferRepository(initializers.DB)
+	manufacturerRepo := manufacturer.NewManufacturerRepository(initializers.DB)
+	manufacturerService := manufacturer.NewManufacturerService(manufacturerRepo)
+	saleOfferService := sale_offer.NewSaleOfferService(saleOfferRepo, manufacturerService)
+	notificationService := notification.NewNotificationService(notificationRepo, saleOfferService)
+	bidHandler := bid.NewHandler(bidService, redisClient, hub, notificationService)
 	bidRoutes := router.Group("/bid")
 	bidRoutes.POST("/", middleware.Authenticate(verifier), bidHandler.CreateBid)
 	bidRoutes.GET("/", bidHandler.GetAllBids)
