@@ -4,15 +4,19 @@ import { XMarkIcon } from '@heroicons/react/20/solid';
 import * as Dialog from '@radix-ui/react-dialog';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { useState } from 'react';
+import NotificationsTable from '@/app/ui/(notifications-table)/notifications-table';
+import { Notification } from '@/app/lib/definitions/notification';
 
 interface NotificationsDialogProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  notifications?: Notification[];
 }
 
 export default function NotificationsModal({
   open,
   onOpenChange,
+  notifications,
 }: NotificationsDialogProps) {
   const [dialogOpen, setDialogOpen] = useState(open || false);
 
@@ -36,6 +40,21 @@ export default function NotificationsModal({
           <div className='relative'>
             <div>
               <p className='p-4 text-lg font-bold'>Notifications</p>
+              {notifications && notifications.length > 0 ? (
+                <NotificationsTable notifications={notifications} />
+              ) : (
+                <div className="p-4 text-center text-gray-500">
+                  You don&apos;t have any notifications
+                </div>
+              )}
+              <div className="p-4 border-t border-gray-200">
+                <a
+                  href="/account/notifications"
+                  className="block text-center text-blue-600 hover:text-blue-800 font-medium"
+                >
+                  See more notifications
+                </a>
+              </div>
             </div>
 
             <Dialog.Close asChild>
