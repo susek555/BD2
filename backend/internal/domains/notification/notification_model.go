@@ -9,5 +9,4 @@ type Notification struct {
 	Title                 string `json:"title"`
 	Description           string `json:"description"`
 	Date                  string `json:"date"`
-	Seen                  bool   `json:"seen"`
 }
