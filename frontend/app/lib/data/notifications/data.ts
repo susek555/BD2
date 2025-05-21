@@ -31,6 +31,14 @@ export async function fetchNotifications() {
             date: "2023-10-03",
             is_read: true,
         },
+        {
+            id: "4",
+            offer_id: "4",
+            title: "New message",
+            description: "You have a new message",
+            date: "2023-10-04",
+            is_read: false,
+        }
     ]
 
     return {

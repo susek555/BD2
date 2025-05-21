@@ -32,7 +32,7 @@ export default function NotificationsModal({
         </VisuallyHidden>
         <Dialog.Overlay className='animate-fade-in fixed inset-0 z-40 bg-black/50' />
         <Dialog.Content
-          className='animate-slide-up fixed top-1/2 left-1/2 z-50 max-h-[90vh] w-[90vw] max-w-md -translate-x-1/2 -translate-y-1/2 overflow-auto rounded-lg bg-white shadow-lg'
+          className='animate-slide-up fixed top-1/2 left-1/2 z-50 max-h-[90vh] w-[90vw] max-w-5/12 -translate-x-1/2 -translate-y-1/2 overflow-auto rounded-lg bg-white shadow-lg'
           onClick={(e) => {
             e.stopPropagation();
           }}
