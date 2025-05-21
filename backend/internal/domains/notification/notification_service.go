@@ -8,8 +8,8 @@ import (
 )
 
 type NotificationServiceInterface interface {
-	CreateOutbidNotification(notification *Notification, amount uint) error
-	CreateEndAuctionNotification(notification *Notification, winner string, winningBid uint) error
+	CreateOutbidNotification(notification *Notification, amount int64) error
+	CreateEndAuctionNotification(notification *Notification, winner string, winningBid int64) error
 	GetNotificationByID(id uint) (*Notification, error)
 }
 
@@ -25,7 +25,7 @@ func NewNotificationService(notificationRepository NotificationRepositoryInterfa
 	}
 }
 
-func (s *NotificationService) CreateOutbidNotification(notification *Notification, amount uint) error {
+func (s *NotificationService) CreateOutbidNotification(notification *Notification, amount int64) error {
 	offer, err := s.SaleOfferService.GetByID(notification.OfferID)
 	if err != nil {
 		return err
@@ -36,7 +36,7 @@ func (s *NotificationService) CreateOutbidNotification(notification *Notificatio
 	return s.NotificationRepository.Create(notification)
 }
 
-func (s *NotificationService) CreateEndAuctionNotification(notification *Notification, winner string, winningBid uint) error {
+func (s *NotificationService) CreateEndAuctionNotification(notification *Notification, winner string, winningBid int64) error {
 	offer, err := s.SaleOfferService.GetByID(notification.OfferID)
 	if err != nil {
 		return err
