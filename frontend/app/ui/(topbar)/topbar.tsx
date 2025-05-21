@@ -25,11 +25,11 @@ export async function TopBar() {
           <div className="flex justify-end px-2">
             <div className="flex flex-row space-x-2">
               <LoginButtons />
-                <Link href={loggedIn ? "/offer/add" : "/login"}>
-                  <BaseAccountButton className="hidden md:flex w-full">
-                    Add Offer <PlusIcon className="ml-auto w-5 text-gray-50" />
-                  </BaseAccountButton>
-                </Link>
+              <Link href={loggedIn ? "/offer/add" : "/login"}>
+                <BaseAccountButton className="hidden md:flex w-full">
+                  Add Offer <PlusIcon className="ml-auto w-5 text-gray-50" />
+                </BaseAccountButton>
+              </Link>
             </div>
           </div>
         </div>
