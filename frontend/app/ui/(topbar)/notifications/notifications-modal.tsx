@@ -10,7 +10,7 @@ interface NotificationsDialogProps {
   onOpenChange?: (open: boolean) => void;
 }
 
-export default function LoginModal({
+export default function NotificationsModal({
   open,
   onOpenChange,
 }: NotificationsDialogProps) {
