@@ -4,7 +4,7 @@ import { ClientLogoutButton } from "@/app/ui/(topbar)/client-logout-button";
 import { ArrowRightIcon, UserCircleIcon } from '@heroicons/react/20/solid';
 import { getServerSession } from "next-auth/next";
 import Link from "next/link";
-import NotificationsButton from "./notifications/notifications-button";
+import NotificationsHandler from "./notifications/notifications-handler";
 
 export default async function LoginButtons() {
   const session = await getServerSession(authConfig);
@@ -20,7 +20,7 @@ export default async function LoginButtons() {
               My Account <UserCircleIcon className="ml-auto w-5 text-gray-50" />
             </BaseAccountButton>
           </Link>
-          <NotificationsButton />
+          <NotificationsHandler />
         </>
       ) : (
         <>

@@ -1,4 +1,4 @@
-import { SaleOffer } from '@/app/lib/definitions/reviews';
+import { SaleOffer } from '@/app/lib/definitions/SaleOffer';
 import GenericOffersTable from './generic-offer-table';
 import SaleOfferCard from './sale-offer-card';
 
