@@ -3,7 +3,7 @@ package notification
 import "gorm.io/gorm"
 
 type ClientNotificationRepositoryInterface interface {
-	Create(clientNotification *ClientNotification) (*ClientNotification, error)
+	Create(clientNotification *ClientNotification) error
 	GetById(id uint) (*ClientNotification, error)
 	GetAll() ([]ClientNotification, error)
 }
@@ -18,12 +18,12 @@ func NewClientNotificationRepository(db *gorm.DB) ClientNotificationRepositoryIn
 	}
 }
 
-func (r *ClientNotificationRepository) Create(clientNotification *ClientNotification) (*ClientNotification, error) {
+func (r *ClientNotificationRepository) Create(clientNotification *ClientNotification) error {
 	db := r.DB
 	if err := db.Create(clientNotification).Error; err != nil {
-		return nil, err
+		return err
 	}
-	return clientNotification, nil
+	return nil
 }
 
 func (r *ClientNotificationRepository) GetById(id uint) (*ClientNotification, error) {
