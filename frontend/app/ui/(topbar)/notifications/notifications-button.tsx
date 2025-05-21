@@ -4,15 +4,16 @@ import { BellAlertIcon } from "@heroicons/react/20/solid"
 import { BaseAccountButton } from "@/app/ui/(topbar)/base-account-buttons/base-account-button"
 import NotificationModal from "@/app/ui/(topbar)/notifications/notifications-modal"
 import { useState } from "react"
+import { Notification } from "@/app/lib/definitions/notification"
 
 interface NotificationsButtonProps {
     newNotifications: number;
-    //notifications: Notification[];
+    notifications?: Notification[];
 }
 
 export default function NotificationsButton({
     newNotifications = 0,
-    //notifications = [],
+    notifications,
 }: NotificationsButtonProps = { newNotifications: 0
 }) {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -34,7 +35,7 @@ export default function NotificationsButton({
                     </div>
                 )}
             </BaseAccountButton>
-            <NotificationModal open={isDialogOpen} onOpenChange={setIsDialogOpen}/>
+            <NotificationModal open={isDialogOpen} onOpenChange={setIsDialogOpen} notifications={notifications}/>
         </>
     )
 }
