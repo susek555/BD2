@@ -12,6 +12,7 @@ export async function fetchSessionData(): Promise<UserProfile> {
   }
 
   const userProfile: UserProfile = {
+    selector: user.selector,
     id: user.id,
     username: user.username,
     email: user.email,
@@ -109,55 +110,63 @@ export async function getFavorites(
   return response.json();
 }
 
-export async function fetchHistory(params: SearchParams) : Promise<{totalPages: number, totalOffers: number, offers: HistoryOffer[]}> {
-    try{
-        const data = await getHistory(params);
+export async function fetchHistory(params: SearchParams): Promise<{
+  totalPages: number;
+  totalOffers: number;
+  offers: HistoryOffer[];
+}> {
+  try {
+    const data = await getHistory(params);
 
-        console.log("History page data: ", data);
+    console.log('History page data: ', data);
 
-        return {
-            totalPages: data.pagination.total_pages,
-            totalOffers: data.pagination.total_records,
-            offers: data.offers
-        };
-
-
-    } catch (error) {
-        console.error("Api error:", error);
-        throw new Error('Failed to fetch home page data.');
-    }
+    return {
+      totalPages: data.pagination.total_pages,
+      totalOffers: data.pagination.total_records,
+      offers: data.offers,
+    };
+  } catch (error) {
+    console.error('Api error:', error);
+    throw new Error('Failed to fetch home page data.');
+  }
 }
 
-export async function fetchListings(params: SearchParams) : Promise<{totalPages: number, totalOffers: number, offers: HistoryOffer[]}> {
-    try{
-        const data = await getListings(params);
+export async function fetchListings(params: SearchParams): Promise<{
+  totalPages: number;
+  totalOffers: number;
+  offers: HistoryOffer[];
+}> {
+  try {
+    const data = await getListings(params);
 
-        console.log("Listings page data: ", data);
+    console.log('Listings page data: ', data);
 
-        return {
-            totalPages: data.pagination.total_pages,
-            totalOffers: data.pagination.total_records,
-            offers: data.offers
-        };
-    } catch (error) {
-        console.error("Api error:", error);
-        throw new Error('Failed to fetch home page data.');
-    }
+    return {
+      totalPages: data.pagination.total_pages,
+      totalOffers: data.pagination.total_records,
+      offers: data.offers,
+    };
+  } catch (error) {
+    console.error('Api error:', error);
+    throw new Error('Failed to fetch home page data.');
+  }
 }
 
-export async function fetchFavorites(params: SearchParams) : Promise<{totalPages: number, totalOffers: number, offers: SaleOffer[]}> {
-    try{
-        const data = await getFavorites(params);
+export async function fetchFavorites(
+  params: SearchParams,
+): Promise<{ totalPages: number; totalOffers: number; offers: SaleOffer[] }> {
+  try {
+    const data = await getFavorites(params);
 
-        console.log("Favorites page data: ", data);
+    console.log('Favorites page data: ', data);
 
-        return {
-            totalPages: data.pagination.total_pages,
-            totalOffers: data.pagination.total_records,
-            offers: data.offers
-        };
-    } catch (error) {
-        console.error("Api error:", error);
-        throw new Error('Failed to fetch home page data.');
-    }
+    return {
+      totalPages: data.pagination.total_pages,
+      totalOffers: data.pagination.total_records,
+      offers: data.offers,
+    };
+  } catch (error) {
+    console.error('Api error:', error);
+    throw new Error('Failed to fetch home page data.');
+  }
 }
