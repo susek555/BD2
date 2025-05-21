@@ -11,14 +11,15 @@ export default function NotificationCard({
 }) {
   const [isRead, setIsRead] = useState(notification.is_read);
 
-  const handleReadChange = async () => {
-    setIsRead(!isRead);
+  const handleReadChange = async (newValue?: boolean) => {
+    setIsRead(newValue !== undefined ? newValue : !isRead);
 
     // TODO send API request to update notification status
   }
 
   const handleClick = () => {
-    console.log(`Notification clicked: ${notification.id}`);
+    handleReadChange(true);
+    window.location.href = `/offer/${notification.offer_id}`
   }
 
 
