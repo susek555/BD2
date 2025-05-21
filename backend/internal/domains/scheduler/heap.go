@@ -24,7 +24,7 @@ func (h timerHeap) Swap(i, j int) {
 	h[j].index = j
 }
 
-func (h *timerHeap) Push(x interface{}) {
+func (h *timerHeap) Push(x any) {
 	*h = append(*h, x.(*Item))
 }
 
