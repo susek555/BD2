@@ -123,8 +123,8 @@ func registerSaleOfferRoutes(router *gin.Engine) {
 		saleOfferRoutes.POST("/my-offers", middleware.Authenticate(verifier), saleOfferHandler.GetMySaleOffers)
 		saleOfferRoutes.POST("/filtered", middleware.OptionalAuthenticate(verifier), saleOfferHandler.GetFilteredSaleOffers)
 		saleOfferRoutes.GET("/id/:id", middleware.OptionalAuthenticate(verifier), saleOfferHandler.GetSaleOfferByID)
-		saleOfferRoutes.POST("/dislike", middleware.Authenticate(verifier), saleOfferHandler.DislikeOffer)
-		saleOfferRoutes.POST("/like", middleware.Authenticate(verifier), saleOfferHandler.LikeOffer)
+		saleOfferRoutes.POST("/like/:id", middleware.Authenticate(verifier), saleOfferHandler.LikeOffer)
+		saleOfferRoutes.DELETE("/dislike/:id", middleware.Authenticate(verifier), saleOfferHandler.DislikeOffer)
 		saleOfferRoutes.GET("/offer-types", saleOfferHandler.GetSaleOfferTypes)
 		saleOfferRoutes.GET("/order-keys", saleOfferHandler.GetOrderKeys)
 	}
