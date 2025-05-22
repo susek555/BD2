@@ -12,6 +12,8 @@ type SaleOfferServiceInterface interface {
 	GetFiltered(filter *OfferFilter) (*RetrieveOffersWithPagination, error)
 	GetByID(id uint, userID *uint) (*RetrieveDetailedSaleOfferDTO, error)
 	GetByUserID(id uint, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error)
+	LikeOffer(offerID, userID uint) error
+	DislikeOffer(offerID, userID uint) error
 	IsOfferLikedByUser(userID, offerID uint) bool
 }
 
@@ -85,6 +87,24 @@ func (s *SaleOfferService) mapSliceWithIsLikedField(offers []SaleOffer, userID *
 		offerDTOs = append(offerDTOs, *dto)
 	}
 	return offerDTOs
+}
+
+func (s *SaleOfferService) LikeOffer(offerID, userID uint) error {
+	offer, err := s.repo.GetByID(offerID)
+	if err != nil {
+		return err
+	}
+	if offer.UserID == userID {
+		return ErrLikeOwnOffer
+	}
+	return s.likedOfferRepo.Create(&liked_offer.LikedOffer{OfferID: offerID, UserID: userID})
+}
+
+func (s *SaleOfferService) DislikeOffer(offerID, userID uint) error {
+	if !s.IsOfferLikedByUser(offerID, userID) {
+		return ErrDislikeNotLikedOffer
+	}
+	return s.likedOfferRepo.Delete(offerID, userID)
 }
 
 func (s *SaleOfferService) IsOfferLikedByUser(offerID, userID uint) bool {
