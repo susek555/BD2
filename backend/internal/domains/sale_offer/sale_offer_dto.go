@@ -29,6 +29,11 @@ type CreateSaleOfferDTO struct {
 	ModelID            uint                    `json:"model_id" validate:"required"`
 }
 
+type UserContext struct {
+	IsLiked   bool `json:"is_liked"`
+	CanModify bool `json:"can_modify"`
+}
+
 type RetrieveSaleOfferDTO struct {
 	ID             uint             `json:"id"`
 	Username       string           `json:"username"`
@@ -38,7 +43,7 @@ type RetrieveSaleOfferDTO struct {
 	ProductionYear uint             `json:"production_year"`
 	Color          car_params.Color `json:"color"`
 	IsAuction      bool             `json:"is_auction"`
-	IsLiked        bool             `json:"is_liked"`
+	UserContext
 }
 
 type RetrieveDetailedSaleOfferDTO struct {
@@ -67,7 +72,7 @@ type RetrieveDetailedSaleOfferDTO struct {
 	DateEnd            *time.Time              `json:"date_end,omitempty"`
 	BuyNowPrice        *uint                   `json:"buy_now_price,omitempty"`
 	IsAuction          bool                    `json:"is_auction"`
-	IsLiked            bool                    `json:"is_liked"`
+	UserContext
 }
 
 type RetrieveOffersWithPagination struct {
