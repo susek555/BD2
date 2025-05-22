@@ -15,7 +15,7 @@ export const profileTabs: Tab[] = [
 ];
 
 export interface UserProfile {
-  selector: 'P' | 'C'
+  selector: 'P' | 'C';
   id: number;
   username: string;
   email: string;
@@ -23,4 +23,9 @@ export interface UserProfile {
   personSurname?: string;
   companyName?: string;
   companyNip?: string;
+}
+
+export interface PasswordData {
+  id: number;
+  password: string;
 }
