@@ -572,7 +572,7 @@ func TestGetFiltered_OneRegularOffer(t *testing.T) {
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
 	assert.Equal(t, len(seedOffers), len(got.Offers))
-	assert.True(t, doSaleOfferAndRetrieveSaleOfferDTOsMatch(seedOffers[0], got.Offers[0], s))
+	assert.True(t, doSaleOfferAndRetrieveSaleOfferDTOsMatch(seedOffers[0], got.Offers[0], s, nil))
 }
 
 func TestGetFiltered_OneAuction(t *testing.T) {
@@ -590,7 +590,7 @@ func TestGetFiltered_OneAuction(t *testing.T) {
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
 	assert.Equal(t, len(seedOffers), len(got.Offers))
-	assert.True(t, doSaleOfferAndRetrieveSaleOfferDTOsMatch(seedOffers[0], got.Offers[0], s))
+	assert.True(t, doSaleOfferAndRetrieveSaleOfferDTOsMatch(seedOffers[0], got.Offers[0], s, nil))
 }
 
 func TestGetFiltered_AuctionsAndOffersCombined(t *testing.T) {
@@ -614,7 +614,7 @@ func TestGetFiltered_AuctionsAndOffersCombined(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, len(seedOffers), len(got.Offers))
 	for i := range len(seedOffers) {
-		assert.True(t, doSaleOfferAndRetrieveSaleOfferDTOsMatch(seedOffers[i], got.Offers[i], s))
+		assert.True(t, doSaleOfferAndRetrieveSaleOfferDTOsMatch(seedOffers[i], got.Offers[i], s, nil))
 	}
 }
 
@@ -641,7 +641,7 @@ func TestGetFiltered_AuthorizedOtherUserOffers(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, len(seedOffers), len(got.Offers))
 	for i := range len(seedOffers) {
-		assert.True(t, doSaleOfferAndRetrieveSaleOfferDTOsMatch(seedOffers[i], got.Offers[i], s))
+		assert.True(t, doSaleOfferAndRetrieveSaleOfferDTOsMatch(seedOffers[i], got.Offers[i], s, &user.ID))
 	}
 }
 
@@ -798,7 +798,7 @@ func TestGetMyOffers_OneRegularOffer(t *testing.T) {
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
 	assert.Equal(t, len(seedOffers), len(got.Offers))
-	assert.True(t, doSaleOfferAndRetrieveSaleOfferDTOsMatch(seedOffers[0], got.Offers[0], s))
+	assert.True(t, doSaleOfferAndRetrieveSaleOfferDTOsMatch(seedOffers[0], got.Offers[0], s, &user.ID))
 }
 
 func TestGetMyOffers_OneAuctionOffer(t *testing.T) {
@@ -817,7 +817,7 @@ func TestGetMyOffers_OneAuctionOffer(t *testing.T) {
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
 	assert.Equal(t, len(seedOffers), len(got.Offers))
-	assert.True(t, doSaleOfferAndRetrieveSaleOfferDTOsMatch(seedOffers[0], got.Offers[0], s))
+	assert.True(t, doSaleOfferAndRetrieveSaleOfferDTOsMatch(seedOffers[0], got.Offers[0], s, &user.ID))
 }
 
 func TestGetMyOffers_AuctionsAndOffersCombined(t *testing.T) {
@@ -842,7 +842,7 @@ func TestGetMyOffers_AuctionsAndOffersCombined(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, len(seedOffers), len(got.Offers))
 	for i := range len(seedOffers) {
-		assert.True(t, doSaleOfferAndRetrieveSaleOfferDTOsMatch(seedOffers[i], got.Offers[i], s))
+		assert.True(t, doSaleOfferAndRetrieveSaleOfferDTOsMatch(seedOffers[i], got.Offers[i], s, &user.ID))
 	}
 }
 
