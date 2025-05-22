@@ -85,6 +85,9 @@ func (s *SaleOfferService) LikeOffer(offerID, userID uint) error {
 	if err != nil {
 		return err
 	}
+	if s.IsOfferLikedByUser(offerID, userID) {
+		return ErrLikeAlreadyLikedOffer
+	}
 	if offer.UserID == userID {
 		return ErrLikeOwnOffer
 	}
@@ -92,6 +95,9 @@ func (s *SaleOfferService) LikeOffer(offerID, userID uint) error {
 }
 
 func (s *SaleOfferService) DislikeOffer(offerID, userID uint) error {
+	if _, err := s.repo.GetByID(offerID); err != nil {
+		return err
+	}
 	if !s.IsOfferLikedByUser(offerID, userID) {
 		return ErrDislikeNotLikedOffer
 	}
@@ -99,7 +105,7 @@ func (s *SaleOfferService) DislikeOffer(offerID, userID uint) error {
 }
 
 func (s *SaleOfferService) IsOfferLikedByUser(offerID, userID uint) bool {
-	return s.likedOfferRepo.IsOfferLikedByUser(userID, offerID)
+	return s.likedOfferRepo.IsOfferLikedByUser(offerID, userID)
 }
 
 func (s *SaleOfferService) CanBeModifiedByUser(offerID, userID uint) (bool, error) {

@@ -85,7 +85,7 @@ func getRepositoryWithSaleOffers(db *gorm.DB, offers []sale_offer.SaleOffer) sal
 	return repo
 }
 
-func newTestServer(db *gorm.DB, seedOffers []sale_offer.SaleOffer) (*gin.Engine, sale_offer.SaleOfferServiceInterface, error) {
+func newTestServer(db *gorm.DB, seedOffers []sale_offer.SaleOffer) (*gin.Engine, sale_offer.SaleOfferServiceInterface) {
 	verifier := jwt.NewJWTVerifier(u.JWTSECRET)
 	saleOfferRepo := getRepositoryWithSaleOffers(db, seedOffers)
 	manufacturerRepo := manufacturer.NewManufacturerRepository(db)
@@ -100,10 +100,12 @@ func newTestServer(db *gorm.DB, seedOffers []sale_offer.SaleOffer) (*gin.Engine,
 		saleOfferRoutes.POST("/filtered", middleware.OptionalAuthenticate(verifier), saleOfferHandler.GetFilteredSaleOffers)
 		saleOfferRoutes.POST("/my-offers", middleware.Authenticate(verifier), saleOfferHandler.GetMySaleOffers)
 		saleOfferRoutes.GET("/id/:id", middleware.OptionalAuthenticate(verifier), saleOfferHandler.GetSaleOfferByID)
+		saleOfferRoutes.POST("/like/:id", middleware.Authenticate(verifier), saleOfferHandler.LikeOffer)
+		saleOfferRoutes.DELETE("/dislike/:id", middleware.Authenticate(verifier), saleOfferHandler.DislikeOffer)
 		saleOfferRoutes.GET("/offer-types", saleOfferHandler.GetSaleOfferTypes)
 		saleOfferRoutes.GET("/order-keys", saleOfferHandler.GetOrderKeys)
 	}
-	return r, saleOfferService, nil
+	return r, saleOfferService
 }
 
 // ------------
