@@ -2,7 +2,7 @@
 
 import { API_URL } from '../constants';
 
-export type registerResult = {
+export type AccountFieldValidationResult = {
   errors?: {
     username?: string[];
     email?: string[];
@@ -25,7 +25,7 @@ export async function registerUser(userData: {
   person_surname?: string;
   company_name?: string;
   company_nip?: string;
-}): Promise<registerResult> {
+}): Promise<AccountFieldValidationResult> {
   console.log(JSON.stringify(userData));
 
   try {
@@ -41,7 +41,7 @@ export async function registerUser(userData: {
       return {};
     }
 
-    const data: registerResult = await response.json();
+    const data: AccountFieldValidationResult = await response.json();
 
     console.log('Registration response: ', data);
 
