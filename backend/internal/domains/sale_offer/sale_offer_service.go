@@ -64,7 +64,7 @@ func (s *SaleOfferService) GetByID(id uint, userID *uint) (*RetrieveDetailedSale
 		return nil, err
 	}
 	offerDTO := offer.MapToDetailedDTO()
-	s.fillUserFields(&offerDTO.UserContext, offer.ID, *&userID)
+	s.fillUserFields(&offerDTO.UserContext, offer.ID, userID)
 	return offerDTO, nil
 }
 
@@ -139,6 +139,7 @@ func (s *SaleOfferService) mapOfferSliceWithAdditionalFields(offers []SaleOffer,
 		if err := s.fillUserFields(&dto.UserContext, offer.ID, userID); err != nil {
 			return nil, err
 		}
+		offerDTOs = append(offerDTOs, *dto)
 	}
 	return offerDTOs, nil
 }

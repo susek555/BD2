@@ -60,6 +60,7 @@ func setupDB() (*gorm.DB, error) {
 		&sale_offer.Auction{},
 		&sale_offer.SaleOffer{},
 		&liked_offer.LikedOffer{},
+		&bid.Bid{},
 	)
 	if err != nil {
 		return nil, err
@@ -197,16 +198,25 @@ func createSaleOfferDTO() *sale_offer.CreateSaleOfferDTO {
 	}
 }
 
-func doSaleOfferAndRetrieveSaleOfferDTOsMatch(offer sale_offer.SaleOffer, dto sale_offer.RetrieveSaleOfferDTO, s sale_offer.SaleOfferServiceInterface) bool {
-	return offer.ID == dto.ID &&
+func doSaleOfferAndRetrieveSaleOfferDTOsMatch(offer sale_offer.SaleOffer, dto sale_offer.RetrieveSaleOfferDTO, s sale_offer.SaleOfferServiceInterface, userID *uint) bool {
+	var likedCondition bool
+	var bidCondition bool
+	condition := offer.ID == dto.ID &&
 		offer.User.Username == dto.Username &&
 		offer.Car.Model.Manufacturer.Name+" "+offer.Car.Model.Name == dto.Name &&
 		offer.Price == dto.Price &&
 		offer.Car.Mileage == dto.Mileage &&
 		offer.Car.ProductionYear == dto.ProductionYear &&
 		offer.Car.Color == dto.Color &&
-		(offer.Auction != nil) == dto.IsAuction &&
-		(s.IsOfferLikedByUser(offer.ID, offer.User.ID)) == dto.IsLiked
+		(offer.Auction != nil) == dto.IsAuction
+	if userID == nil {
+		likedCondition = false
+		bidCondition = false
+	} else {
+		likedCondition = s.IsOfferLikedByUser(offer.ID, *userID)
+		bidCondition, _ = s.CanBeModifiedByUser(offer.ID, *userID)
+	}
+	return condition && bidCondition == dto.CanModify && likedCondition == dto.IsLiked
 }
 
 func wasEntityAddedToDB[T any](db *gorm.DB, id uint) bool {
