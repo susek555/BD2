@@ -265,7 +265,7 @@ const docTemplate = `{
         },
         "/car/manufacturer-model-map": {
             "get": {
-                "description": "Get manufacturers and models map. Each manufacturer has a list of models (the indices are coresponding).",
+                "description": "Get manufacturers and models map. Each manufacturer has a list of models (the indices are corresponding).",
                 "consumes": [
                     "application/json"
                 ],
@@ -808,7 +808,7 @@ const docTemplate = `{
                         "Bearer": []
                     }
                 ],
-                "description": "Creates a new sale offer in the database. To create a sale offer, the user must be logged in. There are several constraints on the offer fields, such as:\n- Color must be one of the predefined colors (endpoint: /car/colors)\n- Fuel type must be one of the predefined fuel types (endpoint: /car/fuel_types)\n- Transmission must be one of the predefined transmission types (endpotin: /car/transmissions)\n- Drive must be one of the predefined drive types (endpoint: /car/drives)\n- Model must be one of the predefined models (endpoint: /car/models or /car/models/:id)\n- Number of doors must be between 1 and 6\n- Number of seats must be between 2 and 100\n- Engine power must be less than or equal to 9999 (in horsepower)\n- Engine capacity must be less than or equal to 9000 (in cm3)\n- Number of gears must be between 1 and 10",
+                "description": "Creates a new sale offer in the database. To create a sale offer, the user must be logged in. There are several constraints on the offer fields, such as:\n- Color must be one of the predefined colors (endpoint: /car/colors)\n- Fuel type must be one of the predefined fuel types (endpoint: /car/fuel_types)\n- Transmission must be one of the predefined transmission types (endpoint: /car/transmissions)\n- Drive must be one of the predefined drive types (endpoint: /car/drives)\n- Model must be one of the predefined models (endpoint: /car/models or /car/models/:id)\n- Number of doors must be between 1 and 6\n- Number of seats must be between 2 and 100\n- Engine power must be less than or equal to 9999 (in horsepower)\n- Engine capacity must be less than or equal to 9000 (in cm3)\n- Number of gears must be between 1 and 10",
                 "consumes": [
                     "application/json"
                 ],
@@ -834,7 +834,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created - returns the created sale offer",
                         "schema": {
-                            "$ref": "#/definitions/sale_offer.CreateSaleOfferDTO"
+                            "$ref": "#/definitions/sale_offer.RetrieveDetailedSaleOfferDTO"
                         }
                     },
                     "400": {
@@ -860,7 +860,7 @@ const docTemplate = `{
         },
         "/sale-offer/filtered": {
             "post": {
-                "description": "Returns a list of sale offers in paginated form. If the user is logged in, the results are not containing the offers created by the user. The results are filtered based on request's body. There are several constraints on the filter fields, such as:\n- Offer type must be one of the predefined offer types (endpoint: /sale-offer/offer-types)\n- Order key must be one of the predefined order keys (endpoint: /sale-offer/order-keys)\n- List of manufacturers must contain only predefined manufacturers (endpoint: /car/manufacturers)\n- List of colors must containonly predefined colors (endpoint: /car/colors)\n- List of drives must contain only predefined drives (endpoint: /car/drives)\n- List of fuel types must contain only predefined fuel types (endpoint: /car/fuel_types)\n- List of transmissions must contain only predefined transmission types (endpoint: /car/transmissions)\n- Whenever you use a range, the min value must be less than or equal to the max value, you can provide only one of them, and the other will be ignored.",
+                "description": "Returns a list of sale offers in paginated form. If the user is logged in, the results contain he offers created by the user. The results are filtered based on request's body. There are several constraints on the filter fields, such as:\n- Offer type must be one of the predefined offer types (endpoint: /sale-offer/offer-types)\n- Order key must be one of the predefined order keys (endpoint: /sale-offer/order-keys)\n- List of manufacturers must contain only predefined manufacturers (endpoint: /car/manufacturers)\n- List of colors must contain only predefined colors (endpoint: /car/colors)\n- List of drives must contain only predefined drives (endpoint: /car/drives)\n- List of fuel types must contain only predefined fuel types (endpoint: /car/fuel_types)\n- List of transmissions must contain only predefined transmission types (endpoint: /car/transmissions)\n- Whenever you use a range, the min value must be less than or equal to the max value, you can provide only one of them, and the other will be ignored.",
                 "consumes": [
                     "application/json"
                 ],
@@ -891,6 +891,125 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Invalid input data",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/sale-offer/id/dislike/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Dislike offer by giving it's id. You have to be logged in to perform this operation.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sale-offer"
+                ],
+                "summary": "Dislike offer",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Sale offer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "400": {
+                        "description": "Invalid input data",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - user not logged in",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Sale offer not found",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/sale-offer/id/like/{id}": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Like new offer by giving it's id. You have to be logged in to perform this operation.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sale-offer"
+                ],
+                "summary": "Like new offer",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Sale offer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Liked offer",
+                        "schema": {
+                            "$ref": "#/definitions/liked_offer.LikedOffer"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input data",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - user not logged in",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Sale offer not found",
                         "schema": {
                             "$ref": "#/definitions/custom_errors.HTTPError"
                         }
@@ -1100,7 +1219,7 @@ const docTemplate = `{
                         "Bearer": []
                     }
                 ],
-                "description": "Updates user's data in database from given form. Currently you can only change basic fields (email, username, password), not the subtype.",
+                "description": "Updates user's data in database from given form. Currently, you can only change basic fields (email, username, password), not the subtype.",
                 "consumes": [
                     "application/json"
                 ],
@@ -1224,7 +1343,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Id is not a number",
+                        "description": "ID is not a number",
                         "schema": {
                             "$ref": "#/definitions/custom_errors.HTTPError"
                         }
@@ -1273,10 +1392,10 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "204": {
-                        "description": "User sucessfully deleted"
+                        "description": "User successfully deleted"
                     },
                     "400": {
-                        "description": "Id is not a number",
+                        "description": "ID is not a number",
                         "schema": {
                             "$ref": "#/definitions/custom_errors.HTTPError"
                         }
@@ -1479,7 +1598,7 @@ const docTemplate = `{
                 "Ethanol",
                 "LPG",
                 "Biofuel",
-                "Hybird",
+                "Hybrid",
                 "Hydrogen"
             ],
             "x-enum-varnames": [
@@ -1513,6 +1632,17 @@ const docTemplate = `{
             "properties": {
                 "error_description": {
                     "type": "string"
+                }
+            }
+        },
+        "liked_offer.LikedOffer": {
+            "type": "object",
+            "properties": {
+                "offer_id": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer"
                 }
             }
         },
@@ -1621,6 +1751,26 @@ const docTemplate = `{
         },
         "sale_offer.CreateSaleOfferDTO": {
             "type": "object",
+            "required": [
+                "color",
+                "description",
+                "drive",
+                "engine_capacity",
+                "engine_power",
+                "fuel_type",
+                "margin",
+                "mileage",
+                "model_id",
+                "number_of_doors",
+                "number_of_gears",
+                "number_of_seats",
+                "price",
+                "production_year",
+                "registration_date",
+                "registration_number",
+                "transmission",
+                "vin"
+            ],
             "properties": {
                 "color": {
                     "$ref": "#/definitions/car_params.Color"
@@ -1746,6 +1896,9 @@ const docTemplate = `{
                 "is_order_desc": {
                     "type": "boolean"
                 },
+                "liked_only": {
+                    "type": "boolean"
+                },
                 "manufacturers": {
                     "type": "array",
                     "items": {
@@ -1809,6 +1962,9 @@ const docTemplate = `{
                 "buy_now_price": {
                     "type": "integer"
                 },
+                "can_modify": {
+                    "type": "boolean"
+                },
                 "color": {
                     "$ref": "#/definitions/car_params.Color"
                 },
@@ -1835,6 +1991,12 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
+                },
+                "is_auction": {
+                    "type": "boolean"
+                },
+                "is_liked": {
+                    "type": "boolean"
                 },
                 "margin": {
                     "$ref": "#/definitions/sale_offer.MarginValue"
@@ -1894,6 +2056,9 @@ const docTemplate = `{
         "sale_offer.RetrieveSaleOfferDTO": {
             "type": "object",
             "properties": {
+                "can_modify": {
+                    "type": "boolean"
+                },
                 "color": {
                     "$ref": "#/definitions/car_params.Color"
                 },
@@ -1901,6 +2066,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "is_auction": {
+                    "type": "boolean"
+                },
+                "is_liked": {
                     "type": "boolean"
                 },
                 "mileage": {
@@ -1923,7 +2091,10 @@ const docTemplate = `{
         "user.CreateUserDTO": {
             "type": "object",
             "required": [
-                "email"
+                "email",
+                "password",
+                "selector",
+                "username"
             ],
             "properties": {
                 "company_name": {

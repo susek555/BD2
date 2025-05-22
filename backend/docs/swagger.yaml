@@ -134,7 +134,7 @@ definitions:
     - Ethanol
     - LPG
     - Biofuel
-    - Hybird
+    - Hybrid
     - Hydrogen
     type: string
     x-enum-varnames:
@@ -162,6 +162,13 @@ definitions:
     properties:
       error_description:
         type: string
+    type: object
+  liked_offer.LikedOffer:
+    properties:
+      offer_id:
+        type: integer
+      user_id:
+        type: integer
     type: object
   manufacturer.Manufacturer:
     properties:
@@ -267,6 +274,25 @@ definitions:
         $ref: '#/definitions/car_params.Transmission'
       vin:
         type: string
+    required:
+    - color
+    - description
+    - drive
+    - engine_capacity
+    - engine_power
+    - fuel_type
+    - margin
+    - mileage
+    - model_id
+    - number_of_doors
+    - number_of_gears
+    - number_of_seats
+    - price
+    - production_year
+    - registration_date
+    - registration_number
+    - transmission
+    - vin
     type: object
   sale_offer.MarginValue:
     enum:
@@ -314,6 +340,8 @@ definitions:
         type: array
       is_order_desc:
         type: boolean
+      liked_only:
+        type: boolean
       manufacturers:
         items:
           type: string
@@ -357,6 +385,8 @@ definitions:
         type: string
       buy_now_price:
         type: integer
+      can_modify:
+        type: boolean
       color:
         $ref: '#/definitions/car_params.Color'
       date_end:
@@ -375,6 +405,10 @@ definitions:
         $ref: '#/definitions/car_params.FuelType'
       id:
         type: integer
+      is_auction:
+        type: boolean
+      is_liked:
+        type: boolean
       margin:
         $ref: '#/definitions/sale_offer.MarginValue'
       mileage:
@@ -413,11 +447,15 @@ definitions:
     type: object
   sale_offer.RetrieveSaleOfferDTO:
     properties:
+      can_modify:
+        type: boolean
       color:
         $ref: '#/definitions/car_params.Color'
       id:
         type: integer
       is_auction:
+        type: boolean
+      is_liked:
         type: boolean
       mileage:
         type: integer
@@ -450,6 +488,9 @@ definitions:
         type: string
     required:
     - email
+    - password
+    - selector
+    - username
     type: object
   user.RetrieveUserDTO:
     properties:
@@ -664,7 +705,7 @@ paths:
       consumes:
       - application/json
       description: Get manufacturers and models map. Each manufacturer has a list
-        of models (the indices are coresponding).
+        of models (the indices are corresponding).
       produces:
       - application/json
       responses:
@@ -1029,7 +1070,7 @@ paths:
         Creates a new sale offer in the database. To create a sale offer, the user must be logged in. There are several constraints on the offer fields, such as:
         - Color must be one of the predefined colors (endpoint: /car/colors)
         - Fuel type must be one of the predefined fuel types (endpoint: /car/fuel_types)
-        - Transmission must be one of the predefined transmission types (endpotin: /car/transmissions)
+        - Transmission must be one of the predefined transmission types (endpoint: /car/transmissions)
         - Drive must be one of the predefined drive types (endpoint: /car/drives)
         - Model must be one of the predefined models (endpoint: /car/models or /car/models/:id)
         - Number of doors must be between 1 and 6
@@ -1050,7 +1091,7 @@ paths:
         "201":
           description: Created - returns the created sale offer
           schema:
-            $ref: '#/definitions/sale_offer.CreateSaleOfferDTO'
+            $ref: '#/definitions/sale_offer.RetrieveDetailedSaleOfferDTO'
         "400":
           description: Invalid input data
           schema:
@@ -1073,11 +1114,11 @@ paths:
       consumes:
       - application/json
       description: |-
-        Returns a list of sale offers in paginated form. If the user is logged in, the results are not containing the offers created by the user. The results are filtered based on request's body. There are several constraints on the filter fields, such as:
+        Returns a list of sale offers in paginated form. If the user is logged in, the results contain he offers created by the user. The results are filtered based on request's body. There are several constraints on the filter fields, such as:
         - Offer type must be one of the predefined offer types (endpoint: /sale-offer/offer-types)
         - Order key must be one of the predefined order keys (endpoint: /sale-offer/order-keys)
         - List of manufacturers must contain only predefined manufacturers (endpoint: /car/manufacturers)
-        - List of colors must containonly predefined colors (endpoint: /car/colors)
+        - List of colors must contain only predefined colors (endpoint: /car/colors)
         - List of drives must contain only predefined drives (endpoint: /car/drives)
         - List of fuel types must contain only predefined fuel types (endpoint: /car/fuel_types)
         - List of transmissions must contain only predefined transmission types (endpoint: /car/transmissions)
@@ -1139,6 +1180,84 @@ paths:
           schema:
             $ref: '#/definitions/custom_errors.HTTPError'
       summary: Get sale offer by ID
+      tags:
+      - sale-offer
+  /sale-offer/id/dislike/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Dislike offer by giving it's id. You have to be logged in to perform
+        this operation.
+      parameters:
+      - description: Sale offer ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No content
+        "400":
+          description: Invalid input data
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "401":
+          description: Unauthorized - user not logged in
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "404":
+          description: Sale offer not found
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      security:
+      - Bearer: []
+      summary: Dislike offer
+      tags:
+      - sale-offer
+  /sale-offer/id/like/{id}:
+    post:
+      consumes:
+      - application/json
+      description: Like new offer by giving it's id. You have to be logged in to perform
+        this operation.
+      parameters:
+      - description: Sale offer ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Liked offer
+          schema:
+            $ref: '#/definitions/liked_offer.LikedOffer'
+        "400":
+          description: Invalid input data
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "401":
+          description: Unauthorized - user not logged in
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "404":
+          description: Sale offer not found
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      security:
+      - Bearer: []
+      summary: Like new offer
       tags:
       - sale-offer
   /sale-offer/my-offers:
@@ -1239,7 +1358,7 @@ paths:
     put:
       consumes:
       - application/json
-      description: Updates user's data in database from given form. Currently you
+      description: Updates user's data in database from given form. Currently, you
         can only change basic fields (email, username, password), not the subtype.
       parameters:
       - description: Update form
@@ -1287,9 +1406,9 @@ paths:
       - application/json
       responses:
         "204":
-          description: User sucessfully deleted
+          description: User successfully deleted
         "400":
-          description: Id is not a number
+          description: ID is not a number
           schema:
             $ref: '#/definitions/custom_errors.HTTPError'
         "404":
@@ -1355,7 +1474,7 @@ paths:
           schema:
             $ref: '#/definitions/user.RetrieveUserDTO'
         "400":
-          description: Id is not a number
+          description: ID is not a number
           schema:
             $ref: '#/definitions/custom_errors.HTTPError'
         "404":
