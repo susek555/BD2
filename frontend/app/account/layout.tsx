@@ -1,4 +1,4 @@
-import { fetchSessionData } from '@/app/lib/data/account/data';
+import { cachedSessionData } from '@/app/lib/data/account/data';
 import ProfileInfo from '@/app/ui/account/profile-info';
 import {
   ProfileInfoSkeleton,
@@ -10,7 +10,7 @@ import { Suspense } from 'react';
 
 async function ProfileInfoWrapper() {
   try {
-    const user = await fetchSessionData();
+    const user = await cachedSessionData();
     return <ProfileInfo user={user} />;
   } catch (error) {
     redirect('/login');
