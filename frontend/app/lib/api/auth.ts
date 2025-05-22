@@ -37,6 +37,10 @@ export async function registerUser(userData: {
       body: JSON.stringify(userData),
     });
 
+    if (response.ok && response.headers.get('Content-Length') === '0') {
+      return {};
+    }
+
     const data: registerResult = await response.json();
 
     console.log('Registration response: ', data);
