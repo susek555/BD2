@@ -19,6 +19,8 @@ var (
 	ErrInvalidDateFormat    = errors.New("invalid date format, should be YYYY-MM-DD")
 	ErrInvalidOrderKey      = errors.New("invalid order-key")
 	ErrInvalidManufacturer  = errors.New("invalid manufacturer")
+	ErrLikeOwnOffer         = errors.New("your own offer cannot be liked")
+	ErrDislikeNotLikedOffer = errors.New("offer not liked before cannot be disliked")
 	ErrAuthorization        = errors.New("you have to be logged in to create an offer")
 )
 
@@ -34,6 +36,8 @@ var ErrorMap = map[error]int{
 	ErrInvalidDateFormat:    http.StatusBadRequest,
 	ErrInvalidOrderKey:      http.StatusBadRequest,
 	ErrInvalidManufacturer:  http.StatusBadRequest,
+	ErrLikeOwnOffer:         http.StatusBadRequest,
+	ErrDislikeNotLikedOffer: http.StatusBadRequest,
 	ErrAuthorization:        http.StatusUnauthorized,
 	gorm.ErrRecordNotFound:  http.StatusNotFound,
 }
