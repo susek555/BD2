@@ -1,6 +1,7 @@
 package sale_offer
 
 import (
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/bid"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/liked_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
 	"github.com/susek555/BD2/car-dealer-api/pkg/mapping"
@@ -14,17 +15,19 @@ type SaleOfferServiceInterface interface {
 	GetByUserID(id uint, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error)
 	LikeOffer(offerID, userID uint) error
 	DislikeOffer(offerID, userID uint) error
-	IsOfferLikedByUser(userID, offerID uint) bool
+	IsOfferLikedByUser(offerID, userID uint) bool
+	CanBeModifiedByUser(offerID, userID uint) (bool, error)
 }
 
 type SaleOfferService struct {
 	repo           SaleOfferRepositoryInterface
 	manRepo        manufacturer.ManufacturerRepositoryInterface
 	likedOfferRepo liked_offer.LikedOfferRepositoryInterface
+	bidRepo        bid.BidRepositoryInterface
 }
 
-func NewSaleOfferService(saleOfferRepository SaleOfferRepositoryInterface, manufacturerRepo manufacturer.ManufacturerRepositoryInterface, likedOfferRepo liked_offer.LikedOfferRepositoryInterface) SaleOfferServiceInterface {
-	return &SaleOfferService{repo: saleOfferRepository, manRepo: manufacturerRepo, likedOfferRepo: likedOfferRepo}
+func NewSaleOfferService(saleOfferRepository SaleOfferRepositoryInterface, manufacturerRepo manufacturer.ManufacturerRepositoryInterface, likedOfferRepo liked_offer.LikedOfferRepositoryInterface, bidRepo bid.BidRepositoryInterface) SaleOfferServiceInterface {
+	return &SaleOfferService{repo: saleOfferRepository, manRepo: manufacturerRepo, likedOfferRepo: likedOfferRepo, bidRepo: bidRepo}
 }
 
 func (s *SaleOfferService) Create(in CreateSaleOfferDTO) (*RetrieveDetailedSaleOfferDTO, error) {
@@ -48,7 +51,10 @@ func (s *SaleOfferService) GetFiltered(filter *OfferFilter) (*RetrieveOffersWith
 	if err != nil {
 		return nil, err
 	}
-	offerDTOs := s.mapSliceWithIsLikedField(offers, filter.UserID)
+	offerDTOs, err := s.mapOfferSliceWithAdditionalFields(offers, filter.UserID)
+	if err != nil {
+		return nil, err
+	}
 	return &RetrieveOffersWithPagination{Offers: offerDTOs, PaginationResponse: pagResponse}, nil
 }
 
@@ -58,11 +64,7 @@ func (s *SaleOfferService) GetByID(id uint, userID *uint) (*RetrieveDetailedSale
 		return nil, err
 	}
 	offerDTO := offer.MapToDetailedDTO()
-	if userID == nil {
-		offerDTO.IsLiked = false
-	} else {
-		offerDTO.IsLiked = s.IsOfferLikedByUser(*userID, offer.ID)
-	}
+	s.fillUserFields(&offerDTO.UserContext, offer.ID, *&userID)
 	return offerDTO, nil
 }
 
@@ -71,22 +73,11 @@ func (s *SaleOfferService) GetByUserID(id uint, pagRequest *pagination.Paginatio
 	if err != nil {
 		return nil, err
 	}
-	offerDTOs := s.mapSliceWithIsLikedField(offers, &id)
-	return &RetrieveOffersWithPagination{Offers: offerDTOs, PaginationResponse: pagResponse}, nil
-}
-
-func (s *SaleOfferService) mapSliceWithIsLikedField(offers []SaleOffer, userID *uint) []RetrieveSaleOfferDTO {
-	offerDTOs := make([]RetrieveSaleOfferDTO, 0, len(offers))
-	for _, offer := range offers {
-		dto := offer.MapToDTO()
-		if userID == nil {
-			dto.IsLiked = false
-		} else {
-			dto.IsLiked = s.IsOfferLikedByUser(*userID, offer.ID)
-		}
-		offerDTOs = append(offerDTOs, *dto)
+	offerDTOs, err := s.mapOfferSliceWithAdditionalFields(offers, &id)
+	if err != nil {
+		return nil, err
 	}
-	return offerDTOs
+	return &RetrieveOffersWithPagination{Offers: offerDTOs, PaginationResponse: pagResponse}, nil
 }
 
 func (s *SaleOfferService) LikeOffer(offerID, userID uint) error {
@@ -109,4 +100,45 @@ func (s *SaleOfferService) DislikeOffer(offerID, userID uint) error {
 
 func (s *SaleOfferService) IsOfferLikedByUser(offerID, userID uint) bool {
 	return s.likedOfferRepo.IsOfferLikedByUser(userID, offerID)
+}
+
+func (s *SaleOfferService) CanBeModifiedByUser(offerID, userID uint) (bool, error) {
+	offer, err := s.repo.GetByID(offerID)
+	if err != nil {
+		return false, err
+	}
+	if offer.Auction == nil {
+		return true, nil
+	}
+	bids, err := s.bidRepo.GetByAuctionId(offerID)
+	if err != nil {
+		return false, err
+	}
+	return len(bids) == 0, nil
+}
+
+func (s *SaleOfferService) fillUserFields(userContext *UserContext, offerID uint, userID *uint) error {
+	if userID == nil {
+		userContext.IsLiked = false
+		userContext.CanModify = false
+	} else {
+		userContext.IsLiked = s.IsOfferLikedByUser(offerID, *userID)
+		smt, err := s.CanBeModifiedByUser(offerID, *userID)
+		if err != nil {
+			return err
+		}
+		userContext.CanModify = smt
+	}
+	return nil
+}
+
+func (s *SaleOfferService) mapOfferSliceWithAdditionalFields(offers []SaleOffer, userID *uint) ([]RetrieveSaleOfferDTO, error) {
+	offerDTOs := make([]RetrieveSaleOfferDTO, 0, len(offers))
+	for _, offer := range offers {
+		dto := offer.MapToDTO()
+		if err := s.fillUserFields(&dto.UserContext, offer.ID, userID); err != nil {
+			return nil, err
+		}
+	}
+	return offerDTOs, nil
 }

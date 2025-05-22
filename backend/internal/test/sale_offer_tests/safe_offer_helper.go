@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/bid"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/generic"
@@ -88,7 +89,8 @@ func newTestServer(db *gorm.DB, seedOffers []sale_offer.SaleOffer) (*gin.Engine,
 	saleOfferRepo := getRepositoryWithSaleOffers(db, seedOffers)
 	manufacturerRepo := manufacturer.NewManufacturerRepository(db)
 	likedOfferRepository := liked_offer.NewLikedOfferRepository(db)
-	saleOfferService := sale_offer.NewSaleOfferService(saleOfferRepo, manufacturerRepo, likedOfferRepository)
+	bidRepository := bid.NewBidRepository(db)
+	saleOfferService := sale_offer.NewSaleOfferService(saleOfferRepo, manufacturerRepo, likedOfferRepository, bidRepository)
 	saleOfferHandler := sale_offer.NewSaleOfferHandler(saleOfferService)
 	r := gin.Default()
 	saleOfferRoutes := r.Group("/sale-offer")
