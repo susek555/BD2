@@ -34,7 +34,7 @@ export const SignupFormSchema = z
         selector: z.literal('C'),
         company_name: z
           .string()
-          .min(1, { message: 'Business name is required' }),
+          .min(1, { message: 'Company name is required' }),
         company_nip: z
           .string()
           .min(10, { message: 'Must be 10 characters long' })
