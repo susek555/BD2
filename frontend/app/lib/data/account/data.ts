@@ -1,4 +1,5 @@
 import { getServerSession } from 'next-auth';
+import { cache } from 'react';
 import { authConfig } from '../../authConfig';
 import { HistoryOffer, SaleOffer } from '../../definitions/SaleOffer';
 import { SearchParams } from '../../definitions/SearchParams';
@@ -28,6 +29,10 @@ export async function fetchSessionData(): Promise<UserProfile> {
 
   return userProfile;
 }
+
+export const cachedSessionData = cache(async () => {
+  return fetchSessionData();
+});
 
 export async function getHistory(
   params: SearchParams = {
