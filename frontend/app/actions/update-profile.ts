@@ -1,3 +1,4 @@
+import camelcaseKeys from 'camelcase-keys';
 import { updatePersonalData } from '../lib/api/account/updatePersonalData';
 import { AccountFieldValidationResult } from '../lib/api/auth';
 import { PersonalDataFormState } from '../lib/definitions/account-settings';
@@ -9,7 +10,6 @@ export async function updateProfile(
   formData: FormData,
   id: number,
 ): Promise<{ state: PersonalDataFormState; newUserData?: UserProfile }> {
-
   const formDataObj = Object.fromEntries(formData.entries());
   const validatedFields = PersonalDataSchema.safeParse(formDataObj);
 
@@ -25,10 +25,10 @@ export async function updateProfile(
       },
     };
   }
-
-  const updatedUserProfile: UserProfile = { id, ...validatedFields.data };
-  const updateResult: AccountFieldValidationResult =
-    await updatePersonalData(updatedUserProfile);
+  const updateResult: AccountFieldValidationResult = await updatePersonalData({
+    id,
+    ...validatedFields.data,
+  });
 
   if (updateResult.errors) {
     return {
@@ -42,6 +42,10 @@ export async function updateProfile(
       },
     };
   } else {
+    const updatedUserProfile: UserProfile = {
+      id,
+      ...camelcaseKeys(validatedFields.data, { deep: true }),
+    };
     return { state: {}, newUserData: updatedUserProfile };
   }
 }
