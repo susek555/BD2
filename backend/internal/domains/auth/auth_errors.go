@@ -18,6 +18,8 @@ var (
 	ErrRefreshTokenNotFound = errors.New("refresh token not found")
 	ErrUnauthorized         = errors.New("unauthorized")
 	ErrUserIdNotFound       = errors.New("user id not found")
+	ErrUserNotFound         = errors.New("user not found")
+	ErrInvalidOldPassword   = errors.New("invalid old password")
 )
 
 var ErrorMap = map[error]int{
