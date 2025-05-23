@@ -24,31 +24,32 @@ func TestBidService_Create_OK(t *testing.T) {
 	repo := new(mocks.BidRepositoryInterface)
 	svc := bid.NewBidService(repo)
 
-	b := models.Bid{AuctionID: 1}
-
-	repo.On("Create", &b).Return(nil)
+	repo.On("Create", mock.MatchedBy(func(b *models.Bid) bool {
+		return b.AuctionID == 1 && b.BidderID == 1
+	})).Return(nil)
 
 	dto := &bid.CreateBidDTO{
-		AuctionID: b.AuctionID,
-		Amount:    b.Amount,
-		UserID:    1,
+		AuctionID: 1,
+		Amount:    0,
 	}
-	_, err := svc.Create(dto)
+	_, err := svc.Create(dto, 1)
+	assert.NoError(t, err)
 }
 func TestBidService_Create_Error(t *testing.T) {
 	repo := new(mocks.BidRepositoryInterface)
 	svc := bid.NewBidService(repo)
 
-	b := models.Bid{AuctionID: 1}
 	expectedErr := errors.New("insert failed")
 
-	repo.On("Create", &b).Return(expectedErr)
+	repo.On("Create", mock.MatchedBy(func(b *models.Bid) bool {
+		return b.AuctionID == 1
+	})).Return(expectedErr)
 
 	dto := &bid.CreateBidDTO{
-		AuctionID: b.AuctionID,
-		Amount:    b.Amount,
+		AuctionID: 1,
+		Amount:    0,
 	}
-	_, err := svc.Create(dto)
+	_, err := svc.Create(dto, 1)
 
 	assert.ErrorIs(t, err, expectedErr)
 }
@@ -77,17 +78,17 @@ func TestBidService_Create_SerializesPerAuction(t *testing.T) {
 			dto := &bid.CreateBidDTO{
 				AuctionID: aucID,
 			}
-			_, _ = svc.Create(dto)
+			_, _ = svc.Create(dto, 1)
 		}()
 	}
 
 	wg.Wait()
 	repo.AssertExpectations(t)
 
-		go func() {
-			defer wg.Done()
-			_ = svc.Create(&models.Bid{AuctionID: aucID})
-		}()
+	go func() {
+		defer wg.Done()
+		_, _ = svc.Create(&bid.CreateBidDTO{AuctionID: aucID}, 1)
+	}()
 
 	wg.Wait()
 	repo.AssertExpectations(t)
@@ -97,9 +98,19 @@ func TestBidService_GetHighestBid_OK(t *testing.T) {
 	repo := new(mocks.BidRepositoryInterface)
 	svc := bid.NewBidService(repo)
 
-	expected := &models.Bid{AuctionID: 10, Amount: 1000}
+	expected := &bid.RetrieveBidDTO{
+		AuctionID: 10,
+		BidderID:  1,
+		Amount:    100,
+	}
 
-	repo.On("GetHighestBid", uint(10)).Return(expected, nil)
+	// Return a models.Bid that the service will convert to RetrieveBidDTO
+	modelsBid := &models.Bid{
+		AuctionID: 10,
+		BidderID:  1,
+		Amount:    100,
+	}
+	repo.On("GetHighestBid", uint(10)).Return(modelsBid, nil)
 
 	got, err := svc.GetHighestBid(10)
 
