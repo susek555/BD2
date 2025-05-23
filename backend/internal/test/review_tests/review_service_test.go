@@ -35,7 +35,7 @@ func TestGetByReviewerId_Success(t *testing.T) {
 
 	var expectedDTOs []review.RetrieveReviewDTO
 	for _, r := range mockReviews {
-		expectedDTOs = append(expectedDTOs, *r.MapToDTO())
+		expectedDTOs = append(expectedDTOs, *review.MapToDTO(&r))
 	}
 
 	repo.On("GetByReviewerId", uint(10)).Return(mockReviews, nil).Once()
@@ -69,7 +69,7 @@ func TestGetByRevieweeId_Success(t *testing.T) {
 
 	var expectedDTOs []review.RetrieveReviewDTO
 	for _, r := range mockReviews {
-		expectedDTOs = append(expectedDTOs, *r.MapToDTO())
+		expectedDTOs = append(expectedDTOs, *review.MapToDTO(&r))
 	}
 
 	repo.On("GetByRevieweeId", uint(20)).Return(mockReviews, nil).Once()
@@ -91,7 +91,7 @@ func TestGetByReviewerAndReviewee_Success(t *testing.T) {
 		Reviewer:   &models.User{ID: 10, Username: "reviewer"},
 		Reviewee:   &models.User{ID: 20, Username: "reviewee"},
 	}
-	expectedDTO := mockReview.MapToDTO()
+	expectedDTO := *review.MapToDTO(mockReview)
 
 	repo.On("GetByReviewerIdAndRevieweeId", uint(10), uint(20)).Return(mockReview, nil).Once()
 
@@ -187,7 +187,7 @@ func TestGet_Success(t *testing.T) {
 	repo.On("GetById", uint(7)).Return(&want, nil).Once()
 
 	got, err := svc.GetById(7)
-	expected := want.MapToDTO()
+	expected := review.MapToDTO(&want)
 	require.NoError(t, err)
 	assert.Equal(t, expected, got)
 	repo.AssertExpectations(t)
