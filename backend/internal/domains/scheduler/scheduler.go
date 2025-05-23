@@ -26,6 +26,7 @@ type Scheduler struct {
 	saleOfferRepository sale_offer.SaleOfferRepositoryInterface
 }
 
+//go:generate mockery --name=SchedulerInterface --output=../../test/mocks --case=snake --with-expecter
 type SchedulerInterface interface {
 	AddAuction(auctionID string, end time.Time)
 	Run(ctx context.Context)
