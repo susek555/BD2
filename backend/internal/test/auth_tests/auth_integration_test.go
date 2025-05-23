@@ -2,12 +2,13 @@ package auth_tests
 
 import (
 	"encoding/json"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
