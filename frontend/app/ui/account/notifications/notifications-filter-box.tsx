@@ -3,6 +3,7 @@
 import clsx from "clsx"
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
+import MarkAllAsReadButton from "./mark-all-as-read-button";
 
 
 const orderOptions = [
@@ -52,6 +53,7 @@ export default function NotificationsFilterBox() {
     return (
     <div className='flex h-full flex-col rounded-lg border-2 border-gray-300 bg-white p-4'>
       <div className='flex flex-col space-y-4'>
+        <MarkAllAsReadButton />
         <div className='mb-4'>
           <h3 className='mb-2 text-sm font-medium text-gray-700'>Sort by</h3>
           <div className='flex items-center space-x-2'>
