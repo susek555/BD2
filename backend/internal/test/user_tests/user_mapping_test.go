@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	u "github.com/susek555/BD2/car-dealer-api/internal/domains/user"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
 	"github.com/susek555/BD2/car-dealer-api/pkg/passwords"
 )
 
@@ -13,43 +13,43 @@ import (
 // --------------------------------
 
 func TestMapToUser_EmptyDTO(t *testing.T) {
-	dto := u.CreateUserDTO{}
+	dto := user.CreateUserDTO{}
 	_, err := dto.MapToUser()
-	assert.ErrorIs(t, err, u.ErrCreateUser)
+	assert.ErrorIs(t, err, user.ErrCreateUser)
 }
 
 func TestMapToUser_MissingUsername(t *testing.T) {
-	dto := u.CreateUserDTO{Password: "123", Email: "john@example.com", Selector: "P"}
+	dto := user.CreateUserDTO{Password: "123", Email: "john@example.com", Selector: "P"}
 	_, err := dto.MapToUser()
-	assert.ErrorIs(t, err, u.ErrCreateUser)
+	assert.ErrorIs(t, err, user.ErrCreateUser)
 }
 
 func TestMapToUser_MissingPassword(t *testing.T) {
-	dto := u.CreateUserDTO{Username: "john", Email: "john@exampl.com", Selector: "P"}
+	dto := user.CreateUserDTO{Username: "john", Email: "john@exampl.com", Selector: "P"}
 	_, err := dto.MapToUser()
-	assert.ErrorIs(t, err, u.ErrCreateUser)
+	assert.ErrorIs(t, err, user.ErrCreateUser)
 }
 
 func TestMapToUser_MissingEmail(t *testing.T) {
-	dto := u.CreateUserDTO{Username: "john", Password: "123", Selector: "P"}
+	dto := user.CreateUserDTO{Username: "john", Password: "123", Selector: "P"}
 	_, err := dto.MapToUser()
-	assert.ErrorIs(t, err, u.ErrCreateUser)
+	assert.ErrorIs(t, err, user.ErrCreateUser)
 }
 
 func TestMapToUser_MissingSelector(t *testing.T) {
-	dto := u.CreateUserDTO{Username: "john", Password: "123", Email: "john@example.com"}
+	dto := user.CreateUserDTO{Username: "john", Password: "123", Email: "john@example.com"}
 	_, err := dto.MapToUser()
-	assert.ErrorIs(t, err, u.ErrCreateUser)
+	assert.ErrorIs(t, err, user.ErrCreateUser)
 }
 
 func TestMapToUser_InvalidSelector(t *testing.T) {
-	dto := u.CreateUserDTO{Username: "john", Password: "123", Email: "john@example.com", Selector: "X"}
+	dto := user.CreateUserDTO{Username: "john", Password: "123", Email: "john@example.com", Selector: "X"}
 	_, err := dto.MapToUser()
-	assert.ErrorIs(t, err, u.ErrInvalidSelector)
+	assert.ErrorIs(t, err, user.ErrInvalidSelector)
 }
 func TestMapToUser_EmptyPersonName(t *testing.T) {
 	surname := "doe"
-	dto := u.CreateUserDTO{
+	dto := user.CreateUserDTO{
 		Username:      "john",
 		Password:      "123",
 		Email:         "john@example.com",
@@ -58,12 +58,12 @@ func TestMapToUser_EmptyPersonName(t *testing.T) {
 		PersonSurname: &surname,
 	}
 	_, err := dto.MapToUser()
-	assert.ErrorIs(t, err, u.ErrCreatePerson)
+	assert.ErrorIs(t, err, user.ErrCreatePerson)
 }
 
 func TestMapToUser_EmptyPersonSurname(t *testing.T) {
 	name := "john person"
-	dto := u.CreateUserDTO{
+	dto := user.CreateUserDTO{
 		Username:      "john",
 		Password:      "123",
 		Email:         "john@example.com",
@@ -72,13 +72,13 @@ func TestMapToUser_EmptyPersonSurname(t *testing.T) {
 		PersonSurname: nil,
 	}
 	_, err := dto.MapToUser()
-	assert.ErrorIs(t, err, u.ErrCreatePerson)
+	assert.ErrorIs(t, err, user.ErrCreatePerson)
 }
 
 func TestMapToUser_PersonWithCompanyFields(t *testing.T) {
 	name := "john company"
 	nip := "1234567890"
-	dto := u.CreateUserDTO{
+	dto := user.CreateUserDTO{
 		Username:    "john",
 		Password:    "123",
 		Email:       "john@example.com",
@@ -87,12 +87,12 @@ func TestMapToUser_PersonWithCompanyFields(t *testing.T) {
 		CompanyNIP:  &nip,
 	}
 	_, err := dto.MapToUser()
-	assert.ErrorIs(t, err, u.ErrCreatePerson)
+	assert.ErrorIs(t, err, user.ErrCreatePerson)
 }
 
 func TestMapToUser_EmptyCompanyName(t *testing.T) {
 	nip := "1234567890"
-	dto := u.CreateUserDTO{
+	dto := user.CreateUserDTO{
 		Username:    "john",
 		Password:    "123",
 		Email:       "john@example.com",
@@ -101,12 +101,12 @@ func TestMapToUser_EmptyCompanyName(t *testing.T) {
 		CompanyNIP:  &nip,
 	}
 	_, err := dto.MapToUser()
-	assert.ErrorIs(t, err, u.ErrCreateCompany)
+	assert.ErrorIs(t, err, user.ErrCreateCompany)
 }
 
 func TestMapToUser_EmptyCompanyNIP(t *testing.T) {
 	name := "john Company"
-	dto := u.CreateUserDTO{
+	dto := user.CreateUserDTO{
 		Username:    "john",
 		Password:    "123",
 		Email:       "john@example.com",
@@ -115,13 +115,13 @@ func TestMapToUser_EmptyCompanyNIP(t *testing.T) {
 		CompanyNIP:  nil,
 	}
 	_, err := dto.MapToUser()
-	assert.ErrorIs(t, err, u.ErrCreateCompany)
+	assert.ErrorIs(t, err, user.ErrCreateCompany)
 }
 
 func TestMapToUser_CompanyWithPersonFields(t *testing.T) {
 	name := "john person"
 	surname := "doe person"
-	dto := u.CreateUserDTO{
+	dto := user.CreateUserDTO{
 		Username:      "john",
 		Password:      "123",
 		Email:         "john@example.com",
@@ -130,13 +130,13 @@ func TestMapToUser_CompanyWithPersonFields(t *testing.T) {
 		PersonSurname: &surname,
 	}
 	_, err := dto.MapToUser()
-	assert.ErrorIs(t, err, u.ErrCreateCompany)
+	assert.ErrorIs(t, err, user.ErrCreateCompany)
 }
 
 func TestMapToUser_ValidPerson(t *testing.T) {
 	name := "john person"
 	surname := "doe person"
-	dto := u.CreateUserDTO{
+	dto := user.CreateUserDTO{
 		Username:      "john",
 		Password:      "123",
 		Email:         "john@example.com",
@@ -157,7 +157,7 @@ func TestMapToUser_ValidPerson(t *testing.T) {
 func TestMapToUser_ValidCompany(t *testing.T) {
 	name := "john company"
 	nip := "1234567890"
-	dto := u.CreateUserDTO{
+	dto := user.CreateUserDTO{
 		Username:    "john",
 		Password:    "123",
 		Email:       "john@example.com",
@@ -180,7 +180,7 @@ func TestMapToUser_PersonWithAllFields(t *testing.T) {
 	companyNIP := "1234567890"
 	name := "john person"
 	surname := "doe person"
-	dto := u.CreateUserDTO{
+	dto := user.CreateUserDTO{
 		Username:      "john",
 		Password:      "123",
 		Email:         "john@example.com",
@@ -206,7 +206,7 @@ func TestMapToUser_CompanyWithAllFields(t *testing.T) {
 	companyNIP := "1234567890"
 	name := "john person"
 	surname := "doe person"
-	dto := u.CreateUserDTO{
+	dto := user.CreateUserDTO{
 		Username:      "john",
 		Password:      "123",
 		Email:         "john@example.com",
@@ -232,22 +232,22 @@ func TestMapToUser_CompanyWithAllFields(t *testing.T) {
 // ----------------------------------
 
 func TestMapToDTO_Person(t *testing.T) {
-	user := createPerson(1)
-	dto := user.MapToDTO()
-	assert.Equal(t, user.ID, dto.ID)
-	assert.Equal(t, user.Username, dto.Username)
-	assert.Equal(t, user.Email, dto.Email)
-	assert.Equal(t, user.Person.Name, *dto.PersonName)
-	assert.Equal(t, user.Person.Surname, *dto.PersonSurname)
+	user_ := createPerson(1)
+	dto := user.MapToDTO(user_)
+	assert.Equal(t, user_.ID, dto.ID)
+	assert.Equal(t, user_.Username, dto.Username)
+	assert.Equal(t, user_.Email, dto.Email)
+	assert.Equal(t, user_.Person.Name, *dto.PersonName)
+	assert.Equal(t, user_.Person.Surname, *dto.PersonSurname)
 }
 func TestMapToDTO_Company(t *testing.T) {
-	user := createCompany(1)
-	dto := user.MapToDTO()
-	assert.Equal(t, user.ID, dto.ID)
-	assert.Equal(t, user.Username, dto.Username)
-	assert.Equal(t, user.Email, dto.Email)
-	assert.Equal(t, user.Company.Name, *dto.CompanyName)
-	assert.Equal(t, user.Company.NIP, *dto.CompanyNIP)
+	user_ := createCompany(1)
+	dto := user.MapToDTO(user_)
+	assert.Equal(t, user_.ID, dto.ID)
+	assert.Equal(t, user_.Username, dto.Username)
+	assert.Equal(t, user_.Email, dto.Email)
+	assert.Equal(t, user_.Company.Name, *dto.CompanyName)
+	assert.Equal(t, user_.Company.NIP, *dto.CompanyNIP)
 }
 
 // --------------------------------
@@ -256,7 +256,7 @@ func TestMapToDTO_Company(t *testing.T) {
 
 func TestUpdateUserFromDTO_Email(t *testing.T) {
 	email := "john_updated@example.com"
-	dto := u.UpdateUserDTO{
+	dto := user.UpdateUserDTO{
 		ID:    1,
 		Email: &email,
 	}
@@ -270,7 +270,7 @@ func TestUpdateUserFromDTO_Email(t *testing.T) {
 
 func TestUpdateUserFromDTO_Password(t *testing.T) {
 	password := "new_password"
-	dto := u.UpdateUserDTO{
+	dto := user.UpdateUserDTO{
 		ID:       1,
 		Password: &password,
 	}
@@ -284,7 +284,7 @@ func TestUpdateUserFromDTO_Password(t *testing.T) {
 
 func TestUpdateUserFromDTO_Username(t *testing.T) {
 	username := "john_updated"
-	dto := u.UpdateUserDTO{
+	dto := user.UpdateUserDTO{
 		ID:       1,
 		Username: &username,
 	}
@@ -298,7 +298,7 @@ func TestUpdateUserFromDTO_Username(t *testing.T) {
 
 func TestUpdateUserFromDTO_CompanyNameAsCompany(t *testing.T) {
 	companyName := "new_name"
-	dto := u.UpdateUserDTO{
+	dto := user.UpdateUserDTO{
 		ID:          1,
 		CompanyName: &companyName,
 	}
@@ -312,18 +312,18 @@ func TestUpdateUserFromDTO_CompanyNameAsCompany(t *testing.T) {
 
 func TestUpdateUserFromDTO_CompanyNameAsPerson(t *testing.T) {
 	companyName := "new_name"
-	dto := u.UpdateUserDTO{
+	dto := user.UpdateUserDTO{
 		ID:          1,
 		CompanyName: &companyName,
 	}
-	user := createPerson(1)
-	_, err := dto.UpdateUserFromDTO(user)
-	assert.ErrorIs(t, err, u.ErrUpdateCompany)
+	user_ := createPerson(1)
+	_, err := dto.UpdateUserFromDTO(user_)
+	assert.ErrorIs(t, err, user.ErrUpdateCompany)
 }
 
 func TestUpdateUserFromDTO_CompanyNIPAsCompany(t *testing.T) {
 	companyNIP := "new_nip"
-	dto := u.UpdateUserDTO{
+	dto := user.UpdateUserDTO{
 		ID:         1,
 		CompanyNIP: &companyNIP,
 	}
@@ -337,18 +337,18 @@ func TestUpdateUserFromDTO_CompanyNIPAsCompany(t *testing.T) {
 
 func TestUpdateUserFromDTO_CompanyNIPAsPerson(t *testing.T) {
 	companyNIP := "new_nip"
-	dto := u.UpdateUserDTO{
+	dto := user.UpdateUserDTO{
 		ID:         1,
 		CompanyNIP: &companyNIP,
 	}
-	user := createPerson(1)
-	_, err := dto.UpdateUserFromDTO(user)
-	assert.ErrorIs(t, err, u.ErrUpdateCompany)
+	user_ := createPerson(1)
+	_, err := dto.UpdateUserFromDTO(user_)
+	assert.ErrorIs(t, err, user.ErrUpdateCompany)
 }
 
 func TestUpdateUserFromDTO_PersonNameAsPerson(t *testing.T) {
 	name := "new_name"
-	dto := u.UpdateUserDTO{
+	dto := user.UpdateUserDTO{
 		ID:         1,
 		PersonName: &name,
 	}
@@ -362,18 +362,18 @@ func TestUpdateUserFromDTO_PersonNameAsPerson(t *testing.T) {
 
 func TestUpdateUserFromDTO_PersonNameAsCompany(t *testing.T) {
 	name := "new_name"
-	dto := u.UpdateUserDTO{
+	dto := user.UpdateUserDTO{
 		ID:         1,
 		PersonName: &name,
 	}
-	user := createCompany(1)
-	_, err := dto.UpdateUserFromDTO(user)
-	assert.ErrorIs(t, err, u.ErrUpdatePerson)
+	user_ := createCompany(1)
+	_, err := dto.UpdateUserFromDTO(user_)
+	assert.ErrorIs(t, err, user.ErrUpdatePerson)
 }
 
 func TestUpdateUserFromDTO_PersonSurnameAsPerson(t *testing.T) {
 	surname := "new_surname"
-	dto := u.UpdateUserDTO{
+	dto := user.UpdateUserDTO{
 		ID:            1,
 		PersonSurname: &surname,
 	}
@@ -387,17 +387,17 @@ func TestUpdateUserFromDTO_PersonSurnameAsPerson(t *testing.T) {
 
 func TestUpdateUserFromDTO_PersonSurnameAsCompany(t *testing.T) {
 	surname := "new_surname"
-	dto := u.UpdateUserDTO{
+	dto := user.UpdateUserDTO{
 		ID:            1,
 		PersonSurname: &surname,
 	}
-	user := createCompany(1)
-	_, err := dto.UpdateUserFromDTO(user)
-	assert.ErrorIs(t, err, u.ErrUpdatePerson)
+	user_ := createCompany(1)
+	_, err := dto.UpdateUserFromDTO(user_)
+	assert.ErrorIs(t, err, user.ErrUpdatePerson)
 }
 
 func TestUpdateUserFromDTO_Empty(t *testing.T) {
-	dto := u.UpdateUserDTO{
+	dto := user.UpdateUserDTO{
 		ID: 1,
 	}
 	user := createPerson(1)
