@@ -2,12 +2,13 @@ package review_tests
 
 import (
 	"encoding/json"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
@@ -223,7 +224,7 @@ func TestGetAllReviewsMultipleReviews(t *testing.T) {
 	server, _, _, err := newTestServer(seedUsers, seedReviews)
 	assert.NoError(t, err)
 	wantStatus := http.StatusOK
-	req := httptest.NewRequest(http.MethodGet, "/review_/", nil)
+	req := httptest.NewRequest(http.MethodGet, "/review/", nil)
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 	server.ServeHTTP(w, req)
