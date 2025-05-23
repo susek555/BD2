@@ -12,6 +12,7 @@ type UserRepositoryInterface interface {
 	GetByEmail(email string) (models.User, error)
 	GetByCompanyNip(nip string) (models.User, error)
 	GetByUsername(username string) (models.User, error)
+	UpdatePassword(userId uint, newPassword string) error
 }
 
 type UserRepository struct {
@@ -89,6 +90,12 @@ func (r *UserRepository) Update(user *models.User) error {
 		}
 		subtype := user.GetSubtype()
 		return subtype.SaveSubtype(tx)
+	})
+}
+
+func (r *UserRepository) UpdatePassword(userId uint, newPassword string) error {
+	return r.DB.Transaction(func(tx *gorm.DB) error {
+		return tx.Model(&models.User{}).Where("id = ?", userId).Update("password", newPassword).Error
 	})
 }
 
