@@ -88,8 +88,10 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
 
           <div className='my-4' />
           <UserDetails
+            sellerId={offer.sellerId}
             sellerName={offer.sellerName}
             sellerAverageRating={sellerAverageRating}
+            offerId={Number(id)}
           />
           {/* // TODO - maybe add google maps with location */}
         </div>
