@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { PersonalDataSchema } from './personal-data-schema';
+import { PersonalDataSchema } from './user-data-schema';
 
 export const SignupFormSchema = PersonalDataSchema.and(
   z
