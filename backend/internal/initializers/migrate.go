@@ -20,5 +20,6 @@ func MigrateModels() {
 		&models.LikedOffer{},
 		&models.Notification{},
 		&models.ClientNotification{},
+		&models.Image{},
 	)
 }
