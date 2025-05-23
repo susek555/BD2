@@ -255,4 +255,8 @@ export type RegularOfferData = {
   registration_number: string;
   vin: string;
   engine_capacity: number;
+  description: string;
+  // images: File[]; // Array of image files
+  price: number;
+  margin: number;
 }
