@@ -2,52 +2,41 @@ package notification
 
 import (
 	"fmt"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"time"
-
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 )
 
 type NotificationServiceInterface interface {
-	CreateOutbidNotification(notification *Notification, amount int64) error
-	CreateEndAuctionNotification(notification *Notification, winner string, winningBid int64) error
-	GetNotificationByID(id uint) (*Notification, error)
+	CreateOutbidNotification(notification *models.Notification, amount int64, offer *models.Auction) error
+	CreateEndAuctionNotification(notification *models.Notification, winner string, winningBid int64, offer *models.SaleOffer) error
+	GetNotificationByID(id uint) (*models.Notification, error)
 }
 
 type NotificationService struct {
 	NotificationRepository NotificationRepositoryInterface
-	SaleOfferService       sale_offer.SaleOfferServiceInterface
 }
 
-func NewNotificationService(notificationRepository NotificationRepositoryInterface, saleOfferService sale_offer.SaleOfferServiceInterface) NotificationServiceInterface {
+func NewNotificationService(notificationRepository NotificationRepositoryInterface) NotificationServiceInterface {
 	return &NotificationService{
 		NotificationRepository: notificationRepository,
-		SaleOfferService:       saleOfferService,
 	}
 }
 
-func (s *NotificationService) CreateOutbidNotification(notification *Notification, amount int64) error {
-	offer, err := s.SaleOfferService.GetByID(notification.OfferID)
-	if err != nil {
-		return err
-	}
+func (s *NotificationService) CreateOutbidNotification(notification *models.Notification, amount int64, offer *models.Auction) error {
 	notification.Date = time.Now().Format("2006-01-02 15:04:05")
-	notification.Title = fmt.Sprintf("Someone outbid you on %s %s \n", offer.Brand, offer.Model)
-	notification.Description = fmt.Sprintf("You were outbid on your offer for %s %s. \n New price: %d \n", offer.Brand, offer.Model, amount)
+	notification.Title = fmt.Sprintf("Someone outbid you on %s %s \n", offer.Offer.Car.Model.Manufacturer.Name, offer.Offer.Car.Model.Name)
+	notification.Description = fmt.Sprintf("You were outbid on your offer for %s %s. \n New price: %d \n", offer.Offer.Car.Model.Manufacturer.Name, offer.Offer.Car.Model.Name, amount)
 	return s.NotificationRepository.Create(notification)
 }
 
-func (s *NotificationService) CreateEndAuctionNotification(notification *Notification, winner string, winningBid int64) error {
-	offer, err := s.SaleOfferService.GetByID(notification.OfferID)
-	if err != nil {
-		return err
-	}
+func (s *NotificationService) CreateEndAuctionNotification(notification *models.Notification, winner string, winningBid int64, offer *models.SaleOffer) error {
 	notification.Date = time.Now().Format("2006-01-02 15:04:05")
-	notification.Title = fmt.Sprintf("Auction ended for %s %s \n", offer.Brand, offer.Model)
-	notification.Description = fmt.Sprintf("The auction for %s %s has ended. \n Winner: %s \n Winning bid: %d", offer.Brand, offer.Model, winner, winningBid)
+	notification.Title = fmt.Sprintf("Auction ended for %s %s \n", offer.Car.Model.Manufacturer.Name, offer.Car.Model.Name)
+	notification.Description = fmt.Sprintf("The auction for %s %s has ended. \n Winner: %s \n Winning bid: %d", offer.Car.Model.Manufacturer.Name, offer.Car.Model.Name, winner, winningBid)
 	return s.NotificationRepository.Create(notification)
 }
 
-func (s *NotificationService) GetNotificationByID(id uint) (*Notification, error) {
+func (s *NotificationService) GetNotificationByID(id uint) (*models.Notification, error) {
 	notification, err := s.NotificationRepository.GetById(id)
 	if err != nil {
 		return nil, err

@@ -1,6 +1,8 @@
 package user
 
-import "github.com/susek555/BD2/car-dealer-api/pkg/mapping"
+import (
+	"github.com/susek555/BD2/car-dealer-api/pkg/mapping"
+)
 
 type UserServiceInterface interface {
 	Create(CreateUserDTO) error
@@ -34,7 +36,7 @@ func (s *UserService) GetAll() ([]RetrieveUserDTO, error) {
 	if err != nil {
 		return nil, err
 	}
-	userDTOs := mapping.MapSliceToDTOs(users, (*User).MapToDTO)
+	userDTOs := mapping.MapSliceToDTOs(users, MapToDTO)
 	return userDTOs, nil
 }
 
@@ -43,7 +45,7 @@ func (s *UserService) GetById(id uint) (*RetrieveUserDTO, error) {
 	if err != nil {
 		return nil, err
 	}
-	userDTO := user.MapToDTO()
+	userDTO := MapToDTO(user)
 	return userDTO, nil
 }
 
@@ -52,7 +54,7 @@ func (s *UserService) GetByEmail(email string) (*RetrieveUserDTO, error) {
 	if err != nil {
 		return nil, err
 	}
-	userDTO := user.MapToDTO()
+	userDTO := MapToDTO(&user)
 	return userDTO, nil
 }
 
@@ -61,7 +63,7 @@ func (s *UserService) GetByUsername(username string) (*RetrieveUserDTO, error) {
 	if err != nil {
 		return nil, err
 	}
-	userDTO := user.MapToDTO()
+	userDTO := MapToDTO(&user)
 	return userDTO, nil
 }
 
@@ -70,7 +72,7 @@ func (s *UserService) GetByCompanyNip(nip string) (*RetrieveUserDTO, error) {
 	if err != nil {
 		return nil, err
 	}
-	userDTO := user.MapToDTO()
+	userDTO := MapToDTO(&user)
 	return userDTO, nil
 }
 

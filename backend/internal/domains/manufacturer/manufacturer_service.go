@@ -1,7 +1,9 @@
 package manufacturer
 
+import "github.com/susek555/BD2/car-dealer-api/internal/domains/models"
+
 type ManufacturerServiceInterface interface {
-	GetAll() ([]Manufacturer, error)
+	GetAll() ([]models.Manufacturer, error)
 	GetAllAsNames() ([]string, error)
 }
 
@@ -13,7 +15,7 @@ func NewManufacturerService(manufacturerRepository ManufacturerRepositoryInterfa
 	return &ManufacturerService{repo: manufacturerRepository}
 }
 
-func (s *ManufacturerService) GetAll() ([]Manufacturer, error) {
+func (s *ManufacturerService) GetAll() ([]models.Manufacturer, error) {
 	return s.repo.GetAll()
 }
 

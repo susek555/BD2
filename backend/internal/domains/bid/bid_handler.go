@@ -2,6 +2,7 @@ package bid
 
 import (
 	"encoding/json"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"log"
 	"net/http"
 	"strconv"
@@ -50,10 +51,11 @@ func (h *Handler) CreateBid(c *gin.Context) {
 	auctionIDStr := strconv.FormatUint(uint64(dto.AuctionID), 10)
 	userIDStr := strconv.FormatUint(uint64(userId), 10)
 	amountInt64 := int64(dto.Amount)
-	notification := &notification.Notification{
+	notification := &models.Notification{
 		OfferID: dto.AuctionID,
 	}
-	err = h.notificationService.CreateOutbidNotification(notification, amountInt64)
+
+	err = h.notificationService.CreateOutbidNotification(notification, amountInt64, dto.Auction)
 	if err != nil {
 		log.Println("Error creating notification:", err)
 		return

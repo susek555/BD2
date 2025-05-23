@@ -2,13 +2,13 @@ package auction
 
 import (
 	"errors"
-	"time"
-
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
+	"time"
 )
 
-func (dto *CreateAuctionDTO) MapToAuction() (*sale_offer.Auction, error) {
-	var auction sale_offer.Auction
+func (dto *CreateAuctionDTO) MapToAuction() (*models.Auction, error) {
+	var auction models.Auction
 	offer, err := dto.MapToSaleOffer()
 	if err != nil {
 		return nil, err
@@ -27,8 +27,8 @@ func (dto *CreateAuctionDTO) MapToAuction() (*sale_offer.Auction, error) {
 	return &auction, nil
 }
 
-func (dto *UpdateAuctionDTO) MapToAuction() (*sale_offer.Auction, error) {
-	var auction sale_offer.Auction
+func (dto *UpdateAuctionDTO) MapToAuction() (*models.Auction, error) {
+	var auction models.Auction
 	offer, err := dto.MapToSaleOffer()
 	if err != nil {
 		return nil, err
@@ -50,8 +50,8 @@ func (dto *UpdateAuctionDTO) MapToAuction() (*sale_offer.Auction, error) {
 	return &auction, nil
 }
 
-func MapToDTO(auction *sale_offer.Auction) *RetrieveAuctionDTO {
-	offerDTO := auction.Offer.MapToDTO()
+func MapToDTO(auction *models.Auction) *RetrieveAuctionDTO {
+	offerDTO := sale_offer.MapToDTO(auction.Offer)
 	return &RetrieveAuctionDTO{
 		offerDTO,
 		auction.DateEnd.Format("15:04 02/01/2006"),

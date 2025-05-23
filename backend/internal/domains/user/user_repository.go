@@ -2,15 +2,16 @@ package user
 
 import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/generic"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"gorm.io/gorm"
 )
 
 //go:generate mockery --name=UserRepositoryInterface --output=../../test/mocks --case=snake --with-expecter
 type UserRepositoryInterface interface {
-	generic.CRUDRepository[User]
-	GetByEmail(email string) (User, error)
-	GetByCompanyNip(nip string) (User, error)
-	GetByUsername(username string) (User, error)
+	generic.CRUDRepository[models.User]
+	GetByEmail(email string) (models.User, error)
+	GetByCompanyNip(nip string) (models.User, error)
+	GetByUsername(username string) (models.User, error)
 }
 
 type UserRepository struct {
@@ -21,7 +22,7 @@ func NewUserRepository(db *gorm.DB) UserRepositoryInterface {
 	return &UserRepository{DB: db}
 }
 
-func (r *UserRepository) Create(user *User) error {
+func (r *UserRepository) Create(user *models.User) error {
 	return r.DB.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Create(&user).Error; err != nil {
 			return err
@@ -32,8 +33,8 @@ func (r *UserRepository) Create(user *User) error {
 	})
 }
 
-func (r *UserRepository) GetAll() ([]User, error) {
-	var users []User
+func (r *UserRepository) GetAll() ([]models.User, error) {
+	var users []models.User
 	err := r.buildBaseQuery().Find(&users).Error
 	if err != nil {
 		return nil, err
@@ -41,8 +42,8 @@ func (r *UserRepository) GetAll() ([]User, error) {
 	return users, err
 }
 
-func (r *UserRepository) GetById(id uint) (*User, error) {
-	var user User
+func (r *UserRepository) GetById(id uint) (*models.User, error) {
+	var user models.User
 	err := r.buildBaseQuery().First(&user, id).Error
 	if err != nil {
 		return nil, err
@@ -50,38 +51,38 @@ func (r *UserRepository) GetById(id uint) (*User, error) {
 	return &user, nil
 }
 
-func (r *UserRepository) GetByEmail(email string) (User, error) {
-	var u User
+func (r *UserRepository) GetByEmail(email string) (models.User, error) {
+	var u models.User
 	err := r.buildBaseQuery().Where("email = ?", email).First(&u).Error
 	if err != nil {
-		return User{}, err
+		return models.User{}, err
 	}
 	return u, nil
 }
 
-func (r *UserRepository) GetByUsername(username string) (User, error) {
-	var u User
+func (r *UserRepository) GetByUsername(username string) (models.User, error) {
+	var u models.User
 	err := r.buildBaseQuery().Where("username = ?", username).First(&u).Error
 	if err != nil {
-		return User{}, err
+		return models.User{}, err
 	}
 	return u, nil
 }
 
-func (r *UserRepository) GetByCompanyNip(nip string) (User, error) {
-	var u User
+func (r *UserRepository) GetByCompanyNip(nip string) (models.User, error) {
+	var u models.User
 	err := r.buildBaseQuery().
 		Joins("JOIN companies ON companies.user_id = users.id").
 		Where("companies.nip = ?", nip).
 		First(&u).Error
 
 	if err != nil {
-		return User{}, err
+		return models.User{}, err
 	}
 	return u, nil
 }
 
-func (r *UserRepository) Update(user *User) error {
+func (r *UserRepository) Update(user *models.User) error {
 	return r.DB.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Save(user).Error; err != nil {
 			return err
@@ -93,7 +94,7 @@ func (r *UserRepository) Update(user *User) error {
 
 func (r *UserRepository) Delete(id uint) error {
 	return r.DB.Transaction(func(tx *gorm.DB) error {
-		return tx.Delete(&User{}, id).Error
+		return tx.Delete(&models.User{}, id).Error
 	})
 }
 

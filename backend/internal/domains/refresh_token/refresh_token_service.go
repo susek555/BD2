@@ -1,52 +1,49 @@
 package refresh_token
 
 import (
-	"context"
 	"errors"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"time"
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/generic"
-	"gorm.io/gorm"
 )
 
 //go:generate mockery --name=RefreshTokenServiceInterface --output=../../test/mocks --case=snake --with-expecter
 type RefreshTokenServiceInterface interface {
-	generic.CRUDService[RefreshToken]
+	generic.CRUDService[models.RefreshToken]
 
-	FindByToken(ctx context.Context, token string) (*RefreshToken, error)
-	FindByUserEmail(ctx context.Context, email string) ([]RefreshToken, error)
-	FindByUserId(ctx context.Context, id uint) ([]RefreshToken, error)
-	VerifyExpiration(ctx context.Context, token *RefreshToken) (*RefreshToken, error)
-	DeleteByUserID(ctx context.Context, userID uint) error
+	FindByToken(token string) (*models.RefreshToken, error)
+	FindByUserEmail(email string) ([]models.RefreshToken, error)
+	FindByUserId(id uint) ([]models.RefreshToken, error)
+	VerifyExpiration(token *models.RefreshToken) (*models.RefreshToken, error)
+	DeleteByUserId(userID uint) error
 }
 
 type RefreshTokenService struct {
-	generic.GenericService[RefreshToken, *RefreshTokenRepository]
+	generic.GenericService[models.RefreshToken, RefreshTokenRepositoryInterface]
 }
 
-func NewRefreshTokenService(db *gorm.DB) *RefreshTokenService {
-	repo := GetRefreshTokenRepository(db)
-
+func NewRefreshTokenService(repo RefreshTokenRepositoryInterface) RefreshTokenServiceInterface {
 	return &RefreshTokenService{
-		GenericService: generic.GenericService[RefreshToken, *RefreshTokenRepository]{
+		GenericService: generic.GenericService[models.RefreshToken, RefreshTokenRepositoryInterface]{
 			Repo: repo,
 		},
 	}
 }
 
-func (s *RefreshTokenService) FindByToken(ctx context.Context, token string) (*RefreshToken, error) {
+func (s *RefreshTokenService) FindByToken(token string) (*models.RefreshToken, error) {
 	return s.Repo.FindByToken(token)
 }
 
-func (s *RefreshTokenService) FindByUserEmail(ctx context.Context, email string) ([]RefreshToken, error) {
+func (s *RefreshTokenService) FindByUserEmail(email string) ([]models.RefreshToken, error) {
 	return s.Repo.FindByUserEmail(email)
 }
 
-func (s *RefreshTokenService) FindByUserId(ctx context.Context, id uint) ([]RefreshToken, error) {
+func (s *RefreshTokenService) FindByUserId(id uint) ([]models.RefreshToken, error) {
 	return s.Repo.FindByUserId(id)
 }
 
-func (s *RefreshTokenService) VerifyExpiration(ctx context.Context, token *RefreshToken) (*RefreshToken, error) {
+func (s *RefreshTokenService) VerifyExpiration(token *models.RefreshToken) (*models.RefreshToken, error) {
 	if token.ExpiryDate.Before(time.Now()) {
 		_ = s.Repo.Delete(token.ID)
 		return nil, errors.New("refresh token expired")
@@ -54,6 +51,6 @@ func (s *RefreshTokenService) VerifyExpiration(ctx context.Context, token *Refre
 	return token, nil
 }
 
-func (s *RefreshTokenService) DeleteByUserID(ctx context.Context, userID uint) error {
+func (s *RefreshTokenService) DeleteByUserId(userID uint) error {
 	return s.Repo.DeleteByUserId(userID)
 }

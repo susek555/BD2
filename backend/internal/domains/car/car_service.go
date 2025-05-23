@@ -24,14 +24,14 @@ func (s *CarService) GetManufacturersModelsMap() (*ManufacturerModelMap, error) 
 	if err != nil {
 		return nil, err
 	}
-	manufacturersNames := mapping.MapSliceToDTOs(manufacturers, (*manufacturer.Manufacturer).MapToName)
+	manufacturersNames := mapping.MapSliceToDTOs(manufacturers, manufacturer.MapToName)
 	var modelsNames [][]string
 	for _, manufacturer := range manufacturers {
 		models, err := s.modelRepo.GetByManufacturerID(manufacturer.ID)
 		if err != nil {
 			return nil, err
 		}
-		modelsNames = append(modelsNames, mapping.MapSliceToDTOs(models, (*model.Model).MapToName))
+		modelsNames = append(modelsNames, mapping.MapSliceToDTOs(models, model.MapToName))
 	}
 	return &ManufacturerModelMap{Manufacturers: manufacturersNames, Models: modelsNames}, nil
 }

@@ -2,10 +2,11 @@ package user
 
 import (
 	"github.com/go-playground/validator/v10"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"github.com/susek555/BD2/car-dealer-api/pkg/passwords"
 )
 
-func (dto *CreateUserDTO) MapToUser() (*User, error) {
+func (dto *CreateUserDTO) MapToUser() (*models.User, error) {
 	hashed, err := passwords.Hash(dto.Password)
 	if err != nil {
 		return nil, ErrHashPassword
@@ -20,24 +21,24 @@ func (dto *CreateUserDTO) MapToUser() (*User, error) {
 		if err := dto.validateP(); err != nil {
 			return nil, err
 		}
-		return &User{
+		return &models.User{
 				Username: dto.Username,
 				Password: hashed,
 				Email:    dto.Email,
 				Selector: dto.Selector,
-				Person:   &Person{Name: *dto.PersonName, Surname: *dto.PersonSurname},
+				Person:   &models.Person{Name: *dto.PersonName, Surname: *dto.PersonSurname},
 			},
 			nil
 	case "C":
 		if err := dto.validateC(); err != nil {
 			return nil, err
 		}
-		return &User{
+		return &models.User{
 				Username: dto.Username,
 				Password: hashed,
 				Email:    dto.Email,
 				Selector: dto.Selector,
-				Company:  &Company{Name: *dto.CompanyName, NIP: *dto.CompanyNIP},
+				Company:  &models.Company{Name: *dto.CompanyName, NIP: *dto.CompanyNIP},
 			},
 			nil
 	default:
@@ -58,7 +59,7 @@ func (dto *CreateUserDTO) validateC() error {
 	return nil
 }
 
-func (user *User) MapToDTO() *RetrieveUserDTO {
+func MapToDTO(user *models.User) *RetrieveUserDTO {
 	switch user.Selector {
 	case "P":
 		return &RetrieveUserDTO{
@@ -80,7 +81,7 @@ func (user *User) MapToDTO() *RetrieveUserDTO {
 	return nil
 }
 
-func (dto *UpdateUserDTO) UpdateUserFromDTO(user *User) (*User, error) {
+func (dto *UpdateUserDTO) UpdateUserFromDTO(user *models.User) (*models.User, error) {
 	if err := dto.updateMainFields(user); err != nil {
 		return nil, err
 	}
@@ -93,7 +94,7 @@ func (dto *UpdateUserDTO) UpdateUserFromDTO(user *User) (*User, error) {
 	return user, nil
 }
 
-func (dto *UpdateUserDTO) updateMainFields(user *User) error {
+func (dto *UpdateUserDTO) updateMainFields(user *models.User) error {
 	if dto.Email != nil {
 		user.Email = *dto.Email
 	}
@@ -110,7 +111,7 @@ func (dto *UpdateUserDTO) updateMainFields(user *User) error {
 	return nil
 }
 
-func (dto *UpdateUserDTO) updatePersonFields(user *User) error {
+func (dto *UpdateUserDTO) updatePersonFields(user *models.User) error {
 	if dto.PersonName == nil && dto.PersonSurname == nil {
 		return nil
 	}
@@ -126,7 +127,7 @@ func (dto *UpdateUserDTO) updatePersonFields(user *User) error {
 	return nil
 }
 
-func (dto *UpdateUserDTO) updateCompanyFields(user *User) error {
+func (dto *UpdateUserDTO) updateCompanyFields(user *models.User) error {
 	if dto.CompanyName == nil && dto.CompanyNIP == nil {
 		return nil
 	}

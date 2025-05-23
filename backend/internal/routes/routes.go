@@ -1,28 +1,9 @@
 package routes
 
 import (
-	"context"
-	"log"
-	"os"
-
-	"github.com/redis/go-redis/v9"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/auction"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/auctionws"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/bid"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/car"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/liked_offer"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/notification"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/review"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
-
 	"github.com/gin-gonic/gin"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/auth"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/auctionws"
 	"github.com/susek555/BD2/car-dealer-api/internal/initializers"
-	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
 	"github.com/susek555/BD2/car-dealer-api/pkg/middleware"
 )
 
@@ -34,155 +15,96 @@ func RegisterRoutes(router *gin.Engine) {
 	registerSaleOfferRoutes(router)
 	registerAuctionRoutes(router)
 	registerBidRoutes(router)
+	registerWebsocket(router)
 }
 
-func RegisterWebsocket(router *gin.Engine) (*redis.Client, *auctionws.Hub) {
-	ctx := context.Background()
-	redisClient := initializers.RedisClient
-
-	hub := auctionws.NewHub()
-	go hub.Run()
-	hub.StartRedisFanIn(ctx, redisClient)
+func registerWebsocket(router *gin.Engine) {
 	// Start the WebSocket server
-	verifier, _ := initializeVerifier()
-	wsHandler := auctionws.ServeWS(hub)
-	router.GET("/ws", middleware.Authenticate(verifier), wsHandler)
-	return redisClient, hub
-}
-
-func initializeVerifier() (*jwt.JWTVerifier, []byte) {
-	secret := os.Getenv("JWT_SECRET")
-	if secret == "" {
-		log.Fatal("JWT_SECRET environment variable not set")
-	}
-	verifier := jwt.NewJWTVerifier(secret)
-	jwtKey := []byte(secret)
-	return verifier, jwtKey
+	wsHandler := auctionws.ServeWS(initializers.Hub)
+	router.GET("/ws", middleware.Authenticate(initializers.Verifier), wsHandler)
 }
 
 func registerUserRoutes(router *gin.Engine) {
-	userRepo := user.NewUserRepository(initializers.DB)
-	userService := user.NewUserService(userRepo)
-	userHandler := user.NewUserHandler(userService)
-	verifier, _ := initializeVerifier()
 	userRoutes := router.Group("/users")
 	{
-		userRoutes.PUT("/", middleware.Authenticate(verifier), userHandler.UpdateUser)
-		userRoutes.GET("/", userHandler.GetAllUsers)
-		userRoutes.GET("/id/:id", userHandler.GetUserById)
-		userRoutes.GET("/email/:email", userHandler.GetUserByEmail)
-		userRoutes.DELETE("/:id", middleware.Authenticate(verifier), userHandler.DeleteUser)
+		userRoutes.PUT("/", middleware.Authenticate(initializers.Verifier), initializers.UserHandler.UpdateUser)
+		userRoutes.GET("/", initializers.UserHandler.GetAllUsers)
+		userRoutes.GET("/id/:id", initializers.UserHandler.GetUserById)
+		userRoutes.GET("/email/:email", initializers.UserHandler.GetUserByEmail)
+		userRoutes.DELETE("/:id", middleware.Authenticate(initializers.Verifier), initializers.UserHandler.DeleteUser)
 	}
 }
 
 func registerAuthRoutes(router *gin.Engine) {
-	verifier, jwtKey := initializeVerifier()
-	authService := auth.NewService(initializers.DB, jwtKey)
-	authHandler := auth.NewHandler(authService)
 	authRoutes := router.Group("/auth")
 	{
-		authRoutes.POST("/register", authHandler.Register)
-		authRoutes.POST("/login", authHandler.Login)
-		authRoutes.POST("/refresh", authHandler.Refresh)
+		authRoutes.POST("/register", initializers.AuthHandler.Register)
+		authRoutes.POST("/login", initializers.AuthHandler.Login)
+		authRoutes.POST("/refresh", initializers.AuthHandler.Refresh)
 	}
-	router.POST("/logout", middleware.Authenticate(verifier), authHandler.Logout)
+	router.POST("/logout", middleware.Authenticate(initializers.Verifier), initializers.AuthHandler.Logout)
 }
 
 func registerReviewRoutes(router *gin.Engine) {
-	verifier, _ := initializeVerifier()
-	reviewRepo := review.NewReviewRepository(initializers.DB)
-	reviewService := review.NewReviewService(reviewRepo)
-	reviewHandler := review.NewReviewHandler(reviewService)
 	reviewRoutes := router.Group("/review")
-	reviewRoutes.GET("/", reviewHandler.GetAllReviews)
-	reviewRoutes.GET("/:id", reviewHandler.GetReviewById)
-	reviewRoutes.POST("/", middleware.Authenticate(verifier), reviewHandler.CreateReview)
-	reviewRoutes.PUT("/", middleware.Authenticate(verifier), reviewHandler.UpdateReview)
-	reviewRoutes.DELETE("/:id", middleware.Authenticate(verifier), reviewHandler.DeleteReview)
-	reviewRoutes.POST("/reviewer/:id", reviewHandler.GetReviewsByReviewerId)
-	reviewRoutes.POST("/reviewee/:id", reviewHandler.GetReviewsByRevieweeId)
-	reviewRoutes.GET("/reviewer/reviewee/:reviewerId/:revieweeId", reviewHandler.GetReviewsByReviewerIdAndRevieweeId)
-	reviewRoutes.POST("/filtered", reviewHandler.GetFilteredReviews)
-	reviewRoutes.GET("/average-rating/:id", reviewHandler.GetAverageRatingByRevieweeId)
-	reviewRoutes.GET("/frequency/:id", reviewHandler.GetFrequencyOfRatingByRevieweeId)
+	reviewRoutes.GET("/", initializers.ReviewHandler.GetAllReviews)
+	reviewRoutes.GET("/:id", initializers.ReviewHandler.GetReviewById)
+	reviewRoutes.POST("/", middleware.Authenticate(initializers.Verifier), initializers.ReviewHandler.CreateReview)
+	reviewRoutes.PUT("/", middleware.Authenticate(initializers.Verifier), initializers.ReviewHandler.UpdateReview)
+	reviewRoutes.DELETE("/:id", middleware.Authenticate(initializers.Verifier), initializers.ReviewHandler.DeleteReview)
+	reviewRoutes.POST("/reviewer/:id", initializers.ReviewHandler.GetReviewsByReviewerId)
+	reviewRoutes.POST("/reviewee/:id", initializers.ReviewHandler.GetReviewsByRevieweeId)
+	reviewRoutes.GET("/reviewer/reviewee/:reviewerId/:revieweeId", initializers.ReviewHandler.GetReviewsByReviewerIdAndRevieweeId)
+	reviewRoutes.POST("/filtered", initializers.ReviewHandler.GetFilteredReviews)
+	reviewRoutes.GET("/average-rating/:id", initializers.ReviewHandler.GetAverageRatingByRevieweeId)
+	reviewRoutes.GET("/frequency/:id", initializers.ReviewHandler.GetFrequencyOfRatingByRevieweeId)
 }
 
 func registerCarRoutes(router *gin.Engine) {
-	modelRepo := model.NewModelRepository(initializers.DB)
-	modelService := model.NewModelService(modelRepo)
-	modelHandler := model.NewModelHandler(modelService)
-	manufacturerRepo := manufacturer.NewManufacturerRepository(initializers.DB)
-	manufacturerService := manufacturer.NewManufacturerService(manufacturerRepo)
-	manufacturerHandler := manufacturer.NewManufacturerHandler(manufacturerService)
-	carParamHandler := car_params.NewHandler()
-	carService := car.NewCarService(manufacturerRepo, modelRepo)
-	carHandler := car.NewCarHandler(carService)
 	carRoutes := router.Group("/car")
 	{
-		carRoutes.GET("/colors", carParamHandler.GetPossibleColors)
-		carRoutes.GET("/transmissions", carParamHandler.GetPossibleTransmissions)
-		carRoutes.GET("/fuel-types", carParamHandler.GetPossibleFuelTypes)
-		carRoutes.GET("/drives", carParamHandler.GetPossibleDrives)
-		carRoutes.GET("/manufactures", manufacturerHandler.GetAllManufactures)
-		carRoutes.GET("/models/id/:id", modelHandler.GetModelsByManufacturerID)
-		carRoutes.GET("/models/name/:name", modelHandler.GetModelsByManufacturerName)
-		carRoutes.GET("/manufacturer-model-map", carHandler.GetManufacturersModelsMap)
+		carRoutes.GET("/colors", initializers.CarParamHandler.GetPossibleColors)
+		carRoutes.GET("/transmissions", initializers.CarParamHandler.GetPossibleTransmissions)
+		carRoutes.GET("/fuel-types", initializers.CarParamHandler.GetPossibleFuelTypes)
+		carRoutes.GET("/drives", initializers.CarParamHandler.GetPossibleDrives)
+		carRoutes.GET("/manufactures", initializers.ManufacturerHandler.GetAllManufactures)
+		carRoutes.GET("/models/id/:id", initializers.ModelHandler.GetModelsByManufacturerID)
+		carRoutes.GET("/models/name/:name", initializers.ModelHandler.GetModelsByManufacturerName)
+		carRoutes.GET("/manufacturer-model-map", initializers.CarHandler.GetManufacturersModelsMap)
 	}
 }
 
 func registerSaleOfferRoutes(router *gin.Engine) {
-	verifier, _ := initializeVerifier()
-	saleOfferRepo := sale_offer.NewSaleOfferRepository(initializers.DB)
-	manufacturerRepo := manufacturer.NewManufacturerRepository(initializers.DB)
-	likedOfferRepository := liked_offer.NewLikedOfferRepository(initializers.DB)
-	bidRepository := bid.NewBidRepository(initializers.DB)
-	saleOfferService := sale_offer.NewSaleOfferService(saleOfferRepo, manufacturerRepo, likedOfferRepository, bidRepository)
-	saleOfferHandler := sale_offer.NewSaleOfferHandler(saleOfferService)
 	saleOfferRoutes := router.Group("/sale-offer")
 	{
-		saleOfferRoutes.POST("/", middleware.Authenticate(verifier), saleOfferHandler.CreateSaleOffer)
-		saleOfferRoutes.POST("/my-offers", middleware.Authenticate(verifier), saleOfferHandler.GetMySaleOffers)
-		saleOfferRoutes.POST("/filtered", middleware.OptionalAuthenticate(verifier), saleOfferHandler.GetFilteredSaleOffers)
-		saleOfferRoutes.GET("/id/:id", middleware.OptionalAuthenticate(verifier), saleOfferHandler.GetSaleOfferByID)
-		saleOfferRoutes.POST("/like/:id", middleware.Authenticate(verifier), saleOfferHandler.LikeOffer)
-		saleOfferRoutes.DELETE("/dislike/:id", middleware.Authenticate(verifier), saleOfferHandler.DislikeOffer)
-		saleOfferRoutes.GET("/offer-types", saleOfferHandler.GetSaleOfferTypes)
-		saleOfferRoutes.GET("/order-keys", saleOfferHandler.GetOrderKeys)
+		saleOfferRoutes.POST("/", middleware.Authenticate(initializers.Verifier), initializers.SaleOfferHandler.CreateSaleOffer)
+		saleOfferRoutes.POST("/my-offers", middleware.Authenticate(initializers.Verifier), initializers.SaleOfferHandler.GetMySaleOffers)
+		saleOfferRoutes.POST("/filtered", middleware.OptionalAuthenticate(initializers.Verifier), initializers.SaleOfferHandler.GetFilteredSaleOffers)
+		saleOfferRoutes.GET("/id/:id", middleware.OptionalAuthenticate(initializers.Verifier), initializers.SaleOfferHandler.GetSaleOfferByID)
+		saleOfferRoutes.POST("/like/:id", middleware.Authenticate(initializers.Verifier), initializers.SaleOfferHandler.LikeOffer)
+		saleOfferRoutes.DELETE("/dislike/:id", middleware.Authenticate(initializers.Verifier), initializers.SaleOfferHandler.DislikeOffer)
+		saleOfferRoutes.GET("/offer-types", initializers.SaleOfferHandler.GetSaleOfferTypes)
+		saleOfferRoutes.GET("/order-keys", initializers.SaleOfferHandler.GetOrderKeys)
 	}
 }
 
 func registerAuctionRoutes(router *gin.Engine) {
-	verifier, _ := initializeVerifier()
-	auctionRepo := auction.NewAuctionRepository(initializers.DB)
-	auctionService := auction.NewAuctionService(auctionRepo)
-	auctionHandler := auction.NewHandler(auctionService, initializers.Sched)
 	auctionRoutes := router.Group("/auction")
-	auctionRoutes.GET("/", auctionHandler.GetAllAuctions)
-	auctionRoutes.GET("/:id", auctionHandler.GetAuctionById)
-	auctionRoutes.POST("/", middleware.Authenticate(verifier), auctionHandler.CreateAuction)
-	auctionRoutes.PUT("/", middleware.Authenticate(verifier), auctionHandler.UpdateAuction)
-	auctionRoutes.DELETE("/:id", middleware.Authenticate(verifier), auctionHandler.DeleteAuctionById)
+	auctionRoutes.GET("/", initializers.AuctionHandler.GetAllAuctions)
+	auctionRoutes.GET("/:id", initializers.AuctionHandler.GetAuctionById)
+	auctionRoutes.POST("/", middleware.Authenticate(initializers.Verifier), initializers.AuctionHandler.CreateAuction)
+	auctionRoutes.PUT("/", middleware.Authenticate(initializers.Verifier), initializers.AuctionHandler.UpdateAuction)
+	auctionRoutes.DELETE("/:id", middleware.Authenticate(initializers.Verifier), initializers.AuctionHandler.DeleteAuctionById)
 
 }
 
 func registerBidRoutes(router *gin.Engine) {
-	verifier, _ := initializeVerifier()
-	redisClient, hub := RegisterWebsocket(router)
-	bidRepo := bid.NewBidRepository(initializers.DB)
-	bidService := bid.NewBidService(bidRepo)
-	notificationRepo := notification.NewNotificationRepository(initializers.DB)
-	saleOfferRepo := sale_offer.NewSaleOfferRepository(initializers.DB)
-	manufacturerRepo := manufacturer.NewManufacturerRepository(initializers.DB)
-	manufacturerService := manufacturer.NewManufacturerService(manufacturerRepo)
-	saleOfferService := sale_offer.NewSaleOfferService(saleOfferRepo, manufacturerService)
-	notificationService := notification.NewNotificationService(notificationRepo, saleOfferService)
-	bidHandler := bid.NewHandler(bidService, redisClient, hub, notificationService)
 	bidRoutes := router.Group("/bid")
-	bidRoutes.POST("/", middleware.Authenticate(verifier), bidHandler.CreateBid)
-	bidRoutes.GET("/", bidHandler.GetAllBids)
-	bidRoutes.GET("/:id", bidHandler.GetBidByID)
-	bidRoutes.GET("/bidder/:id", bidHandler.GetBidsByBidderId)
-	bidRoutes.GET("/auction/:id", bidHandler.GetBidsByAuctionId)
-	bidRoutes.GET("/highest/:id", bidHandler.GetHighestBid)
-	bidRoutes.GET("/highest/auction/:auctionId/bidder/:bidderId", bidHandler.GetHighestBidByUserId)
+	bidRoutes.POST("/", middleware.Authenticate(initializers.Verifier), initializers.BidHandler.CreateBid)
+	bidRoutes.GET("/", initializers.BidHandler.GetAllBids)
+	bidRoutes.GET("/:id", initializers.BidHandler.GetBidByID)
+	bidRoutes.GET("/bidder/:id", initializers.BidHandler.GetBidsByBidderId)
+	bidRoutes.GET("/auction/:id", initializers.BidHandler.GetBidsByAuctionId)
+	bidRoutes.GET("/highest/:id", initializers.BidHandler.GetHighestBid)
+	bidRoutes.GET("/highest/auction/:auctionId/bidder/:bidderId", initializers.BidHandler.GetHighestBidByUserId)
 }

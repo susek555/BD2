@@ -1,9 +1,12 @@
 package manufacturer
 
-import "gorm.io/gorm"
+import (
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
+	"gorm.io/gorm"
+)
 
 type ManufacturerRepositoryInterface interface {
-	GetAll() ([]Manufacturer, error)
+	GetAll() ([]models.Manufacturer, error)
 }
 
 type ManufacturerRepository struct {
@@ -14,8 +17,8 @@ func NewManufacturerRepository(db *gorm.DB) ManufacturerRepositoryInterface {
 	return &ManufacturerRepository{DB: db}
 }
 
-func (r *ManufacturerRepository) GetAll() ([]Manufacturer, error) {
-	var manufacturers []Manufacturer
+func (r *ManufacturerRepository) GetAll() ([]models.Manufacturer, error) {
+	var manufacturers []models.Manufacturer
 	err := r.DB.Find(&manufacturers).Error
 	return manufacturers, err
 }

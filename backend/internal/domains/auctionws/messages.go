@@ -2,8 +2,7 @@ package auctionws
 
 import (
 	"encoding/json"
-
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/notification"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 )
 
 type MsgType string
@@ -27,7 +26,7 @@ type UnsubscribePayload struct {
 	Auctions []string `json:"auctions"`
 }
 
-func NewNotificationEnvelope(notification *notification.Notification) *Envelope {
+func NewNotificationEnvelope(notification *models.Notification) *Envelope {
 	data, err := json.Marshal(notification)
 	if err != nil {
 		return nil

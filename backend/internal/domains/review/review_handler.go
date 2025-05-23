@@ -10,12 +10,12 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/pkg/custom_errors"
 )
 
-type ReviewHandler struct {
+type Handler struct {
 	service ReviewServiceInterface
 }
 
-func NewReviewHandler(service ReviewServiceInterface) *ReviewHandler {
-	return &ReviewHandler{service: service}
+func NewHandler(service ReviewServiceInterface) *Handler {
+	return &Handler{service: service}
 }
 
 // GetAllReviews godoc
@@ -28,7 +28,7 @@ func NewReviewHandler(service ReviewServiceInterface) *ReviewHandler {
 //	@Success		200	{array}		RetrieveReviewDTO		"OK – list of reviews"
 //	@Failure		400	{object}	custom_errors.HTTPError	"Bad Request – query failed"
 //	@Router			/review [get]
-func (h *ReviewHandler) GetAllReviews(c *gin.Context) {
+func (h *Handler) GetAllReviews(c *gin.Context) {
 	reviews, err := h.service.GetAll()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
@@ -48,7 +48,7 @@ func (h *ReviewHandler) GetAllReviews(c *gin.Context) {
 //	@Success		200	{object}	RetrieveReviewDTO		"OK – review with given id"
 //	@Failure		400	{object}	custom_errors.HTTPError	"Bad Request – query failed"
 //	@Router			/review/{id} [get]
-func (h *ReviewHandler) GetReviewById(c *gin.Context) {
+func (h *Handler) GetReviewById(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
@@ -74,7 +74,7 @@ func (h *ReviewHandler) GetReviewById(c *gin.Context) {
 //	@Success		201		{object}	RetrieveReviewDTO		"Created – review stored"
 //	@Failure		400		{object}	custom_errors.HTTPError	"Bad Request – validation or persistence error"
 //	@Router			/review [post]
-func (h *ReviewHandler) CreateReview(c *gin.Context) {
+func (h *Handler) CreateReview(c *gin.Context) {
 	var reviewInput CreateReviewDTO
 	reviewerId, err := auth.GetUserId(c)
 	if err != nil {
@@ -105,7 +105,7 @@ func (h *ReviewHandler) CreateReview(c *gin.Context) {
 //	@Success		200		{object}	RetrieveReviewDTO		"OK – review updated"
 //	@Failure		400		{object}	custom_errors.HTTPError	"Bad Request – validation or update error"
 //	@Router			/review [put]
-func (h *ReviewHandler) UpdateReview(c *gin.Context) {
+func (h *Handler) UpdateReview(c *gin.Context) {
 	var reviewInput UpdateReviewDTO
 	reviewerId, err := auth.GetUserId(c)
 	if err != nil {
@@ -134,7 +134,7 @@ func (h *ReviewHandler) UpdateReview(c *gin.Context) {
 //	@Success		204	{string}	string					"No Content – review deleted"
 //	@Failure		400	{object}	custom_errors.HTTPError	"Bad Request – invalid ID format or delete failed"
 //	@Router			/review/{id} [delete]
-func (h *ReviewHandler) DeleteReview(c *gin.Context) {
+func (h *Handler) DeleteReview(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
@@ -161,7 +161,7 @@ func (h *ReviewHandler) DeleteReview(c *gin.Context) {
 //	@Success		200	{array}		RetrieveReviewDTO		"OK – list of reviews"
 //	@Failure		400	{object}	custom_errors.HTTPError	"Bad Request – invalid ID format or query failed"
 //	@Router			/review/reviewer/{id} [post]
-func (h *ReviewHandler) GetReviewsByReviewerId(c *gin.Context) {
+func (h *Handler) GetReviewsByReviewerId(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
@@ -194,7 +194,7 @@ func (h *ReviewHandler) GetReviewsByReviewerId(c *gin.Context) {
 //	@Success		200	{array}		RetrieveReviewDTO		"OK – list of reviews"
 //	@Failure		400	{object}	custom_errors.HTTPError	"Bad Request – invalid ID format or query failed"
 //	@Router			/review/reviewee/{id} [post]
-func (h *ReviewHandler) GetReviewsByRevieweeId(c *gin.Context) {
+func (h *Handler) GetReviewsByRevieweeId(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
@@ -228,7 +228,7 @@ func (h *ReviewHandler) GetReviewsByRevieweeId(c *gin.Context) {
 //	@Success		200			{object}	RetrieveReviewDTO		"OK – review found"
 //	@Failure		400			{object}	custom_errors.HTTPError	"Bad Request – invalid ID format or query failed"
 //	@Router			/review/reviewer/{reviewerId}/reviewee/{revieweeId} [get]
-func (h *ReviewHandler) GetReviewsByReviewerIdAndRevieweeId(c *gin.Context) {
+func (h *Handler) GetReviewsByReviewerIdAndRevieweeId(c *gin.Context) {
 	reviewerId, err := strconv.ParseUint(c.Param("reviewerId"), 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
@@ -256,7 +256,7 @@ func (h *ReviewHandler) GetReviewsByReviewerIdAndRevieweeId(c *gin.Context) {
 //	@Success		200		{object}	review.RetrieveReviewsWithPagination	"OK "
 //	@Failure		400		{object}	custom_errors.HTTPError					"Bad Request – invalid filter or query failed"
 //	@Router			/review/filter [post]
-func (h *ReviewHandler) GetFilteredReviews(c *gin.Context) {
+func (h *Handler) GetFilteredReviews(c *gin.Context) {
 	filter := NewReviewFilter()
 	if err := c.ShouldBindJSON(filter); err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
@@ -281,7 +281,7 @@ func (h *ReviewHandler) GetFilteredReviews(c *gin.Context) {
 //	@Success		200	{number}	float64							"OK – average rating (rounded to two decimals)"
 //	@Failure		400	{object}	custom_errors.HTTPError		"Bad Request – invalid ID format or query failed"
 //	@Router			/review/{id}/average [get]
-func (h *ReviewHandler) GetAverageRatingByRevieweeId(c *gin.Context) {
+func (h *Handler) GetAverageRatingByRevieweeId(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
@@ -306,7 +306,7 @@ func (h *ReviewHandler) GetAverageRatingByRevieweeId(c *gin.Context) {
 //	@Success		200	{object}	map[int]int						"OK – percentage frequencies for ratings 1 through 5"
 //	@Failure		400	{object}	custom_errors.HTTPError		"Bad Request – invalid ID format or query failed"
 //	@Router			/review/{id}/frequency [get]
-func (h *ReviewHandler) GetFrequencyOfRatingByRevieweeId(c *gin.Context) {
+func (h *Handler) GetFrequencyOfRatingByRevieweeId(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))

@@ -2,12 +2,12 @@ package sale_offer_tests
 
 import (
 	"encoding/json"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"net/http"
 	"testing"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/car"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/liked_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
@@ -22,7 +22,7 @@ import (
 
 func TestCreateOffer_NotAuthorized(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{}
+	seedOffers := []models.SaleOffer{}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*createSaleOfferDTO())
@@ -33,7 +33,7 @@ func TestCreateOffer_NotAuthorized(t *testing.T) {
 
 func TestCreateOffer_InvalidToken(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{}
+	seedOffers := []models.SaleOffer{}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*createSaleOfferDTO())
@@ -45,7 +45,7 @@ func TestCreateOffer_InvalidToken(t *testing.T) {
 
 func TestCreateOffer_EmptyBody(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{}
+	seedOffers := []models.SaleOffer{}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal("")
@@ -62,7 +62,7 @@ func TestCreateOffer_EmptyBody(t *testing.T) {
 
 func TestCreateOffer_EmptyStruct(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{}
+	seedOffers := []models.SaleOffer{}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(sale_offer.CreateSaleOfferDTO{})
@@ -79,7 +79,7 @@ func TestCreateOffer_EmptyStruct(t *testing.T) {
 
 func TestCreateOffer_SettingUserIDManually(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{}
+	seedOffers := []models.SaleOffer{}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("UserID", uint(3))))
@@ -96,7 +96,7 @@ func TestCreateOffer_SettingUserIDManually(t *testing.T) {
 
 func TestCreateOffer_NonExistentModel(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{}
+	seedOffers := []models.SaleOffer{}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("ModelID", uint(6))))
@@ -113,7 +113,7 @@ func TestCreateOffer_NonExistentModel(t *testing.T) {
 
 func TestCreateOffer_InvalidNumberOfDoorsGreater(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{}
+	seedOffers := []models.SaleOffer{}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("NumberOfDoors", uint(10))))
@@ -130,7 +130,7 @@ func TestCreateOffer_InvalidNumberOfDoorsGreater(t *testing.T) {
 
 func TestCreateOffer_InvalidNumberOfDoorsLower(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{}
+	seedOffers := []models.SaleOffer{}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("NumberOfDoors", uint(0))))
@@ -146,7 +146,7 @@ func TestCreateOffer_InvalidNumberOfDoorsLower(t *testing.T) {
 }
 func TestCreateOffer_ValidNumberOfDoors(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{}
+	seedOffers := []models.SaleOffer{}
 	db, _ := setupDB()
 	server, svc := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("NumberOfDoors", uint(5))))
@@ -161,13 +161,13 @@ func TestCreateOffer_ValidNumberOfDoors(t *testing.T) {
 	offer, err := svc.GetByID(1, &user.ID)
 	assert.NoError(t, err)
 	assert.Equal(t, *offer, got)
-	assert.True(t, wasEntityAddedToDB[car.Car](db, uint(1)))
-	assert.False(t, wasEntityAddedToDB[sale_offer.Auction](db, uint(1)))
+	assert.True(t, wasEntityAddedToDB[models.Car](db, uint(1)))
+	assert.False(t, wasEntityAddedToDB[models.Auction](db, uint(1)))
 }
 
 func TestCreateOffer_InvalidNumberOfSeatsGreater(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{}
+	seedOffers := []models.SaleOffer{}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("NumberOfSeats", uint(101))))
@@ -184,7 +184,7 @@ func TestCreateOffer_InvalidNumberOfSeatsGreater(t *testing.T) {
 
 func TestCreateOffer_InvalidNumberOfSeatsLower(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{}
+	seedOffers := []models.SaleOffer{}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("NumberOfSeats", uint(1))))
@@ -201,7 +201,7 @@ func TestCreateOffer_InvalidNumberOfSeatsLower(t *testing.T) {
 
 func TestCreateOffer_ValidNumberOfSeats(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{}
+	seedOffers := []models.SaleOffer{}
 	db, _ := setupDB()
 	server, svc := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("NumberOfSeats", uint(5))))
@@ -216,13 +216,13 @@ func TestCreateOffer_ValidNumberOfSeats(t *testing.T) {
 	offer, err := svc.GetByID(1, &user.ID)
 	assert.NoError(t, err)
 	assert.Equal(t, *offer, got)
-	assert.True(t, wasEntityAddedToDB[car.Car](db, uint(1)))
-	assert.False(t, wasEntityAddedToDB[sale_offer.Auction](db, uint(1)))
+	assert.True(t, wasEntityAddedToDB[models.Car](db, uint(1)))
+	assert.False(t, wasEntityAddedToDB[models.Auction](db, uint(1)))
 }
 
 func TestCreateOffer_InvalidEnginePowerGreater(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{}
+	seedOffers := []models.SaleOffer{}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("EnginePower", uint(10000))))
@@ -238,7 +238,7 @@ func TestCreateOffer_InvalidEnginePowerGreater(t *testing.T) {
 }
 func TestCreateOffer_InvalidEnginePowerLower(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{}
+	seedOffers := []models.SaleOffer{}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("EnginePower", uint(0))))
@@ -255,7 +255,7 @@ func TestCreateOffer_InvalidEnginePowerLower(t *testing.T) {
 
 func TestCreateOffer_ValidEnginePower(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{}
+	seedOffers := []models.SaleOffer{}
 	db, _ := setupDB()
 	server, svc := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("EnginePower", uint(100))))
@@ -270,13 +270,13 @@ func TestCreateOffer_ValidEnginePower(t *testing.T) {
 	offer, err := svc.GetByID(1, &user.ID)
 	assert.NoError(t, err)
 	assert.Equal(t, *offer, got)
-	assert.True(t, wasEntityAddedToDB[car.Car](db, uint(1)))
-	assert.False(t, wasEntityAddedToDB[sale_offer.Auction](db, uint(1)))
+	assert.True(t, wasEntityAddedToDB[models.Car](db, uint(1)))
+	assert.False(t, wasEntityAddedToDB[models.Auction](db, uint(1)))
 }
 
 func TestCreateOffer_InvalidEngineCapacityGreater(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{}
+	seedOffers := []models.SaleOffer{}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("EngineCapacity", uint(9001))))
@@ -293,7 +293,7 @@ func TestCreateOffer_InvalidEngineCapacityGreater(t *testing.T) {
 
 func TestCreateOffer_InvalidEngineCapacityLower(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{}
+	seedOffers := []models.SaleOffer{}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("EngineCapacity", uint(0))))
@@ -310,7 +310,7 @@ func TestCreateOffer_InvalidEngineCapacityLower(t *testing.T) {
 
 func TestCreateOffer_ValidEngineCapacity(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{}
+	seedOffers := []models.SaleOffer{}
 	db, _ := setupDB()
 	server, svc := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("EngineCapacity", uint(1000))))
@@ -325,13 +325,13 @@ func TestCreateOffer_ValidEngineCapacity(t *testing.T) {
 	offer, err := svc.GetByID(1, &user.ID)
 	assert.NoError(t, err)
 	assert.Equal(t, *offer, got)
-	assert.True(t, wasEntityAddedToDB[car.Car](db, uint(1)))
-	assert.False(t, wasEntityAddedToDB[sale_offer.Auction](db, uint(1)))
+	assert.True(t, wasEntityAddedToDB[models.Car](db, uint(1)))
+	assert.False(t, wasEntityAddedToDB[models.Auction](db, uint(1)))
 }
 
 func TestCreateOffer_InvalidNumberOfGearsGreater(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{}
+	seedOffers := []models.SaleOffer{}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("NumberOfGears", uint(11))))
@@ -348,7 +348,7 @@ func TestCreateOffer_InvalidNumberOfGearsGreater(t *testing.T) {
 
 func TestCreateOffer_InvalidNumberOfGearsLower(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{}
+	seedOffers := []models.SaleOffer{}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("NumberOfGears", uint(0))))
@@ -365,7 +365,7 @@ func TestCreateOffer_InvalidNumberOfGearsLower(t *testing.T) {
 
 func TestCreateOffer_ValidNumberOfGears(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{}
+	seedOffers := []models.SaleOffer{}
 	db, _ := setupDB()
 	server, svc := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("NumberOfGears", uint(5))))
@@ -380,13 +380,13 @@ func TestCreateOffer_ValidNumberOfGears(t *testing.T) {
 	offer, err := svc.GetByID(1, &user.ID)
 	assert.NoError(t, err)
 	assert.Equal(t, *offer, got)
-	assert.True(t, wasEntityAddedToDB[car.Car](db, uint(1)))
-	assert.False(t, wasEntityAddedToDB[sale_offer.Auction](db, uint(1)))
+	assert.True(t, wasEntityAddedToDB[models.Car](db, uint(1)))
+	assert.False(t, wasEntityAddedToDB[models.Auction](db, uint(1)))
 }
 
 func TestCreateOffer_InvalidColor(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{}
+	seedOffers := []models.SaleOffer{}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("Color", car_params.Color("invalid_color"))))
@@ -403,7 +403,7 @@ func TestCreateOffer_InvalidColor(t *testing.T) {
 
 func TestCreateOffer_ValidColor(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{}
+	seedOffers := []models.SaleOffer{}
 	db, _ := setupDB()
 	server, svc := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("Color", car_params.BLACK)))
@@ -418,13 +418,13 @@ func TestCreateOffer_ValidColor(t *testing.T) {
 	offer, err := svc.GetByID(1, &user.ID)
 	assert.NoError(t, err)
 	assert.Equal(t, *offer, got)
-	assert.True(t, wasEntityAddedToDB[car.Car](db, uint(1)))
-	assert.False(t, wasEntityAddedToDB[sale_offer.Auction](db, uint(1)))
+	assert.True(t, wasEntityAddedToDB[models.Car](db, uint(1)))
+	assert.False(t, wasEntityAddedToDB[models.Auction](db, uint(1)))
 }
 
 func TestCreateOffer_InvalidFuelType(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{}
+	seedOffers := []models.SaleOffer{}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("FuelType", car_params.FuelType("invalid_fuel_type"))))
@@ -441,7 +441,7 @@ func TestCreateOffer_InvalidFuelType(t *testing.T) {
 
 func TestCreateOffer_ValidFuelType(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{}
+	seedOffers := []models.SaleOffer{}
 	db, _ := setupDB()
 	server, svc := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("FuelType", car_params.PETROL)))
@@ -456,13 +456,13 @@ func TestCreateOffer_ValidFuelType(t *testing.T) {
 	offer, err := svc.GetByID(1, &user.ID)
 	assert.NoError(t, err)
 	assert.Equal(t, *offer, got)
-	assert.True(t, wasEntityAddedToDB[car.Car](db, uint(1)))
-	assert.False(t, wasEntityAddedToDB[sale_offer.Auction](db, uint(1)))
+	assert.True(t, wasEntityAddedToDB[models.Car](db, uint(1)))
+	assert.False(t, wasEntityAddedToDB[models.Auction](db, uint(1)))
 }
 
 func TestCreateOffer_InvalidTransmission(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{}
+	seedOffers := []models.SaleOffer{}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("Transmission", car_params.Transmission("invalid_transmission"))))
@@ -479,7 +479,7 @@ func TestCreateOffer_InvalidTransmission(t *testing.T) {
 
 func TestCreateOffer_ValidTransmission(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{}
+	seedOffers := []models.SaleOffer{}
 	db, _ := setupDB()
 	server, svc := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("Transmission", car_params.MANUAL)))
@@ -494,13 +494,13 @@ func TestCreateOffer_ValidTransmission(t *testing.T) {
 	offer, err := svc.GetByID(1, &user.ID)
 	assert.NoError(t, err)
 	assert.Equal(t, *offer, got)
-	assert.True(t, wasEntityAddedToDB[car.Car](db, uint(1)))
-	assert.False(t, wasEntityAddedToDB[sale_offer.Auction](db, uint(1)))
+	assert.True(t, wasEntityAddedToDB[models.Car](db, uint(1)))
+	assert.False(t, wasEntityAddedToDB[models.Auction](db, uint(1)))
 }
 
 func TestCreateOffer_InvalidDrive(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{}
+	seedOffers := []models.SaleOffer{}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("Drive", car_params.Drive("invalid_drive"))))
@@ -517,7 +517,7 @@ func TestCreateOffer_InvalidDrive(t *testing.T) {
 
 func TestCreateOffer_ValidDrive(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{}
+	seedOffers := []models.SaleOffer{}
 	db, _ := setupDB()
 	server, svc := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("Drive", car_params.FWD)))
@@ -532,8 +532,8 @@ func TestCreateOffer_ValidDrive(t *testing.T) {
 	offer, err := svc.GetByID(1, &user.ID)
 	assert.NoError(t, err)
 	assert.Equal(t, *offer, got)
-	assert.True(t, wasEntityAddedToDB[car.Car](db, uint(1)))
-	assert.False(t, wasEntityAddedToDB[sale_offer.Auction](db, uint(1)))
+	assert.True(t, wasEntityAddedToDB[models.Car](db, uint(1)))
+	assert.False(t, wasEntityAddedToDB[models.Auction](db, uint(1)))
 }
 
 // ------------------------------
@@ -543,7 +543,7 @@ func TestCreateOffer_ValidDrive(t *testing.T) {
 
 func TestGetFiltered_EmptyDatabase(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{}
+	seedOffers := []models.SaleOffer{}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	filter := sale_offer.NewOfferFilter()
@@ -560,7 +560,7 @@ func TestGetFiltered_EmptyDatabase(t *testing.T) {
 
 func TestGetFiltered_OneRegularOffer(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{*createOffer(1)}
+	seedOffers := []models.SaleOffer{*createOffer(1)}
 	db, _ := setupDB()
 	server, s := newTestServer(db, seedOffers)
 	filter := sale_offer.NewOfferFilter()
@@ -578,7 +578,7 @@ func TestGetFiltered_OneRegularOffer(t *testing.T) {
 
 func TestGetFiltered_OneAuction(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{*createAuctionSaleOffer(1)}
+	seedOffers := []models.SaleOffer{*createAuctionSaleOffer(1)}
 	db, _ := setupDB()
 	server, s := newTestServer(db, seedOffers)
 	filter := sale_offer.NewOfferFilter()
@@ -596,7 +596,7 @@ func TestGetFiltered_OneAuction(t *testing.T) {
 
 func TestGetFiltered_AuctionsAndOffersCombined(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{
+	seedOffers := []models.SaleOffer{
 		*createAuctionSaleOffer(1),
 		*createOffer(2),
 		*createAuctionSaleOffer(3),
@@ -621,7 +621,7 @@ func TestGetFiltered_AuctionsAndOffersCombined(t *testing.T) {
 
 func TestGetFiltered_AuthorizedOtherUserOffers(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{
+	seedOffers := []models.SaleOffer{
 		*createAuctionSaleOffer(1),
 		*createOffer(2),
 		*createAuctionSaleOffer(3),
@@ -648,7 +648,7 @@ func TestGetFiltered_AuthorizedOtherUserOffers(t *testing.T) {
 
 func TestGetFiltered_AuthorizedMyOffers(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{
+	seedOffers := []models.SaleOffer{
 		*createAuctionSaleOffer(1),
 		*createOffer(2),
 		*createAuctionSaleOffer(3),
@@ -676,7 +676,7 @@ func TestGetFiltered_AuthorizedMyOffers(t *testing.T) {
 
 func TestGetSaleOfferById_EmptyDatabase(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{}
+	seedOffers := []models.SaleOffer{}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/sale-offer/id/1", nil, nil)
@@ -689,7 +689,7 @@ func TestGetSaleOfferById_EmptyDatabase(t *testing.T) {
 
 func TestGetSaleOfferById_NonExistentID(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{*createOffer(1)}
+	seedOffers := []models.SaleOffer{*createOffer(1)}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/sale-offer/id/2", nil, nil)
@@ -702,7 +702,7 @@ func TestGetSaleOfferById_NonExistentID(t *testing.T) {
 
 func TestGetSaleOfferById_NegativeID(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{*createOffer(1)}
+	seedOffers := []models.SaleOffer{*createOffer(1)}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/sale-offer/id/-1", nil, nil)
@@ -715,7 +715,7 @@ func TestGetSaleOfferById_NegativeID(t *testing.T) {
 
 func TestGetSaleOfferById_StringID(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{*createOffer(1)}
+	seedOffers := []models.SaleOffer{*createOffer(1)}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/sale-offer/id/abc", nil, nil)
@@ -728,7 +728,7 @@ func TestGetSaleOfferById_StringID(t *testing.T) {
 
 func TestGetById_RegularOffer(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{*createOffer(1)}
+	seedOffers := []models.SaleOffer{*createOffer(1)}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/sale-offer/id/1", nil, nil)
@@ -741,7 +741,7 @@ func TestGetById_RegularOffer(t *testing.T) {
 
 func TestGetById_AuctionOffer(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{*createAuctionSaleOffer(1)}
+	seedOffers := []models.SaleOffer{*createAuctionSaleOffer(1)}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/sale-offer/id/1", nil, nil)
@@ -758,7 +758,7 @@ func TestGetById_AuctionOffer(t *testing.T) {
 
 func TestGetMyOffers_NotAuthorized(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{*createOffer(1)}
+	seedOffers := []models.SaleOffer{*createOffer(1)}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	_, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/my-offers", nil, nil)
@@ -767,7 +767,7 @@ func TestGetMyOffers_NotAuthorized(t *testing.T) {
 
 func TestGetMyOffers_NoOffers(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{}
+	seedOffers := []models.SaleOffer{}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	user := USERS[0]
@@ -785,7 +785,7 @@ func TestGetMyOffers_NoOffers(t *testing.T) {
 
 func TestGetMyOffers_OneRegularOffer(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{*createOffer(1)}
+	seedOffers := []models.SaleOffer{*createOffer(1)}
 	db, _ := setupDB()
 	server, s := newTestServer(db, seedOffers)
 	user := USERS[0]
@@ -804,7 +804,7 @@ func TestGetMyOffers_OneRegularOffer(t *testing.T) {
 
 func TestGetMyOffers_OneAuctionOffer(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{*createAuctionSaleOffer(1)}
+	seedOffers := []models.SaleOffer{*createAuctionSaleOffer(1)}
 	db, _ := setupDB()
 	server, s := newTestServer(db, seedOffers)
 	user := USERS[0]
@@ -823,7 +823,7 @@ func TestGetMyOffers_OneAuctionOffer(t *testing.T) {
 
 func TestGetMyOffers_AuctionsAndOffersCombined(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{
+	seedOffers := []models.SaleOffer{
 		*createAuctionSaleOffer(1),
 		*createOffer(2),
 		*createAuctionSaleOffer(3),
@@ -853,7 +853,7 @@ func TestGetMyOffers_AuctionsAndOffersCombined(t *testing.T) {
 
 func TestLikeOffer_NotAuthorized(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{*createOffer(1)}
+	seedOffers := []models.SaleOffer{*createOffer(1)}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	_, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/like/1", nil, nil)
@@ -862,7 +862,7 @@ func TestLikeOffer_NotAuthorized(t *testing.T) {
 
 func TestLikeOffer_OfferNotFound(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{*createOffer(1)}
+	seedOffers := []models.SaleOffer{*createOffer(1)}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	user := USERS[0]
@@ -877,7 +877,7 @@ func TestLikeOffer_OfferNotFound(t *testing.T) {
 
 func TestLikeOffer_OwnOffer(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{*createOffer(1)}
+	seedOffers := []models.SaleOffer{*createOffer(1)}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	user := USERS[0]
@@ -892,14 +892,14 @@ func TestLikeOffer_OwnOffer(t *testing.T) {
 
 func TestLikeOffer_Successful(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{*createOffer(1)}
+	seedOffers := []models.SaleOffer{*createOffer(1)}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	user := USERS[1]
 	token, _ := u.GetValidToken(user.ID, user.Email)
 	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/like/1", nil, &token)
 	assert.Equal(t, http.StatusOK, receivedStatus)
-	var got liked_offer.LikedOffer
+	var got models.LikedOffer
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
 	likedOfferRepo := liked_offer.NewLikedOfferRepository(db)
@@ -910,7 +910,7 @@ func TestLikeOffer_Successful(t *testing.T) {
 
 func TestLikeOffer_AlreadyLiked(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{*createOffer(1)}
+	seedOffers := []models.SaleOffer{*createOffer(1)}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	user := USERS[1]
@@ -931,7 +931,7 @@ func TestLikeOffer_AlreadyLiked(t *testing.T) {
 
 func TestDislikeOffer_NotAuthorized(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{*createOffer(1)}
+	seedOffers := []models.SaleOffer{*createOffer(1)}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	_, receivedStatus := u.PerformRequest(server, http.MethodDelete, "/sale-offer/dislike/1", nil, nil)
@@ -940,7 +940,7 @@ func TestDislikeOffer_NotAuthorized(t *testing.T) {
 
 func TestDislikeOffer_OfferNotFound(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{*createOffer(1)}
+	seedOffers := []models.SaleOffer{*createOffer(1)}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	user := USERS[0]
@@ -955,7 +955,7 @@ func TestDislikeOffer_OfferNotFound(t *testing.T) {
 
 func TestDislikeOffer_NotLikedOffer(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{*createOffer(1)}
+	seedOffers := []models.SaleOffer{*createOffer(1)}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	user := USERS[1]
@@ -970,7 +970,7 @@ func TestDislikeOffer_NotLikedOffer(t *testing.T) {
 
 func TestDislikeOffer_Successful(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{*createOffer(1)}
+	seedOffers := []models.SaleOffer{*createOffer(1)}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	user := USERS[1]
@@ -990,7 +990,7 @@ func TestDislikeOffer_Successful(t *testing.T) {
 // ----------
 func TestGetOfferTypes_Successful(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{*createOffer(1)}
+	seedOffers := []models.SaleOffer{*createOffer(1)}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/sale-offer/offer-types", nil, nil)
@@ -1003,7 +1003,7 @@ func TestGetOfferTypes_Successful(t *testing.T) {
 
 func TestGetOrderKeys_Successful(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedOffers := []sale_offer.SaleOffer{*createOffer(1)}
+	seedOffers := []models.SaleOffer{*createOffer(1)}
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/sale-offer/order-keys", nil, nil)

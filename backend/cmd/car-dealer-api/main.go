@@ -23,7 +23,12 @@ func init() {
 	initializers.ConnectToDatabase()
 	initializers.MigrateModels()
 	initializers.ConnectToRedis(context.Background())
+	initializers.InitializeVerifier()
+	initializers.InitializeHub()
+	initializers.InitializeRepos()
+	initializers.InitializeServices()
 	initializers.InitializeScheduler()
+	initializers.InitializeHandlers()
 }
 
 // @title			Car‑Dealer API

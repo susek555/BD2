@@ -1,6 +1,7 @@
 package user_tests
 
 import (
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -10,22 +11,22 @@ import (
 	"gorm.io/gorm"
 )
 
-func createUser() *user.User {
+func createUser() *models.User {
 	name := "john person"
 	surname := "doe person"
-	return &user.User{
+	return &models.User{
 		ID:       1,
 		Username: "john",
 		Email:    "john@example.com",
 		Password: "hashed_password",
 		Selector: "P",
-		Person:   &user.Person{Name: name, Surname: surname},
+		Person:   &models.Person{Name: name, Surname: surname},
 	}
 }
 
 func TestGetAll_EmptyDatabase(t *testing.T) {
 	uRepo := mocks.NewUserRepositoryInterface(t)
-	uRepo.On("GetAll").Return([]user.User{}, nil)
+	uRepo.On("GetAll").Return([]models.User{}, nil)
 	uService := user.NewUserService(uRepo)
 	users, err := uService.GetAll()
 	assert.NoError(t, err)
@@ -34,7 +35,7 @@ func TestGetAll_EmptyDatabase(t *testing.T) {
 
 func TestGetAll_RecordsFound(t *testing.T) {
 	uRepo := mocks.NewUserRepositoryInterface(t)
-	uRepo.On("GetAll").Return([]user.User{*createUser()}, nil)
+	uRepo.On("GetAll").Return([]models.User{*createUser()}, nil)
 	uService := user.NewUserService(uRepo)
 	users, err := uService.GetAll()
 	assert.NoError(t, err)
@@ -62,7 +63,7 @@ func TestGetById_UserFound(t *testing.T) {
 
 func TestGetByEmail_UserNotFound(t *testing.T) {
 	uRepo := mocks.NewUserRepositoryInterface(t)
-	uRepo.On("GetByEmail", "john@example.com").Return(user.User{}, gorm.ErrRecordNotFound)
+	uRepo.On("GetByEmail", "john@example.com").Return(models.User{}, gorm.ErrRecordNotFound)
 	uService := user.NewUserService(uRepo)
 	user, err := uService.GetByEmail("john@example.com")
 	assert.Error(t, err)

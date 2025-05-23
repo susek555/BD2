@@ -1,4 +1,4 @@
-package liked_offer
+package models
 
 type LikedOffer struct {
 	UserID  uint `json:"user_id" gorm:"primaryKey;constraint:OnDelete:CASCADE,OnUpdate:CASCADE"`

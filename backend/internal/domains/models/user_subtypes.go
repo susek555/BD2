@@ -1,6 +1,8 @@
-package user
+package models
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 type Company struct {
 	UserID uint   `json:"id" gorm:"primaryKey"`

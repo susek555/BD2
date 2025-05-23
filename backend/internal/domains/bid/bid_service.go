@@ -40,7 +40,7 @@ func (service *BidService) Create(bidDTO *CreateBidDTO, bidderID uint) (*Retriev
 	if err != nil {
 		return nil, err
 	}
-	return bid.MapToDTO(), nil
+	return MapToDTO(bid), nil
 }
 
 func (service *BidService) GetAll() ([]RetrieveBidDTO, error) {
@@ -49,7 +49,7 @@ func (service *BidService) GetAll() ([]RetrieveBidDTO, error) {
 		return nil, err
 	}
 
-	return mapping.MapSliceToDTOs(bids, (*Bid).MapToDTO), nil
+	return mapping.MapSliceToDTOs(bids, MapToDTO), nil
 }
 
 func (service *BidService) GetById(id uint) (*RetrieveBidDTO, error) {
@@ -57,7 +57,7 @@ func (service *BidService) GetById(id uint) (*RetrieveBidDTO, error) {
 	if err != nil {
 		return nil, err
 	}
-	return bid.MapToDTO(), nil
+	return MapToDTO(bid), nil
 }
 
 func (service *BidService) GetByBidderId(bidderId uint) ([]RetrieveBidDTO, error) {
@@ -66,7 +66,7 @@ func (service *BidService) GetByBidderId(bidderId uint) ([]RetrieveBidDTO, error
 		return nil, err
 	}
 
-	return mapping.MapSliceToDTOs(bids, (*Bid).MapToDTO), nil
+	return mapping.MapSliceToDTOs(bids, MapToDTO), nil
 }
 
 func (service *BidService) GetByAuctionId(auctionID uint) ([]RetrieveBidDTO, error) {
@@ -75,7 +75,7 @@ func (service *BidService) GetByAuctionId(auctionID uint) ([]RetrieveBidDTO, err
 		return nil, err
 	}
 
-	return mapping.MapSliceToDTOs(bids, (*Bid).MapToDTO), nil
+	return mapping.MapSliceToDTOs(bids, MapToDTO), nil
 }
 
 func (service *BidService) GetHighestBid(auctionId uint) (*RetrieveBidDTO, error) {
@@ -83,7 +83,7 @@ func (service *BidService) GetHighestBid(auctionId uint) (*RetrieveBidDTO, error
 	if err != nil {
 		return nil, err
 	}
-	return bid.MapToDTO(), nil
+	return MapToDTO(bid), nil
 }
 
 func (service *BidService) GetHighestBidByUserId(auctionId, userId uint) (*RetrieveBidDTO, error) {
@@ -91,5 +91,5 @@ func (service *BidService) GetHighestBidByUserId(auctionId, userId uint) (*Retri
 	if err != nil {
 		return nil, err
 	}
-	return bid.MapToDTO(), nil
+	return MapToDTO(bid), nil
 }

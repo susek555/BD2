@@ -1,9 +1,7 @@
-package bid
+package models
 
 import (
 	"time"
-
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
 )
 
 type Bid struct {
@@ -12,6 +10,7 @@ type Bid struct {
 	CreatedAt time.Time `json:"created_at" gorm:"not null;index"`
 	AuctionID uint      `json:"auction_id" gorm:"not null;index"`
 	// TODO: fix after refactor models dir `gorm:"foreignKey:AuctionID;references:OfferID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
-	BidderID uint       `json:"bidder_id" gorm:"not null;index"`
-	Bidder   *user.User `gorm:"foreignKey:BidderID;references:ID"`
+	BidderID uint     `json:"bidder_id" gorm:"not null;index"`
+	Bidder   *User    `gorm:"foreignKey:BidderID;references:ID"`
+	Auction  *Auction `gorm:"foreignKey:AuctionID;references:OfferID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }

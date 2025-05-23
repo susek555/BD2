@@ -1,10 +1,9 @@
-package car
+package models
 
 import (
 	"time"
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
 )
 
 type Car struct {
@@ -24,5 +23,5 @@ type Car struct {
 	NumberOfGears      uint                    `json:"number_of_gears" gorm:"check:number_of_gears BETWEEN 1 AND 10"`
 	Drive              car_params.Drive        `json:"drive"`
 	ModelID            uint                    `json:"model_id"`
-	Model              model.Model             `gorm:"foreignKey:ModelID;references:ID;constraint:OnDelete:SET NULL,OnUpdate:CASCADE"`
+	Model              Model                   `gorm:"foreignKey:ModelID;references:ID;constraint:OnDelete:SET NULL,OnUpdate:CASCADE"`
 }

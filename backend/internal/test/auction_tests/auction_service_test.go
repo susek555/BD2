@@ -2,6 +2,7 @@ package auction_test
 
 import (
 	"errors"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"testing"
 	"time"
 
@@ -10,19 +11,16 @@ import (
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auction"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
 	"github.com/susek555/BD2/car-dealer-api/internal/test/mocks"
 )
 
-func makeFullAuctionEntity(id uint, end time.Time, buyNow uint) *sale_offer.Auction {
+func makeFullAuctionEntity(id uint, end time.Time, buyNow uint) *models.Auction {
 	const (
 		mockUserID = 99
 	)
-	man := manufacturer.Manufacturer{ID: 2, Name: "Tesla"}
-	mod := model.Model{ID: 1, Name: "ModelS", Manufacturer: man}
+	man := models.Manufacturer{ID: 2, Name: "Tesla"}
+	mod := models.Model{ID: 1, Name: "ModelS", Manufacturer: man}
 	car := &sale_offer.Car{
 		OfferID:        id,
 		Mileage:        1000,
@@ -31,14 +29,14 @@ func makeFullAuctionEntity(id uint, end time.Time, buyNow uint) *sale_offer.Auct
 		ModelID:        mod.ID,
 		Model:          mod,
 	}
-	so := &sale_offer.SaleOffer{
+	so := &models.SaleOffer{
 		ID:     id,
 		UserID: mockUserID,
-		User:   &user.User{ID: mockUserID, Username: "alice"},
+		User:   &models.User{ID: mockUserID, Username: "alice"},
 		Price:  5000,
 		Car:    car,
 	}
-	auc := &sale_offer.Auction{
+	auc := &models.Auction{
 		OfferID:     id,
 		DateEnd:     end,
 		BuyNowPrice: buyNow,
@@ -87,7 +85,7 @@ func TestAuctionService_Create_OK(t *testing.T) {
 	assert.NoError(t, err)
 
 	repo.On("Create", entity).Run(func(args mock.Arguments) {
-		a := args.Get(0).(*sale_offer.Auction)
+		a := args.Get(0).(*models.Auction)
 		full := makeFullAuctionEntity(7, a.DateEnd, a.BuyNowPrice)
 		*a = *full
 	}).Return(nil)
@@ -129,7 +127,7 @@ func TestAuctionService_GetAll_OK(t *testing.T) {
 	a1 := makeFullAuctionEntity(1, now.Add(time.Hour), 100)
 	a2 := makeFullAuctionEntity(2, now.Add(2*time.Hour), 200)
 
-	repo.On("GetAll").Return([]sale_offer.Auction{*a1, *a2}, nil)
+	repo.On("GetAll").Return([]models.Auction{*a1, *a2}, nil)
 
 	all, err := svc.GetAll()
 	assert.NoError(t, err)
@@ -205,7 +203,7 @@ func TestAuctionService_Update_OK(t *testing.T) {
 	assert.NoError(t, err)
 
 	repo.On("Update", entity).Run(func(args mock.Arguments) {
-		a := args.Get(0).(*sale_offer.Auction)
+		a := args.Get(0).(*models.Auction)
 		full := makeFullAuctionEntity(5, a.DateEnd, a.BuyNowPrice)
 		*a = *full
 	}).Return(nil)

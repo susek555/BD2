@@ -1,33 +1,24 @@
 package initializers
 
 import (
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/bid"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/car"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/liked_offer"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/notification"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/refresh_token"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/review"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 )
 
 func MigrateModels() {
 	DB.AutoMigrate(
-		&user.User{},
-		&user.Person{},
-		&user.Company{},
-		&refresh_token.RefreshToken{},
-		&review.Review{},
-		&manufacturer.Manufacturer{},
-		&model.Model{},
-		&sale_offer.SaleOffer{},
-		&car.Car{},
-		&sale_offer.Auction{},
-		&bid.Bid{},
-		&liked_offer.LikedOffer{},
-		&notification.Notification{},
-		&notification.ClientNotification{},
+		&models.User{},
+		&models.Person{},
+		&models.Company{},
+		&models.RefreshToken{},
+		&models.Review{},
+		&models.Manufacturer{},
+		&models.Model{},
+		&models.SaleOffer{},
+		&models.Car{},
+		&models.Auction{},
+		&models.Bid{},
+		&models.LikedOffer{},
+		&models.Notification{},
+		&models.ClientNotification{},
 	)
 }

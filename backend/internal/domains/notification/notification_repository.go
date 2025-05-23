@@ -1,11 +1,14 @@
 package notification
 
-import "gorm.io/gorm"
+import (
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
+	"gorm.io/gorm"
+)
 
 type NotificationRepositoryInterface interface {
-	Create(notification *Notification) error
-	GetById(id uint) (*Notification, error)
-	GetAll() ([]Notification, error)
+	Create(notification *models.Notification) error
+	GetById(id uint) (*models.Notification, error)
+	GetAll() ([]models.Notification, error)
 }
 
 type NotificationRepository struct {
@@ -18,7 +21,7 @@ func NewNotificationRepository(db *gorm.DB) NotificationRepositoryInterface {
 	}
 }
 
-func (r *NotificationRepository) Create(notification *Notification) error {
+func (r *NotificationRepository) Create(notification *models.Notification) error {
 	db := r.DB
 	if err := db.Create(notification).Error; err != nil {
 		return err
@@ -26,18 +29,18 @@ func (r *NotificationRepository) Create(notification *Notification) error {
 	return nil
 }
 
-func (r *NotificationRepository) GetById(id uint) (*Notification, error) {
+func (r *NotificationRepository) GetById(id uint) (*models.Notification, error) {
 	db := r.DB
-	var notification Notification
+	var notification models.Notification
 	if err := db.First(&notification, id).Error; err != nil {
 		return nil, err
 	}
 	return &notification, nil
 }
 
-func (r *NotificationRepository) GetAll() ([]Notification, error) {
+func (r *NotificationRepository) GetAll() ([]models.Notification, error) {
 	db := r.DB
-	var notifications []Notification
+	var notifications []models.Notification
 	if err := db.Find(&notifications).Error; err != nil {
 		return nil, err
 	}
