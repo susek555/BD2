@@ -55,3 +55,23 @@ export async function getTransmissions() : Promise<string[]> {
 
   return data.transmissions;
 }
+
+export async function getProducersAndModels() : Promise<{
+        producers: string[];
+        models: string[][];
+    }> {
+  const response = await fetch(`${API_URL}/car/manufacturer-model-map`, {
+    method: "GET",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch producers and models");
+  }
+
+  const data = await response.json();
+
+  return {
+    producers: data.Manufacturers,
+    models: data.Models,
+  }
+}
