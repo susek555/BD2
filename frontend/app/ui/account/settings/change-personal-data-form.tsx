@@ -159,9 +159,11 @@ export default function ChangePersonalDataForm({
           />
         </>
       )}
-      <Button type='submit' className='mt-6 w-full'>
-        Save
-      </Button>
+      <div className='flex justify-end'>
+        <Button type='submit' className='mt-2 px-4'>
+          Save
+        </Button>
+      </div>
     </form>
   );
 }
