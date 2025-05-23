@@ -31,3 +31,7 @@ type UpdateUserDTO struct {
 	PersonName    *string `json:"person_name"`
 	PersonSurname *string `json:"person_surname"`
 }
+
+type UpdateResponse struct {
+	Errors map[string][]string `json:"errors"`
+}
