@@ -311,7 +311,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/manufacturer.Manufacturer"
+                                "$ref": "#/definitions/models.Manufacturer"
                             }
                         }
                     },
@@ -1109,7 +1109,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Liked offer",
                         "schema": {
-                            "$ref": "#/definitions/liked_offer.LikedOffer"
+                            "$ref": "#/definitions/models.LikedOffer"
                         }
                     },
                     "400": {
@@ -1365,21 +1365,21 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Invalid input data",
+                        "description": "Invalid input data - email, username or nip taken",
                         "schema": {
-                            "$ref": "#/definitions/custom_errors.HTTPError"
+                            "$ref": "#/definitions/user.UpdateResponse"
                         }
                     },
                     "404": {
                         "description": "User not found",
                         "schema": {
-                            "$ref": "#/definitions/custom_errors.HTTPError"
+                            "$ref": "#/definitions/user.UpdateResponse"
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "$ref": "#/definitions/custom_errors.HTTPError"
+                            "$ref": "#/definitions/user.UpdateResponse"
                         }
                     }
                 }
@@ -1754,28 +1754,6 @@ const docTemplate = `{
                 }
             }
         },
-        "liked_offer.LikedOffer": {
-            "type": "object",
-            "properties": {
-                "offer_id": {
-                    "type": "integer"
-                },
-                "user_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "manufacturer.Manufacturer": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
         "model.RetrieveModelDTO": {
             "type": "object",
             "properties": {
@@ -1786,6 +1764,41 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "models.LikedOffer": {
+            "type": "object",
+            "properties": {
+                "offer_id": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.Manufacturer": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.MarginValue": {
+            "type": "integer",
+            "enum": [
+                3,
+                5,
+                10
+            ],
+            "x-enum-varnames": [
+                "LOW_MARGIN",
+                "MEDIUM_MARGIN",
+                "HIGH_MARGIN"
+            ]
         },
         "pagination.PaginationRequest": {
             "type": "object",
@@ -1953,7 +1966,7 @@ const docTemplate = `{
                     "$ref": "#/definitions/car_params.FuelType"
                 },
                 "margin": {
-                    "$ref": "#/definitions/sale_offer.MarginValue"
+                    "$ref": "#/definitions/models.MarginValue"
                 },
                 "mileage": {
                     "type": "integer"
@@ -1989,19 +2002,6 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
-        },
-        "sale_offer.MarginValue": {
-            "type": "integer",
-            "enum": [
-                3,
-                5,
-                10
-            ],
-            "x-enum-varnames": [
-                "LOW_MARGIN",
-                "MEDIUM_MARGIN",
-                "HIGH_MARGIN"
-            ]
         },
         "sale_offer.MinMax-string": {
             "type": "object",
@@ -2161,7 +2161,7 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "margin": {
-                    "$ref": "#/definitions/sale_offer.MarginValue"
+                    "$ref": "#/definitions/models.MarginValue"
                 },
                 "mileage": {
                     "type": "integer"
@@ -2308,6 +2308,20 @@ const docTemplate = `{
                 },
                 "username": {
                     "type": "string"
+                }
+            }
+        },
+        "user.UpdateResponse": {
+            "type": "object",
+            "properties": {
+                "errors": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
                 }
             }
         },
