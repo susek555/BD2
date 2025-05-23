@@ -124,14 +124,14 @@ func TestService_Login(t *testing.T) {
 	ctx := context.Background()
 	validIn := auth.LoginInput{Login: "john@example.com", Password: "secret"}
 
-	t.Run("valid credentials – returns access & refresh", func(t *testing.T) {
+	t.Run("valid credentials - returns access & refresh", func(t *testing.T) {
 		uRepo := mocks.NewUserRepositoryInterface(t)
 		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
 
 		existing := models.User{ID: 1, Email: validIn.Login, Password: hashPass(t, validIn.Password)}
 		uRepo.EXPECT().GetByEmail(validIn.Login).Return(existing, nil)
 
-		rtSvc.EXPECT().Create(mock.AnythingOfType("*refresh_token.RefreshToken")).Return(nil)
+		rtSvc.EXPECT().Create(mock.AnythingOfType("*models.RefreshToken")).Return(nil)
 
 		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
 
@@ -146,7 +146,7 @@ func TestService_Login(t *testing.T) {
 		assert.Equal(t, int64(existing.ID), uid)
 	})
 
-	t.Run("unknown e‑mail – ErrInvalidCredentials", func(t *testing.T) {
+	t.Run("unknown email - ErrInvalidCredentials", func(t *testing.T) {
 		uRepo := mocks.NewUserRepositoryInterface(t)
 		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
 
@@ -160,7 +160,7 @@ func TestService_Login(t *testing.T) {
 		assert.ErrorIs(t, err, auth.ErrInvalidCredentials)
 	})
 
-	t.Run("wrong password – ErrInvalidCredentials", func(t *testing.T) {
+	t.Run("wrong password - ErrInvalidCredentials", func(t *testing.T) {
 		uRepo := mocks.NewUserRepositoryInterface(t)
 		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
 
@@ -173,7 +173,7 @@ func TestService_Login(t *testing.T) {
 		assert.ErrorIs(t, err, auth.ErrInvalidCredentials)
 	})
 
-	t.Run("refresh‑token save fails – propagates error", func(t *testing.T) {
+	t.Run("refresh-token save fails - propagates error", func(t *testing.T) {
 		uRepo := mocks.NewUserRepositoryInterface(t)
 		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
 
@@ -182,7 +182,7 @@ func TestService_Login(t *testing.T) {
 
 		rtSvc.
 			EXPECT().
-			Create(mock.AnythingOfType("*refresh_token.RefreshToken")).
+			Create(mock.AnythingOfType("*models.RefreshToken")).
 			Return(errors.New("db down"))
 
 		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
