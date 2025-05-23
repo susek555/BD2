@@ -79,7 +79,6 @@ export const authConfig: NextAuthOptions = {
       const jwtToken = token as ExtendedJWT;
 
       if (trigger === 'update' && session) {
-        console.log('Update session data', session);
 
         const isUserProfile =
           session.selector &&
@@ -87,7 +86,6 @@ export const authConfig: NextAuthOptions = {
           typeof session.username === 'string' &&
           typeof session.email === 'string' &&
           (session.selector === 'P' || session.selector === 'C');
-        console.log('isUserProfile', isUserProfile);
 
         const isIdPassword =
           // typeof session.id === 'number' &&
