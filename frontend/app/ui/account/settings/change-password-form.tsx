@@ -10,6 +10,7 @@ export default function ChangePasswordForm() {
         name='currentPassword'
         label='Current Password'
         placeholder='Enter your current password'
+        type='password'
         defaultValue={''}
         icon={KeyIcon}
         errors={[]}
@@ -20,6 +21,7 @@ export default function ChangePasswordForm() {
         name='newPassword'
         label='New Password'
         placeholder='Enter your new password'
+        type='password'
         defaultValue={''}
         icon={KeyIcon}
         errors={[]}
@@ -30,6 +32,7 @@ export default function ChangePasswordForm() {
         name='confirmNewPassword'
         label='Confirm New Password'
         placeholder='Confirm your new password'
+        type='password'
         defaultValue={''}
         icon={KeyIcon}
         errors={[]}
