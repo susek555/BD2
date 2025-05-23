@@ -1,8 +1,9 @@
 package user_tests
 
 import (
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"testing"
+
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -102,7 +103,7 @@ func TestUpdate_UserFoundChange(t *testing.T) {
 	uRepo := mocks.NewUserRepositoryInterface(t)
 	uRepo.On("GetById", uint(1)).Return(createUser(), nil)
 	uService := user.NewUserService(uRepo)
-	uRepo.On("Update", mock.AnythingOfType("*user.User")).Return(nil)
+	uRepo.On("Update", mock.AnythingOfType("*models.User")).Return(nil)
 	newUsername := "new_username"
 	newEmail := "john_updated@example.com"
 	dto := user.UpdateUserDTO{ID: 1, Username: &newUsername, Email: &newEmail}
