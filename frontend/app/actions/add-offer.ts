@@ -30,13 +30,10 @@ export async function addOffer(
             : undefined
     }
 
-    let validatedFields = null;
+    const validatedFields = detailsPart
+        ? OfferDetailsFormSchema.safeParse(normalizedData)
+        : CombinedOfferFormSchema.safeParse(normalizedData);;
 
-    if (detailsPart) {
-        validatedFields = OfferDetailsFormSchema.safeParse(normalizedData);
-    } else {
-        validatedFields = CombinedOfferFormSchema.safeParse(normalizedData);
-    }
 
 
     if (!validatedFields.success) {
