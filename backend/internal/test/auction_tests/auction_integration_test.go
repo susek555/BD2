@@ -2,12 +2,13 @@ package auction_test
 
 import (
 	"encoding/json"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
@@ -24,7 +25,7 @@ import (
 // Setup
 // ------
 
-func setupDB(manufacturers []models.Manufacturer, models []models.Model, cars []models.Car, saleOffers []models.SaleOffer, auctions []models.Auction, users []models.User) (auction.AuctionServiceInterface, error) {
+func setupDB(manufacturers []models.Manufacturer, models_ []models.Model, cars []models.Car, saleOffers []models.SaleOffer, auctions []models.Auction, users []models.User) (auction.AuctionServiceInterface, error) {
 	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
 	if err != nil {
 		return nil, err
@@ -32,10 +33,9 @@ func setupDB(manufacturers []models.Manufacturer, models []models.Model, cars []
 	err = db.AutoMigrate(
 		&models.Model{},
 		&models.Person{},
-		models.Company{},
+		&models.Company{},
 		&models.Manufacturer{},
-		&models.Model{},
-		&sale_offer.Car{},
+		&models.Car{},
 		&models.SaleOffer{},
 		&models.Auction{},
 	)
@@ -54,7 +54,7 @@ func setupDB(manufacturers []models.Manufacturer, models []models.Model, cars []
 			return nil, err
 		}
 	}
-	for _, model := range models {
+	for _, model := range models_ {
 		err = db.Create(&model).Error
 		if err != nil {
 			return nil, err
@@ -72,8 +72,8 @@ func setupDB(manufacturers []models.Manufacturer, models []models.Model, cars []
 			return nil, err
 		}
 	}
-	for _, auction := range auctions {
-		err = db.Create(&auction).Error
+	for _, auction_ := range auctions {
+		err = db.Create(&auction_).Error
 		if err != nil {
 			return nil, err
 		}
@@ -84,14 +84,14 @@ func setupDB(manufacturers []models.Manufacturer, models []models.Model, cars []
 	return service, nil
 }
 
-func newTestServer(seedManufacturers []models.Manufacturer, seedModels []models.Model, seedCars []sale_offer.Car, seedSaleOffers []models.SaleOffer, seedAuctions []models.Auction, seedUsers []models.User) (*gin.Engine, auction.AuctionServiceInterface, error) {
+func newTestServer(seedManufacturers []models.Manufacturer, seedModels []models.Model, seedCars []models.Car, seedSaleOffers []models.SaleOffer, seedAuctions []models.Auction, seedUsers []models.User) (*gin.Engine, auction.AuctionServiceInterface, error) {
 	service, err := setupDB(seedManufacturers, seedModels, seedCars, seedSaleOffers, seedAuctions, seedUsers)
 	if err != nil {
 		return nil, nil, err
 	}
 	verifier := jwt.NewJWTVerifier("secret")
 	r := gin.Default()
-	auctionHandler := auction.NewHandler(service)
+	auctionHandler := auction.NewHandler(service, nil)
 	auctionRoutes := r.Group("/auction")
 	auctionRoutes.GET("/", auctionHandler.GetAllAuctions)
 	auctionRoutes.GET("/:id", auctionHandler.GetAuctionById)
@@ -108,12 +108,12 @@ func getValidToken(userId uint, email string) (string, error) {
 
 func TestCreateAuctionNoAuthHeader(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedManufacturers := []models.Manufacturer{}
-	seedModels := []models.Model{}
-	seedCars := []sale_offer.Car{}
-	seedSaleOffers := []models.SaleOffer{}
-	seedAuctions := []models.Auction{}
-	seedUsers := []models.User{}
+	var seedManufacturers []models.Manufacturer
+	var seedModels []models.Model
+	var seedCars []models.Car
+	var seedSaleOffers []models.SaleOffer
+	var seedAuctions []models.Auction
+	var seedUsers []models.User
 	server, _, err := newTestServer(seedManufacturers, seedModels, seedCars, seedSaleOffers, seedAuctions, seedUsers)
 	assert.NoError(t, err)
 	wantStatus := http.StatusUnauthorized
@@ -130,12 +130,12 @@ func TestCreateAuctionNoAuthHeader(t *testing.T) {
 
 func TestCreateAuctionInvalidToken(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedManufacturers := []models.Manufacturer{}
-	seedModels := []models.Model{}
-	seedCars := []sale_offer.Car{}
-	seedSaleOffers := []models.SaleOffer{}
-	seedAuctions := []models.Auction{}
-	seedUsers := []models.User{}
+	var seedManufacturers []models.Manufacturer
+	var seedModels []models.Model
+	var seedCars []models.Car
+	var seedSaleOffers []models.SaleOffer
+	var seedAuctions []models.Auction
+	var seedUsers []models.User
 	server, _, err := newTestServer(seedManufacturers, seedModels, seedCars, seedSaleOffers, seedAuctions, seedUsers)
 	assert.NoError(t, err)
 	wantStatus := http.StatusForbidden
@@ -166,9 +166,9 @@ func TestCreateAuctionSuccess(t *testing.T) {
 			ManufacturerID: 1,
 		},
 	}
-	seedCars := []sale_offer.Car{}
-	seedSaleOffers := []models.SaleOffer{}
-	seedAuctions := []models.Auction{}
+	var seedCars []models.Car
+	var seedSaleOffers []models.SaleOffer
+	var seedAuctions []models.Auction
 	seedUsers := []models.User{
 		{
 			Username: "herakles",
@@ -192,7 +192,6 @@ func TestCreateAuctionSuccess(t *testing.T) {
 			Description:        "Test auction",
 			Price:              10000,
 			Margin:             1000,
-			DateOfIssue:        time.Now(),
 			Vin:                "1HGCM82633A123456",
 			ProductionYear:     2020,
 			Mileage:            10000,
@@ -248,9 +247,9 @@ func TestCreateAuctionInvalidDate(t *testing.T) {
 			ManufacturerID: 1,
 		},
 	}
-	seedCars := []sale_offer.Car{}
-	seedSaleOffers := []models.SaleOffer{}
-	seedAuctions := []models.Auction{}
+	var seedCars []models.Car
+	var seedSaleOffers []models.SaleOffer
+	var seedAuctions []models.Auction
 	seedUsers := []models.User{
 		{
 			Username: "herakles",
@@ -274,7 +273,6 @@ func TestCreateAuctionInvalidDate(t *testing.T) {
 			Description:        "Test auction",
 			Price:              10000,
 			Margin:             1000,
-			DateOfIssue:        time.Now(),
 			Vin:                "1HGCM82633A123456",
 			ProductionYear:     2020,
 			Mileage:            10000,
@@ -324,9 +322,9 @@ func TestCreateAuctionInvalidDateFormat(t *testing.T) {
 			ManufacturerID: 1,
 		},
 	}
-	seedCars := []sale_offer.Car{}
-	seedSaleOffers := []models.SaleOffer{}
-	seedAuctions := []models.Auction{}
+	var seedCars []models.Car
+	var seedSaleOffers []models.SaleOffer
+	var seedAuctions []models.Auction
 	seedUsers := []models.User{
 		{
 			Username: "herakles",
@@ -350,7 +348,6 @@ func TestCreateAuctionInvalidDateFormat(t *testing.T) {
 			Description:        "Test auction",
 			Price:              10000,
 			Margin:             1000,
-			DateOfIssue:        time.Now(),
 			Vin:                "1HGCM82633A123456",
 			ProductionYear:     2020,
 			Mileage:            10000,
@@ -400,9 +397,9 @@ func TestCreateAuctionZeroBuyNowPrice(t *testing.T) {
 			ManufacturerID: 1,
 		},
 	}
-	seedCars := []sale_offer.Car{}
-	seedSaleOffers := []models.SaleOffer{}
-	seedAuctions := []models.Auction{}
+	var seedCars []models.Car
+	var seedSaleOffers []models.SaleOffer
+	var seedAuctions []models.Auction
 	seedUsers := []models.User{
 		{
 			Username: "herakles",
@@ -442,7 +439,7 @@ func TestCreateAuctionZeroBuyNowPrice(t *testing.T) {
 	}
 	`
 	assert.NoError(t, err)
-	req := httptest.NewRequest(http.MethodPost, "/auction/", strings.NewReader(string(auctionInput)))
+	req := httptest.NewRequest(http.MethodPost, "/auction/", strings.NewReader(auctionInput))
 	req.Header.Set("Content-Type", "application/json")
 	assert.NoError(t, err)
 	req.Header.Set("Authorization", "Bearer "+token)
@@ -470,9 +467,9 @@ func TestCreateAuctionBuyNowPriceLessThanOfferPrice(t *testing.T) {
 			ManufacturerID: 1,
 		},
 	}
-	seedCars := []sale_offer.Car{}
-	seedSaleOffers := []models.SaleOffer{}
-	seedAuctions := []models.Auction{}
+	var seedCars []models.Car
+	var seedSaleOffers []models.SaleOffer
+	var seedAuctions []models.Auction
 	seedUsers := []models.User{
 		{
 			Username: "herakles",
@@ -513,7 +510,7 @@ func TestCreateAuctionBuyNowPriceLessThanOfferPrice(t *testing.T) {
 	}
 	`
 	assert.NoError(t, err)
-	req := httptest.NewRequest(http.MethodPost, "/auction/", strings.NewReader(string(auctionInput)))
+	req := httptest.NewRequest(http.MethodPost, "/auction/", strings.NewReader(auctionInput))
 	req.Header.Set("Content-Type", "application/json")
 	assert.NoError(t, err)
 	req.Header.Set("Authorization", "Bearer "+token)
@@ -541,9 +538,9 @@ func TestCreateAuctionBuyNowPriceNegative(t *testing.T) {
 			ManufacturerID: 1,
 		},
 	}
-	seedCars := []sale_offer.Car{}
-	seedSaleOffers := []models.SaleOffer{}
-	seedAuctions := []models.Auction{}
+	var seedCars []models.Car
+	var seedSaleOffers []models.SaleOffer
+	var seedAuctions []models.Auction
 	seedUsers := []models.User{
 		{
 			Username: "herakles",
@@ -583,7 +580,7 @@ func TestCreateAuctionBuyNowPriceNegative(t *testing.T) {
 	}
 	`
 	assert.NoError(t, err)
-	req := httptest.NewRequest(http.MethodPost, "/auction/", strings.NewReader(string(auctionInput)))
+	req := httptest.NewRequest(http.MethodPost, "/auction/", strings.NewReader(auctionInput))
 	req.Header.Set("Content-Type", "application/json")
 	assert.NoError(t, err)
 	req.Header.Set("Authorization", "Bearer "+token)
