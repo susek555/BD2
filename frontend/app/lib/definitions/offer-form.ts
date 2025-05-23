@@ -9,7 +9,6 @@ export const OfferDetailsFormSchema = z.object({
   fuel_type: z.string().min(1, { message: 'Fuel type is required' }),
   transmission: z.string().min(1, { message: 'Gearbox is required' }),
   drive: z.string().min(1, { message: 'Drive type is required' }),
-  country: z.string().min(1, { message: 'Country is required' }),
   production_year: z
     .number()
     .min(1900, { message: 'Year must be greater than 1900' })
@@ -83,7 +82,7 @@ export const OfferPricingFormSchema = z.object({
     .max(10_000_000, { message: 'Price must be less than or equal to 10,000,000' }),
   margin: z
     .number()
-    .min(8, { message: 'Margin must be greater than or equal to 0' })
+    .min(8, { message: 'Margin must be greater than or equal to 8' })
     .max(10,{ message: 'Margin must be less than or equal to 10' }),
   is_auction: z.boolean(),
   auction_end_date: z
@@ -96,14 +95,14 @@ export const OfferPricingFormSchema = z.object({
     }, { message: 'Date must be in the future' }),
   buy_now_auction_price: z
     .number()
-    .nullable()
-    .optional()
+    .nullish()
+    .transform(val => val === 0 || val === null || val === undefined ? undefined : val)
     .refine(
-      (price) => price === null || price === undefined || price > 0,
+      (price) => price === undefined || price > 0,
       { message: 'Price must be greater than 0' }
     )
     .refine(
-      (price) => price === null || price === undefined || price < 10_000_000,
+      (price) => price === undefined || price < 10_000_000,
       { message: 'Price must be less than 10,000,000' }
     ),
 }).superRefine((data, ctx) => {
@@ -112,12 +111,11 @@ export const OfferPricingFormSchema = z.object({
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Auction end date is required when auction is enabled',
-        path: ['auctionEndDate'],
+        path: ['auction_end_date'],
       });
     }
   }
   if (
-    data.buy_now_auction_price !== null &&
     data.buy_now_auction_price !== undefined &&
     data.buy_now_auction_price <= data.price
   ) {
@@ -129,6 +127,54 @@ export const OfferPricingFormSchema = z.object({
   }
 });
 
+export const CombinedOfferFormSchema = z
+  .object({
+    ...OfferDetailsFormSchema._def.schema.shape,
+    ...OfferPricingFormSchema._def.schema.shape,
+  })
+  .superRefine((data, ctx) => {
+    if (data.registration_date && data.production_year) {
+      const registrationDate = new Date(data.registration_date);
+      if (registrationDate.getFullYear() < data.production_year) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Registration date cannot be earlier than production year',
+          path: ['registration_date'],
+        });
+      }
+    }
+
+    if (data.is_auction) {
+      if (!data.auction_end_date) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Auction end date is required when auction is enabled',
+          path: ['auction_end_date'],
+        });
+      }
+    }
+
+    if (
+      data.buy_now_auction_price !== undefined &&
+      data.buy_now_auction_price <= data.price
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Buy now auction price must be greater than the regular price',
+        path: ['buy_now_auction_price'],
+      });
+    }
+  })
+  .transform((data) => {
+    if (data.buy_now_auction_price === undefined) {
+      const { buy_now_auction_price, ...rest } = data;
+      return rest;
+    }
+    return data;
+  });
+
+
+
 
 export type AddOfferFormState = {
   errors?: {
@@ -139,7 +185,6 @@ export type AddOfferFormState = {
     fuel_type?: string[];
     transmission?: string[];
     drive?: string[];
-    country?: string[];
     production_year?: string[];
     mileage?: string[];
     number_of_doors?: string[];
@@ -166,7 +211,6 @@ export type AddOfferFormState = {
     fuel_type?: string;
     transmission?: string;
     drive?: string;
-    country?: string; //origin_country
     production_year?: number;
     mileage?: number;
     number_of_doors?: number;
