@@ -98,7 +98,7 @@ func TestGetByReviewerAndReviewee_Success(t *testing.T) {
 	got, err := svc.GetByReviewerIdAndRevieweeId(10, 20)
 
 	require.NoError(t, err)
-	assert.Equal(t, expectedDTO, got)
+	assert.Equal(t, &expectedDTO, got)
 	repo.AssertExpectations(t)
 }
 
@@ -126,7 +126,7 @@ func TestCreate_Success(t *testing.T) {
 	in := &review.CreateReviewDTO{Description: "ok", Rating: 1, RevieweeId: 2}
 
 	repo.
-		On("Create", mock.AnythingOfType("*review.Review")).
+		On("Create", mock.AnythingOfType("*models.Review")).
 		Run(func(args mock.Arguments) {
 			r := args.Get(0).(*models.Review)
 
@@ -156,7 +156,7 @@ func TestCreate_Error(t *testing.T) {
 	repoErr := errors.New("err")
 
 	repo.
-		On("Create", mock.AnythingOfType("*review.Review")).
+		On("Create", mock.AnythingOfType("*models.Review")).
 		Return(repoErr).
 		Once()
 
@@ -247,7 +247,7 @@ func TestUpdate_Success(t *testing.T) {
 
 	// ── step 2: service calls Update(&reviewObj) ──
 	repo.
-		On("Update", mock.AnythingOfType("*review.Review")).
+		On("Update", mock.AnythingOfType("*models.Review")).
 		Run(func(args mock.Arguments) {
 			r := args.Get(0).(*models.Review)
 
@@ -286,7 +286,7 @@ func TestUpdate_Error(t *testing.T) {
 		Return(&models.Review{ID: reviewID, ReviewerID: reviewerID, RevieweeId: 2}, nil).
 		Once()
 
-	repo.On("Update", mock.AnythingOfType("*review.Review")).Return(repoErr).Once()
+	repo.On("Update", mock.AnythingOfType("*models.Review")).Return(repoErr).Once()
 
 	got, err := svc.Update(reviewerID, upd)
 
