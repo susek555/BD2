@@ -307,7 +307,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/manufacturer.Manufacturer"
+                                "$ref": "#/definitions/models.Manufacturer"
                             }
                         }
                     },
@@ -972,7 +972,7 @@
         },
         "/sale-offer/filtered": {
             "post": {
-                "description": "Returns a list of sale offers in paginated form. If the user is logged in, the results contain he offers created by the user. The results are filtered based on request's body. There are several constraints on the filter fields, such as:\n- Offer type must be one of the predefined offer types (endpoint: /sale-offer/offer-types)\n- Order key must be one of the predefined order keys (endpoint: /sale-offer/order-keys)\n- List of manufacturers must contain only predefined manufacturers (endpoint: /car/manufacturers)\n- List of colors must contain only predefined colors (endpoint: /car/colors)\n- List of drives must contain only predefined drives (endpoint: /car/drives)\n- List of fuel types must contain only predefined fuel types (endpoint: /car/fuel_types)\n- List of transmissions must contain only predefined transmission types (endpoint: /car/transmissions)\n- Whenever you use a range, the min value must be less than or equal to the max value, you can provide only one of them, and the other will be ignored.",
+                "description": "Returns a list of sale offers in paginated form. If the user is logged in, the results contain he offers created by the user. The results are filtered based on request's body. There are several constraints on the filter fields, such as:\n- Auction type must be one of the predefined offer types (endpoint: /sale-offer/offer-types)\n- Order key must be one of the predefined order keys (endpoint: /sale-offer/order-keys)\n- List of manufacturers must contain only predefined manufacturers (endpoint: /car/manufacturers)\n- List of colors must contain only predefined colors (endpoint: /car/colors)\n- List of drives must contain only predefined drives (endpoint: /car/drives)\n- List of fuel types must contain only predefined fuel types (endpoint: /car/fuel_types)\n- List of transmissions must contain only predefined transmission types (endpoint: /car/transmissions)\n- Whenever you use a range, the min value must be less than or equal to the max value, you can provide only one of them, and the other will be ignored.",
                 "consumes": [
                     "application/json"
                 ],
@@ -1105,7 +1105,7 @@
                     "200": {
                         "description": "Liked offer",
                         "schema": {
-                            "$ref": "#/definitions/liked_offer.LikedOffer"
+                            "$ref": "#/definitions/models.LikedOffer"
                         }
                     },
                     "400": {
@@ -1361,21 +1361,21 @@
                         }
                     },
                     "400": {
-                        "description": "Invalid input data",
+                        "description": "Invalid input data - email, username or nip taken",
                         "schema": {
-                            "$ref": "#/definitions/custom_errors.HTTPError"
+                            "$ref": "#/definitions/user.UpdateResponse"
                         }
                     },
                     "404": {
                         "description": "User not found",
                         "schema": {
-                            "$ref": "#/definitions/custom_errors.HTTPError"
+                            "$ref": "#/definitions/user.UpdateResponse"
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "$ref": "#/definitions/custom_errors.HTTPError"
+                            "$ref": "#/definitions/user.UpdateResponse"
                         }
                     }
                 }
@@ -1750,28 +1750,6 @@
                 }
             }
         },
-        "liked_offer.LikedOffer": {
-            "type": "object",
-            "properties": {
-                "offer_id": {
-                    "type": "integer"
-                },
-                "user_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "manufacturer.Manufacturer": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
         "model.RetrieveModelDTO": {
             "type": "object",
             "properties": {
@@ -1782,6 +1760,41 @@
                     "type": "string"
                 }
             }
+        },
+        "models.LikedOffer": {
+            "type": "object",
+            "properties": {
+                "offer_id": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.Manufacturer": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.MarginValue": {
+            "type": "integer",
+            "enum": [
+                3,
+                5,
+                10
+            ],
+            "x-enum-varnames": [
+                "LOW_MARGIN",
+                "MEDIUM_MARGIN",
+                "HIGH_MARGIN"
+            ]
         },
         "pagination.PaginationRequest": {
             "type": "object",
@@ -1949,7 +1962,7 @@
                     "$ref": "#/definitions/car_params.FuelType"
                 },
                 "margin": {
-                    "$ref": "#/definitions/sale_offer.MarginValue"
+                    "$ref": "#/definitions/models.MarginValue"
                 },
                 "mileage": {
                     "type": "integer"
@@ -1985,19 +1998,6 @@
                     "type": "string"
                 }
             }
-        },
-        "sale_offer.MarginValue": {
-            "type": "integer",
-            "enum": [
-                3,
-                5,
-                10
-            ],
-            "x-enum-varnames": [
-                "LOW_MARGIN",
-                "MEDIUM_MARGIN",
-                "HIGH_MARGIN"
-            ]
         },
         "sale_offer.MinMax-string": {
             "type": "object",
@@ -2157,7 +2157,7 @@
                     "type": "boolean"
                 },
                 "margin": {
-                    "$ref": "#/definitions/sale_offer.MarginValue"
+                    "$ref": "#/definitions/models.MarginValue"
                 },
                 "mileage": {
                     "type": "integer"
@@ -2304,6 +2304,20 @@
                 },
                 "username": {
                     "type": "string"
+                }
+            }
+        },
+        "user.UpdateResponse": {
+            "type": "object",
+            "properties": {
+                "errors": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
                 }
             }
         },
