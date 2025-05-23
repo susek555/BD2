@@ -7,13 +7,13 @@ export default async function SettingsPage() {
   return (
     <div className='p-6'>
       <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-        <div className='pl-20 pr-2'>
+        <div className='pr-2 pl-20'>
           <h2 className='mb-4 text-xl font-semibold'>Edit Profile</h2>
           <ChangePersonalDataForm userProfile={userProfile} />
         </div>
-        <div className='pl-2 pr-20'>
+        <div className='pr-20 pl-2'>
           <h2 className='mb-4 text-xl font-semibold'>Change Password</h2>
-          <ChangePasswordForm />
+          <ChangePasswordForm userProfile={userProfile} />
         </div>
       </div>
     </div>
