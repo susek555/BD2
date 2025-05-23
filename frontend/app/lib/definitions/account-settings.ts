@@ -20,3 +20,13 @@ export type PersonalDataFormState = {
     companyNip?: string;
   };
 };
+
+export type ChangePasswordFormState = {
+  errors?: {
+    current_password?: string[];
+    new_password?: string[];
+    confirm_new_password?: string[];
+    other?: string[];
+  };
+  success?: boolean;
+};
