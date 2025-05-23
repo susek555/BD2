@@ -1,5 +1,6 @@
-import { OfferDetailsFormSchema, AddOfferFormState, OfferPricingFormSchema, CombinedOfferFormSchema } from "@/app/lib/definitions/offer-form";
+import { OfferDetailsFormSchema, AddOfferFormState, CombinedOfferFormSchema, RegularOfferData } from "@/app/lib/definitions/offer-form";
 import { permanentRedirect } from "next/navigation";
+import { postRegularOffer } from "@/app/lib/api/add-offer/add-offer";
 
 export async function addOffer(
     state: AddOfferFormState,
@@ -69,10 +70,12 @@ export async function addOffer(
     console.log("Is auction:", is_auction);
     console.log("Add Offer validated fields:", validatedFields.data);
 
-    try {
-        
-    } catch (error) {
 
+    if (is_auction) {
+        console.log("Adding auction offer");
+    } else {
+        const regularOfferData: RegularOfferData = validatedFields.data as RegularOfferData;
+        await postRegularOffer(regularOfferData);
     }
 
 
@@ -81,8 +84,7 @@ export async function addOffer(
 
 
 
-    return state;
 
-    // permanentRedirect("/");
-    //TODO redirect to my offers
+
+    return state;
 }
