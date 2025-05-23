@@ -37,7 +37,7 @@ func (service *ReviewService) Create(userId uint, review *CreateReviewDTO) (*Ret
 	if err != nil {
 		return nil, err
 	}
-	reviewDTO := reviewObj.MapToDTO()
+	reviewDTO := MapToDTO(reviewObj)
 	return reviewDTO, nil
 }
 
@@ -46,7 +46,7 @@ func (service *ReviewService) GetAll() ([]RetrieveReviewDTO, error) {
 	if err != nil {
 		return nil, err
 	}
-	reviewsDTO := mapping.MapSliceToDTOs(reviews, (*Review).MapToDTO)
+	reviewsDTO := mapping.MapSliceToDTOs(reviews, MapToDTO)
 	return reviewsDTO, nil
 }
 
@@ -55,7 +55,7 @@ func (service *ReviewService) GetById(id uint) (*RetrieveReviewDTO, error) {
 	if err != nil {
 		return nil, ErrNoReviewFound
 	}
-	reviewDTO := review.MapToDTO()
+	reviewDTO := MapToDTO(review)
 	return reviewDTO, nil
 }
 
@@ -64,7 +64,7 @@ func (service *ReviewService) GetFiltered(filter *ReviewFilter) (*RetrieveReview
 	if err != nil {
 		return nil, err
 	}
-	reviewsDTO := mapping.MapSliceToDTOs(reviews, (*Review).MapToDTO)
+	reviewsDTO := mapping.MapSliceToDTOs(reviews, MapToDTO)
 	return &RetrieveReviewsWithPagination{
 		Reviews:            reviewsDTO,
 		PaginationResponse: pagResponse,
@@ -99,7 +99,7 @@ func (service *ReviewService) Update(reviewerId uint, review *UpdateReviewDTO) (
 	if err != nil {
 		return nil, err
 	}
-	reviewDTO := reviewObj.MapToDTO()
+	reviewDTO := MapToDTO(reviewObj)
 	return reviewDTO, nil
 }
 
@@ -119,7 +119,7 @@ func (service *ReviewService) GetByReviewerId(reviewerId uint) ([]RetrieveReview
 	if err != nil {
 		return nil, err
 	}
-	reviewsDTO := mapping.MapSliceToDTOs(reviews, (*Review).MapToDTO)
+	reviewsDTO := mapping.MapSliceToDTOs(reviews, MapToDTO)
 	return reviewsDTO, nil
 }
 
@@ -128,7 +128,7 @@ func (service *ReviewService) GetByRevieweeId(reviewedId uint) ([]RetrieveReview
 	if err != nil {
 		return nil, err
 	}
-	reviewsDTO := mapping.MapSliceToDTOs(reviews, (*Review).MapToDTO)
+	reviewsDTO := mapping.MapSliceToDTOs(reviews, MapToDTO)
 	return reviewsDTO, nil
 }
 
@@ -137,7 +137,7 @@ func (service *ReviewService) GetByReviewerIdAndRevieweeId(reviewerId uint, revi
 	if err != nil {
 		return nil, err
 	}
-	reviewDTO := review.MapToDTO()
+	reviewDTO := MapToDTO(review)
 	return reviewDTO, nil
 }
 

@@ -1,16 +1,15 @@
 package review
 
 import (
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"time"
-
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
 )
 
-func (ri *CreateReviewDTO) MapToObject(reviewerId uint) (*Review, error) {
+func (ri *CreateReviewDTO) MapToObject(reviewerId uint) (*models.Review, error) {
 	if !validateRating(ri.Rating) {
 		return nil, ErrInvalidRating
 	}
-	return &Review{
+	return &models.Review{
 		Description: ri.Description,
 		Rating:      ri.Rating,
 		ReviewerID:  reviewerId,
@@ -19,11 +18,11 @@ func (ri *CreateReviewDTO) MapToObject(reviewerId uint) (*Review, error) {
 	}, nil
 }
 
-func (ur *UpdateReviewDTO) MapToObject(reviewerId, revieweeId uint) (*Review, error) {
+func (ur *UpdateReviewDTO) MapToObject(reviewerId, revieweeId uint) (*models.Review, error) {
 	if !validateRating(ur.Rating) {
 		return nil, ErrInvalidRating
 	}
-	return &Review{
+	return &models.Review{
 		ID:          ur.ID,
 		Description: ur.Description,
 		Rating:      ur.Rating,
@@ -33,7 +32,7 @@ func (ur *UpdateReviewDTO) MapToObject(reviewerId, revieweeId uint) (*Review, er
 	}, nil
 }
 
-func (r *Review) MapToDTO() *RetrieveReviewDTO {
+func MapToDTO(r *models.Review) *RetrieveReviewDTO {
 	reviewDTO := RetrieveReviewDTO{}
 	reviewDTO.ID = r.ID
 	reviewDTO.Description = r.Description
@@ -46,7 +45,7 @@ func (r *Review) MapToDTO() *RetrieveReviewDTO {
 	return &reviewDTO
 }
 
-func MapToUserDTO(u *user.User) UserDTO {
+func MapToUserDTO(u *models.User) UserDTO {
 	return UserDTO{
 		ID:       u.ID,
 		Username: u.Username,

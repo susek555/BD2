@@ -1,4 +1,4 @@
-package sale_offer
+package models
 
 type MarginValue uint
 

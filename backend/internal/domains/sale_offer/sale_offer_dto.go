@@ -1,6 +1,7 @@
 package sale_offer
 
 import (
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"time"
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
@@ -11,7 +12,7 @@ type CreateSaleOfferDTO struct {
 	UserID             uint                    `json:"-"`
 	Description        string                  `json:"description" validate:"required"`
 	Price              uint                    `json:"price" validate:"required"`
-	Margin             MarginValue             `json:"margin" validate:"required"`
+	Margin             models.MarginValue      `json:"margin" validate:"required"`
 	Vin                string                  `json:"vin" validate:"required"`
 	ProductionYear     uint                    `json:"production_year" validate:"required"`
 	Mileage            uint                    `json:"mileage" validate:"required"`
@@ -51,7 +52,7 @@ type RetrieveDetailedSaleOfferDTO struct {
 	Username           string                  `json:"username"`
 	Description        string                  `json:"description"`
 	Price              uint                    `json:"price"`
-	Margin             MarginValue             `json:"margin"`
+	Margin             models.MarginValue      `json:"margin"`
 	DateOfIssue        string                  `json:"date_of_issue"`
 	Vin                string                  `json:"vin"`
 	ProductionYear     uint                    `json:"production_year"`

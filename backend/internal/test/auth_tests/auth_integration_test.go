@@ -2,6 +2,7 @@ package auth_tests
 
 import (
 	"encoding/json"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -24,16 +25,16 @@ import (
 // Setup
 // ------
 
-func setupDB(users []user.User, refreshTokens []refresh_token.RefreshToken) (user.UserRepositoryInterface, refresh_token.RefreshTokenServiceInterface, error) {
+func setupDB(users []models.User, refreshTokens []models.RefreshToken) (user.UserRepositoryInterface, refresh_token.RefreshTokenServiceInterface, error) {
 	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
 	if err != nil {
 		return nil, nil, err
 	}
 	err = db.AutoMigrate(
-		&user.User{},
-		&user.Person{},
-		&user.Company{},
-		&refresh_token.RefreshToken{},
+		&models.User{},
+		&models.Person{},
+		&models.Company{},
+		&models.RefreshToken{},
 	)
 	if err != nil {
 		return nil, nil, err
@@ -55,7 +56,7 @@ func setupDB(users []user.User, refreshTokens []refresh_token.RefreshToken) (use
 	return repo, refreshTokenService, nil
 }
 
-func newTestServer(seedUsers []user.User, refreshTokens []refresh_token.RefreshToken) (*gin.Engine, *auth.Handler, refresh_token.RefreshTokenServiceInterface, error) {
+func newTestServer(seedUsers []models.User, refreshTokens []models.RefreshToken) (*gin.Engine, *auth.Handler, refresh_token.RefreshTokenServiceInterface, error) {
 	repo, rtSvc, err := setupDB(seedUsers, refreshTokens)
 	if err != nil {
 		return nil, nil, nil, err
@@ -78,8 +79,8 @@ func getValidToken(userId uint, email string) (string, error) {
 }
 func TestRegisterPersonSuccess(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{}
-	seedRefreshTokens := []refresh_token.RefreshToken{}
+	seedUsers := []models.User{}
+	seedRefreshTokens := []models.RefreshToken{}
 	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusCreated
 	assert.NoError(t, err)
@@ -103,8 +104,8 @@ func TestRegisterPersonSuccess(t *testing.T) {
 
 func TestRegisterCompanySuccess(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{}
-	seedRefreshTokens := []refresh_token.RefreshToken{}
+	seedUsers := []models.User{}
+	seedRefreshTokens := []models.RefreshToken{}
 	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusCreated
 	assert.NoError(t, err)
@@ -128,19 +129,19 @@ func TestRegisterCompanySuccess(t *testing.T) {
 
 func TestRegisterPersonEmailAlreadyExists(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "taken@example.com",
 			Username: "taken_username",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedRefreshTokens := []refresh_token.RefreshToken{}
+	seedRefreshTokens := []models.RefreshToken{}
 	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusConflict
 	assert.NoError(t, err)
@@ -167,19 +168,19 @@ func TestRegisterPersonEmailAlreadyExists(t *testing.T) {
 
 func TestRegisterPersonUsernameAlreadyExists(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "unique@example.com",
 			Username: "taken_username",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedRefreshTokens := []refresh_token.RefreshToken{}
+	seedRefreshTokens := []models.RefreshToken{}
 	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusConflict
 	assert.NoError(t, err)
@@ -206,8 +207,8 @@ func TestRegisterPersonUsernameAlreadyExists(t *testing.T) {
 
 func TestRegisterPersonInvalidEmail(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{}
-	seedTokens := []refresh_token.RefreshToken{}
+	seedUsers := []models.User{}
+	seedTokens := []models.RefreshToken{}
 	server, _, _, err := newTestServer(seedUsers, seedTokens)
 	wantStatus := http.StatusBadRequest
 	assert.NoError(t, err)
@@ -234,19 +235,19 @@ func TestRegisterPersonInvalidEmail(t *testing.T) {
 
 func TestRegisterCompanyEmailAlreadyExists(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "taken@example.com",
 			Username: "unique_username",
 			Password: "PolskaGurom",
 			Selector: "C",
-			Company: &user.Company{
+			Company: &models.Company{
 				Name: "Herakles",
 				NIP:  "1234567890",
 			},
 		},
 	}
-	seedRefreshTokens := []refresh_token.RefreshToken{}
+	seedRefreshTokens := []models.RefreshToken{}
 	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusConflict
 	assert.NoError(t, err)
@@ -273,19 +274,19 @@ func TestRegisterCompanyEmailAlreadyExists(t *testing.T) {
 
 func TestRegisterCompanyUsernameAlreadyExists(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "unique@example.com",
 			Username: "taken_username",
 			Password: "PolskaGurom",
 			Selector: "C",
-			Company: &user.Company{
+			Company: &models.Company{
 				Name: "Herakles",
 				NIP:  "1234567890",
 			},
 		},
 	}
-	seedRefreshTokens := []refresh_token.RefreshToken{}
+	seedRefreshTokens := []models.RefreshToken{}
 	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusConflict
 	assert.NoError(t, err)
@@ -312,19 +313,19 @@ func TestRegisterCompanyUsernameAlreadyExists(t *testing.T) {
 
 func TestRegisterCompanyNipAlreadyExists(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "unique@examle.com",
 			Username: "unique_username",
 			Password: "PolskaGurom",
 			Selector: "C",
-			Company: &user.Company{
+			Company: &models.Company{
 				Name: "Herakles",
 				NIP:  "1234567890",
 			},
 		},
 	}
-	seedRefreshTokens := []refresh_token.RefreshToken{}
+	seedRefreshTokens := []models.RefreshToken{}
 	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusConflict
 	assert.NoError(t, err)
@@ -353,19 +354,19 @@ func TestLoginSuccess(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	hashedPassword, err := passwords.Hash("PolskaGurom")
 	assert.NoError(t, err)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herkules@gmail.com",
 			Username: "herkules",
 			Password: hashedPassword,
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedRefreshTokens := []refresh_token.RefreshToken{}
+	seedRefreshTokens := []models.RefreshToken{}
 	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusOK
 	assert.NoError(t, err)
@@ -396,19 +397,19 @@ func TestLoginInvalidLogin(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	hashedPassword, err := passwords.Hash("PolskaGurom")
 	assert.NoError(t, err)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herkules@gmail.com",
 			Username: "herkules",
 			Password: hashedPassword,
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedRefreshTokens := []refresh_token.RefreshToken{}
+	seedRefreshTokens := []models.RefreshToken{}
 	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusUnauthorized
 	assert.NoError(t, err)
@@ -433,19 +434,19 @@ func TestLoginInvalidPassword(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	hashedPassword, err := passwords.Hash("PolskaGurom")
 	assert.NoError(t, err)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herkules@gmail.com",
 			Username: "herkules",
 			Password: hashedPassword,
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedRefreshTokens := []refresh_token.RefreshToken{}
+	seedRefreshTokens := []models.RefreshToken{}
 	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusUnauthorized
 	assert.NoError(t, err)
@@ -468,8 +469,8 @@ func TestLoginInvalidPassword(t *testing.T) {
 
 func TestLoginInvalidBody(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{}
-	seedRefreshTokens := []refresh_token.RefreshToken{}
+	seedUsers := []models.User{}
+	seedRefreshTokens := []models.RefreshToken{}
 	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusBadRequest
 	assert.NoError(t, err)
@@ -494,19 +495,19 @@ func TestRefreshSuccess(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	hashedPassword, err := passwords.Hash("PolskaGurom")
 	assert.NoError(t, err)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herkules@gmail.com",
 			Username: "herkules",
 			Password: hashedPassword,
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedRefreshTokens := []refresh_token.RefreshToken{
+	seedRefreshTokens := []models.RefreshToken{
 		{
 			UserId:     1,
 			Token:      "valid_refresh_token",
@@ -535,8 +536,8 @@ func TestRefreshSuccess(t *testing.T) {
 
 func TestRefreshInvalidToken(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{}
-	seedRefreshTokens := []refresh_token.RefreshToken{}
+	seedUsers := []models.User{}
+	seedRefreshTokens := []models.RefreshToken{}
 	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusUnauthorized
 	assert.NoError(t, err)
@@ -558,8 +559,8 @@ func TestRefreshInvalidToken(t *testing.T) {
 
 func TestRefreshExpiredToken(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{}
-	seedRefreshTokens := []refresh_token.RefreshToken{
+	seedUsers := []models.User{}
+	seedRefreshTokens := []models.RefreshToken{
 		{
 			UserId:     1,
 			Token:      "expired_refresh_token",
@@ -587,8 +588,8 @@ func TestRefreshExpiredToken(t *testing.T) {
 
 func TestRefreshInvalidBody(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{}
-	seedRefreshTokens := []refresh_token.RefreshToken{}
+	seedUsers := []models.User{}
+	seedRefreshTokens := []models.RefreshToken{}
 	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusBadRequest
 	assert.NoError(t, err)
@@ -610,19 +611,19 @@ func TestRefreshInvalidBody(t *testing.T) {
 
 func TestLogoutSuccess(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herkules@gmail.com",
 			Username: "herkules",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedRefreshTokens := []refresh_token.RefreshToken{
+	seedRefreshTokens := []models.RefreshToken{
 		{
 			UserId:     1,
 			Token:      "valid_refresh_token",
@@ -650,8 +651,8 @@ func TestLogoutSuccess(t *testing.T) {
 
 func TestLogoutNoHeader(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{}
-	seedRefreshTokens := []refresh_token.RefreshToken{}
+	seedUsers := []models.User{}
+	seedRefreshTokens := []models.RefreshToken{}
 	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusUnauthorized
 	assert.NoError(t, err)
@@ -672,19 +673,19 @@ func TestLogoutNoHeader(t *testing.T) {
 
 func TestLogoutNonExistingToken(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herakles@gmail.com",
 			Username: "herkules",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedRefreshTokens := []refresh_token.RefreshToken{}
+	seedRefreshTokens := []models.RefreshToken{}
 	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusNotFound
 	assert.NoError(t, err)
@@ -710,19 +711,19 @@ func TestLogoutNonExistingToken(t *testing.T) {
 
 func TestLogoutEmptyToken(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herakles@gmail.com",
 			Username: "herkules",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedRefreshTokens := []refresh_token.RefreshToken{}
+	seedRefreshTokens := []models.RefreshToken{}
 	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusBadRequest
 	assert.NoError(t, err)
@@ -748,13 +749,13 @@ func TestLogoutEmptyToken(t *testing.T) {
 
 func TestLogoutAllDevicesSuccess(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herakles@gmail.com",
 			Username: "herkules",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
@@ -764,13 +765,13 @@ func TestLogoutAllDevicesSuccess(t *testing.T) {
 			Username: "herkules2",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedRefreshTokens := []refresh_token.RefreshToken{
+	seedRefreshTokens := []models.RefreshToken{
 		{
 			UserId:     1,
 			Token:      "valid_refresh_token",
@@ -817,8 +818,8 @@ func TestLogoutAllDevicesSuccess(t *testing.T) {
 
 func TestLogoutAllDevicesNoHeader(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{}
-	seedRefreshTokens := []refresh_token.RefreshToken{}
+	seedUsers := []models.User{}
+	seedRefreshTokens := []models.RefreshToken{}
 	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusUnauthorized
 	assert.NoError(t, err)
@@ -841,19 +842,19 @@ func TestLogoutAllDevicesNoHeader(t *testing.T) {
 
 func TestLogoutAllDevicesNonExistingToken(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herakles@gmail.com",
 			Username: "herkules",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedRefreshTokens := []refresh_token.RefreshToken{
+	seedRefreshTokens := []models.RefreshToken{
 		{
 			UserId:     1,
 			Token:      "valid_refresh_token",
@@ -892,19 +893,19 @@ func TestLogoutAllDevicesNonExistingToken(t *testing.T) {
 
 func TestLogoutAllDevicesEmptyToken(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herkules@gmail.com",
 			Username: "herkules",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedRefreshTokens := []refresh_token.RefreshToken{
+	seedRefreshTokens := []models.RefreshToken{
 		{
 			UserId:     1,
 			Token:      "valid_refresh_token",
@@ -943,19 +944,19 @@ func TestLogoutAllDevicesEmptyToken(t *testing.T) {
 
 func TestLogoutAllDevicesInvalidBody(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herakles@gmail.com",
 			Username: "herkules",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedRefreshTokens := []refresh_token.RefreshToken{}
+	seedRefreshTokens := []models.RefreshToken{}
 	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusBadRequest
 	assert.NoError(t, err)

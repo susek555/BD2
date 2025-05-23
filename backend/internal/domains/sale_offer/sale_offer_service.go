@@ -4,6 +4,7 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/bid"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/liked_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"github.com/susek555/BD2/car-dealer-api/pkg/mapping"
 	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
 )
@@ -46,7 +47,7 @@ func (s *SaleOfferService) GetFiltered(filter *OfferFilter) (*RetrieveOffersWith
 	if err != nil {
 		return nil, err
 	}
-	filter.Constraints.Manufacturers = mapping.MapSliceToDTOs(manufacturers, (*manufacturer.Manufacturer).MapToName)
+	filter.Constraints.Manufacturers = mapping.MapSliceToDTOs(manufacturers, manufacturer.MapToName)
 	offers, pagResponse, err := s.repo.GetFiltered(filter)
 	if err != nil {
 		return nil, err
@@ -63,7 +64,7 @@ func (s *SaleOfferService) GetByID(id uint, userID *uint) (*RetrieveDetailedSale
 	if err != nil {
 		return nil, err
 	}
-	offerDTO := offer.MapToDetailedDTO()
+	offerDTO := MapToDetailedDTO(offer)
 	s.fillUserFields(&offerDTO.UserContext, offer.ID, userID)
 	return offerDTO, nil
 }
@@ -91,7 +92,7 @@ func (s *SaleOfferService) LikeOffer(offerID, userID uint) error {
 	if offer.UserID == userID {
 		return ErrLikeOwnOffer
 	}
-	return s.likedOfferRepo.Create(&liked_offer.LikedOffer{OfferID: offerID, UserID: userID})
+	return s.likedOfferRepo.Create(&models.LikedOffer{OfferID: offerID, UserID: userID})
 }
 
 func (s *SaleOfferService) DislikeOffer(offerID, userID uint) error {
@@ -138,10 +139,10 @@ func (s *SaleOfferService) fillUserFields(userContext *UserContext, offerID uint
 	return nil
 }
 
-func (s *SaleOfferService) mapOfferSliceWithAdditionalFields(offers []SaleOffer, userID *uint) ([]RetrieveSaleOfferDTO, error) {
+func (s *SaleOfferService) mapOfferSliceWithAdditionalFields(offers []models.SaleOffer, userID *uint) ([]RetrieveSaleOfferDTO, error) {
 	offerDTOs := make([]RetrieveSaleOfferDTO, 0, len(offers))
 	for _, offer := range offers {
-		dto := offer.MapToDTO()
+		dto := MapToDTO(&offer)
 		if err := s.fillUserFields(&dto.UserContext, offer.ID, userID); err != nil {
 			return nil, err
 		}

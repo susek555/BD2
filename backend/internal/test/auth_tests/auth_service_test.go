@@ -3,6 +3,7 @@ package auth_tests
 import (
 	"context"
 	"errors"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"testing"
 	"time"
 
@@ -10,7 +11,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/refresh_token"
 	"github.com/susek555/BD2/car-dealer-api/internal/test/mocks"
 	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
 	"gorm.io/gorm"
@@ -34,12 +34,12 @@ func TestService_Register_Person(t *testing.T) {
 		ctx := context.Background()
 		uRepo := mocks.NewUserRepositoryInterface(t)
 		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
-		person := user.Person{Name: "John", Surname: "Doe"}
+		person := models.Person{Name: "John", Surname: "Doe"}
 
 		in := user.CreateUserDTO{Email: "john@example.com", Password: "secret", Username: "john", PersonName: &person.Name, PersonSurname: &person.Surname, Selector: "P"}
 
-		uRepo.On("GetByEmail", in.Email).Return(user.User{}, gorm.ErrRecordNotFound)
-		uRepo.On("GetByUsername", in.Username).Return(user.User{}, gorm.ErrRecordNotFound)
+		uRepo.On("GetByEmail", in.Email).Return(models.User{}, gorm.ErrRecordNotFound)
+		uRepo.On("GetByUsername", in.Username).Return(models.User{}, gorm.ErrRecordNotFound)
 		uRepo.On("Create", mock.Anything).Return(nil)
 
 		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
@@ -57,7 +57,7 @@ func TestService_Register_Person(t *testing.T) {
 		uRepo := mocks.NewUserRepositoryInterface(t)
 		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
 
-		existing := user.User{ID: 1, Email: "marta@example.com"}
+		existing := models.User{ID: 1, Email: "marta@example.com"}
 		uRepo.On("GetByEmail", existing.Email).Return(existing, nil)
 		uRepo.On("GetByUsername", existing.Username).Return(existing, nil)
 
@@ -75,7 +75,7 @@ func TestService_Register_Company(t *testing.T) {
 		ctx := context.Background()
 		uRepo := mocks.NewUserRepositoryInterface(t)
 		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
-		company := user.Company{Name: "Awesome Name", NIP: "123233234234"}
+		company := models.Company{Name: "Awesome Name", NIP: "123233234234"}
 
 		in := user.CreateUserDTO{
 			Email:       "john@example.com",
@@ -86,9 +86,9 @@ func TestService_Register_Company(t *testing.T) {
 			Selector:    "C",
 		}
 
-		uRepo.On("GetByEmail", in.Email).Return(user.User{}, errors.New("not found"))
-		uRepo.On("GetByUsername", in.Username).Return(user.User{}, errors.New("not found"))
-		uRepo.On("GetByCompanyNip", *in.CompanyNIP).Return(user.User{}, errors.New("not found"))
+		uRepo.On("GetByEmail", in.Email).Return(models.User{}, errors.New("not found"))
+		uRepo.On("GetByUsername", in.Username).Return(models.User{}, errors.New("not found"))
+		uRepo.On("GetByCompanyNip", *in.CompanyNIP).Return(models.User{}, errors.New("not found"))
 		uRepo.On("Create", mock.Anything).Return(nil)
 
 		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
@@ -106,7 +106,7 @@ func TestService_Register_Company(t *testing.T) {
 		uRepo := mocks.NewUserRepositoryInterface(t)
 		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
 
-		existing := user.User{ID: 1, Email: "john@example.com"}
+		existing := models.User{ID: 1, Email: "john@example.com"}
 		uRepo.On("GetByEmail", existing.Email).Return(existing, nil)
 		uRepo.On("GetByUsername", existing.Username).Return(existing, nil)
 
@@ -127,7 +127,7 @@ func TestService_Login(t *testing.T) {
 		uRepo := mocks.NewUserRepositoryInterface(t)
 		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
 
-		existing := user.User{ID: 1, Email: validIn.Login, Password: hashPass(t, validIn.Password)}
+		existing := models.User{ID: 1, Email: validIn.Login, Password: hashPass(t, validIn.Password)}
 		uRepo.EXPECT().GetByEmail(validIn.Login).Return(existing, nil)
 
 		rtSvc.EXPECT().Create(mock.AnythingOfType("*refresh_token.RefreshToken")).Return(nil)
@@ -151,7 +151,7 @@ func TestService_Login(t *testing.T) {
 
 		uRepo.EXPECT().
 			GetByEmail(validIn.Login).
-			Return(user.User{}, gorm.ErrRecordNotFound)
+			Return(models.User{}, gorm.ErrRecordNotFound)
 
 		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
 
@@ -163,7 +163,7 @@ func TestService_Login(t *testing.T) {
 		uRepo := mocks.NewUserRepositoryInterface(t)
 		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
 
-		badPassUser := user.User{ID: 2, Email: validIn.Login, Password: hashPass(t, "invalidPass")}
+		badPassUser := models.User{ID: 2, Email: validIn.Login, Password: hashPass(t, "invalidPass")}
 		uRepo.EXPECT().GetByEmail(validIn.Login).Return(badPassUser, nil)
 
 		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
@@ -176,7 +176,7 @@ func TestService_Login(t *testing.T) {
 		uRepo := mocks.NewUserRepositoryInterface(t)
 		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
 
-		existing := user.User{ID: 3, Email: validIn.Login, Password: hashPass(t, validIn.Password)}
+		existing := models.User{ID: 3, Email: validIn.Login, Password: hashPass(t, validIn.Password)}
 		uRepo.EXPECT().GetByEmail(validIn.Login).Return(existing, nil)
 
 		rtSvc.
@@ -195,12 +195,12 @@ func TestService_Refresh(t *testing.T) {
 	ctx := context.Background()
 	oldToken := "old_refresh"
 
-	baseRT := refresh_token.RefreshToken{
+	baseRT := models.RefreshToken{
 		ID:         101,
 		Token:      oldToken,
 		UserId:     1,
 		ExpiryDate: time.Now().Add(24 * time.Hour),
-		User:       user.User{ID: 1, Email: "john@example.com"},
+		User:       models.User{ID: 1, Email: "john@example.com"},
 	}
 
 	t.Run("happy‑path – returns new access", func(t *testing.T) {
@@ -255,7 +255,7 @@ func TestService_Refresh(t *testing.T) {
 func TestService_Logout(t *testing.T) {
 	ctx := context.Background()
 	userID := uint(8)
-	rt := refresh_token.RefreshToken{ID: 42, Token: "r1"}
+	rt := models.RefreshToken{ID: 42, Token: "r1"}
 
 	t.Run("allDevices=true – deleteByUserID", func(t *testing.T) {
 		uRepo := mocks.NewUserRepositoryInterface(t)

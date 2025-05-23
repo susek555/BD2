@@ -1,6 +1,8 @@
 package model
 
-import "github.com/susek555/BD2/car-dealer-api/pkg/mapping"
+import (
+	"github.com/susek555/BD2/car-dealer-api/pkg/mapping"
+)
 
 type ModelServiceInterace interface {
 	GetByManufacturerID(id uint) ([]RetrieveModelDTO, error)
@@ -20,7 +22,7 @@ func (s *ModelService) GetByManufacturerID(id uint) ([]RetrieveModelDTO, error) 
 	if err != nil {
 		return nil, err
 	}
-	return mapping.MapSliceToDTOs(models, (*Model).MapToDTO), nil
+	return mapping.MapSliceToDTOs(models, MapToDTO), nil
 }
 
 func (s *ModelService) GetByManufacturerName(name string) ([]RetrieveModelDTO, error) {
@@ -28,5 +30,5 @@ func (s *ModelService) GetByManufacturerName(name string) ([]RetrieveModelDTO, e
 	if err != nil {
 		return nil, err
 	}
-	return mapping.MapSliceToDTOs(models, (*Model).MapToDTO), nil
+	return mapping.MapSliceToDTOs(models, MapToDTO), nil
 }

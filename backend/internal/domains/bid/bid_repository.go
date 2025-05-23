@@ -2,6 +2,7 @@ package bid
 
 import (
 	"errors"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -9,13 +10,13 @@ import (
 
 //go:generate mockery --name=BidRepositoryInterface --output=../../test/mocks --case=snake --with-expecter
 type BidRepositoryInterface interface {
-	Create(bid *Bid) error
-	GetById(id uint) (*Bid, error)
-	GetByBidderId(bidderID uint) ([]Bid, error)
-	GetAll() ([]Bid, error)
-	GetByAuctionId(auctionID uint) ([]Bid, error)
-	GetHighestBid(auctionID uint) (*Bid, error)
-	GetHighestBidByUserId(auctionID, userID uint) (*Bid, error)
+	Create(bid *models.Bid) error
+	GetById(id uint) (*models.Bid, error)
+	GetByBidderId(bidderID uint) ([]models.Bid, error)
+	GetAll() ([]models.Bid, error)
+	GetByAuctionId(auctionID uint) ([]models.Bid, error)
+	GetHighestBid(auctionID uint) (*models.Bid, error)
+	GetHighestBidByUserId(auctionID, userID uint) (*models.Bid, error)
 }
 
 type BidRepository struct {
@@ -32,9 +33,9 @@ func NewBidRepository(db *gorm.DB) BidRepositoryInterface {
 	}
 }
 
-func (b *BidRepository) Create(bid *Bid) error {
+func (b *BidRepository) Create(bid *models.Bid) error {
 	return b.DB.Transaction(func(tx *gorm.DB) error {
-		var highest Bid
+		var highest models.Bid
 
 		err := tx.
 			Clauses(clause.Locking{Strength: "UPDATE"}).
@@ -49,13 +50,24 @@ func (b *BidRepository) Create(bid *Bid) error {
 			return ErrBidTooLow
 		}
 
-		return tx.Create(bid).Error
+		err = tx.Create(bid).Error
+		if err != nil {
+			return err
+		}
+		if err := tx.
+			Preload("Auction").
+			Preload("Auction.Offer.Car.Model.Manufacturer").
+			Preload("Bidder").
+			First(bid, bid.ID).Error; err != nil {
+			return err
+		}
+		return nil
 	})
 }
 
-func (b *BidRepository) GetAll() ([]Bid, error) {
+func (b *BidRepository) GetAll() ([]models.Bid, error) {
 	db := b.DB
-	var bids []Bid
+	var bids []models.Bid
 	err := db.Find(&bids).Error
 	if err != nil {
 		return nil, err
@@ -63,36 +75,36 @@ func (b *BidRepository) GetAll() ([]Bid, error) {
 	return bids, nil
 }
 
-func (b *BidRepository) GetById(id uint) (*Bid, error) {
+func (b *BidRepository) GetById(id uint) (*models.Bid, error) {
 	db := b.DB
-	var bid Bid
+	var bid models.Bid
 	if err := db.First(&bid, id).Error; err != nil {
 		return nil, err
 	}
 	return &bid, nil
 }
 
-func (b *BidRepository) GetByBidderId(bidderID uint) ([]Bid, error) {
+func (b *BidRepository) GetByBidderId(bidderID uint) ([]models.Bid, error) {
 	db := b.DB
-	var bids []Bid
+	var bids []models.Bid
 	if err := db.Where("bidder_id = ?", bidderID).Find(&bids).Error; err != nil {
 		return nil, err
 	}
 	return bids, nil
 }
 
-func (b *BidRepository) GetByAuctionId(auctionID uint) ([]Bid, error) {
+func (b *BidRepository) GetByAuctionId(auctionID uint) ([]models.Bid, error) {
 	db := b.DB
-	var bids []Bid
+	var bids []models.Bid
 	if err := db.Where("auction_id = ?", auctionID).Find(&bids).Error; err != nil {
 		return nil, err
 	}
 	return bids, nil
 }
 
-func (b *BidRepository) GetHighestBid(auctionID uint) (*Bid, error) {
+func (b *BidRepository) GetHighestBid(auctionID uint) (*models.Bid, error) {
 	db := b.DB
-	var bid Bid
+	var bid models.Bid
 	err := db.
 		Where("auction_id = ?", auctionID).
 		Order("amount desc").
@@ -103,9 +115,9 @@ func (b *BidRepository) GetHighestBid(auctionID uint) (*Bid, error) {
 	return &bid, nil
 }
 
-func (b *BidRepository) GetHighestBidByUserId(auctionID, userID uint) (*Bid, error) {
+func (b *BidRepository) GetHighestBidByUserId(auctionID, userID uint) (*models.Bid, error) {
 	db := b.DB
-	var bid Bid
+	var bid models.Bid
 	err := db.
 		Where("auction_id = ?", auctionID).
 		Where("bidder_id = ?", userID).

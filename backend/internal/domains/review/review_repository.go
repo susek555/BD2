@@ -2,6 +2,7 @@ package review
 
 import (
 	"errors"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"math"
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/generic"
@@ -11,24 +12,24 @@ import (
 
 //go:generate mockery --name=ReviewRepositoryInterface --output=../../test/mocks --case=snake --with-expecter
 type ReviewRepositoryInterface interface {
-	generic.CRUDRepository[Review]
-	GetByReviewerId(reviewerId uint) ([]Review, error)
-	GetByRevieweeId(reviewedId uint) ([]Review, error)
-	GetByReviewerIdAndRevieweeId(reviewerId uint, reviewedId uint) (*Review, error)
-	GetFiltered(filter *ReviewFilter) ([]Review, *pagination.PaginationResponse, error)
+	generic.CRUDRepository[models.Review]
+	GetByReviewerId(reviewerId uint) ([]models.Review, error)
+	GetByRevieweeId(reviewedId uint) ([]models.Review, error)
+	GetByReviewerIdAndRevieweeId(reviewerId uint, reviewedId uint) (*models.Review, error)
+	GetFiltered(filter *ReviewFilter) ([]models.Review, *pagination.PaginationResponse, error)
 	GetAverageRatingByRevieweeId(revieweeId uint) (float64, error)
 	GetFrequencyOfRatingByRevieweeId(revieweeId uint) (map[int]int, error)
 }
 
 type ReviewRepository struct {
-	repository *generic.GormRepository[Review]
+	repository *generic.GormRepository[models.Review]
 }
 
 func NewReviewRepository(dbHandle *gorm.DB) ReviewRepositoryInterface {
-	return &ReviewRepository{repository: generic.GetGormRepository[Review](dbHandle)}
+	return &ReviewRepository{repository: generic.GetGormRepository[models.Review](dbHandle)}
 }
 
-func (repo *ReviewRepository) Create(review *Review) error {
+func (repo *ReviewRepository) Create(review *models.Review) error {
 	db := repo.repository.DB
 
 	if err := db.Create(review).Error; err != nil {
@@ -41,9 +42,9 @@ func (repo *ReviewRepository) Create(review *Review) error {
 		Error
 }
 
-func (repo *ReviewRepository) GetAll() ([]Review, error) {
+func (repo *ReviewRepository) GetAll() ([]models.Review, error) {
 	db := repo.repository.DB
-	var reviews []Review
+	var reviews []models.Review
 	err := db.
 		Preload("Reviewer").
 		Preload("Reviewee").
@@ -55,9 +56,9 @@ func (repo *ReviewRepository) GetAll() ([]Review, error) {
 	return reviews, nil
 }
 
-func (repo *ReviewRepository) GetById(id uint) (*Review, error) {
+func (repo *ReviewRepository) GetById(id uint) (*models.Review, error) {
 	db := repo.repository.DB
-	var review Review
+	var review models.Review
 	err := db.
 		Preload("Reviewer").
 		Preload("Reviewee").
@@ -69,7 +70,7 @@ func (repo *ReviewRepository) GetById(id uint) (*Review, error) {
 	return &review, nil
 }
 
-func (repo *ReviewRepository) GetFiltered(filter *ReviewFilter) ([]Review, *pagination.PaginationResponse, error) {
+func (repo *ReviewRepository) GetFiltered(filter *ReviewFilter) ([]models.Review, *pagination.PaginationResponse, error) {
 	query := repo.buildBaseQuery().
 		Joins("JOIN users as reviewer ON reviews.reviewer_id = reviewer.id").
 		Joins("JOIN users as reviewee ON reviews.reviewee_id = reviewee.id")
@@ -77,14 +78,14 @@ func (repo *ReviewRepository) GetFiltered(filter *ReviewFilter) ([]Review, *pagi
 	if err != nil {
 		return nil, nil, err
 	}
-	reviews, paginationResponse, err := pagination.PaginateResults[Review](&filter.Pagination, query)
+	reviews, paginationResponse, err := pagination.PaginateResults[models.Review](&filter.Pagination, query)
 	if err != nil {
 		return nil, nil, err
 	}
 	return reviews, paginationResponse, nil
 }
 
-func (repo *ReviewRepository) Update(review *Review) error {
+func (repo *ReviewRepository) Update(review *models.Review) error {
 	db := repo.repository.DB
 	err := db.Save(review).Error
 	if err != nil {
@@ -105,8 +106,8 @@ func (repo *ReviewRepository) Delete(id uint) error {
 	return repo.repository.Delete(id)
 }
 
-func (repo *ReviewRepository) GetByReviewerId(reviewerId uint) ([]Review, error) {
-	var reviews []Review
+func (repo *ReviewRepository) GetByReviewerId(reviewerId uint) ([]models.Review, error) {
+	var reviews []models.Review
 	err := repo.repository.
 		DB.
 		Where("reviewer_id = ?", reviewerId).
@@ -117,8 +118,8 @@ func (repo *ReviewRepository) GetByReviewerId(reviewerId uint) ([]Review, error)
 	return reviews, err
 }
 
-func (repo *ReviewRepository) GetByRevieweeId(reviewedId uint) ([]Review, error) {
-	var reviews []Review
+func (repo *ReviewRepository) GetByRevieweeId(reviewedId uint) ([]models.Review, error) {
+	var reviews []models.Review
 	err := repo.repository.
 		DB.
 		Where("reviewee_id = ?", reviewedId).
@@ -129,8 +130,8 @@ func (repo *ReviewRepository) GetByRevieweeId(reviewedId uint) ([]Review, error)
 	return reviews, err
 }
 
-func (repo *ReviewRepository) GetByReviewerIdAndRevieweeId(reviewerId uint, reviewedId uint) (*Review, error) {
-	var review Review
+func (repo *ReviewRepository) GetByReviewerIdAndRevieweeId(reviewerId uint, reviewedId uint) (*models.Review, error) {
+	var review models.Review
 	err := repo.repository.
 		DB.
 		Where("reviewer_id = ?", reviewerId).
@@ -146,7 +147,7 @@ func (repo *ReviewRepository) GetAverageRatingByRevieweeId(revieweeId uint) (flo
 	var average float64
 	err := repo.repository.
 		DB.
-		Model(&Review{}).
+		Model(&models.Review{}).
 		Select("AVG(rating)").
 		Where("reviewee_id = ?", revieweeId).
 		Scan(&average).
@@ -200,7 +201,7 @@ func (repo *ReviewRepository) getFrequencies(revieweeId uint) ([]RatingFrequency
 	var frequencies []RatingFrequency
 	err := repo.repository.
 		DB.
-		Model(&Review{}).
+		Model(&models.Review{}).
 		Select("rating, COUNT(*) AS frequency").
 		Where("reviewee_id = ?", revieweeId).
 		Group("rating").
@@ -216,7 +217,7 @@ func (repo *ReviewRepository) getTotalReviews(revieweeId uint) (int64, error) {
 	var total int64
 	err := repo.repository.
 		DB.
-		Model(&Review{}).
+		Model(&models.Review{}).
 		Where("reviewee_id = ?", revieweeId).
 		Count(&total).
 		Error

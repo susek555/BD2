@@ -2,6 +2,7 @@ package review_tests
 
 import (
 	"encoding/json"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -23,17 +24,17 @@ import (
 // Setup
 // ------
 
-func setupDB(users []user.User, reviews []review.Review) (review.ReviewRepositoryInterface, user.UserRepositoryInterface, error) {
+func setupDB(users []models.User, reviews []models.Review) (review.ReviewRepositoryInterface, user.UserRepositoryInterface, error) {
 	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
 	if err != nil {
 		return nil, nil, err
 	}
 
 	err = db.AutoMigrate(
-		&user.User{},
-		&user.Person{},
-		&user.Company{},
-		&review.Review{},
+		&models.User{},
+		&models.Person{},
+		&models.Company{},
+		&models.Review{},
 	)
 	if err != nil {
 		return nil, nil, err
@@ -55,7 +56,7 @@ func setupDB(users []user.User, reviews []review.Review) (review.ReviewRepositor
 	return reviewRepo, userRepo, nil
 }
 
-func newTestServer(seedUsers []user.User, seedReviews []review.Review) (*gin.Engine, review.ReviewServiceInterface, user.UserServiceInterface, error) {
+func newTestServer(seedUsers []models.User, seedReviews []models.Review) (*gin.Engine, review.ReviewServiceInterface, user.UserServiceInterface, error) {
 	reviewRepo, userRepo, err := setupDB(seedUsers, seedReviews)
 	if err != nil {
 		return nil, nil, nil, err
@@ -63,7 +64,7 @@ func newTestServer(seedUsers []user.User, seedReviews []review.Review) (*gin.Eng
 	verifier := jwt.NewJWTVerifier("secret")
 	reviewService := review.NewReviewService(reviewRepo)
 	userService := user.NewUserService(userRepo)
-	reviewHandler := review.NewReviewHandler(reviewService)
+	reviewHandler := review.NewHandler(reviewService)
 
 	router := gin.Default()
 	reviewRoutes := router.Group("/review")
@@ -86,8 +87,8 @@ func getValidToken(userId uint, email string) (string, error) {
 
 func TestGetAllReviewsNoReviews(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{}
-	seedReviews := []review.Review{}
+	seedUsers := []models.User{}
+	seedReviews := []models.Review{}
 	server, _, _, err := newTestServer(seedUsers, seedReviews)
 	assert.NoError(t, err)
 	wantStatus := http.StatusOK
@@ -104,13 +105,13 @@ func TestGetAllReviewsNoReviews(t *testing.T) {
 
 func TestGetAllReviewsOneReview(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "unique@example.com",
 			Username: "taken_username",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
@@ -120,13 +121,13 @@ func TestGetAllReviewsOneReview(t *testing.T) {
 			Username: "taken_username2",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedReviews := []review.Review{
+	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
 			RevieweeId:  2,
@@ -155,13 +156,13 @@ func TestGetAllReviewsOneReview(t *testing.T) {
 
 func TestGetAllReviewsMultipleReviews(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herakles@gmail.com",
 			Username: "herakles",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
@@ -171,7 +172,7 @@ func TestGetAllReviewsMultipleReviews(t *testing.T) {
 			Username: "herakles2",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
@@ -181,13 +182,13 @@ func TestGetAllReviewsMultipleReviews(t *testing.T) {
 			Username: "herakles3",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedReviews := []review.Review{
+	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
 			RevieweeId:  2,
@@ -242,13 +243,13 @@ func TestGetAllReviewsMultipleReviews(t *testing.T) {
 
 func TestGetReviewByIdNotFound(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herakles1@gmail.com",
 			Username: "herakles1",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
@@ -258,13 +259,13 @@ func TestGetReviewByIdNotFound(t *testing.T) {
 			Username: "herakles2",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedReviews := []review.Review{
+	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
 			RevieweeId:  2,
@@ -288,13 +289,13 @@ func TestGetReviewByIdNotFound(t *testing.T) {
 
 func TestGetReviewById(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herakles@gmail.com",
 			Username: "herakles",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
@@ -304,13 +305,13 @@ func TestGetReviewById(t *testing.T) {
 			Username: "herakles2",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedReviews := []review.Review{
+	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
 			RevieweeId:  2,
@@ -338,13 +339,13 @@ func TestGetReviewById(t *testing.T) {
 
 func TestCreateReviewNoAuthHeader(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herakles@gmail.com",
 			Username: "herakles",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
@@ -354,13 +355,13 @@ func TestCreateReviewNoAuthHeader(t *testing.T) {
 			Username: "herakles2",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedReviews := []review.Review{}
+	seedReviews := []models.Review{}
 	server, _, _, err := newTestServer(seedUsers, seedReviews)
 	assert.NoError(t, err)
 	wantStatus := http.StatusUnauthorized
@@ -377,13 +378,13 @@ func TestCreateReviewNoAuthHeader(t *testing.T) {
 
 func TestCreateReviewInvalidToken(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herakles@gmail.com",
 			Username: "herakles",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
@@ -393,13 +394,13 @@ func TestCreateReviewInvalidToken(t *testing.T) {
 			Username: "herakles2",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedReviews := []review.Review{}
+	seedReviews := []models.Review{}
 	server, _, _, err := newTestServer(seedUsers, seedReviews)
 	assert.NoError(t, err)
 	wantStatus := http.StatusForbidden
@@ -417,13 +418,13 @@ func TestCreateReviewInvalidToken(t *testing.T) {
 
 func TestCreateReviewSuccess(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herakles@gmail.com",
 			Username: "herakles",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
@@ -433,13 +434,13 @@ func TestCreateReviewSuccess(t *testing.T) {
 			Username: "herakles2",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedReviews := []review.Review{}
+	seedReviews := []models.Review{}
 	server, _, _, err := newTestServer(seedUsers, seedReviews)
 	assert.NoError(t, err)
 	wantStatus := http.StatusCreated
@@ -470,13 +471,13 @@ func TestCreateReviewSuccess(t *testing.T) {
 
 func TestCreateReviewInvalidRating(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herakles@gmail.com",
 			Username: "herakles",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
@@ -486,13 +487,13 @@ func TestCreateReviewInvalidRating(t *testing.T) {
 			Username: "herakles2",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedReviews := []review.Review{}
+	seedReviews := []models.Review{}
 	server, _, _, err := newTestServer(seedUsers, seedReviews)
 	assert.NoError(t, err)
 	wantStatus := http.StatusBadRequest
@@ -519,19 +520,19 @@ func TestCreateReviewInvalidRating(t *testing.T) {
 
 func TestCreateReviewSelfReview(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herakles@gmail.com",
 			Username: "herakles",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedReviews := []review.Review{}
+	seedReviews := []models.Review{}
 	server, _, _, err := newTestServer(seedUsers, seedReviews)
 	assert.NoError(t, err)
 	wantStatus := http.StatusBadRequest
@@ -558,13 +559,13 @@ func TestCreateReviewSelfReview(t *testing.T) {
 
 func TestCreateReviewReviewAlreadyExists(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herakles@gmail.com",
 			Username: "herakles",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
@@ -574,13 +575,13 @@ func TestCreateReviewReviewAlreadyExists(t *testing.T) {
 			Username: "herakles2",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedReviews := []review.Review{
+	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
 			RevieweeId:  2,
@@ -614,13 +615,13 @@ func TestCreateReviewReviewAlreadyExists(t *testing.T) {
 
 func TestUpdateReviewNoAuthHeader(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herakles@gmail.com",
 			Username: "herakles",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
@@ -630,13 +631,13 @@ func TestUpdateReviewNoAuthHeader(t *testing.T) {
 			Username: "herakles2",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedReviews := []review.Review{
+	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
 			RevieweeId:  2,
@@ -660,13 +661,13 @@ func TestUpdateReviewNoAuthHeader(t *testing.T) {
 
 func TestUpdateReviewInvalidToken(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herakles@gmail.com",
 			Username: "herakles",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
@@ -676,13 +677,13 @@ func TestUpdateReviewInvalidToken(t *testing.T) {
 			Username: "herakles2",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedReviews := []review.Review{
+	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
 			RevieweeId:  2,
@@ -707,13 +708,13 @@ func TestUpdateReviewInvalidToken(t *testing.T) {
 
 func TestUpdateReviewSuccess(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herakles@gmail.com",
 			Username: "herakles",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
@@ -723,13 +724,13 @@ func TestUpdateReviewSuccess(t *testing.T) {
 			Username: "herakles2",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedReviews := []review.Review{
+	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
 			RevieweeId:  2,
@@ -769,13 +770,13 @@ func TestUpdateReviewSuccess(t *testing.T) {
 
 func TestUpdateReviewNotFound(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herakles@gmail.com",
 			Username: "herakles",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
@@ -785,13 +786,13 @@ func TestUpdateReviewNotFound(t *testing.T) {
 			Username: "herakles2",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedReviews := []review.Review{
+	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
 			RevieweeId:  2,
@@ -825,13 +826,13 @@ func TestUpdateReviewNotFound(t *testing.T) {
 
 func TestUpdateReviewInvalidRating(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herakles@gmail.com",
 			Username: "herakles",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
@@ -841,13 +842,13 @@ func TestUpdateReviewInvalidRating(t *testing.T) {
 			Username: "herakles2",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedReviews := []review.Review{
+	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
 			RevieweeId:  2,
@@ -881,13 +882,13 @@ func TestUpdateReviewInvalidRating(t *testing.T) {
 
 func TestUpdateNotYourReview(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herakles@gmail.com",
 			Username: "herakles",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
@@ -897,7 +898,7 @@ func TestUpdateNotYourReview(t *testing.T) {
 			Username: "herakles2",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
@@ -907,13 +908,13 @@ func TestUpdateNotYourReview(t *testing.T) {
 			Username: "herakles3",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedReviews := []review.Review{
+	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
 			RevieweeId:  2,
@@ -951,13 +952,13 @@ func TestUpdateNotYourReview(t *testing.T) {
 
 func TestDeleteReviewNoAuthHeader(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herakles@gmail.com",
 			Username: "herakles",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
@@ -967,13 +968,13 @@ func TestDeleteReviewNoAuthHeader(t *testing.T) {
 			Username: "herakles2",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedReviews := []review.Review{
+	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
 			RevieweeId:  2,
@@ -997,13 +998,13 @@ func TestDeleteReviewNoAuthHeader(t *testing.T) {
 
 func TestDeleteReviewInvalidToken(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herkules@gmail.com",
 			Username: "herkules",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herkules",
 				Surname: "Wielki",
 			},
@@ -1013,13 +1014,13 @@ func TestDeleteReviewInvalidToken(t *testing.T) {
 			Username: "herakles2",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedReviews := []review.Review{
+	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
 			RevieweeId:  2,
@@ -1044,13 +1045,13 @@ func TestDeleteReviewInvalidToken(t *testing.T) {
 
 func TestDeleteReviewSuccess(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herakles@gmail.com",
 			Username: "herakles",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
@@ -1060,13 +1061,13 @@ func TestDeleteReviewSuccess(t *testing.T) {
 			Username: "herakles2",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedReviews := []review.Review{
+	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
 			RevieweeId:  2,
@@ -1099,13 +1100,13 @@ func TestDeleteReviewSuccess(t *testing.T) {
 
 func TestDeleteReviewNotFound(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herakles@gmail.com",
 			Username: "herakles",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
@@ -1115,13 +1116,13 @@ func TestDeleteReviewNotFound(t *testing.T) {
 			Username: "herakles2",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedReviews := []review.Review{
+	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
 			RevieweeId:  2,
@@ -1148,13 +1149,13 @@ func TestDeleteReviewNotFound(t *testing.T) {
 
 func TestDeleteNotYourReview(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herakles@gmail.com",
 			Username: "herakles",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
@@ -1164,13 +1165,13 @@ func TestDeleteNotYourReview(t *testing.T) {
 			Username: "herakles2",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedReviews := []review.Review{
+	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
 			RevieweeId:  2,
@@ -1201,13 +1202,13 @@ func TestDeleteNotYourReview(t *testing.T) {
 
 func TestGetReviewsByReviewerIdNoReviews(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herakles@gmail.com",
 			Username: "herakles",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
@@ -1217,13 +1218,13 @@ func TestGetReviewsByReviewerIdNoReviews(t *testing.T) {
 			Username: "herakles2",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedReviews := []review.Review{}
+	seedReviews := []models.Review{}
 	server, _, _, err := newTestServer(seedUsers, seedReviews)
 	assert.NoError(t, err)
 	wantStatus := http.StatusOK
@@ -1247,13 +1248,13 @@ func TestGetReviewsByReviewerIdNoReviews(t *testing.T) {
 
 func TestGetReviewsByReviewerId(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herkules@gmail.com",
 			Username: "herkules",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herkules",
 				Surname: "Wielki",
 			},
@@ -1263,13 +1264,13 @@ func TestGetReviewsByReviewerId(t *testing.T) {
 			Username: "herkules2",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herkules",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedReviews := []review.Review{
+	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
 			RevieweeId:  2,
@@ -1310,13 +1311,13 @@ func TestGetReviewsByReviewerId(t *testing.T) {
 
 func TestGetReviewsByReviewerIdNotFound(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herkules@gmail.com",
 			Username: "herkules",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herkules",
 				Surname: "Wielki",
 			},
@@ -1326,13 +1327,13 @@ func TestGetReviewsByReviewerIdNotFound(t *testing.T) {
 			Username: "herkules2",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herkules",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedReviews := []review.Review{
+	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
 			RevieweeId:  2,
@@ -1369,13 +1370,13 @@ func TestGetReviewsByReviewerIdNotFound(t *testing.T) {
 
 func TestGetReviewsByRevieweeIdNoReviews(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herkules@gmail.com",
 			Username: "herkules",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herkules",
 				Surname: "Wielki",
 			},
@@ -1385,13 +1386,13 @@ func TestGetReviewsByRevieweeIdNoReviews(t *testing.T) {
 			Username: "herkules2",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herkules",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedReviews := []review.Review{}
+	seedReviews := []models.Review{}
 	server, _, _, err := newTestServer(seedUsers, seedReviews)
 	assert.NoError(t, err)
 	wantStatus := http.StatusOK
@@ -1415,13 +1416,13 @@ func TestGetReviewsByRevieweeIdNoReviews(t *testing.T) {
 
 func TestGetReviewsByRevieweeId(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herkules@gmail.com",
 			Username: "herkules",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herkules",
 				Surname: "Wielki",
 			},
@@ -1431,13 +1432,13 @@ func TestGetReviewsByRevieweeId(t *testing.T) {
 			Username: "herkules2",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herkules",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedReviews := []review.Review{
+	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
 			RevieweeId:  2,
@@ -1478,13 +1479,13 @@ func TestGetReviewsByRevieweeId(t *testing.T) {
 
 func TestGetReviewsByRevieweeIdNotFound(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herkules@gmail.com",
 			Username: "herkules",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herkules",
 				Surname: "Wielki",
 			},
@@ -1494,13 +1495,13 @@ func TestGetReviewsByRevieweeIdNotFound(t *testing.T) {
 			Username: "herkules2",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herkules",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedReviews := []review.Review{
+	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
 			RevieweeId:  2,
@@ -1537,13 +1538,13 @@ func TestGetReviewsByRevieweeIdNotFound(t *testing.T) {
 
 func TestGetReviewsByReviewerIdAndRevieweeIdNoReviews(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herkules@gmail.com",
 			Username: "herkules",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herkules",
 				Surname: "Wielki",
 			},
@@ -1553,13 +1554,13 @@ func TestGetReviewsByReviewerIdAndRevieweeIdNoReviews(t *testing.T) {
 			Username: "herkules2",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herkules",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedReviews := []review.Review{}
+	seedReviews := []models.Review{}
 	server, _, _, err := newTestServer(seedUsers, seedReviews)
 	assert.NoError(t, err)
 	wantStatus := http.StatusNotFound
@@ -1572,13 +1573,13 @@ func TestGetReviewsByReviewerIdAndRevieweeIdNoReviews(t *testing.T) {
 
 func TestGetReviewsByReviewerIdAndRevieweeId(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []user.User{
+	seedUsers := []models.User{
 		{
 			Email:    "herkules@gmail.com",
 			Username: "herkules",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herkules",
 				Surname: "Wielki",
 			},
@@ -1588,13 +1589,13 @@ func TestGetReviewsByReviewerIdAndRevieweeId(t *testing.T) {
 			Username: "herkules2",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herkules",
 				Surname: "Wielki",
 			},
 		},
 	}
-	seedReviews := []review.Review{
+	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
 			RevieweeId:  2,

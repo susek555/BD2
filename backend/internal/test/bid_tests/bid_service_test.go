@@ -5,6 +5,7 @@ package bid_test
 
 import (
 	"errors"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"sync"
 	"sync/atomic"
 	"testing"
@@ -24,7 +25,7 @@ func TestBidService_Create_OK(t *testing.T) {
 	repo := new(mocks.BidRepositoryInterface)
 	svc := bid.NewBidService(repo)
 
-	b := bid.Bid{AuctionID: 1}
+	b := models.Bid{AuctionID: 1}
 
 	repo.On("Create", &b).Return(nil)
 
@@ -38,7 +39,7 @@ func TestBidService_Create_Error(t *testing.T) {
 	repo := new(mocks.BidRepositoryInterface)
 	svc := bid.NewBidService(repo)
 
-	b := bid.Bid{AuctionID: 1}
+	b := models.Bid{AuctionID: 1}
 	expectedErr := errors.New("insert failed")
 
 	repo.On("Create", &b).Return(expectedErr)
@@ -72,7 +73,7 @@ func TestBidService_Create_SerializesPerAuction(t *testing.T) {
 	for i := 0; i < calls; i++ {
 		go func() {
 			defer wg.Done()
-			_ = svc.Create(&bid.Bid{AuctionID: aucID})
+			_ = svc.Create(&models.Bid{AuctionID: aucID})
 		}()
 	}
 
@@ -84,7 +85,7 @@ func TestBidService_GetHighestBid_OK(t *testing.T) {
 	repo := new(mocks.BidRepositoryInterface)
 	svc := bid.NewBidService(repo)
 
-	expected := &bid.Bid{AuctionID: 10, Amount: 1000}
+	expected := &models.Bid{AuctionID: 10, Amount: 1000}
 
 	repo.On("GetHighestBid", uint(10)).Return(expected, nil)
 

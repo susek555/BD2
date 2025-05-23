@@ -3,6 +3,8 @@ package scheduler
 import (
 	"container/heap"
 	"context"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 	"log"
 	"strconv"
 	"sync"
@@ -21,6 +23,7 @@ type Scheduler struct {
 	notificationService notification.NotificationServiceInterface
 	redisClient         *redis.Client
 	addCh               chan *Item
+	saleOfferRepository sale_offer.SaleOfferRepositoryInterface
 }
 
 type SchedulerInterface interface {
@@ -28,13 +31,14 @@ type SchedulerInterface interface {
 	Run(ctx context.Context)
 }
 
-func NewScheduler(repo bid.BidRepositoryInterface, redisClient *redis.Client, notificationService notification.NotificationServiceInterface) SchedulerInterface {
+func NewScheduler(repo bid.BidRepositoryInterface, redisClient *redis.Client, notificationService notification.NotificationServiceInterface, saleOfferRepo sale_offer.SaleOfferRepositoryInterface) SchedulerInterface {
 	return &Scheduler{
 		heap:                make(timerHeap, 0),
 		addCh:               make(chan *Item, 1024),
 		notificationService: notificationService,
 		repo:                repo,
 		redisClient:         redisClient,
+		saleOfferRepository: saleOfferRepo,
 	}
 }
 
@@ -94,10 +98,15 @@ func (s *Scheduler) closeAuction(ctx context.Context, auctionID string) {
 		winnerID = strconv.FormatUint(uint64(highest.BidderID), 10)
 		amount = int64(highest.Amount)
 	}
-	notification := notification.Notification{
+	notification := models.Notification{
 		OfferID: uint(auctionIDInt),
 	}
-	err = s.notificationService.CreateEndAuctionNotification(&notification, winnerID, amount)
+	offer, err := s.saleOfferRepository.GetByID(uint(auctionIDInt))
+	if err != nil {
+		return
+	}
+
+	err = s.notificationService.CreateEndAuctionNotification(&notification, winnerID, amount, offer)
 	if err != nil {
 		log.Println("Error creating notification:", err)
 		return

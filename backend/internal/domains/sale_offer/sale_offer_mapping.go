@@ -1,14 +1,14 @@
 package sale_offer
 
 import (
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"time"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/car"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
 )
 
-func (dto *CreateSaleOfferDTO) MapToSaleOffer() (*SaleOffer, error) {
+func (dto *CreateSaleOfferDTO) MapToSaleOffer() (*models.SaleOffer, error) {
 	if err := dto.validateParams(); err != nil {
 		return nil, err
 	}
@@ -16,13 +16,13 @@ func (dto *CreateSaleOfferDTO) MapToSaleOffer() (*SaleOffer, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &SaleOffer{
+	return &models.SaleOffer{
 		UserID:      dto.UserID,
 		Description: dto.Description,
 		Price:       dto.Price,
 		Margin:      dto.Margin,
 		DateOfIssue: time.Now().UTC(),
-		Car: &car.Car{
+		Car: &models.Car{
 			Vin:                dto.Vin,
 			ProductionYear:     dto.ProductionYear,
 			Mileage:            dto.Mileage,
@@ -42,7 +42,7 @@ func (dto *CreateSaleOfferDTO) MapToSaleOffer() (*SaleOffer, error) {
 	}, nil
 }
 
-func (offer *SaleOffer) MapToDTO() *RetrieveSaleOfferDTO {
+func MapToDTO(offer *models.SaleOffer) *RetrieveSaleOfferDTO {
 	return &RetrieveSaleOfferDTO{
 		ID:             offer.ID,
 		Username:       offer.User.Username,
@@ -55,8 +55,8 @@ func (offer *SaleOffer) MapToDTO() *RetrieveSaleOfferDTO {
 	}
 }
 
-func (offer *SaleOffer) MapToDetailedDTO() *RetrieveDetailedSaleOfferDTO {
-	buyNow, endDate := offer.prepareAuctionValues()
+func MapToDetailedDTO(offer *models.SaleOffer) *RetrieveDetailedSaleOfferDTO {
+	buyNow, endDate := prepareAuctionValues(offer)
 	return &RetrieveDetailedSaleOfferDTO{
 		ID:                 offer.ID,
 		Username:           offer.User.Username,
@@ -86,7 +86,7 @@ func (offer *SaleOffer) MapToDetailedDTO() *RetrieveDetailedSaleOfferDTO {
 	}
 }
 
-func (offer *SaleOffer) prepareAuctionValues() (*uint, *time.Time) {
+func prepareAuctionValues(offer *models.SaleOffer) (*uint, *time.Time) {
 	if offer.Auction == nil {
 		return nil, nil
 	}
@@ -111,7 +111,7 @@ func (dto *CreateSaleOfferDTO) validateParams() error {
 	if !IsParamValid(dto.Drive, car_params.Drives) {
 		return ErrInvalidDrive
 	}
-	if !IsParamValid(dto.Margin, Margins) {
+	if !IsParamValid(dto.Margin, models.Margins) {
 		return ErrInvalidMargin
 	}
 	return nil

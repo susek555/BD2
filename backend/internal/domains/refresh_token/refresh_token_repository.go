@@ -2,38 +2,39 @@ package refresh_token
 
 import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/generic"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"gorm.io/gorm"
 )
 
 type RefreshTokenRepositoryInterface interface {
-	generic.CRUDRepository[RefreshToken]
-	FindByToken(token string) (*RefreshToken, error)
-	FindByUserEmail(email string) ([]RefreshToken, error)
-	FindByUserId(id uint) ([]RefreshToken, error)
+	generic.CRUDRepository[models.RefreshToken]
+	FindByToken(token string) (*models.RefreshToken, error)
+	FindByUserEmail(email string) ([]models.RefreshToken, error)
+	FindByUserId(id uint) ([]models.RefreshToken, error)
 	DeleteByUserId(id uint) error
 }
 
 type RefreshTokenRepository struct {
-	repository *generic.GormRepository[RefreshToken]
+	repository *generic.GormRepository[models.RefreshToken]
 }
 
-func GetRefreshTokenRepository(dbHandle *gorm.DB) *RefreshTokenRepository {
-	return &RefreshTokenRepository{repository: generic.GetGormRepository[RefreshToken](dbHandle)}
+func NewRefreshTokenRepository(dbHandle *gorm.DB) RefreshTokenRepositoryInterface {
+	return &RefreshTokenRepository{repository: generic.GetGormRepository[models.RefreshToken](dbHandle)}
 }
 
-func (repo *RefreshTokenRepository) Create(token *RefreshToken) error {
+func (repo *RefreshTokenRepository) Create(token *models.RefreshToken) error {
 	return repo.repository.Create(token)
 }
 
-func (repo *RefreshTokenRepository) GetAll() ([]RefreshToken, error) {
+func (repo *RefreshTokenRepository) GetAll() ([]models.RefreshToken, error) {
 	return repo.repository.GetAll()
 }
 
-func (repo *RefreshTokenRepository) GetById(id uint) (*RefreshToken, error) {
+func (repo *RefreshTokenRepository) GetById(id uint) (*models.RefreshToken, error) {
 	return repo.repository.GetById(id)
 }
 
-func (repo *RefreshTokenRepository) Update(token *RefreshToken) error {
+func (repo *RefreshTokenRepository) Update(token *models.RefreshToken) error {
 	return repo.repository.Update(token)
 }
 
@@ -41,8 +42,8 @@ func (repo *RefreshTokenRepository) Delete(id uint) error {
 	return repo.repository.Delete(id)
 }
 
-func (repo *RefreshTokenRepository) FindByUserEmail(email string) ([]RefreshToken, error) {
-	var tokens []RefreshToken
+func (repo *RefreshTokenRepository) FindByUserEmail(email string) ([]models.RefreshToken, error) {
+	var tokens []models.RefreshToken
 	err := repo.repository.
 		DB.
 		Joins("User").
@@ -51,8 +52,8 @@ func (repo *RefreshTokenRepository) FindByUserEmail(email string) ([]RefreshToke
 	return tokens, err
 }
 
-func (repo *RefreshTokenRepository) FindByUserId(id uint) ([]RefreshToken, error) {
-	var tokens []RefreshToken
+func (repo *RefreshTokenRepository) FindByUserId(id uint) ([]models.RefreshToken, error) {
+	var tokens []models.RefreshToken
 	err := repo.repository.
 		DB.
 		Where("user_id = ?", id).
@@ -60,8 +61,8 @@ func (repo *RefreshTokenRepository) FindByUserId(id uint) ([]RefreshToken, error
 	return tokens, err
 }
 
-func (repo *RefreshTokenRepository) FindByToken(token string) (*RefreshToken, error) {
-	var t RefreshToken
+func (repo *RefreshTokenRepository) FindByToken(token string) (*models.RefreshToken, error) {
+	var t models.RefreshToken
 	err := repo.repository.
 		DB.
 		Where("token = ?", token).
@@ -73,7 +74,7 @@ func (repo *RefreshTokenRepository) DeleteByUserId(id uint) error {
 	err := repo.repository.
 		DB.
 		Where("user_id = ?", id).
-		Delete(&RefreshToken{}).
+		Delete(&models.RefreshToken{}).
 		Error
 	return err
 }

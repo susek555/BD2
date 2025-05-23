@@ -12,7 +12,7 @@ type Handler struct {
 	service UserServiceInterface
 }
 
-func NewUserHandler(s UserServiceInterface) *Handler {
+func NewHandler(s UserServiceInterface) *Handler {
 	return &Handler{service: s}
 }
 

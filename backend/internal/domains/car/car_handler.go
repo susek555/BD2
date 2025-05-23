@@ -11,7 +11,7 @@ type Handler struct {
 	service CarServiceInterface
 }
 
-func NewCarHandler(s CarServiceInterface) *Handler {
+func NewHandler(s CarServiceInterface) *Handler {
 	return &Handler{service: s}
 }
 

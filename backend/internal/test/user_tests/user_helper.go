@@ -2,6 +2,7 @@ package user_tests
 
 import (
 	"fmt"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 
 	"github.com/gin-gonic/gin"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/generic"
@@ -21,9 +22,9 @@ func setupDB() (*gorm.DB, error) {
 	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
 	db.Exec("PRAGMA foreign_keys = ON")
 	db.AutoMigrate(
-		&user.User{},
-		&user.Company{},
-		&user.Person{},
+		&models.User{},
+		&models.Company{},
+		&models.Person{},
 	)
 	if err != nil {
 		return nil, err
@@ -31,14 +32,14 @@ func setupDB() (*gorm.DB, error) {
 	return db, nil
 }
 
-func getRepositories(db *gorm.DB) (user.UserRepositoryInterface, generic.CRUDRepository[user.Company], generic.CRUDRepository[user.Person]) {
+func getRepositories(db *gorm.DB) (user.UserRepositoryInterface, generic.CRUDRepository[models.Company], generic.CRUDRepository[models.Person]) {
 	userRepo := user.NewUserRepository(db)
-	companyRepo := generic.GetGormRepository[user.Company](db)
-	personRepo := generic.GetGormRepository[user.Person](db)
+	companyRepo := generic.GetGormRepository[models.Company](db)
+	personRepo := generic.GetGormRepository[models.Person](db)
 	return userRepo, companyRepo, personRepo
 }
 
-func getRepositoryWithUsers(db *gorm.DB, users []user.User) user.UserRepositoryInterface {
+func getRepositoryWithUsers(db *gorm.DB, users []models.User) user.UserRepositoryInterface {
 	repo := user.NewUserRepository(db)
 	for _, user := range users {
 		repo.Create(&user)
@@ -46,11 +47,11 @@ func getRepositoryWithUsers(db *gorm.DB, users []user.User) user.UserRepositoryI
 	return repo
 }
 
-func newTestServer(db *gorm.DB, seedUsers []user.User) (*gin.Engine, error) {
+func newTestServer(db *gorm.DB, seedUsers []models.User) (*gin.Engine, error) {
 	verifier := jwt.NewJWTVerifier(u.JWTSECRET)
 	userRepo := getRepositoryWithUsers(db, seedUsers)
 	userService := user.NewUserService(userRepo)
-	userHandler := user.NewUserHandler(userService)
+	userHandler := user.NewHandler(userService)
 	r := gin.Default()
 	userRoutes := r.Group("/users")
 	{
@@ -67,40 +68,40 @@ func newTestServer(db *gorm.DB, seedUsers []user.User) (*gin.Engine, error) {
 // Basic models
 // ------------
 
-func createPerson(id uint) *user.User {
-	user := user.User{
+func createPerson(id uint) *models.User {
+	user := models.User{
 		ID:       id,
 		Username: fmt.Sprintf("john%d", id),
 		Email:    fmt.Sprintf("john%d@gmail.com", id),
 		Password: "hashed_password",
 		Selector: "P",
-		Person:   &user.Person{Name: "john person", Surname: "doe person"},
+		Person:   &models.Person{Name: "john person", Surname: "doe person"},
 	}
 	return &user
 }
 
-func createCompany(id uint) *user.User {
-	user := user.User{
+func createCompany(id uint) *models.User {
+	user := models.User{
 		ID:       id,
 		Username: fmt.Sprintf("john%d", id),
 		Email:    fmt.Sprintf("john%d@gmail.com", id),
 		Password: "hashed_password",
 		Selector: "C",
-		Company:  &user.Company{Name: "john company", NIP: fmt.Sprintf("1234567890-%d", id)},
+		Company:  &models.Company{Name: "john company", NIP: fmt.Sprintf("1234567890-%d", id)},
 	}
 	return &user
 }
 
-func withCompanyField(opt u.Option[user.Company]) u.Option[user.User] {
-	return func(userObj *user.User) {
+func withCompanyField(opt u.Option[models.Company]) u.Option[models.User] {
+	return func(userObj *models.User) {
 		if userObj.Company == nil {
-			userObj.Company = &user.Company{}
+			userObj.Company = &models.Company{}
 		}
 		opt(userObj.Company)
 	}
 }
 
-func doUserAndRetrieveUserDTOsMatch(user user.User, dto user.RetrieveUserDTO) bool {
+func doUserAndRetrieveUserDTOsMatch(user models.User, dto user.RetrieveUserDTO) bool {
 	if user.ID != dto.ID || user.Username != dto.Username || user.Email != dto.Email {
 		return false
 	}

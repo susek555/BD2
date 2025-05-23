@@ -1,4 +1,4 @@
-package manufacturer
+package models
 
 type Manufacturer struct {
 	ID   uint   `json:"id" gorm:"primaryKey"`

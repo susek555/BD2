@@ -2,20 +2,17 @@ package auction_test
 
 import (
 	"encoding/json"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/assert"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
-
 	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auction"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
 	"github.com/susek555/BD2/car-dealer-api/pkg/middleware"
@@ -27,20 +24,20 @@ import (
 // Setup
 // ------
 
-func setupDB(manufacturers []manufacturer.Manufacturer, models []model.Model, cars []sale_offer.Car, saleOffers []sale_offer.SaleOffer, auctions []sale_offer.Auction, users []user.User) (auction.AuctionServiceInterface, error) {
+func setupDB(manufacturers []models.Manufacturer, models []models.Model, cars []sale_offer.Car, saleOffers []models.SaleOffer, auctions []models.Auction, users []models.User) (auction.AuctionServiceInterface, error) {
 	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
 	err = db.AutoMigrate(
-		&user.User{},
-		&user.Person{},
-		user.Company{},
-		&manufacturer.Manufacturer{},
-		&model.Model{},
+		&models.User{},
+		&models.Person{},
+		models.Company{},
+		&models.Manufacturer{},
+		&models.Model{},
 		&sale_offer.Car{},
-		&sale_offer.SaleOffer{},
-		&sale_offer.Auction{},
+		&models.SaleOffer{},
+		&models.Auction{},
 	)
 	if err != nil {
 		return nil, err
@@ -87,7 +84,7 @@ func setupDB(manufacturers []manufacturer.Manufacturer, models []model.Model, ca
 	return service, nil
 }
 
-func newTestServer(seedManufacturers []manufacturer.Manufacturer, seedModels []model.Model, seedCars []sale_offer.Car, seedSaleOffers []sale_offer.SaleOffer, seedAuctions []sale_offer.Auction, seedUsers []user.User) (*gin.Engine, auction.AuctionServiceInterface, error) {
+func newTestServer(seedManufacturers []models.Manufacturer, seedModels []models.Model, seedCars []sale_offer.Car, seedSaleOffers []models.SaleOffer, seedAuctions []models.Auction, seedUsers []models.User) (*gin.Engine, auction.AuctionServiceInterface, error) {
 	service, err := setupDB(seedManufacturers, seedModels, seedCars, seedSaleOffers, seedAuctions, seedUsers)
 	if err != nil {
 		return nil, nil, err
@@ -111,12 +108,12 @@ func getValidToken(userId uint, email string) (string, error) {
 
 func TestCreateAuctionNoAuthHeader(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedManufacturers := []manufacturer.Manufacturer{}
-	seedModels := []model.Model{}
+	seedManufacturers := []models.Manufacturer{}
+	seedModels := []models.Model{}
 	seedCars := []sale_offer.Car{}
-	seedSaleOffers := []sale_offer.SaleOffer{}
-	seedAuctions := []sale_offer.Auction{}
-	seedUsers := []user.User{}
+	seedSaleOffers := []models.SaleOffer{}
+	seedAuctions := []models.Auction{}
+	seedUsers := []models.User{}
 	server, _, err := newTestServer(seedManufacturers, seedModels, seedCars, seedSaleOffers, seedAuctions, seedUsers)
 	assert.NoError(t, err)
 	wantStatus := http.StatusUnauthorized
@@ -133,12 +130,12 @@ func TestCreateAuctionNoAuthHeader(t *testing.T) {
 
 func TestCreateAuctionInvalidToken(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedManufacturers := []manufacturer.Manufacturer{}
-	seedModels := []model.Model{}
+	seedManufacturers := []models.Manufacturer{}
+	seedModels := []models.Model{}
 	seedCars := []sale_offer.Car{}
-	seedSaleOffers := []sale_offer.SaleOffer{}
-	seedAuctions := []sale_offer.Auction{}
-	seedUsers := []user.User{}
+	seedSaleOffers := []models.SaleOffer{}
+	seedAuctions := []models.Auction{}
+	seedUsers := []models.User{}
 	server, _, err := newTestServer(seedManufacturers, seedModels, seedCars, seedSaleOffers, seedAuctions, seedUsers)
 	assert.NoError(t, err)
 	wantStatus := http.StatusForbidden
@@ -156,13 +153,13 @@ func TestCreateAuctionInvalidToken(t *testing.T) {
 
 func TestCreateAuctionSuccess(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedManufacturers := []manufacturer.Manufacturer{
+	seedManufacturers := []models.Manufacturer{
 		{
 			ID:   1,
 			Name: "Toyota",
 		},
 	}
-	seedModels := []model.Model{
+	seedModels := []models.Model{
 		{
 			ID:             1,
 			Name:           "Corolla",
@@ -170,15 +167,15 @@ func TestCreateAuctionSuccess(t *testing.T) {
 		},
 	}
 	seedCars := []sale_offer.Car{}
-	seedSaleOffers := []sale_offer.SaleOffer{}
-	seedAuctions := []sale_offer.Auction{}
-	seedUsers := []user.User{
+	seedSaleOffers := []models.SaleOffer{}
+	seedAuctions := []models.Auction{}
+	seedUsers := []models.User{
 		{
 			Username: "herakles",
 			Email:    "herakles@gmail.com",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
@@ -238,13 +235,13 @@ func TestCreateAuctionSuccess(t *testing.T) {
 
 func TestCreateAuctionInvalidDate(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedManufacturers := []manufacturer.Manufacturer{
+	seedManufacturers := []models.Manufacturer{
 		{
 			ID:   1,
 			Name: "Toyota",
 		},
 	}
-	seedModels := []model.Model{
+	seedModels := []models.Model{
 		{
 			ID:             1,
 			Name:           "Corolla",
@@ -252,15 +249,15 @@ func TestCreateAuctionInvalidDate(t *testing.T) {
 		},
 	}
 	seedCars := []sale_offer.Car{}
-	seedSaleOffers := []sale_offer.SaleOffer{}
-	seedAuctions := []sale_offer.Auction{}
-	seedUsers := []user.User{
+	seedSaleOffers := []models.SaleOffer{}
+	seedAuctions := []models.Auction{}
+	seedUsers := []models.User{
 		{
 			Username: "herakles",
 			Email:    "herakles@gmail.com",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
@@ -314,13 +311,13 @@ func TestCreateAuctionInvalidDate(t *testing.T) {
 
 func TestCreateAuctionInvalidDateFormat(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedManufacturers := []manufacturer.Manufacturer{
+	seedManufacturers := []models.Manufacturer{
 		{
 			ID:   1,
 			Name: "Toyota",
 		},
 	}
-	seedModels := []model.Model{
+	seedModels := []models.Model{
 		{
 			ID:             1,
 			Name:           "Corolla",
@@ -328,15 +325,15 @@ func TestCreateAuctionInvalidDateFormat(t *testing.T) {
 		},
 	}
 	seedCars := []sale_offer.Car{}
-	seedSaleOffers := []sale_offer.SaleOffer{}
-	seedAuctions := []sale_offer.Auction{}
-	seedUsers := []user.User{
+	seedSaleOffers := []models.SaleOffer{}
+	seedAuctions := []models.Auction{}
+	seedUsers := []models.User{
 		{
 			Username: "herakles",
 			Email:    "herakles@gmail.com",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
@@ -390,13 +387,13 @@ func TestCreateAuctionInvalidDateFormat(t *testing.T) {
 
 func TestCreateAuctionZeroBuyNowPrice(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedManufacturers := []manufacturer.Manufacturer{
+	seedManufacturers := []models.Manufacturer{
 		{
 			ID:   1,
 			Name: "Toyota",
 		},
 	}
-	seedModels := []model.Model{
+	seedModels := []models.Model{
 		{
 			ID:             1,
 			Name:           "Corolla",
@@ -404,15 +401,15 @@ func TestCreateAuctionZeroBuyNowPrice(t *testing.T) {
 		},
 	}
 	seedCars := []sale_offer.Car{}
-	seedSaleOffers := []sale_offer.SaleOffer{}
-	seedAuctions := []sale_offer.Auction{}
-	seedUsers := []user.User{
+	seedSaleOffers := []models.SaleOffer{}
+	seedAuctions := []models.Auction{}
+	seedUsers := []models.User{
 		{
 			Username: "herakles",
 			Email:    "herakles@gmail.com",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
@@ -460,13 +457,13 @@ func TestCreateAuctionZeroBuyNowPrice(t *testing.T) {
 
 func TestCreateAuctionBuyNowPriceLessThanOfferPrice(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedManufacturers := []manufacturer.Manufacturer{
+	seedManufacturers := []models.Manufacturer{
 		{
 			ID:   1,
 			Name: "Toyota",
 		},
 	}
-	seedModels := []model.Model{
+	seedModels := []models.Model{
 		{
 			ID:             1,
 			Name:           "Corolla",
@@ -474,15 +471,15 @@ func TestCreateAuctionBuyNowPriceLessThanOfferPrice(t *testing.T) {
 		},
 	}
 	seedCars := []sale_offer.Car{}
-	seedSaleOffers := []sale_offer.SaleOffer{}
-	seedAuctions := []sale_offer.Auction{}
-	seedUsers := []user.User{
+	seedSaleOffers := []models.SaleOffer{}
+	seedAuctions := []models.Auction{}
+	seedUsers := []models.User{
 		{
 			Username: "herakles",
 			Email:    "herakles@gmail.com",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},
@@ -531,13 +528,13 @@ func TestCreateAuctionBuyNowPriceLessThanOfferPrice(t *testing.T) {
 
 func TestCreateAuctionBuyNowPriceNegative(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedManufacturers := []manufacturer.Manufacturer{
+	seedManufacturers := []models.Manufacturer{
 		{
 			ID:   1,
 			Name: "Toyota",
 		},
 	}
-	seedModels := []model.Model{
+	seedModels := []models.Model{
 		{
 			ID:             1,
 			Name:           "Corolla",
@@ -545,15 +542,15 @@ func TestCreateAuctionBuyNowPriceNegative(t *testing.T) {
 		},
 	}
 	seedCars := []sale_offer.Car{}
-	seedSaleOffers := []sale_offer.SaleOffer{}
-	seedAuctions := []sale_offer.Auction{}
-	seedUsers := []user.User{
+	seedSaleOffers := []models.SaleOffer{}
+	seedAuctions := []models.Auction{}
+	seedUsers := []models.User{
 		{
 			Username: "herakles",
 			Email:    "herakles@gmail.com",
 			Password: "PolskaGurom",
 			Selector: "P",
-			Person: &user.Person{
+			Person: &models.Person{
 				Name:    "Herakles",
 				Surname: "Wielki",
 			},

@@ -1,9 +1,11 @@
 package model
 
-func (m *Model) MapToDTO() *RetrieveModelDTO {
+import "github.com/susek555/BD2/car-dealer-api/internal/domains/models"
+
+func MapToDTO(m *models.Model) *RetrieveModelDTO {
 	return &RetrieveModelDTO{ID: m.ID, Name: m.Name}
 }
 
-func (m *Model) MapToName() *string {
+func MapToName(m *models.Model) *string {
 	return &m.Name
 }

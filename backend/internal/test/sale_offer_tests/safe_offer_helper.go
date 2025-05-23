@@ -1,18 +1,16 @@
 package sale_offer_tests
 
 import (
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/bid"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/car"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/generic"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/liked_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
 	u "github.com/susek555/BD2/car-dealer-api/internal/test/test_utils"
 	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
 	"github.com/susek555/BD2/car-dealer-api/pkg/middleware"
@@ -24,7 +22,7 @@ import (
 // Constants
 // ---------
 
-var MANUFACTURERS = []manufacturer.Manufacturer{
+var MANUFACTURERS = []models.Manufacturer{
 	{ID: 1, Name: "Audi"},
 	{ID: 2, Name: "BMW"},
 	{ID: 3, Name: "Opel"},
@@ -32,7 +30,7 @@ var MANUFACTURERS = []manufacturer.Manufacturer{
 	{ID: 5, Name: "Skoda"},
 }
 
-var MODELS = []model.Model{
+var MODELS = []models.Model{
 	{ID: 1, Name: "A3", ManufacturerID: 1},
 	{ID: 2, Name: "M3", ManufacturerID: 2},
 	{ID: 3, Name: "Astra", ManufacturerID: 3},
@@ -40,7 +38,7 @@ var MODELS = []model.Model{
 	{ID: 5, Name: "Octavia", ManufacturerID: 5},
 }
 
-var USERS = []user.User{
+var USERS = []models.User{
 	{ID: 1, Username: "john", Email: "john@example.com", Selector: "P"},
 	{ID: 2, Username: "jane", Email: "jane@example.com", Selector: "P"},
 }
@@ -53,14 +51,14 @@ func setupDB() (*gorm.DB, error) {
 	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
 	db.Exec("PRAGMA foreign_keys = ON")
 	db.AutoMigrate(
-		&user.User{},
-		&manufacturer.Manufacturer{},
-		&model.Model{},
-		&car.Car{},
-		&sale_offer.Auction{},
-		&sale_offer.SaleOffer{},
-		&liked_offer.LikedOffer{},
-		&bid.Bid{},
+		&models.User{},
+		&models.Manufacturer{},
+		&models.Model{},
+		&models.Car{},
+		&models.Auction{},
+		&models.SaleOffer{},
+		&models.LikedOffer{},
+		&models.Bid{},
 	)
 	if err != nil {
 		return nil, err
@@ -77,7 +75,7 @@ func setupDB() (*gorm.DB, error) {
 	return db, nil
 }
 
-func getRepositoryWithSaleOffers(db *gorm.DB, offers []sale_offer.SaleOffer) sale_offer.SaleOfferRepositoryInterface {
+func getRepositoryWithSaleOffers(db *gorm.DB, offers []models.SaleOffer) sale_offer.SaleOfferRepositoryInterface {
 	repo := sale_offer.NewSaleOfferRepository(db)
 	for _, offer := range offers {
 		repo.Create(&offer)
@@ -85,14 +83,14 @@ func getRepositoryWithSaleOffers(db *gorm.DB, offers []sale_offer.SaleOffer) sal
 	return repo
 }
 
-func newTestServer(db *gorm.DB, seedOffers []sale_offer.SaleOffer) (*gin.Engine, sale_offer.SaleOfferServiceInterface) {
+func newTestServer(db *gorm.DB, seedOffers []models.SaleOffer) (*gin.Engine, sale_offer.SaleOfferServiceInterface) {
 	verifier := jwt.NewJWTVerifier(u.JWTSECRET)
 	saleOfferRepo := getRepositoryWithSaleOffers(db, seedOffers)
 	manufacturerRepo := manufacturer.NewManufacturerRepository(db)
 	likedOfferRepository := liked_offer.NewLikedOfferRepository(db)
 	bidRepository := bid.NewBidRepository(db)
 	saleOfferService := sale_offer.NewSaleOfferService(saleOfferRepo, manufacturerRepo, likedOfferRepository, bidRepository)
-	saleOfferHandler := sale_offer.NewSaleOfferHandler(saleOfferService)
+	saleOfferHandler := sale_offer.NewHandler(saleOfferService)
 	r := gin.Default()
 	saleOfferRoutes := r.Group("/sale-offer")
 	{
@@ -112,8 +110,8 @@ func newTestServer(db *gorm.DB, seedOffers []sale_offer.SaleOffer) (*gin.Engine,
 // Basic models
 // ------------
 
-func createOffer(id uint) *sale_offer.SaleOffer {
-	c := &car.Car{
+func createOffer(id uint) *models.SaleOffer {
+	c := &models.Car{
 		OfferID:            id,
 		Vin:                "vin",
 		ProductionYear:     2025,
@@ -130,49 +128,49 @@ func createOffer(id uint) *sale_offer.SaleOffer {
 		NumberOfGears:      6,
 		Drive:              car_params.FWD,
 		ModelID:            1,
-		Model: model.Model{
+		Model: models.Model{
 			ID:             1,
 			Name:           MODELS[0].Name,
 			ManufacturerID: MODELS[0].ManufacturerID,
 			Manufacturer:   MANUFACTURERS[0],
 		},
 	}
-	offer := &sale_offer.SaleOffer{
+	offer := &models.SaleOffer{
 		ID:          id,
 		UserID:      1,
 		User:        &USERS[0],
 		Description: "offer",
 		Price:       1000,
-		Margin:      sale_offer.LOW_MARGIN,
+		Margin:      models.LOW_MARGIN,
 		DateOfIssue: time.Now(),
 		Car:         c,
 	}
 	return offer
 }
 
-func withCarField(opt u.Option[car.Car]) u.Option[sale_offer.SaleOffer] {
-	return func(offer *sale_offer.SaleOffer) {
+func withCarField(opt u.Option[models.Car]) u.Option[models.SaleOffer] {
+	return func(offer *models.SaleOffer) {
 		if offer.Car == nil {
-			offer.Car = &car.Car{}
+			offer.Car = &models.Car{}
 		}
 		opt(offer.Car)
 	}
 }
 
-func withAuctionField(opt u.Option[sale_offer.Auction]) u.Option[sale_offer.SaleOffer] {
-	return func(offer *sale_offer.SaleOffer) {
+func withAuctionField(opt u.Option[models.Auction]) u.Option[models.SaleOffer] {
+	return func(offer *models.SaleOffer) {
 		if offer.Auction == nil {
-			offer.Auction = &sale_offer.Auction{}
+			offer.Auction = &models.Auction{}
 		}
 		opt(offer.Auction)
 	}
 }
 
-func createAuctionSaleOffer(id uint) *sale_offer.SaleOffer {
+func createAuctionSaleOffer(id uint) *models.SaleOffer {
 	offer := *u.Build(createOffer(id),
-		withAuctionField(u.WithField[sale_offer.Auction]("OfferID", id)),
-		withAuctionField(u.WithField[sale_offer.Auction]("DateEnd", time.Now())),
-		withAuctionField(u.WithField[sale_offer.Auction]("BuyNowPrice", uint(0))))
+		withAuctionField(u.WithField[models.Auction]("OfferID", id)),
+		withAuctionField(u.WithField[models.Auction]("DateEnd", time.Now())),
+		withAuctionField(u.WithField[models.Auction]("BuyNowPrice", uint(0))))
 	return &offer
 }
 
@@ -181,7 +179,7 @@ func createSaleOfferDTO() *sale_offer.CreateSaleOfferDTO {
 		UserID:             1,
 		Description:        "offer",
 		Price:              1000,
-		Margin:             sale_offer.LOW_MARGIN,
+		Margin:             models.LOW_MARGIN,
 		Vin:                "vin",
 		ProductionYear:     2025,
 		Mileage:            1000,
@@ -200,7 +198,7 @@ func createSaleOfferDTO() *sale_offer.CreateSaleOfferDTO {
 	}
 }
 
-func doSaleOfferAndRetrieveSaleOfferDTOsMatch(offer sale_offer.SaleOffer, dto sale_offer.RetrieveSaleOfferDTO, s sale_offer.SaleOfferServiceInterface, userID *uint) bool {
+func doSaleOfferAndRetrieveSaleOfferDTOsMatch(offer models.SaleOffer, dto sale_offer.RetrieveSaleOfferDTO, s sale_offer.SaleOfferServiceInterface, userID *uint) bool {
 	var likedCondition bool
 	var bidCondition bool
 	condition := offer.ID == dto.ID &&

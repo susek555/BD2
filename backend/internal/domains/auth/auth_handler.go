@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -85,13 +86,13 @@ func (h *Handler) Login(c *gin.Context) {
 	c.JSON(http.StatusOK, loginResponse)
 }
 
-func prepareLoginResponse(access, refresh string, user user.User) *LoginResponse {
+func prepareLoginResponse(access, refresh string, user models.User) *LoginResponse {
 	loginResponse := LoginResponse{
 		RefreshToken: refresh,
 		AccessToken:  access,
 		Selector:     user.Selector,
 		Username:     user.Username,
-		UserID:      user.ID,
+		UserID:       user.ID,
 		Email:        user.Email,
 	}
 	if user.Selector == "C" {

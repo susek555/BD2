@@ -1,11 +1,11 @@
 package sale_offer
 
 import (
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/liked_offer"
 	"github.com/susek555/BD2/car-dealer-api/pkg/custom_errors"
 	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
 )
@@ -14,7 +14,7 @@ type Handler struct {
 	service SaleOfferServiceInterface
 }
 
-func NewSaleOfferHandler(s SaleOfferServiceInterface) *Handler {
+func NewHandler(s SaleOfferServiceInterface) *Handler {
 	return &Handler{service: s}
 }
 
@@ -62,7 +62,7 @@ func (h *Handler) CreateSaleOffer(c *gin.Context) {
 //
 //	@Summary		Get filtered sale offers
 //	@Description	Returns a list of sale offers in paginated form. If the user is logged in, the results contain he offers created by the user. The results are filtered based on request's body. There are several constraints on the filter fields, such as:
-//	@Description	- Offer type must be one of the predefined offer types (endpoint: /sale-offer/offer-types)
+//	@Description	- Auction type must be one of the predefined offer types (endpoint: /sale-offer/offer-types)
 //	@Description	- Order key must be one of the predefined order keys (endpoint: /sale-offer/order-keys)
 //	@Description	- List of manufacturers must contain only predefined manufacturers (endpoint: /car/manufacturers)
 //	@Description	- List of colors must contain only predefined colors (endpoint: /car/colors)
@@ -204,7 +204,7 @@ func (h *Handler) LikeOffer(c *gin.Context) {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
-	c.JSON(http.StatusOK, liked_offer.LikedOffer{OfferID: uint(offerID), UserID: userID.(uint)})
+	c.JSON(http.StatusOK, models.LikedOffer{OfferID: uint(offerID), UserID: userID.(uint)})
 }
 
 // DislikeOffer godoc
