@@ -441,6 +441,53 @@ func (_c *UserRepositoryInterface_Update_Call) RunAndReturn(run func(*models.Use
 	return _c
 }
 
+// UpdatePassword provides a mock function with given fields: userId, newPassword
+func (_m *UserRepositoryInterface) UpdatePassword(userId uint, newPassword string) error {
+	ret := _m.Called(userId, newPassword)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdatePassword")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(uint, string) error); ok {
+		r0 = rf(userId, newPassword)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// UserRepositoryInterface_UpdatePassword_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdatePassword'
+type UserRepositoryInterface_UpdatePassword_Call struct {
+	*mock.Call
+}
+
+// UpdatePassword is a helper method to define mock.On call
+//   - userId uint
+//   - newPassword string
+func (_e *UserRepositoryInterface_Expecter) UpdatePassword(userId interface{}, newPassword interface{}) *UserRepositoryInterface_UpdatePassword_Call {
+	return &UserRepositoryInterface_UpdatePassword_Call{Call: _e.mock.On("UpdatePassword", userId, newPassword)}
+}
+
+func (_c *UserRepositoryInterface_UpdatePassword_Call) Run(run func(userId uint, newPassword string)) *UserRepositoryInterface_UpdatePassword_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(uint), args[1].(string))
+	})
+	return _c
+}
+
+func (_c *UserRepositoryInterface_UpdatePassword_Call) Return(_a0 error) *UserRepositoryInterface_UpdatePassword_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *UserRepositoryInterface_UpdatePassword_Call) RunAndReturn(run func(uint, string) error) *UserRepositoryInterface_UpdatePassword_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // NewUserRepositoryInterface creates a new instance of UserRepositoryInterface. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewUserRepositoryInterface(t interface {
