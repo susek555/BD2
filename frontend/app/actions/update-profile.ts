@@ -2,8 +2,8 @@ import camelcaseKeys from 'camelcase-keys';
 import { changePersonalData } from '../lib/api/account/changePersonalData';
 import { AccountFieldValidationResult } from '../lib/api/auth';
 import { PersonalDataFormState } from '../lib/definitions/account-settings';
-import { PersonalDataSchema } from '../lib/definitions/personal-data-schema';
 import { UserProfile } from '../lib/definitions/user';
+import { PersonalDataSchema } from '../lib/definitions/user-data-schema';
 
 export async function updateProfile(
   state: PersonalDataFormState,
@@ -18,10 +18,11 @@ export async function updateProfile(
       'Profile update validation errors:',
       validatedFields.error.flatten().fieldErrors,
     );
+
     return {
       state: {
         errors: validatedFields.error.flatten().fieldErrors,
-        values: formDataObj.values as PersonalDataFormState['values'],
+        values: formDataObj as PersonalDataFormState['values'],
       },
     };
   }
