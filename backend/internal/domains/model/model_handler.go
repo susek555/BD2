@@ -15,10 +15,10 @@ var ErrorMap = map[error]int{
 }
 
 type Handler struct {
-	service ModelServiceInterace
+	service ModelServiceInterface
 }
 
-func NewHandler(s ModelServiceInterace) *Handler {
+func NewHandler(s ModelServiceInterface) *Handler {
 	return &Handler{service: s}
 }
 

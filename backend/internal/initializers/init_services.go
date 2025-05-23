@@ -1,6 +1,9 @@
 package initializers
 
 import (
+	"log"
+	"os"
+
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auction"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auth"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/bid"
@@ -12,8 +15,6 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/review"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
-	"log"
-	"os"
 )
 
 var AuctionService auction.AuctionServiceInterface
@@ -21,7 +22,7 @@ var AuthService auth.AuthServiceInterface
 var BidService bid.BidServiceInterface
 var CarService car.CarServiceInterface
 var ManufacturerService manufacturer.ManufacturerServiceInterface
-var ModelService model.ModelServiceInterace
+var ModelService model.ModelServiceInterface
 var NotificationService notification.NotificationServiceInterface
 var RefreshTokenService refresh_token.RefreshTokenServiceInterface
 var ReviewService review.ReviewServiceInterface
