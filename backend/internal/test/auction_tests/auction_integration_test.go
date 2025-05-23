@@ -24,13 +24,13 @@ import (
 // Setup
 // ------
 
-func setupDB(manufacturers []models.Manufacturer, models []models.Model, cars []sale_offer.Car, saleOffers []models.SaleOffer, auctions []models.Auction, users []models.User) (auction.AuctionServiceInterface, error) {
+func setupDB(manufacturers []models.Manufacturer, models []models.Model, cars []models.Car, saleOffers []models.SaleOffer, auctions []models.Auction, users []models.User) (auction.AuctionServiceInterface, error) {
 	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
 	err = db.AutoMigrate(
-		&models.User{},
+		&models.Model{},
 		&models.Person{},
 		models.Company{},
 		&models.Manufacturer{},

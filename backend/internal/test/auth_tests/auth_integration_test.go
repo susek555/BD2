@@ -40,13 +40,14 @@ func setupDB(users []models.User, refreshTokens []models.RefreshToken) (user.Use
 		return nil, nil, err
 	}
 	repo := user.NewUserRepository(db)
-	for _, user := range users {
-		err = repo.Create(&user)
+	for _, user_ := range users {
+		err = repo.Create(&user_)
 		if err != nil {
 			return nil, nil, err
 		}
 	}
-	refreshTokenService := refresh_token.NewRefreshTokenService(db)
+	refreshTokenRepo := refresh_token.NewRefreshTokenRepository(db)
+	refreshTokenService := refresh_token.NewRefreshTokenService(refreshTokenRepo)
 	for _, rt := range refreshTokens {
 		err = refreshTokenService.Create(&rt)
 		if err != nil {
@@ -79,8 +80,8 @@ func getValidToken(userId uint, email string) (string, error) {
 }
 func TestRegisterPersonSuccess(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []models.User{}
-	seedRefreshTokens := []models.RefreshToken{}
+	var seedUsers []models.User
+	var seedRefreshTokens []models.RefreshToken
 	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusCreated
 	assert.NoError(t, err)
@@ -104,8 +105,8 @@ func TestRegisterPersonSuccess(t *testing.T) {
 
 func TestRegisterCompanySuccess(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []models.User{}
-	seedRefreshTokens := []models.RefreshToken{}
+	var seedUsers []models.User
+	var seedRefreshTokens []models.RefreshToken
 	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusCreated
 	assert.NoError(t, err)
@@ -141,7 +142,7 @@ func TestRegisterPersonEmailAlreadyExists(t *testing.T) {
 			},
 		},
 	}
-	seedRefreshTokens := []models.RefreshToken{}
+	var seedRefreshTokens []models.RefreshToken
 	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusConflict
 	assert.NoError(t, err)
@@ -180,7 +181,7 @@ func TestRegisterPersonUsernameAlreadyExists(t *testing.T) {
 			},
 		},
 	}
-	seedRefreshTokens := []models.RefreshToken{}
+	var seedRefreshTokens []models.RefreshToken
 	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusConflict
 	assert.NoError(t, err)
@@ -207,8 +208,8 @@ func TestRegisterPersonUsernameAlreadyExists(t *testing.T) {
 
 func TestRegisterPersonInvalidEmail(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []models.User{}
-	seedTokens := []models.RefreshToken{}
+	var seedUsers []models.User
+	var seedTokens []models.RefreshToken
 	server, _, _, err := newTestServer(seedUsers, seedTokens)
 	wantStatus := http.StatusBadRequest
 	assert.NoError(t, err)
@@ -247,7 +248,7 @@ func TestRegisterCompanyEmailAlreadyExists(t *testing.T) {
 			},
 		},
 	}
-	seedRefreshTokens := []models.RefreshToken{}
+	var seedRefreshTokens []models.RefreshToken
 	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusConflict
 	assert.NoError(t, err)
@@ -286,7 +287,7 @@ func TestRegisterCompanyUsernameAlreadyExists(t *testing.T) {
 			},
 		},
 	}
-	seedRefreshTokens := []models.RefreshToken{}
+	var seedRefreshTokens []models.RefreshToken
 	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusConflict
 	assert.NoError(t, err)
@@ -325,7 +326,7 @@ func TestRegisterCompanyNipAlreadyExists(t *testing.T) {
 			},
 		},
 	}
-	seedRefreshTokens := []models.RefreshToken{}
+	var seedRefreshTokens []models.RefreshToken
 	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusConflict
 	assert.NoError(t, err)
@@ -366,7 +367,7 @@ func TestLoginSuccess(t *testing.T) {
 			},
 		},
 	}
-	seedRefreshTokens := []models.RefreshToken{}
+	var seedRefreshTokens []models.RefreshToken
 	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusOK
 	assert.NoError(t, err)
@@ -409,7 +410,7 @@ func TestLoginInvalidLogin(t *testing.T) {
 			},
 		},
 	}
-	seedRefreshTokens := []models.RefreshToken{}
+	var seedRefreshTokens []models.RefreshToken
 	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusUnauthorized
 	assert.NoError(t, err)
@@ -446,7 +447,7 @@ func TestLoginInvalidPassword(t *testing.T) {
 			},
 		},
 	}
-	seedRefreshTokens := []models.RefreshToken{}
+	var seedRefreshTokens []models.RefreshToken
 	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusUnauthorized
 	assert.NoError(t, err)
@@ -469,8 +470,8 @@ func TestLoginInvalidPassword(t *testing.T) {
 
 func TestLoginInvalidBody(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []models.User{}
-	seedRefreshTokens := []models.RefreshToken{}
+	var seedUsers []models.User
+	var seedRefreshTokens []models.RefreshToken
 	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusBadRequest
 	assert.NoError(t, err)
@@ -536,8 +537,8 @@ func TestRefreshSuccess(t *testing.T) {
 
 func TestRefreshInvalidToken(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []models.User{}
-	seedRefreshTokens := []models.RefreshToken{}
+	var seedUsers []models.User
+	var seedRefreshTokens []models.RefreshToken
 	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusUnauthorized
 	assert.NoError(t, err)
@@ -559,7 +560,7 @@ func TestRefreshInvalidToken(t *testing.T) {
 
 func TestRefreshExpiredToken(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []models.User{}
+	var seedUsers []models.User
 	seedRefreshTokens := []models.RefreshToken{
 		{
 			UserId:     1,
@@ -588,8 +589,8 @@ func TestRefreshExpiredToken(t *testing.T) {
 
 func TestRefreshInvalidBody(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []models.User{}
-	seedRefreshTokens := []models.RefreshToken{}
+	var seedUsers []models.User
+	var seedRefreshTokens []models.RefreshToken
 	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusBadRequest
 	assert.NoError(t, err)
@@ -651,8 +652,8 @@ func TestLogoutSuccess(t *testing.T) {
 
 func TestLogoutNoHeader(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []models.User{}
-	seedRefreshTokens := []models.RefreshToken{}
+	var seedUsers []models.User
+	var seedRefreshTokens []models.RefreshToken
 	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusUnauthorized
 	assert.NoError(t, err)
@@ -685,7 +686,7 @@ func TestLogoutNonExistingToken(t *testing.T) {
 			},
 		},
 	}
-	seedRefreshTokens := []models.RefreshToken{}
+	var seedRefreshTokens []models.RefreshToken
 	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusNotFound
 	assert.NoError(t, err)
@@ -723,7 +724,7 @@ func TestLogoutEmptyToken(t *testing.T) {
 			},
 		},
 	}
-	seedRefreshTokens := []models.RefreshToken{}
+	var seedRefreshTokens []models.RefreshToken
 	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusBadRequest
 	assert.NoError(t, err)
@@ -806,10 +807,10 @@ func TestLogoutAllDevicesSuccess(t *testing.T) {
 	w := httptest.NewRecorder()
 	server.ServeHTTP(w, req)
 	assert.Equal(t, wantStatus, w.Code)
-	user1Tokens, err := rtSvc.FindByUserId(&gin.Context{}, 1)
+	user1Tokens, err := rtSvc.FindByUserId(1)
 	assert.NoError(t, err)
 	assert.Len(t, user1Tokens, 0)
-	users2Tokens, err := rtSvc.FindByUserId(&gin.Context{}, 2)
+	users2Tokens, err := rtSvc.FindByUserId(2)
 	assert.NoError(t, err)
 	assert.Len(t, users2Tokens, 1)
 	assert.Equal(t, "valid_refresh_token_3", users2Tokens[0].Token)
@@ -818,8 +819,8 @@ func TestLogoutAllDevicesSuccess(t *testing.T) {
 
 func TestLogoutAllDevicesNoHeader(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []models.User{}
-	seedRefreshTokens := []models.RefreshToken{}
+	var seedUsers []models.User
+	var seedRefreshTokens []models.RefreshToken
 	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusUnauthorized
 	assert.NoError(t, err)
@@ -883,7 +884,7 @@ func TestLogoutAllDevicesNonExistingToken(t *testing.T) {
 	err = json.Unmarshal(w.Body.Bytes(), &response)
 	assert.NoError(t, err)
 	assert.Equal(t, "refresh token not found", response["error_description"])
-	user1Tokens, err := rtSvc.FindByUserId(&gin.Context{}, 1)
+	user1Tokens, err := rtSvc.FindByUserId(1)
 	assert.NoError(t, err)
 	assert.Len(t, user1Tokens, 1)
 	assert.Equal(t, "valid_refresh_token", user1Tokens[0].Token)
@@ -934,7 +935,7 @@ func TestLogoutAllDevicesEmptyToken(t *testing.T) {
 	err = json.Unmarshal(w.Body.Bytes(), &response)
 	assert.NoError(t, err)
 	assert.Equal(t, "refresh token required", response["error_description"])
-	user1Tokens, err := rtSvc.FindByUserId(&gin.Context{}, 1)
+	user1Tokens, err := rtSvc.FindByUserId(1)
 	assert.NoError(t, err)
 	assert.Len(t, user1Tokens, 1)
 	assert.Equal(t, "valid_refresh_token", user1Tokens[0].Token)
@@ -956,7 +957,7 @@ func TestLogoutAllDevicesInvalidBody(t *testing.T) {
 			},
 		},
 	}
-	seedRefreshTokens := []models.RefreshToken{}
+	var seedRefreshTokens []models.RefreshToken
 	server, _, _, err := newTestServer(seedUsers, seedRefreshTokens)
 	wantStatus := http.StatusBadRequest
 	assert.NoError(t, err)
