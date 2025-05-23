@@ -53,7 +53,7 @@ func makeValidCreateDTO() *auction.CreateAuctionDTO {
 			UserID:             42,
 			Description:        "desc",
 			Price:              1000,
-			Margin:             100,
+			Margin:             10,
 			Vin:                "VIN123456789",
 			ProductionYear:     2020,
 			Mileage:            12345,
