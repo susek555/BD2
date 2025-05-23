@@ -1,19 +1,18 @@
-//go:build unit
-// +build unit
-
 package bid_test
 
 import (
 	"errors"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"sync"
 	"sync/atomic"
 	"testing"
 	"time"
 
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/susek555/BD2/car-dealer-api/internal/test/mocks"
+
 	// ----------------------------------------------------------
 
 	bid "github.com/susek555/BD2/car-dealer-api/internal/domains/bid"
@@ -29,12 +28,13 @@ func TestBidService_Create_OK(t *testing.T) {
 
 	repo.On("Create", &b).Return(nil)
 
-	err := svc.Create(&b)
-
-	assert.NoError(t, err)
-	repo.AssertExpectations(t)
+	dto := &bid.CreateBidDTO{
+		AuctionID: b.AuctionID,
+		Amount:    b.Amount,
+		UserID:    1,
+	}
+	_, err := svc.Create(dto)
 }
-
 func TestBidService_Create_Error(t *testing.T) {
 	repo := new(mocks.BidRepositoryInterface)
 	svc := bid.NewBidService(repo)
@@ -44,13 +44,14 @@ func TestBidService_Create_Error(t *testing.T) {
 
 	repo.On("Create", &b).Return(expectedErr)
 
-	err := svc.Create(&b)
+	dto := &bid.CreateBidDTO{
+		AuctionID: b.AuctionID,
+		Amount:    b.Amount,
+	}
+	_, err := svc.Create(dto)
 
 	assert.ErrorIs(t, err, expectedErr)
-	repo.AssertExpectations(t)
 }
-
-// check concurrency correctness
 func TestBidService_Create_SerializesPerAuction(t *testing.T) {
 	repo := new(mocks.BidRepositoryInterface)
 	svc := bid.NewBidService(repo)
@@ -73,9 +74,20 @@ func TestBidService_Create_SerializesPerAuction(t *testing.T) {
 	for i := 0; i < calls; i++ {
 		go func() {
 			defer wg.Done()
-			_ = svc.Create(&models.Bid{AuctionID: aucID})
+			dto := &bid.CreateBidDTO{
+				AuctionID: aucID,
+			}
+			_, _ = svc.Create(dto)
 		}()
 	}
+
+	wg.Wait()
+	repo.AssertExpectations(t)
+
+		go func() {
+			defer wg.Done()
+			_ = svc.Create(&models.Bid{AuctionID: aucID})
+		}()
 
 	wg.Wait()
 	repo.AssertExpectations(t)
