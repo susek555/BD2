@@ -100,17 +100,24 @@ func (h *Handler) GetUserByEmail(c *gin.Context) {
 //	@Security		Bearer
 func (h *Handler) UpdateUser(c *gin.Context) {
 	var userDTO UpdateUserDTO
+	updateResponse := UpdateResponse{
+		Errors: make(map[string][]string),
+	}
 	if err := c.ShouldBindJSON(&userDTO); err != nil {
-		custom_errors.HandleError(c, err, ErrorMap)
+		updateResponse.Errors["other"] = []string{err.Error()}
+		c.JSON(http.StatusBadRequest, updateResponse)
 		return
 	}
 	userID, ok := c.Get("userID")
 	if !ok || userID != userDTO.ID {
-		custom_errors.HandleError(c, ErrInvalidUserID, ErrorMap)
+		updateResponse.Errors["id"] = []string{ErrForbidden.Error()}
+		c.JSON(http.StatusForbidden, updateResponse)
 		return
 	}
-	if err := h.service.Update(&userDTO); err != nil {
-		custom_errors.HandleError(c, err, ErrorMap)
+	err := h.service.Update(&userDTO)
+	if len(err) > 0 {
+		updateResponse.Errors = err
+		c.JSON(http.StatusBadRequest, updateResponse)
 		return
 	}
 	c.Status(http.StatusOK)
