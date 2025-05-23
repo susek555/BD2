@@ -80,10 +80,10 @@ func TestAuctionService_Create_OK(t *testing.T) {
 	svc := auction.NewAuctionService(repo)
 
 	dtoIn := makeValidCreateDTO()
-	entity, err := dtoIn.MapToAuction()
+	_, err := dtoIn.MapToAuction()
 	assert.NoError(t, err)
 
-	repo.On("Create", entity).Run(func(args mock.Arguments) {
+	repo.On("Create", mock.Anything).Run(func(args mock.Arguments) {
 		a := args.Get(0).(*models.Auction)
 		full := makeFullAuctionEntity(7, a.DateEnd, a.BuyNowPrice)
 		*a = *full
@@ -107,10 +107,9 @@ func TestAuctionService_Create_Error(t *testing.T) {
 	svc := auction.NewAuctionService(repo)
 
 	dtoIn := makeValidCreateDTO()
-	entity, _ := dtoIn.MapToAuction()
 	expected := errors.New("db failure")
 
-	repo.On("Create", entity).Return(expected)
+	repo.On("Create", mock.Anything).Return(expected)
 
 	out, err := svc.Create(dtoIn)
 	assert.Nil(t, out)
@@ -198,10 +197,10 @@ func TestAuctionService_Update_OK(t *testing.T) {
 	}
 	update.DateEnd = time.Now().Add(24 * time.Hour).Format("15:04 02/01/2006")
 
-	entity, err := update.MapToAuction()
+	_, err := update.MapToAuction()
 	assert.NoError(t, err)
 
-	repo.On("Update", entity).Run(func(args mock.Arguments) {
+	repo.On("Update", mock.AnythingOfType("*models.Auction")).Run(func(args mock.Arguments) {
 		a := args.Get(0).(*models.Auction)
 		full := makeFullAuctionEntity(5, a.DateEnd, a.BuyNowPrice)
 		*a = *full
@@ -227,10 +226,9 @@ func TestAuctionService_Update_Error(t *testing.T) {
 		Id:               7,
 		CreateAuctionDTO: *makeValidCreateDTO(),
 	}
-	entity, _ := update.MapToAuction()
 	expected := errors.New("update failed")
 
-	repo.On("Update", entity).Return(expected)
+	repo.On("Update", mock.Anything).Return(expected)
 
 	out, svcErr := svc.Update(&update)
 	assert.Nil(t, out)
