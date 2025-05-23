@@ -93,9 +93,9 @@ func (h *Handler) GetUserByEmail(c *gin.Context) {
 //	@Produce		json
 //	@Param			body	body		UpdateUserDTO			true	"Update form"
 //	@Success		200		{object}	UpdateUserDTO			"User updated"
-//	@Failure		400		{object}	custom_errors.HTTPError	"Invalid input data"
-//	@Failure		404		{object}	custom_errors.HTTPError	"User not found"
-//	@Failure		500		{object}	custom_errors.HTTPError	"Internal server error"
+//	@Failure		400		{object}	UpdateResponse	"Invalid input data - email, username or nip taken"
+//	@Failure		404		{object}	UpdateResponse	"User not found"
+//	@Failure		500		{object}	UpdateResponse	"Internal server error"
 //	@Router			/users [put]
 //	@Security		Bearer
 func (h *Handler) UpdateUser(c *gin.Context) {
