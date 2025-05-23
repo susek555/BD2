@@ -21,7 +21,7 @@ func makeFullAuctionEntity(id uint, end time.Time, buyNow uint) *models.Auction 
 	)
 	man := models.Manufacturer{ID: 2, Name: "Tesla"}
 	mod := models.Model{ID: 1, Name: "ModelS", Manufacturer: man}
-	car := &sale_offer.Car{
+	car := &models.Car{
 		OfferID:        id,
 		Mileage:        1000,
 		ProductionYear: 2021,
@@ -54,7 +54,6 @@ func makeValidCreateDTO() *auction.CreateAuctionDTO {
 			Description:        "desc",
 			Price:              1000,
 			Margin:             100,
-			DateOfIssue:        time.Now(),
 			Vin:                "VIN123456789",
 			ProductionYear:     2020,
 			Mileage:            12345,
