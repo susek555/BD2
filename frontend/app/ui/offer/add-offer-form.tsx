@@ -293,7 +293,6 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                     <NumberInputField id="engine_capacity" name="Engine displacement" />
                     <DateSelectionField id="registration_date" name="Date of first registration" />
                     <TextInputField id="registration_number" name="Plate number" />
-                    <TextInputField id="location" name="Location" />
                     <TextInputField id="vin" name="VIN" />
 
                     <label htmlFor="description" className="text-lg font-semibold">
