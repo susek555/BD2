@@ -11,6 +11,7 @@ export const profileTabs: Tab[] = [
   { id: 'listings', label: 'Listings', href: '/account/listings' },
   { id: 'favorites', label: 'Favorites', href: '/account/favorites' },
   { id: 'reviews', label: 'Reviews', href: '/account/reviews' },
+  { id: 'notifications', label: 'Notifications', href: '/account/notifications' },
   { id: 'settings', label: 'Settings', href: '/account/settings' },
 ];
 
