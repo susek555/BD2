@@ -11,7 +11,7 @@ type UserServiceInterface interface {
 	GetByEmail(email string) (*RetrieveUserDTO, error)
 	GetByCompanyNip(email string) (*RetrieveUserDTO, error)
 	GetByUsername(username string) (*RetrieveUserDTO, error)
-	Update(*UpdateUserDTO) error
+	Update(*UpdateUserDTO) map[string][]string
 	Delete(id uint) error
 }
 
@@ -76,16 +76,37 @@ func (s *UserService) GetByCompanyNip(nip string) (*RetrieveUserDTO, error) {
 	return userDTO, nil
 }
 
-func (s *UserService) Update(in *UpdateUserDTO) error {
+func (s *UserService) Update(in *UpdateUserDTO) map[string][]string {
 	user, err := s.repo.GetById(in.ID)
+	var errs = make(map[string][]string)
 	if err != nil {
-		return err
+		errs["id"] = []string{err.Error()}
 	}
 	updatedUser, err := in.UpdateUserFromDTO(user)
 	if err != nil {
-		return err
+		errs["other"] = []string{err.Error()}
 	}
-	return s.repo.Update(updatedUser)
+	u, noUsername := s.repo.GetByUsername(updatedUser.Username)
+	if noUsername == nil && u.ID != updatedUser.ID {
+		errs["username"] = []string{ErrUsernameTaken.Error()}
+	}
+	u, noEmail := s.repo.GetByEmail(updatedUser.Email)
+	if noEmail == nil && u.ID != updatedUser.ID {
+		errs["email"] = []string{ErrEmailTaken.Error()}
+	}
+	if updatedUser.Selector == "C" {
+		u, noNip := s.repo.GetByCompanyNip(*in.CompanyNIP)
+		if noNip == nil && u.ID != updatedUser.ID {
+			errs["company_nip"] = []string{ErrNipAlreadyTaken.Error()}
+		}
+	}
+	if len(errs) > 0 {
+		return errs
+	}
+	if err := s.repo.Update(updatedUser); err != nil {
+		errs["other"] = []string{err.Error()}
+	}
+	return errs
 }
 
 func (s *UserService) Delete(id uint) error {
