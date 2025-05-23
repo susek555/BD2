@@ -2,8 +2,9 @@ package auth
 
 import (
 	"context"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"time"
+
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/refresh_token"
 
@@ -17,6 +18,7 @@ type AuthServiceInterface interface {
 	Login(ctx context.Context, in LoginInput) (access, refresh string, user *models.User, err error)
 	Refresh(ctx context.Context, refreshToken string) (access string, err error)
 	Logout(ctx context.Context, userID uint, refreshToken string, allDevices bool) error
+	ChangePassword(ctx context.Context, userID uint, oldPassword, newPassword string) map[string][]string
 }
 
 type AuthService struct {
@@ -113,6 +115,24 @@ func (s *AuthService) Logout(ctx context.Context, userID uint, provided string, 
 		return s.RefreshTokenService.DeleteByUserId(userID)
 	}
 	return s.RefreshTokenService.Delete(refresh.ID)
+}
+
+func (s *AuthService) ChangePassword(ctx context.Context, userID uint, oldPassword, newPassword string) map[string][]string {
+	user, err := s.Repo.GetById(userID)
+	if err != nil {
+		return map[string][]string{"other": {ErrUserNotFound.Error()}}
+	}
+	if !passwords.Match(oldPassword, user.Password) {
+		return map[string][]string{"old_password": {ErrInvalidOldPassword.Error()}}
+	}
+	hashedPassword, err := passwords.Hash(newPassword)
+	if err != nil {
+		return map[string][]string{"other": {err.Error()}}
+	}
+	if err := s.Repo.UpdatePassword(userID, hashedPassword); err != nil {
+		return map[string][]string{"other": {err.Error()}}
+	}
+	return nil
 }
 
 func (s *AuthService) newRefreshToken(userId uint, userEmail string) (string, error) {
