@@ -53,7 +53,6 @@ export const OfferDetailsFormSchema = z.object({
     .min(17, { message: 'VIN must be 17 characters long' })
     .max(17, { message: 'VIN must be 17 characters long' })
     .regex(/^[A-HJ-NPR-Z0-9]+$/, { message: 'VIN must contain only valid characters' }),
-  location: z.string().min(1, { message: 'Location is required' }),
   description: z.string().min(1, { message: 'Description is required' }),
   images: z
     .array(z.instanceof(File)).optional()   //TODO remove optional and uncomment code below
@@ -195,7 +194,6 @@ export type AddOfferFormState = {
     registration_number?: string[];
     vin?: string[];
     engine_capacity?: string[];
-    location?: string[];
     price?: string[];
     is_auction?: string[];
     auction_end_date?: string[];
@@ -221,7 +219,6 @@ export type AddOfferFormState = {
     registration_date?: string;
     registration_number?: string;
     vin?: string;
-    location?: string;
     description?: string;
     images?: File[]; // Array of image files
     price?: number;
@@ -239,4 +236,23 @@ export type AddOfferFormData = {
   fuelTypes: string[];
   gearboxes: string[];
   driveTypes: string[];
+}
+
+export type RegularOfferData = {
+  producer: string;
+  model: string;
+  color: string;
+  fuel_type: string;
+  transmission: string;
+  drive: string;
+  production_year: number;
+  mileage: number;
+  number_of_doors: number;
+  number_of_seats: number;
+  number_of_gears: number;
+  engine_power: number;
+  registration_date: string;
+  registration_number: string;
+  vin: string;
+  engine_capacity: number;
 }

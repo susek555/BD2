@@ -53,6 +53,7 @@ export async function addOffer(
         };
     }
 
+
     // convert model from "producer model" to "model"
     if ('model' in validatedFields.data) {
         const firstSpaceIndex = validatedFields.data.model.indexOf(' ');
@@ -61,7 +62,24 @@ export async function addOffer(
         }
     }
 
+    // This property exists, the error is incorrect
+    const { is_auction, ...offerData } = validatedFields.data;
+    validatedFields.data = offerData;
+
+    console.log("Is auction:", is_auction);
     console.log("Add Offer validated fields:", validatedFields.data);
+
+    try {
+        
+    } catch (error) {
+
+    }
+
+
+
+
+
+
 
     return state;
 
