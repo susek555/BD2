@@ -1,4 +1,4 @@
-import { OfferDetailsFormSchema, AddOfferFormState, OfferPricingFormSchema } from "@/app/lib/definitions/offer-form";
+import { OfferDetailsFormSchema, AddOfferFormState, OfferPricingFormSchema, CombinedOfferFormSchema } from "@/app/lib/definitions/offer-form";
 import { permanentRedirect } from "next/navigation";
 
 export async function addOffer(
@@ -33,11 +33,9 @@ export async function addOffer(
 
     if (detailsPart) {
         validatedFields = OfferDetailsFormSchema.safeParse(normalizedData);
-
     } else {
-        validatedFields = OfferPricingFormSchema.safeParse(normalizedData);
+        validatedFields = CombinedOfferFormSchema.safeParse(normalizedData);
     }
-    console.log("Add Offer validation result:", validatedFields);
 
 
     if (!validatedFields.success) {
@@ -62,6 +60,8 @@ export async function addOffer(
             validatedFields.data.model = validatedFields.data.model.substring(firstSpaceIndex + 1);
         }
     }
+
+    console.log("Add Offer validated fields:", validatedFields.data);
 
     return state;
 
