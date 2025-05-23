@@ -42,6 +42,7 @@ func registerAuthRoutes(router *gin.Engine) {
 		authRoutes.POST("/register", initializers.AuthHandler.Register)
 		authRoutes.POST("/login", initializers.AuthHandler.Login)
 		authRoutes.POST("/refresh", initializers.AuthHandler.Refresh)
+		authRoutes.PUT("/change-password", middleware.Authenticate(initializers.Verifier), initializers.AuthHandler.ChangePassword)
 	}
 	router.POST("/logout", middleware.Authenticate(initializers.Verifier), initializers.AuthHandler.Logout)
 }
