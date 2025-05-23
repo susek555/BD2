@@ -9,7 +9,7 @@ import UsersListingsTable from '@/app/ui/account/listings/user-listings-table';
 import OffersFoundInfo from '@/app/ui/(offers-table)/offers-found-info';
 import Pagination from '@/app/ui/(offers-table)/pagination';
 import SideBar from '@/app/ui/(filters-sidebar)/sidebar';
-import { OffersFoundSkeleton, OffersTableSkeleton } from '@/app/ui/skeletons';
+import { OffersFoundSkeleton, OffersTableSkeleton, SideBarSkeleton } from '@/app/ui/skeletons';
 import { PlusIcon } from '@heroicons/react/20/solid';
 import Link from 'next/link';
 import { Suspense } from 'react';
@@ -85,7 +85,7 @@ export default async function ListingsPage(props: {
   return (
     <div className='flex flex-grow flex-col md:flex-row'>
       <div className='h-full w-full flex-none py-4 md:w-80'>
-        <Suspense>
+        <Suspense fallback={<SideBarSkeleton />}>
           <SideBar />
         </Suspense>
       </div>

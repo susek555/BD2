@@ -9,7 +9,7 @@ import OffersFoundInfo from '@/app/ui/(offers-table)/offers-found-info';
 import OffersTable from '@/app/ui/(offers-table)/offers-table';
 import Pagination from '@/app/ui/(offers-table)/pagination';
 import SideBar from '@/app/ui/(filters-sidebar)/sidebar';
-import { OffersFoundSkeleton, OffersTableSkeleton } from '@/app/ui/skeletons';
+import { OffersFoundSkeleton, OffersTableSkeleton, SideBarSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
 
 export default async function ActivityPage(props: {
@@ -83,7 +83,7 @@ export default async function ActivityPage(props: {
   return (
     <div className='flex flex-grow flex-col md:flex-row'>
       <div className='h-full w-full flex-none py-4 md:w-80'>
-        <Suspense>
+        <Suspense fallback={<SideBarSkeleton />}>
           <SideBar />
         </Suspense>
       </div>

@@ -13,6 +13,7 @@ async function ProfileInfoWrapper() {
   try {
     const user = await cachedSessionData();
     return <ProfileInfo user={user} />;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     redirect('/login');
   }
