@@ -11,6 +11,12 @@ export type AccountFieldValidationResult = {
   };
 };
 
+export type PasswordValidationResult = {
+  errors?: {
+    current_password: string[]
+  };
+};
+
 /**
  * Sends registration data to the backend and stores tokens if successful
  * @param userData Registration data in the required format
