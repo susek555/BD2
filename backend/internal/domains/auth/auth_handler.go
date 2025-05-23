@@ -1,8 +1,9 @@
 package auth
 
 import (
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"net/http"
+
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -70,6 +71,7 @@ func (h *Handler) Register(ctx *gin.Context) {
 //	@Failure		401		{object}	LoginResponse	"Unauthorized"
 //	@Failure		500		{object}	LoginResponse	"Internal server error"
 //	@Router			/auth/login [post]
+//	@Security		Bearer
 func (h *Handler) Login(c *gin.Context) {
 	var req LoginInput
 	if err := c.ShouldBindJSON(&req); err != nil {
