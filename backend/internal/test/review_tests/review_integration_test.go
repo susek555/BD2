@@ -87,8 +87,8 @@ func getValidToken(userId uint, email string) (string, error) {
 
 func TestGetAllReviewsNoReviews(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []models.User{}
-	seedReviews := []models.Review{}
+	var seedUsers []models.User
+	var seedReviews []models.Review
 	server, _, _, err := newTestServer(seedUsers, seedReviews)
 	assert.NoError(t, err)
 	wantStatus := http.StatusOK
@@ -223,7 +223,7 @@ func TestGetAllReviewsMultipleReviews(t *testing.T) {
 	server, _, _, err := newTestServer(seedUsers, seedReviews)
 	assert.NoError(t, err)
 	wantStatus := http.StatusOK
-	req := httptest.NewRequest(http.MethodGet, "/review/", nil)
+	req := httptest.NewRequest(http.MethodGet, "/review_/", nil)
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 	server.ServeHTTP(w, req)
@@ -232,11 +232,11 @@ func TestGetAllReviewsMultipleReviews(t *testing.T) {
 	err = json.Unmarshal(w.Body.Bytes(), &got)
 	assert.NoError(t, err)
 	assert.Len(t, got, len(seedReviews))
-	for i, review := range seedReviews {
-		assert.Equal(t, review.Rating, got[i].Rating)
-		assert.Equal(t, review.Description, got[i].Description)
-		assert.Equal(t, review.ReviewerID, got[i].Reviewer.ID)
-		assert.Equal(t, review.RevieweeId, got[i].Reviewee.ID)
+	for i, review_ := range seedReviews {
+		assert.Equal(t, review_.Rating, got[i].Rating)
+		assert.Equal(t, review_.Description, got[i].Description)
+		assert.Equal(t, review_.ReviewerID, got[i].Reviewer.ID)
+		assert.Equal(t, review_.RevieweeId, got[i].Reviewee.ID)
 		assert.Equal(t, uint(i+1), got[i].ID)
 	}
 }
@@ -361,7 +361,7 @@ func TestCreateReviewNoAuthHeader(t *testing.T) {
 			},
 		},
 	}
-	seedReviews := []models.Review{}
+	var seedReviews []models.Review
 	server, _, _, err := newTestServer(seedUsers, seedReviews)
 	assert.NoError(t, err)
 	wantStatus := http.StatusUnauthorized
@@ -400,7 +400,7 @@ func TestCreateReviewInvalidToken(t *testing.T) {
 			},
 		},
 	}
-	seedReviews := []models.Review{}
+	var seedReviews []models.Review
 	server, _, _, err := newTestServer(seedUsers, seedReviews)
 	assert.NoError(t, err)
 	wantStatus := http.StatusForbidden
@@ -440,7 +440,7 @@ func TestCreateReviewSuccess(t *testing.T) {
 			},
 		},
 	}
-	seedReviews := []models.Review{}
+	var seedReviews []models.Review
 	server, _, _, err := newTestServer(seedUsers, seedReviews)
 	assert.NoError(t, err)
 	wantStatus := http.StatusCreated
@@ -493,7 +493,7 @@ func TestCreateReviewInvalidRating(t *testing.T) {
 			},
 		},
 	}
-	seedReviews := []models.Review{}
+	var seedReviews []models.Review
 	server, _, _, err := newTestServer(seedUsers, seedReviews)
 	assert.NoError(t, err)
 	wantStatus := http.StatusBadRequest
@@ -532,7 +532,7 @@ func TestCreateReviewSelfReview(t *testing.T) {
 			},
 		},
 	}
-	seedReviews := []models.Review{}
+	var seedReviews []models.Review
 	server, _, _, err := newTestServer(seedUsers, seedReviews)
 	assert.NoError(t, err)
 	wantStatus := http.StatusBadRequest
@@ -1224,7 +1224,7 @@ func TestGetReviewsByReviewerIdNoReviews(t *testing.T) {
 			},
 		},
 	}
-	seedReviews := []models.Review{}
+	var seedReviews []models.Review
 	server, _, _, err := newTestServer(seedUsers, seedReviews)
 	assert.NoError(t, err)
 	wantStatus := http.StatusOK
@@ -1392,7 +1392,7 @@ func TestGetReviewsByRevieweeIdNoReviews(t *testing.T) {
 			},
 		},
 	}
-	seedReviews := []models.Review{}
+	var seedReviews []models.Review
 	server, _, _, err := newTestServer(seedUsers, seedReviews)
 	assert.NoError(t, err)
 	wantStatus := http.StatusOK
@@ -1560,7 +1560,7 @@ func TestGetReviewsByReviewerIdAndRevieweeIdNoReviews(t *testing.T) {
 			},
 		},
 	}
-	seedReviews := []models.Review{}
+	var seedReviews []models.Review
 	server, _, _, err := newTestServer(seedUsers, seedReviews)
 	assert.NoError(t, err)
 	wantStatus := http.StatusNotFound
