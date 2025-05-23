@@ -9,17 +9,18 @@ export type SaleOfferDetails = {
   description: string;
   // location: string;
   sellerName: string;
+  sellerId: number;
   is_favourite: boolean;
   can_edit: boolean;
   can_delete: boolean;
-}
+};
 
 export type AuctionData = {
   currentBid: number;
   endDate: Date;
-}
+};
 
 export type OfferDetails = {
   name: string;
   value: string;
-}
+};
