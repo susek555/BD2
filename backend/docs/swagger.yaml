@@ -165,20 +165,6 @@ definitions:
       error_description:
         type: string
     type: object
-  liked_offer.LikedOffer:
-    properties:
-      offer_id:
-        type: integer
-      user_id:
-        type: integer
-    type: object
-  manufacturer.Manufacturer:
-    properties:
-      id:
-        type: integer
-      name:
-        type: string
-    type: object
   model.RetrieveModelDTO:
     properties:
       id:
@@ -186,6 +172,30 @@ definitions:
       name:
         type: string
     type: object
+  models.LikedOffer:
+    properties:
+      offer_id:
+        type: integer
+      user_id:
+        type: integer
+    type: object
+  models.Manufacturer:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  models.MarginValue:
+    enum:
+    - 3
+    - 5
+    - 10
+    type: integer
+    x-enum-varnames:
+    - LOW_MARGIN
+    - MEDIUM_MARGIN
+    - HIGH_MARGIN
   pagination.PaginationRequest:
     properties:
       page:
@@ -281,7 +291,7 @@ definitions:
       fuel_type:
         $ref: '#/definitions/car_params.FuelType'
       margin:
-        $ref: '#/definitions/sale_offer.MarginValue'
+        $ref: '#/definitions/models.MarginValue'
       mileage:
         type: integer
       model_id:
@@ -324,16 +334,6 @@ definitions:
     - transmission
     - vin
     type: object
-  sale_offer.MarginValue:
-    enum:
-    - 3
-    - 5
-    - 10
-    type: integer
-    x-enum-varnames:
-    - LOW_MARGIN
-    - MEDIUM_MARGIN
-    - HIGH_MARGIN
   sale_offer.MinMax-string:
     properties:
       max:
@@ -440,7 +440,7 @@ definitions:
       is_liked:
         type: boolean
       margin:
-        $ref: '#/definitions/sale_offer.MarginValue'
+        $ref: '#/definitions/models.MarginValue'
       mileage:
         type: integer
       model:
@@ -538,6 +538,15 @@ definitions:
         type: string
       username:
         type: string
+    type: object
+  user.UpdateResponse:
+    properties:
+      errors:
+        additionalProperties:
+          items:
+            type: string
+          type: array
+        type: object
     type: object
   user.UpdateUserDTO:
     properties:
@@ -762,7 +771,7 @@ paths:
           description: List of manufacturers
           schema:
             items:
-              $ref: '#/definitions/manufacturer.Manufacturer'
+              $ref: '#/definitions/models.Manufacturer'
             type: array
         "500":
           description: Internal server error
@@ -1225,7 +1234,7 @@ paths:
       - application/json
       description: |-
         Returns a list of sale offers in paginated form. If the user is logged in, the results contain he offers created by the user. The results are filtered based on request's body. There are several constraints on the filter fields, such as:
-        - Offer type must be one of the predefined offer types (endpoint: /sale-offer/offer-types)
+        - Auction type must be one of the predefined offer types (endpoint: /sale-offer/offer-types)
         - Order key must be one of the predefined order keys (endpoint: /sale-offer/order-keys)
         - List of manufacturers must contain only predefined manufacturers (endpoint: /car/manufacturers)
         - List of colors must contain only predefined colors (endpoint: /car/colors)
@@ -1348,7 +1357,7 @@ paths:
         "200":
           description: Liked offer
           schema:
-            $ref: '#/definitions/liked_offer.LikedOffer'
+            $ref: '#/definitions/models.LikedOffer'
         "400":
           description: Invalid input data
           schema:
@@ -1485,17 +1494,17 @@ paths:
           schema:
             $ref: '#/definitions/user.UpdateUserDTO'
         "400":
-          description: Invalid input data
+          description: Invalid input data - email, username or nip taken
           schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
+            $ref: '#/definitions/user.UpdateResponse'
         "404":
           description: User not found
           schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
+            $ref: '#/definitions/user.UpdateResponse'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
+            $ref: '#/definitions/user.UpdateResponse'
       security:
       - Bearer: []
       summary: Update user
