@@ -26,9 +26,7 @@ export default async function Page({
     },
   };
 
-  const totalPages = 10; // TODO get page count from API
-  const totalNotifications = 100; // TODO get total notifications from API
-  const { newNotifications, notifications } = await fetchNotifications();
+  const {totalPages, totalNotifications, notifications} = await fetchNotifications(notificationsSearchParams);
 
   return (
     <>

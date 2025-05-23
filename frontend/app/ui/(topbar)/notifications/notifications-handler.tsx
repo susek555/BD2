@@ -1,9 +1,9 @@
 import NotificationsButton from './notifications-button'
-import { fetchNotifications } from '@/app/lib/data/notifications/data'
+import { fetchNotificationsTopbar } from '@/app/lib/data/notifications/data'
 
 export default async function NotificationsHandler() {
     // fetch notifications from the server
-    const { newNotifications, notifications } = await fetchNotifications()
+    const { newNotifications, notifications } = await fetchNotificationsTopbar()
 
     return (
         <>
