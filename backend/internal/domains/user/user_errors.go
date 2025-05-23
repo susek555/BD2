@@ -15,6 +15,10 @@ var (
 	ErrCreateCompany   = errors.New("company_name and company_nip must be provided")
 	ErrUpdatePerson    = errors.New("you cannot update person fields if user is not person")
 	ErrUpdateCompany   = errors.New("you cannot update company fields if user is not company")
+	ErrForbidden       = errors.New("provided id does not match the id of the logged in user")
+	ErrEmailTaken      = errors.New("email already in use")
+	ErrUsernameTaken   = errors.New("username already in use")
+	ErrNipAlreadyTaken = errors.New("NIP already taken")
 	ErrInvalidUserID   = errors.New("provided id does not match the id of the logged in user")
 	ErrHashPassword    = errors.New("error occurred while hashing password")
 )
@@ -30,4 +34,7 @@ var ErrorMap = map[error]int{
 	ErrHashPassword:        http.StatusInternalServerError,
 	strconv.ErrSyntax:      http.StatusBadRequest,
 	gorm.ErrRecordNotFound: http.StatusNotFound,
+	ErrEmailTaken:          http.StatusBadRequest,
+	ErrUsernameTaken:       http.StatusBadRequest,
+	ErrNipAlreadyTaken:     http.StatusBadRequest,
 }
