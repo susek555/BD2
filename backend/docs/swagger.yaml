@@ -1,4 +1,23 @@
 definitions:
+  auth.ChangePasswordDTO:
+    properties:
+      new_password:
+        type: string
+      old_password:
+        type: string
+    required:
+    - new_password
+    - old_password
+    type: object
+  auth.ChangePasswordResponse:
+    properties:
+      errors:
+        additionalProperties:
+          items:
+            type: string
+          type: array
+        type: object
+    type: object
   auth.LoginInput:
     properties:
       login:
@@ -577,6 +596,41 @@ info:
   title: Car‑Dealer API
   version: "1.0"
 paths:
+  /auth/change-password:
+    put:
+      consumes:
+      - application/json
+      description: Changes the password of the authenticated user
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Password change details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/auth.ChangePasswordDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Password successfully changed
+        "400":
+          description: Invalid request or password validation failed
+          schema:
+            $ref: '#/definitions/auth.ChangePasswordResponse'
+        "401":
+          description: Unauthorized access
+          schema:
+            $ref: '#/definitions/auth.ChangePasswordResponse'
+      security:
+      - Bearer: []
+      summary: Change user password
+      tags:
+      - auth
   /auth/login:
     post:
       consumes:
@@ -608,6 +662,8 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/auth.LoginResponse'
+      security:
+      - Bearer: []
       summary: Login user
       tags:
       - auth

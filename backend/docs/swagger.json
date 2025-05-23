@@ -16,8 +16,68 @@
     },
     "host": "localhost:8080",
     "paths": {
+        "/auth/change-password": {
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Changes the password of the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Change user password",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Password change details",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/auth.ChangePasswordDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Password successfully changed"
+                    },
+                    "400": {
+                        "description": "Invalid request or password validation failed",
+                        "schema": {
+                            "$ref": "#/definitions/auth.ChangePasswordResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized access",
+                        "schema": {
+                            "$ref": "#/definitions/auth.ChangePasswordResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/login": {
             "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Authenticate user and return a pair of tokens and user data",
                 "consumes": [
                     "application/json"
@@ -1529,6 +1589,35 @@
         }
     },
     "definitions": {
+        "auth.ChangePasswordDTO": {
+            "type": "object",
+            "required": [
+                "new_password",
+                "old_password"
+            ],
+            "properties": {
+                "new_password": {
+                    "type": "string"
+                },
+                "old_password": {
+                    "type": "string"
+                }
+            }
+        },
+        "auth.ChangePasswordResponse": {
+            "type": "object",
+            "properties": {
+                "errors": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "auth.LoginInput": {
             "type": "object",
             "required": [
