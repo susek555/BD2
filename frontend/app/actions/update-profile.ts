@@ -1,5 +1,5 @@
 import camelcaseKeys from 'camelcase-keys';
-import { updatePersonalData } from '../lib/api/account/updatePersonalData';
+import { changePersonalData } from '../lib/api/account/changePersonalData';
 import { AccountFieldValidationResult } from '../lib/api/auth';
 import { PersonalDataFormState } from '../lib/definitions/account-settings';
 import { PersonalDataSchema } from '../lib/definitions/personal-data-schema';
@@ -25,7 +25,7 @@ export async function updateProfile(
       },
     };
   }
-  const updateResult: AccountFieldValidationResult = await updatePersonalData({
+  const updateResult: AccountFieldValidationResult = await changePersonalData({
     id,
     ...validatedFields.data,
   });
