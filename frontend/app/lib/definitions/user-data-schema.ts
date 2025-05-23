@@ -32,8 +32,8 @@ export const PersonalDataSchema = z
 
 export const ChangePasswordSchema = z
   .object({
-    currentPassword: z.string(),
-    newPassword: z
+    current_password: z.string(),
+    new_password: z
       .string()
       .min(2, { message: 'Must be at least 2 characters long' })
       // .regex(/[a-zA-Z]/, { message: 'Contain at least one letter.' })
@@ -42,13 +42,13 @@ export const ChangePasswordSchema = z
       //   message: 'Contain at least one special character.',
       // })
       .trim(),
-    confirmNewPassword: z.string().trim(),
+    confirm_new_password: z.string().trim(),
   })
-  .refine((data) => data.newPassword === data.confirmNewPassword, {
+  .refine((data) => data.new_password === data.confirm_new_password, {
     message: "Passwords don't match",
-    path: ['confirmNewPassword'],
+    path: ['confirm_new_password'],
   })
   .transform((data) => {
-    const { confirmNewPassword: _, ...rest } = data;
+    const { confirm_new_password: _, ...rest } = data;
     return rest;
   });
