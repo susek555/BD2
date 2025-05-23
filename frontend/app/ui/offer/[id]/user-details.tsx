@@ -19,7 +19,7 @@ export default function UserDetails({
         <p className='text-2xl'>Seller</p>
         {/* Remove link to user profile for now */}
         <Link
-          href={`/offer/${offerId}/seller/${sellerId}/reviews`}
+          href={`/seller/${sellerId}/reviews?callbackUrl=${encodeURIComponent('/offer/' + offerId)}`}
           className='flex flex-row items-center justify-center rounded-md bg-gray-100 p-4 transition hover:bg-gray-200 md:w-100'
         >
           <div className='flex flex-row items-center gap-2'>
