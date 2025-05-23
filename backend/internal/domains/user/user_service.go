@@ -81,10 +81,12 @@ func (s *UserService) Update(in *UpdateUserDTO) map[string][]string {
 	var errs = make(map[string][]string)
 	if err != nil {
 		errs["id"] = []string{err.Error()}
+		return errs
 	}
 	updatedUser, err := in.UpdateUserFromDTO(user)
 	if err != nil {
 		errs["other"] = []string{err.Error()}
+		return errs
 	}
 	u, noUsername := s.repo.GetByUsername(updatedUser.Username)
 	if noUsername == nil && u.ID != updatedUser.ID {
@@ -95,7 +97,7 @@ func (s *UserService) Update(in *UpdateUserDTO) map[string][]string {
 		errs["email"] = []string{ErrEmailTaken.Error()}
 	}
 	if updatedUser.Selector == "C" {
-		u, noNip := s.repo.GetByCompanyNip(*in.CompanyNIP)
+		u, noNip := s.repo.GetByCompanyNip(updatedUser.Company.NIP)
 		if noNip == nil && u.ID != updatedUser.ID {
 			errs["company_nip"] = []string{ErrNipAlreadyTaken.Error()}
 		}
