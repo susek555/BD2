@@ -309,10 +309,12 @@ func TestUpdateUser_NotUniqueUsername(t *testing.T) {
 	token, _ := u.GetValidToken(seedUsers[0].ID, seedUsers[0].Email)
 	response, receivedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
 	assert.Equal(t, http.StatusBadRequest, receivedStatus)
-	var got custom_errors.HTTPError
+	var got user.UpdateResponse
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
-	assert.NotEmpty(t, &got.Description)
+	assert.NotEmpty(t, &got.Errors)
+	assert.NotEmpty(t, got.Errors["username"])
+	assert.Equal(t, got.Errors["username"][0], user.ErrUsernameTaken.Error())
 }
 
 func TestUpdateUser_UpdateEmail(t *testing.T) {
@@ -346,10 +348,12 @@ func TestUpdateUser_NotUniqueEmail(t *testing.T) {
 	token, _ := u.GetValidToken(seedUsers[0].ID, seedUsers[0].Email)
 	response, receivedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
 	assert.Equal(t, http.StatusBadRequest, receivedStatus)
-	var got custom_errors.HTTPError
+	var got user.UpdateResponse
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
-	assert.NotEmpty(t, &got.Description)
+	assert.NotEmpty(t, &got.Errors)
+	assert.NotEmpty(t, got.Errors["email"])
+	assert.Equal(t, got.Errors["email"][0], user.ErrEmailTaken.Error())
 }
 
 func TestUpdateUser_UpdatePassword(t *testing.T) {
@@ -383,7 +387,7 @@ func TestUpdateUser_UpdateCompanyNameAsCompany(t *testing.T) {
 	_, companyRepo, _ := getRepositories(db)
 	got, err := companyRepo.GetById(1)
 	assert.NoError(t, err)
-	assert.Equal(t, got.Name, newCompanyName)
+	assert.Equal(t, newCompanyName, got.Name)
 }
 
 func TestUpdateUser_UpdateCompanyNameAsPerson(t *testing.T) {
@@ -397,10 +401,10 @@ func TestUpdateUser_UpdateCompanyNameAsPerson(t *testing.T) {
 	token, _ := u.GetValidToken(seedUsers[0].ID, seedUsers[0].Email)
 	response, receivedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
 	assert.Equal(t, http.StatusBadRequest, receivedStatus)
-	var got custom_errors.HTTPError
+	var got user.UpdateResponse
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
-	assert.Equal(t, got.Description, user.ErrUpdateCompany.Error())
+	assert.Equal(t, got.Errors["other"][0], user.ErrUpdateCompany.Error())
 }
 
 func TestUpdateUser_UpdateNIPAsCompany(t *testing.T) {
@@ -434,10 +438,12 @@ func TestUpdateUser_UpdateNIPAsCompanyNotUnique(t *testing.T) {
 	token, _ := u.GetValidToken(seedUsers[0].ID, seedUsers[0].Email)
 	response, receivedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
 	assert.Equal(t, http.StatusBadRequest, receivedStatus)
-	var got custom_errors.HTTPError
+	var got user.UpdateResponse
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
-	assert.NotEmpty(t, &got.Description)
+	assert.NotEmpty(t, &got.Errors)
+	assert.NotEmpty(t, got.Errors["company_nip"])
+	assert.Equal(t, got.Errors["company_nip"][0], user.ErrNipAlreadyTaken.Error())
 }
 
 func TestUpdateUser_UpdateNIPAsPerson(t *testing.T) {
@@ -451,10 +457,10 @@ func TestUpdateUser_UpdateNIPAsPerson(t *testing.T) {
 	token, _ := u.GetValidToken(seedUsers[0].ID, seedUsers[0].Email)
 	response, receivedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
 	assert.Equal(t, http.StatusBadRequest, receivedStatus)
-	var got custom_errors.HTTPError
+	var got user.UpdateResponse
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
-	assert.NotEmpty(t, &got.Description)
+	assert.Equal(t, got.Errors["other"][0], user.ErrUpdateCompany.Error())
 }
 
 func TestUpdateUser_UpdatePersonNameAsPerson(t *testing.T) {
@@ -485,10 +491,12 @@ func TestUpdateUser_UpdatePersonNameAsCompany(t *testing.T) {
 	token, _ := u.GetValidToken(seedUsers[0].ID, seedUsers[0].Email)
 	response, receivedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
 	assert.Equal(t, http.StatusBadRequest, receivedStatus)
-	var got custom_errors.HTTPError
+	var got user.UpdateResponse
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
-	assert.NotEmpty(t, &got.Description)
+	assert.NotEmpty(t, &got.Errors)
+	assert.NotEmpty(t, got.Errors["other"])
+	assert.Equal(t, got.Errors["other"][0], user.ErrUpdatePerson.Error())
 }
 
 func TestUpdateUser_UpdatePersonSurnameAsPerson(t *testing.T) {
@@ -519,10 +527,12 @@ func TestUpdateUser_UpdatePersonSurnameAsCompany(t *testing.T) {
 	token, _ := u.GetValidToken(seedUsers[0].ID, seedUsers[0].Email)
 	response, receivedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
 	assert.Equal(t, http.StatusBadRequest, receivedStatus)
-	var got custom_errors.HTTPError
+	var got user.UpdateResponse
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
-	assert.NotEmpty(t, &got.Description)
+	assert.NotEmpty(t, &got.Errors)
+	assert.NotEmpty(t, got.Errors["other"])
+	assert.Equal(t, got.Errors["other"][0], user.ErrUpdatePerson.Error())
 }
 
 // -----------------
