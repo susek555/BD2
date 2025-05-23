@@ -5,7 +5,7 @@ import {
   trimAllAfterFirstSpace,
   SearchParams,
 } from '@/app/lib/definitions/SearchParams';
-import OffersFoundInfo from '@/app/ui/(offers-table)/offers-found-info';
+import FoundInfo from '@/app/ui/(common)/found-info';
 import OffersTable from '@/app/ui/(offers-table)/offers-table';
 import Pagination from '@/app/ui/(offers-table)/pagination';
 import SideBar from '@/app/ui/(filters-sidebar)/sidebar';
@@ -89,7 +89,7 @@ export default async function ActivityPage(props: {
       </div>
       <div className='flex-grow p-6 md:px-12 md:py-8'>
         <Suspense fallback={<OffersFoundSkeleton />}>
-          <OffersFoundInfo totalOffers={totalOffers} />
+          <FoundInfo title={"Offers found"} totalOffers={totalOffers} />
         </Suspense>
         <div className='my-4' />
         <Suspense fallback={<OffersTableSkeleton />}>

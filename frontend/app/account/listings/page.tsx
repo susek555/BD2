@@ -6,7 +6,7 @@ import {
   trimAllAfterFirstSpace,
 } from '@/app/lib/definitions/SearchParams';
 import UsersListingsTable from '@/app/ui/account/listings/user-listings-table';
-import OffersFoundInfo from '@/app/ui/(offers-table)/offers-found-info';
+import FoundInfo from '@/app/ui/(common)/found-info';
 import Pagination from '@/app/ui/(offers-table)/pagination';
 import SideBar from '@/app/ui/(filters-sidebar)/sidebar';
 import { OffersFoundSkeleton, OffersTableSkeleton, SideBarSkeleton } from '@/app/ui/skeletons';
@@ -92,7 +92,7 @@ export default async function ListingsPage(props: {
       <div className='flex-grow p-6 md:px-12 md:py-8'>
         <div className='flex w-full items-center justify-between'>
           <Suspense fallback={<OffersFoundSkeleton />}>
-            <OffersFoundInfo totalOffers={totalOffers} />
+            <FoundInfo title={"Offers found"} totalOffers={totalOffers} />
           </Suspense>
           <Link
             href='/listing/create' // TODO add actual creeate redirect

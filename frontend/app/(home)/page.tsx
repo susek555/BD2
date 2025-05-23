@@ -7,7 +7,7 @@ import {
   trimAllAfterFirstSpace,
   SearchParams,
 } from '../lib/definitions/SearchParams';
-import OffersFoundInfo from '../ui/(offers-table)/offers-found-info';
+import FoundInfo from '../ui/(common)/found-info';
 import OffersTable from '../ui/(offers-table)/offers-table';
 import Pagination from '../ui/(offers-table)/pagination';
 import { OffersFoundSkeleton, OffersTableSkeleton, SideBarSkeleton } from '../ui/skeletons';
@@ -93,7 +93,7 @@ export default async function Home(props: {
         </div>
         <div className='flex-grow p-6 md:overflow-y-auto md:px-12 md:py-8'>
           <Suspense fallback={<OffersFoundSkeleton />}>
-            <OffersFoundInfo totalOffers={totalOffers} />
+            <FoundInfo title={"Offers found"} totalOffers={totalOffers} />
           </Suspense>
           <div className='my-4' />
           <Suspense fallback={<OffersTableSkeleton />}>
