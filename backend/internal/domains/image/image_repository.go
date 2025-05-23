@@ -8,6 +8,7 @@ import (
 type ImageRepositoryInterface interface {
 	Create(image *models.Image) error
 	GetImagesByOfferID(offerID uint) ([]models.Image, error)
+	DeleteByOfferID(offerID uint) error
 }
 
 type ImageRepository struct {
@@ -26,4 +27,8 @@ func (r *ImageRepository) GetImagesByOfferID(offerID uint) ([]models.Image, erro
 	var images []models.Image
 	err := r.DB.Where("offer_id = ?", offerID).Find(&images).Error
 	return images, err
+}
+
+func (r *ImageRepository) DeleteByOfferID(offerID uint) error {
+	return r.DB.Where("offer_id = ?", offerID).Delete(&models.Image{}).Error
 }
