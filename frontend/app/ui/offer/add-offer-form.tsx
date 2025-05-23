@@ -283,7 +283,6 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                     <SelectionLabel id="color" name="Color" options={inputsData.colors} />
                     <SelectionLabel id="fuel_type" name="Fuel Type" options={inputsData.fuelTypes} />
                     <SelectionLabel id="drive" name="Drive Type" options={inputsData.driveTypes} />
-                    <SelectionLabel id="country" name="Country" options={inputsData.countries} />
                     <SelectionLabel id="transmission" name="Transmission" options={inputsData.gearboxes} />
                     <NumberInputField id="number_of_gears" name="Number of gears" />
                     <NumberInputField id="production_year" name="Production Year" />

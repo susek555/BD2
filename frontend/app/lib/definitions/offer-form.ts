@@ -195,5 +195,4 @@ export type AddOfferFormData = {
   fuelTypes: string[];
   gearboxes: string[];
   driveTypes: string[];
-  countries: string[];
 }

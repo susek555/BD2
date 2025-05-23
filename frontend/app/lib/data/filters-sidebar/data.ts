@@ -59,14 +59,6 @@ async function fetchDriveTypes() : Promise<string[]> {
     return data;
 }
 
-async function fetchCountries() : Promise<string[]> {
-    // TODO connect API
-
-    const data = ["Germany", "France", "Italy", "Spain", "USA"]
-
-    return data;
-}
-
 
 
 export async function fetchProducersAndModels() : Promise<ModelFieldData> {
@@ -118,10 +110,6 @@ export async function fetchFilterFields() : Promise<FilterFieldData[]> {
                 fieldName: "Drive types",
                 options: await fetchDriveTypes(),
             }))(),
-            (async () => ({
-                fieldName: "Countries",
-                options: await fetchCountries(),
-            }))()
         ]);
 
 
@@ -189,21 +177,18 @@ export async function fetchAddOfferFormData() : Promise<AddOfferFormData> {
     const fuelTypes = fetchFuelTypes();
     const gearboxes = fetchGearboxes();
     const driveTypes = fetchDriveTypes();
-    const countries = fetchCountries();
 
     const [ producersAndModelsResult,
             colorsResult,
             fuelTypesResult,
             gearboxesResult,
             driveTypesResult,
-            countriesResult
         ] = await Promise.all([
             producersAndModels,
             colors,
             fuelTypes,
             gearboxes,
             driveTypes,
-            countries
         ]);
 
     return {
@@ -213,6 +198,5 @@ export async function fetchAddOfferFormData() : Promise<AddOfferFormData> {
         fuelTypes: fuelTypesResult,
         gearboxes: gearboxesResult,
         driveTypes: driveTypesResult,
-        countries: countriesResult
     };
 }
