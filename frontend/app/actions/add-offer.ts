@@ -71,20 +71,22 @@ export async function addOffer(
     console.log("Add Offer validated fields:", validatedFields.data);
 
 
-    if (is_auction) {
-        console.log("Adding auction offer");
-    } else {
-        const regularOfferData: RegularOfferData = validatedFields.data as RegularOfferData;
-        await postRegularOffer(regularOfferData);
+    try {
+        if (is_auction) {
+            console.log("Adding auction offer");
+        } else {
+            const regularOfferData: RegularOfferData = validatedFields.data as RegularOfferData;
+            await postRegularOffer(regularOfferData);
+        }
+
+        permanentRedirect("/account/listings");
+    } catch (error) {
+        if (typeof window !== 'undefined') {
+            alert(`Error adding offer: ${error instanceof Error ? error.message : String(error)}`);
+        }
+        return {
+            errors: {},
+            values: normalizedData as AddOfferFormState['values']
+        }
     }
-
-
-
-
-
-
-
-
-
-    return state;
 }
