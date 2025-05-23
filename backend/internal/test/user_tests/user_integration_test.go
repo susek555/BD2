@@ -21,7 +21,7 @@ import (
 
 func TestGetAllUsers_EmptyDatabase(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []models.User{}
+	var seedUsers []models.User
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedUsers)
 	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/users/", nil, nil)
@@ -114,7 +114,7 @@ func TestGetAllUsers_Mixed(t *testing.T) {
 
 func TestGetUserByID_EmptyDatabase(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []models.User{}
+	var seedUsers []models.User
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedUsers)
 	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/users/id/1", nil, nil)
@@ -196,7 +196,7 @@ func TestGetUserByID_Company(t *testing.T) {
 
 func TestGetUserByEmail_EmptyDatabase(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	seedUsers := []models.User{}
+	var seedUsers []models.User
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedUsers)
 	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/users/email/john1@gmail.com", nil, nil)
