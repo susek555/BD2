@@ -86,7 +86,7 @@ func setupDB(manufacturers []models.Manufacturer, models_ []models.Model, cars [
 	return service, nil
 }
 
-func newTestServer(t *testing.T, seedManufacturers []models.Manufacturer, seedModels []models.Model, seedCars []models.Car, seedSaleOffers []models.SaleOffer, seedAuctions []models.Auction, seedUsers []models.User) (*gin.Engine, auction.AuctionServiceInterface, error) {
+func newTestServer(seedManufacturers []models.Manufacturer, seedModels []models.Model, seedCars []models.Car, seedSaleOffers []models.SaleOffer, seedAuctions []models.Auction, seedUsers []models.User) (*gin.Engine, auction.AuctionServiceInterface, error) {
 	service, err := setupDB(seedManufacturers, seedModels, seedCars, seedSaleOffers, seedAuctions, seedUsers)
 	if err != nil {
 		return nil, nil, err
@@ -96,7 +96,7 @@ func newTestServer(t *testing.T, seedManufacturers []models.Manufacturer, seedMo
 	ms := new(mocks.SchedulerInterface)
 	ms.
 		On("AddAuction",
-			mock.AnythingOfType("string"),      // ID aukcji
+			mock.AnythingOfType("string"),    // ID aukcji
 			mock.AnythingOfType("time.Time"), // termin zakończenia
 		).
 		Return(nil)
@@ -123,7 +123,7 @@ func TestCreateAuctionNoAuthHeader(t *testing.T) {
 	var seedSaleOffers []models.SaleOffer
 	var seedAuctions []models.Auction
 	var seedUsers []models.User
-	server, _, err := newTestServer(t, seedManufacturers, seedModels, seedCars, seedSaleOffers, seedAuctions, seedUsers)
+	server, _, err := newTestServer(seedManufacturers, seedModels, seedCars, seedSaleOffers, seedAuctions, seedUsers)
 	assert.NoError(t, err)
 	wantStatus := http.StatusUnauthorized
 	req := httptest.NewRequest(http.MethodPost, "/auction/", nil)
@@ -145,7 +145,7 @@ func TestCreateAuctionInvalidToken(t *testing.T) {
 	var seedSaleOffers []models.SaleOffer
 	var seedAuctions []models.Auction
 	var seedUsers []models.User
-	server, _, err := newTestServer(t, seedManufacturers, seedModels, seedCars, seedSaleOffers, seedAuctions, seedUsers)
+	server, _, err := newTestServer(seedManufacturers, seedModels, seedCars, seedSaleOffers, seedAuctions, seedUsers)
 	assert.NoError(t, err)
 	wantStatus := http.StatusForbidden
 	req := httptest.NewRequest(http.MethodPost, "/auction/", nil)
@@ -189,7 +189,7 @@ func TestCreateAuctionSuccess(t *testing.T) {
 			},
 		},
 	}
-	server, _, err := newTestServer(t, seedManufacturers, seedModels, seedCars, seedSaleOffers, seedAuctions, seedUsers)
+	server, _, err := newTestServer(seedManufacturers, seedModels, seedCars, seedSaleOffers, seedAuctions, seedUsers)
 	assert.NoError(t, err)
 	token, err := getValidToken(uint(1), seedUsers[0].Email)
 	assert.NoError(t, err)
@@ -270,7 +270,7 @@ func TestCreateAuctionInvalidDate(t *testing.T) {
 			},
 		},
 	}
-	server, _, err := newTestServer(t, seedManufacturers, seedModels, seedCars, seedSaleOffers, seedAuctions, seedUsers)
+	server, _, err := newTestServer(seedManufacturers, seedModels, seedCars, seedSaleOffers, seedAuctions, seedUsers)
 	assert.NoError(t, err)
 	token, err := getValidToken(uint(1), seedUsers[0].Email)
 	assert.NoError(t, err)
@@ -345,7 +345,7 @@ func TestCreateAuctionInvalidDateFormat(t *testing.T) {
 			},
 		},
 	}
-	server, _, err := newTestServer(t, seedManufacturers, seedModels, seedCars, seedSaleOffers, seedAuctions, seedUsers)
+	server, _, err := newTestServer(seedManufacturers, seedModels, seedCars, seedSaleOffers, seedAuctions, seedUsers)
 	assert.NoError(t, err)
 	token, err := getValidToken(uint(1), seedUsers[0].Email)
 	assert.NoError(t, err)
@@ -420,7 +420,7 @@ func TestCreateAuctionZeroBuyNowPrice(t *testing.T) {
 			},
 		},
 	}
-	server, _, err := newTestServer(t, seedManufacturers, seedModels, seedCars, seedSaleOffers, seedAuctions, seedUsers)
+	server, _, err := newTestServer(seedManufacturers, seedModels, seedCars, seedSaleOffers, seedAuctions, seedUsers)
 	assert.NoError(t, err)
 	token, err := getValidToken(uint(1), seedUsers[0].Email)
 	assert.NoError(t, err)
@@ -490,7 +490,7 @@ func TestCreateAuctionBuyNowPriceLessThanOfferPrice(t *testing.T) {
 			},
 		},
 	}
-	server, _, err := newTestServer(t, seedManufacturers, seedModels, seedCars, seedSaleOffers, seedAuctions, seedUsers)
+	server, _, err := newTestServer(seedManufacturers, seedModels, seedCars, seedSaleOffers, seedAuctions, seedUsers)
 	assert.NoError(t, err)
 	token, err := getValidToken(uint(1), seedUsers[0].Email)
 	assert.NoError(t, err)
@@ -561,7 +561,7 @@ func TestCreateAuctionBuyNowPriceNegative(t *testing.T) {
 			},
 		},
 	}
-	server, _, err := newTestServer(t, seedManufacturers, seedModels, seedCars, seedSaleOffers, seedAuctions, seedUsers)
+	server, _, err := newTestServer(seedManufacturers, seedModels, seedCars, seedSaleOffers, seedAuctions, seedUsers)
 	assert.NoError(t, err)
 	token, err := getValidToken(uint(1), seedUsers[0].Email)
 	assert.NoError(t, err)
