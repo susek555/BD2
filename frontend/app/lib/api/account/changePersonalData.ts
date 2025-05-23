@@ -1,7 +1,7 @@
 import { UserProfile } from '../../definitions/user';
 import { AccountFieldValidationResult } from '../auth';
 
-export async function updatePersonalData(
+export async function changePersonalData(
   newUserData: UserProfile,
 ): Promise<AccountFieldValidationResult> {
   try {
