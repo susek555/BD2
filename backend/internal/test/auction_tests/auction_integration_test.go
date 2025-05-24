@@ -19,7 +19,7 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
 	"github.com/susek555/BD2/car-dealer-api/pkg/middleware"
-	"gorm.io/driver/sqlite"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
@@ -28,22 +28,12 @@ import (
 // ------
 
 func setupDB(manufacturers []models.Manufacturer, models_ []models.Model, cars []models.Car, saleOffers []models.SaleOffer, auctions []models.Auction, users []models.User) (auction.AuctionServiceInterface, error) {
-	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	dsn := "host=localhost user=bd2_user password=bd2_password dbname=bd2_test port=5432 sslmode=disable TimeZone=Europe/Warsaw"
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
-	err = db.AutoMigrate(
-		&models.Model{},
-		&models.Person{},
-		&models.Company{},
-		&models.Manufacturer{},
-		&models.Car{},
-		&models.SaleOffer{},
-		&models.Auction{},
-	)
-	if err != nil {
-		return nil, err
-	}
+	db.Exec("TRUNCATE TABLE auctions, sale_offers, cars, models, manufacturers, companies, people, users RESTART IDENTITY CASCADE")
 	for _, user := range users {
 		err = db.Create(&user).Error
 		if err != nil {
@@ -503,7 +493,7 @@ func TestCreateAuctionBuyNowPriceLessThanOfferPrice(t *testing.T) {
 		"number_of_doors": 4,
 		"number_of_seats": 5,
 		"engine_power": 150,
-		"price": 10000,	
+		"price": 10000,
 		"engine_capacity": 2000,
 		"registration_number": "ABC123",
 		"registration_date": "2023-10-01",

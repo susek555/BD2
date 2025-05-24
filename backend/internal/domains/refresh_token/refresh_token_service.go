@@ -2,8 +2,9 @@ package refresh_token
 
 import (
 	"errors"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"time"
+
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/generic"
 )
@@ -44,7 +45,7 @@ func (s *RefreshTokenService) FindByUserId(id uint) ([]models.RefreshToken, erro
 }
 
 func (s *RefreshTokenService) VerifyExpiration(token *models.RefreshToken) (*models.RefreshToken, error) {
-	if token.ExpiryDate.Before(time.Now()) {
+	if token.ExpiryDate.Before(time.Now().UTC()) {
 		_ = s.Repo.Delete(token.ID)
 		return nil, errors.New("refresh token expired")
 	}
