@@ -113,7 +113,7 @@ func registerBidRoutes(router *gin.Engine) {
 func registerImageRoutes(router *gin.Engine) {
 	imageRoutes := router.Group("/image")
 	{
-		imageRoutes.POST("/:id", middleware.Authenticate(initializers.Verifier), initializers.ImageHandler.UploadImages)
+		imageRoutes.PATCH("/:id", middleware.Authenticate(initializers.Verifier), initializers.ImageHandler.UploadImages)
 	}
 
 }
