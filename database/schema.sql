@@ -1,172 +1,162 @@
-CREATE TABLE client (
+CREATE TABLE users (
     id SERIAL PRIMARY KEY,
-    login VARCHAR(50) NOT NULL UNIQUE,
+    username VARCHAR(50) NOT NULL UNIQUE,
     email VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(50) NOT NULL,
-    address VARCHAR(50) NOT NULL,
-    client_type VARCHAR(10) NOT NULL CHECK (client_type IN ('individual', 'company'))
+    selector VARCHAR(10) NOT NULL CHECK (selector IN ('P', 'C'))
 );
 
-CREATE TABLE document (
+CREATE TABLE documents (
     id SERIAL PRIMARY KEY,
     type VARCHAR(30) NOT NULL
 );
 
-CREATE TABLE manufacturer (
+CREATE TABLE manufacturers (
     id SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE individual (
-    id INTEGER PRIMARY KEY REFERENCES client(id),
-    first_name VARCHAR(20) NOT NULL,
-    last_name VARCHAR(20) NOT NULL
+CREATE TABLE people (
+    user_id INTEGER PRIMARY KEY REFERENCES users(id),
+    name VARCHAR(20) NOT NULL,
+    surname VARCHAR(20) NOT NULL
 );
 
-CREATE TABLE company (
-    id INTEGER PRIMARY KEY REFERENCES client(id),
-    nip INTEGER NOT NULL,
+CREATE TABLE companies (
+    user_id INTEGER PRIMARY KEY REFERENCES users(id),
+    nip VARCHAR(50) NOT NULL,
     name VARCHAR(30) NOT NULL
 );
 
-CREATE TABLE listing (
+CREATE TABLE sale_offers (
     id SERIAL PRIMARY KEY,
-    client_id INTEGER NOT NULL REFERENCES client(id),
+    user_id INTEGER NOT NULL REFERENCES users(id),
     description VARCHAR(2000) NOT NULL,
-    address VARCHAR(50) NOT NULL,
     price INTEGER NOT NULL,
     margin FLOAT NOT NULL,
-    is_active CHAR(1) NOT NULL CHECK (is_active IN ('Y', 'N')),
-    listing_type VARCHAR(10) NOT NULL CHECK (listing_type IN ('auction', 'standard'))  -- CHANGED: ad_type -> listing_type
+    date_of_issue TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE auction (
-    id INTEGER PRIMARY KEY REFERENCES listing(id),
-    end_date DATE NOT NULL,
-    buy_now_price INTEGER,
-    CHECK (listing_type = 'auction')
-) INHERITS (listing);
+CREATE TABLE auctions (
+    offer_id INTEGER PRIMARY KEY REFERENCES sale_offers(id),
+    date_end DATE NOT NULL,
+    buy_now_price INTEGER
+);
 
-CREATE TABLE standard_offer (
-    id INTEGER PRIMARY KEY REFERENCES listing(id),
-    CHECK (listing_type = 'standard')
-) INHERITS (listing);
 
-CREATE TABLE bid (
+CREATE TABLE bids (
     id SERIAL PRIMARY KEY,
-    auction_id INTEGER NOT NULL REFERENCES auction(id),
-    client_id INTEGER NOT NULL REFERENCES client(id),
+    auction_id INTEGER NOT NULL REFERENCES auctions(offer_id),
+    bidder_id INTEGER NOT NULL REFERENCES users(id),
     amount INTEGER NOT NULL,
-    time TIMESTAMP NOT NULL
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE country_of_origin (
+CREATE TABLE countries_of_origin (
     id SERIAL PRIMARY KEY,
     country_name VARCHAR(48) NOT NULL
 );
 
-CREATE TABLE transmission (
+CREATE TABLE transmissions (
     id SERIAL PRIMARY KEY,
     gear_count INTEGER NOT NULL,
     transmission_type VARCHAR(12) NOT NULL CHECK (transmission_type IN ('manual', 'automatic'))
 );
 
-CREATE TABLE color (
+CREATE TABLE colors (
     id SERIAL PRIMARY KEY,
     name VARCHAR(64) NOT NULL
 );
 
-CREATE TABLE fuel_type (
+CREATE TABLE fuel_types (
     id SERIAL PRIMARY KEY,
     name VARCHAR(20) NOT NULL
 );
 
-CREATE TABLE drive_type (
+CREATE TABLE drive_types (
     id SERIAL PRIMARY KEY,
     type VARCHAR(8) NOT NULL CHECK (type IN ('FWD', 'RWD', 'AWD'))
 );
 
-CREATE TABLE car_model (
+CREATE TABLE models (
     id SERIAL PRIMARY KEY,
-    manufacturer_id INTEGER NOT NULL REFERENCES manufacturer(id),
+    manufacturer_id INTEGER NOT NULL REFERENCES manufacturers(id),
     name VARCHAR(64) NOT NULL
 );
 
-CREATE TABLE car (
-    id SERIAL PRIMARY KEY,
+CREATE TABLE cars (
+    offer_id INTEGER PRIMARY KEY REFERENCES sale_offers(id),
+    vin VARCHAR(17),
     production_year INTEGER NOT NULL,
     mileage INTEGER NOT NULL,
-    door_count INTEGER NOT NULL,
-    seat_count INTEGER NOT NULL,
-    power INTEGER NOT NULL,
-    first_registration_date DATE NOT NULL,
+    number_of_doors INTEGER NOT NULL CHECK (number_of_doors BETWEEN 1 AND 6),
+    number_of_seats INTEGER NOT NULL CHECK (number_of_seats BETWEEN 2 AND 100),
+    engine_power INTEGER NOT NULL CHECK (engine_power BETWEEN 1 AND 9999),
+    engine_capacity INTEGER NOT NULL CHECK (engine_capacity BETWEEN 1 AND 9000),
     registration_number VARCHAR(8) NOT NULL,
-    engine_capacity FLOAT NOT NULL,
-    fuel_type_id INTEGER REFERENCES fuel_type(id),
-    transmission_id INTEGER REFERENCES transmission(id),
-    color_id INTEGER REFERENCES color(id),
-    drive_type_id INTEGER REFERENCES drive_type(id),
-    country_of_origin_id INTEGER REFERENCES country_of_origin(id),
-    model_id INTEGER REFERENCES car_model(id)
+    registration_date DATE NOT NULL,
+    color VARCHAR(20) NOT NULL,
+    fuel_type VARCHAR(20) NOT NULL,
+    transmission VARCHAR(20) NOT NULL,
+    number_of_gears INTEGER NOT NULL CHECK (number_of_gears BETWEEN 1 AND 10),
+    drive VARCHAR(8) NOT NULL CHECK (drive IN ('FWD', 'RWD', 'AWD')),
+    model_id INTEGER REFERENCES models(id)
 );
 
 
-CREATE TABLE notification (
+CREATE TABLE notifications (
     id SERIAL PRIMARY KEY,
-    listing_id INTEGER REFERENCES listing(id),
+    offer_id INTEGER REFERENCES sale_offers(id),
     title VARCHAR(100) NOT NULL,
-    content VARCHAR(200) NOT NULL
+    description VARCHAR(200) NOT NULL,
+    date VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE client_notification (
+CREATE TABLE client_notifications (
     id SERIAL PRIMARY KEY,
-    client_id INTEGER REFERENCES client(id),
-    notification_id INTEGER REFERENCES notification(id)
+    user_id INTEGER REFERENCES users(id),
+    notification_id INTEGER REFERENCES notifications(id),
+    seen BOOLEAN DEFAULT FALSE
 );
 
-CREATE TABLE favorite_listing (
+CREATE TABLE liked_offers (
     id SERIAL PRIMARY KEY,
-    client_id INTEGER REFERENCES client(id),
-    listing_id INTEGER REFERENCES listing(id)
+    user_id INTEGER REFERENCES users(id),
+    offer_id INTEGER REFERENCES sale_offers(id)
 );
 
-CREATE TABLE refresh_token (
-    client_id INTEGER PRIMARY KEY REFERENCES client(id),
-    token VARCHAR(64) NOT NULL
-);
-
-CREATE TABLE photo (
-    listing_id INTEGER REFERENCES listing(id),
+CREATE TABLE refresh_tokens (
     id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id),
+    token VARCHAR(64) NOT NULL,
+    expiry_date TIMESTAMP NOT NULL
+);
+
+CREATE TABLE photos (
+    id SERIAL PRIMARY KEY,
+    offer_id INTEGER REFERENCES sale_offers(id),
     url VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE payment_status (
+CREATE TABLE payment_statuses (
     id SERIAL PRIMARY KEY,
     status VARCHAR(16) NOT NULL CHECK (status IN ('pending', 'completed', 'failed', 'refunded'))
 );
 
-CREATE TABLE purchase (
+CREATE TABLE purchases (
     id SERIAL PRIMARY KEY,
-    document_id INTEGER REFERENCES document(id),
-    payment_status_id INTEGER REFERENCES payment_status(id),
-    listing_id INTEGER REFERENCES listing(id),
-    client_id INTEGER REFERENCES client(id),
+    document_id INTEGER REFERENCES documents(id),
+    payment_status_id INTEGER REFERENCES payment_statuses(id),
+    offer_id INTEGER REFERENCES sale_offers(id),
+    user_id INTEGER REFERENCES users(id),
     issue_date DATE NOT NULL
 );
 
-CREATE TABLE review (
+CREATE TABLE reviews (
     id SERIAL PRIMARY KEY,
-    reviewing_client_id INTEGER REFERENCES client(id),
-    reviewed_client_id INTEGER REFERENCES client(id),
+    reviewer_id INTEGER REFERENCES users(id),
+    reviewee_id INTEGER REFERENCES users(id),
     description VARCHAR(200) NOT NULL,
-    rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5)
+    rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
+    review_date VARCHAR(50) NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
-
-ALTER TABLE car ADD CONSTRAINT car_transmission_fk FOREIGN KEY (transmission_id) REFERENCES transmission(id);
-ALTER TABLE car ADD CONSTRAINT car_color_fk FOREIGN KEY (color_id) REFERENCES color(id);
-ALTER TABLE car ADD CONSTRAINT car_drive_type_fk FOREIGN KEY (drive_type_id) REFERENCES drive_type(id);
-ALTER TABLE car ADD CONSTRAINT car_country_fk FOREIGN KEY (country_of_origin_id) REFERENCES country_of_origin(id);
-ALTER TABLE car ADD CONSTRAINT car_model_fk FOREIGN KEY (model_id) REFERENCES car_model(id);
-
-ALTER TABLE car_model ADD CONSTRAINT model_manufacturer_fk FOREIGN KEY (manufacturer_id) REFERENCES manufacturer(id);
