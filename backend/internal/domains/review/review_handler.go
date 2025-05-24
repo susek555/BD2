@@ -87,7 +87,7 @@ func (h *Handler) CreateReview(c *gin.Context) {
 	}
 	reviewOutput, err := h.service.Create(uint(reviewerId), &reviewInput)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
 	c.JSON(http.StatusCreated, reviewOutput)

@@ -2,7 +2,7 @@ CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
     email VARCHAR(50) NOT NULL UNIQUE,
-    password VARCHAR(50) NOT NULL,
+    password VARCHAR(100) NOT NULL,
     selector VARCHAR(10) NOT NULL CHECK (selector IN ('P', 'C'))
 );
 
@@ -158,5 +158,7 @@ CREATE TABLE reviews (
     reviewee_id INTEGER REFERENCES users(id),
     description VARCHAR(200) NOT NULL,
     rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
-    review_date VARCHAR(50) NOT NULL DEFAULT CURRENT_TIMESTAMP
+    review_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CHECK (reviewer_id <> reviewee_id),
+    UNIQUE (reviewer_id, reviewee_id)
 );
