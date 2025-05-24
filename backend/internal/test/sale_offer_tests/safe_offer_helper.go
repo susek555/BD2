@@ -1,8 +1,10 @@
 package sale_offer_tests
 
 import (
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"time"
+
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/image"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 
 	"github.com/gin-gonic/gin"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/bid"
@@ -59,6 +61,7 @@ func setupDB() (*gorm.DB, error) {
 		&models.SaleOffer{},
 		&models.LikedOffer{},
 		&models.Bid{},
+		&models.Image{},
 	)
 	if err != nil {
 		return nil, err
@@ -89,7 +92,8 @@ func newTestServer(db *gorm.DB, seedOffers []models.SaleOffer) (*gin.Engine, sal
 	manufacturerRepo := manufacturer.NewManufacturerRepository(db)
 	likedOfferRepository := liked_offer.NewLikedOfferRepository(db)
 	bidRepository := bid.NewBidRepository(db)
-	saleOfferService := sale_offer.NewSaleOfferService(saleOfferRepo, manufacturerRepo, likedOfferRepository, bidRepository)
+	imageRepo := image.NewImageRepository(db)
+	saleOfferService := sale_offer.NewSaleOfferService(saleOfferRepo, manufacturerRepo, likedOfferRepository, bidRepository, imageRepo)
 	saleOfferHandler := sale_offer.NewHandler(saleOfferService)
 	r := gin.Default()
 	saleOfferRoutes := r.Group("/sale-offer")
