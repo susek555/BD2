@@ -9,6 +9,10 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
 )
 
+type ImageRetrieverInterface interface {
+	GetImagesByOfferID(offerID uint) ([]models.Image, error)
+}
+
 type SaleOfferServiceInterface interface {
 	Create(in CreateSaleOfferDTO) (*RetrieveDetailedSaleOfferDTO, error)
 	GetFiltered(filter *OfferFilter) (*RetrieveOffersWithPagination, error)
@@ -25,10 +29,23 @@ type SaleOfferService struct {
 	manRepo        manufacturer.ManufacturerRepositoryInterface
 	likedOfferRepo liked_offer.LikedOfferRepositoryInterface
 	bidRepo        bid.BidRepositoryInterface
+	imageRepo      ImageRetrieverInterface
 }
 
-func NewSaleOfferService(saleOfferRepository SaleOfferRepositoryInterface, manufacturerRepo manufacturer.ManufacturerRepositoryInterface, likedOfferRepo liked_offer.LikedOfferRepositoryInterface, bidRepo bid.BidRepositoryInterface) SaleOfferServiceInterface {
-	return &SaleOfferService{repo: saleOfferRepository, manRepo: manufacturerRepo, likedOfferRepo: likedOfferRepo, bidRepo: bidRepo}
+func NewSaleOfferService(
+	saleOfferRepository SaleOfferRepositoryInterface,
+	manufacturerRepo manufacturer.ManufacturerRepositoryInterface,
+	likedOfferRepo liked_offer.LikedOfferRepositoryInterface,
+	bidRepo bid.BidRepositoryInterface,
+	imageRepo ImageRetrieverInterface,
+) SaleOfferServiceInterface {
+	return &SaleOfferService{
+		repo:           saleOfferRepository,
+		manRepo:        manufacturerRepo,
+		likedOfferRepo: likedOfferRepo,
+		bidRepo:        bidRepo,
+		imageRepo:      imageRepo,
+	}
 }
 
 func (s *SaleOfferService) Create(in CreateSaleOfferDTO) (*RetrieveDetailedSaleOfferDTO, error) {
@@ -65,7 +82,12 @@ func (s *SaleOfferService) GetByID(id uint, userID *uint) (*RetrieveDetailedSale
 		return nil, err
 	}
 	offerDTO := MapToDetailedDTO(offer)
-	s.fillUserFields(&offerDTO.UserContext, offer.ID, userID)
+	if err = s.setUserFields(&offerDTO.UserContext, offer.ID, userID); err != nil {
+		return nil, err
+	}
+	if err = s.setImagesUrls(offerDTO); err != nil {
+		return nil, err
+	}
 	return offerDTO, nil
 }
 
@@ -124,7 +146,7 @@ func (s *SaleOfferService) CanBeModifiedByUser(offerID, userID uint) (bool, erro
 	return len(bids) == 0, nil
 }
 
-func (s *SaleOfferService) fillUserFields(userContext *UserContext, offerID uint, userID *uint) error {
+func (s *SaleOfferService) setUserFields(userContext *UserContext, offerID uint, userID *uint) error {
 	if userID == nil {
 		userContext.IsLiked = false
 		userContext.CanModify = false
@@ -139,11 +161,21 @@ func (s *SaleOfferService) fillUserFields(userContext *UserContext, offerID uint
 	return nil
 }
 
+func (s *SaleOfferService) setImagesUrls(dto *RetrieveDetailedSaleOfferDTO) error {
+	images, err := s.imageRepo.GetImagesByOfferID(dto.ID)
+	if err != nil {
+		return err
+	}
+	urls := mapping.MapSliceToDTOs(images, func(m *models.Image) *string { return &m.Url })
+	dto.ImagesUrls = urls
+	return nil
+}
+
 func (s *SaleOfferService) mapOfferSliceWithAdditionalFields(offers []models.SaleOffer, userID *uint) ([]RetrieveSaleOfferDTO, error) {
 	offerDTOs := make([]RetrieveSaleOfferDTO, 0, len(offers))
 	for _, offer := range offers {
 		dto := MapToDTO(&offer)
-		if err := s.fillUserFields(&dto.UserContext, offer.ID, userID); err != nil {
+		if err := s.setUserFields(&dto.UserContext, offer.ID, userID); err != nil {
 			return nil, err
 		}
 		offerDTOs = append(offerDTOs, *dto)
