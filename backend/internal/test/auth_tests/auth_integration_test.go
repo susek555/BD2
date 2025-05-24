@@ -27,7 +27,7 @@ import (
 // ------
 
 func setupDB(users []models.User, refreshTokens []models.RefreshToken) (user.UserRepositoryInterface, refresh_token.RefreshTokenServiceInterface, error) {
-	dsn := "host=localhost user=bd2_user password=bd2_password dbname=bd2_test port=5432 sslmode=disable TimeZone=Europe/Warsaw"
+	dsn := "host=localhost user=bd2_user password=bd2_password dbname=bd2_test port=5432 sslmode=disable TimeZone=UTC"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, nil, err
@@ -894,7 +894,7 @@ func TestLogoutAllDevicesNonExistingToken(t *testing.T) {
 	assert.Len(t, user1Tokens, 1)
 	assert.Equal(t, "valid_refresh_token", user1Tokens[0].Token)
 	assert.Equal(t, uint(1), user1Tokens[0].UserId)
-	assert.Equal(t, time.Now().UTC().Add(30*24*time.Hour).Format(time.RFC3339), user1Tokens[0].ExpiryDate.Format(time.RFC3339))
+	assert.Equal(t, time.Now().UTC().Add(30*24*time.Hour).Format(time.RFC3339), user1Tokens[0].ExpiryDate.UTC().Format(time.RFC3339))
 }
 
 func TestLogoutAllDevicesEmptyToken(t *testing.T) {
@@ -945,7 +945,7 @@ func TestLogoutAllDevicesEmptyToken(t *testing.T) {
 	assert.Len(t, user1Tokens, 1)
 	assert.Equal(t, "valid_refresh_token", user1Tokens[0].Token)
 	assert.Equal(t, uint(1), user1Tokens[0].UserId)
-	assert.Equal(t, time.Now().UTC().Add(30*24*time.Hour).Format(time.RFC3339), user1Tokens[0].ExpiryDate.Format(time.RFC3339))
+	assert.Equal(t, time.Now().UTC().Add(30*24*time.Hour).Format(time.RFC3339), user1Tokens[0].ExpiryDate.UTC().Format(time.RFC3339))
 }
 
 func TestLogoutAllDevicesInvalidBody(t *testing.T) {
