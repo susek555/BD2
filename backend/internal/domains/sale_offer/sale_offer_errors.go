@@ -19,6 +19,7 @@ var (
 	ErrInvalidDateFormat    = errors.New("invalid date format, should be YYYY-MM-DD")
 	ErrInvalidOrderKey      = errors.New("invalid order-key")
 	ErrInvalidManufacturer  = errors.New("invalid manufacturer")
+	ErrInvalidModel         = errors.New("invalid model")
 )
 
 var ErrorMap = map[error]int{
