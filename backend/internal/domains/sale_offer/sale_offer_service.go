@@ -28,8 +28,8 @@ type ModelRetrieverInterface interface {
 }
 
 type SaleOfferServiceInterface interface {
-	Create(in CreateSaleOfferDTO) (*RetrieveDetailedSaleOfferDTO, error)
-	Update(in UpdateSaleOfferDTO) (*RetrieveDetailedSaleOfferDTO, error)
+	Create(in *CreateSaleOfferDTO) (*RetrieveDetailedSaleOfferDTO, error)
+	Update(in *UpdateSaleOfferDTO) (*RetrieveDetailedSaleOfferDTO, error)
 	GetFiltered(filter *OfferFilter) (*RetrieveOffersWithPagination, error)
 	GetByID(id uint, userID *uint) (*RetrieveDetailedSaleOfferDTO, error)
 	GetByUserID(id uint, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error)
@@ -62,7 +62,7 @@ func NewSaleOfferService(
 	}
 }
 
-func (s *SaleOfferService) Create(in CreateSaleOfferDTO) (*RetrieveDetailedSaleOfferDTO, error) {
+func (s *SaleOfferService) Create(in *CreateSaleOfferDTO) (*RetrieveDetailedSaleOfferDTO, error) {
 	offer, err := in.MapToSaleOffer()
 	if err != nil {
 		return nil, err
@@ -78,8 +78,22 @@ func (s *SaleOfferService) Create(in CreateSaleOfferDTO) (*RetrieveDetailedSaleO
 	return s.GetByID(offer.ID, &offer.UserID)
 }
 
-func (s *SaleOfferService) Update(in UpdateSaleOfferDTO) (*RetrieveDetailedSaleOfferDTO, error) {
-	return nil, nil
+func (s *SaleOfferService) Update(in *UpdateSaleOfferDTO) (*RetrieveDetailedSaleOfferDTO, error) {
+	offer, err := s.saleOfferRepo.GetByID(in.ID)
+	if err != nil {
+		return nil, err
+	}
+	updatedOffer, err := in.UpdateSaleOfferFromDTO(offer)
+	if err != nil {
+		return nil, err
+	}
+	if err := s.updateModelID(updatedOffer, in); err != nil {
+		return nil, err
+	}
+	if err = s.saleOfferRepo.Update(updatedOffer); err != nil {
+		return nil, err
+	}
+	return s.GetByID(updatedOffer.ID, &offer.UserID)
 }
 
 func (s *SaleOfferService) GetFiltered(filter *OfferFilter) (*RetrieveOffersWithPagination, error) {
@@ -162,6 +176,23 @@ func (s *SaleOfferService) getModelID(manufacturerName, modelName string) (uint,
 		}
 	}
 	return 0, ErrInvalidModel
+}
+
+func (s *SaleOfferService) updateModelID(updatedOffer *models.SaleOffer, in *UpdateSaleOfferDTO) error {
+	if in.Manufacturer == nil && in.Model != nil {
+		modelID, err := s.getModelID(updatedOffer.Car.Model.Manufacturer.Name, *in.Model)
+		if err != nil {
+			return err
+		}
+		updatedOffer.Car.ModelID = modelID
+	} else if in.Manufacturer != nil && in.Model != nil {
+		modelID, err := s.getModelID(*in.Manufacturer, *in.Model)
+		if err != nil {
+			return err
+		}
+		updatedOffer.Car.ModelID = modelID
+	}
+	return nil
 }
 
 func (s *SaleOfferService) setImagesUrls(dto *RetrieveDetailedSaleOfferDTO) error {

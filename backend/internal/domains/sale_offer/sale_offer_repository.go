@@ -8,6 +8,7 @@ import (
 
 type SaleOfferRepositoryInterface interface {
 	Create(offer *models.SaleOffer) error
+	Update(offer *models.SaleOffer) error
 	GetFiltered(filter *OfferFilter) ([]models.SaleOffer, *pagination.PaginationResponse, error)
 	GetByID(id uint) (*models.SaleOffer, error)
 	GetByUserID(id uint, pagination *pagination.PaginationRequest) ([]models.SaleOffer, *pagination.PaginationResponse, error)
@@ -23,6 +24,10 @@ func NewSaleOfferRepository(db *gorm.DB) SaleOfferRepositoryInterface {
 
 func (r *SaleOfferRepository) Create(offer *models.SaleOffer) error {
 	return r.DB.Session(&gorm.Session{FullSaveAssociations: true}).Create(offer).Error
+}
+
+func (r *SaleOfferRepository) Update(offer *models.SaleOffer) error {
+	return r.DB.Session(&gorm.Session{FullSaveAssociations: true}).Save(offer).Error
 }
 
 func (r *SaleOfferRepository) GetFiltered(filter *OfferFilter) ([]models.SaleOffer, *pagination.PaginationResponse, error) {
