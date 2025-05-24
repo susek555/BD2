@@ -2,6 +2,7 @@ package bid
 
 import (
 	"errors"
+
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 
 	"gorm.io/gorm"

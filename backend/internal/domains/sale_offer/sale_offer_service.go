@@ -1,8 +1,6 @@
 package sale_offer
 
 import (
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/bid"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/liked_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"github.com/susek555/BD2/car-dealer-api/pkg/mapping"
@@ -13,38 +11,47 @@ type ImageRetrieverInterface interface {
 	GetImagesByOfferID(offerID uint) ([]models.Image, error)
 }
 
+type LikedOfferCheckerInterface interface {
+	IsOfferLikedByUser(offerID, userID uint) bool
+}
+
+type BidRetrieverInterface interface {
+	GetByAuctionId(auctionID uint) ([]models.Bid, error)
+}
+
+type ManufacturerRetrieverInterface interface {
+	GetAll() ([]models.Manufacturer, error)
+}
+
 type SaleOfferServiceInterface interface {
 	Create(in CreateSaleOfferDTO) (*RetrieveDetailedSaleOfferDTO, error)
 	GetFiltered(filter *OfferFilter) (*RetrieveOffersWithPagination, error)
 	GetByID(id uint, userID *uint) (*RetrieveDetailedSaleOfferDTO, error)
 	GetByUserID(id uint, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error)
-	LikeOffer(offerID, userID uint) error
-	DislikeOffer(offerID, userID uint) error
-	IsOfferLikedByUser(offerID, userID uint) bool
 	CanBeModifiedByUser(offerID, userID uint) (bool, error)
 }
 
 type SaleOfferService struct {
-	repo           SaleOfferRepositoryInterface
-	manRepo        manufacturer.ManufacturerRepositoryInterface
-	likedOfferRepo liked_offer.LikedOfferRepositoryInterface
-	bidRepo        bid.BidRepositoryInterface
-	imageRepo      ImageRetrieverInterface
+	saleOfferRepo  SaleOfferRepositoryInterface
+	manRetriever   ManufacturerRetrieverInterface
+	imageRetriever ImageRetrieverInterface
+	bidRetriever   BidRetrieverInterface
+	likedChecker   LikedOfferCheckerInterface
 }
 
 func NewSaleOfferService(
 	saleOfferRepository SaleOfferRepositoryInterface,
-	manufacturerRepo manufacturer.ManufacturerRepositoryInterface,
-	likedOfferRepo liked_offer.LikedOfferRepositoryInterface,
-	bidRepo bid.BidRepositoryInterface,
-	imageRepo ImageRetrieverInterface,
+	manufacturerRetriever ManufacturerRetrieverInterface,
+	bidRetriever BidRetrieverInterface,
+	imageRetriever ImageRetrieverInterface,
+	likedChecker LikedOfferCheckerInterface,
 ) SaleOfferServiceInterface {
 	return &SaleOfferService{
-		repo:           saleOfferRepository,
-		manRepo:        manufacturerRepo,
-		likedOfferRepo: likedOfferRepo,
-		bidRepo:        bidRepo,
-		imageRepo:      imageRepo,
+		saleOfferRepo:  saleOfferRepository,
+		manRetriever:   manufacturerRetriever,
+		bidRetriever:   bidRetriever,
+		imageRetriever: imageRetriever,
+		likedChecker:   likedChecker,
 	}
 }
 
@@ -53,19 +60,19 @@ func (s *SaleOfferService) Create(in CreateSaleOfferDTO) (*RetrieveDetailedSaleO
 	if err != nil {
 		return nil, err
 	}
-	if err := s.repo.Create(offer); err != nil {
+	if err := s.saleOfferRepo.Create(offer); err != nil {
 		return nil, err
 	}
 	return s.GetByID(offer.ID, &offer.UserID)
 }
 
 func (s *SaleOfferService) GetFiltered(filter *OfferFilter) (*RetrieveOffersWithPagination, error) {
-	manufacturers, err := s.manRepo.GetAll()
+	manufacturers, err := s.manRetriever.GetAll()
 	if err != nil {
 		return nil, err
 	}
 	filter.Constraints.Manufacturers = mapping.MapSliceToDTOs(manufacturers, manufacturer.MapToName)
-	offers, pagResponse, err := s.repo.GetFiltered(filter)
+	offers, pagResponse, err := s.saleOfferRepo.GetFiltered(filter)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +84,7 @@ func (s *SaleOfferService) GetFiltered(filter *OfferFilter) (*RetrieveOffersWith
 }
 
 func (s *SaleOfferService) GetByID(id uint, userID *uint) (*RetrieveDetailedSaleOfferDTO, error) {
-	offer, err := s.repo.GetByID(id)
+	offer, err := s.saleOfferRepo.GetByID(id)
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +99,7 @@ func (s *SaleOfferService) GetByID(id uint, userID *uint) (*RetrieveDetailedSale
 }
 
 func (s *SaleOfferService) GetByUserID(id uint, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error) {
-	offers, pagResponse, err := s.repo.GetByUserID(id, pagRequest)
+	offers, pagResponse, err := s.saleOfferRepo.GetByUserID(id, pagRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -103,43 +110,15 @@ func (s *SaleOfferService) GetByUserID(id uint, pagRequest *pagination.Paginatio
 	return &RetrieveOffersWithPagination{Offers: offerDTOs, PaginationResponse: pagResponse}, nil
 }
 
-func (s *SaleOfferService) LikeOffer(offerID, userID uint) error {
-	offer, err := s.repo.GetByID(offerID)
-	if err != nil {
-		return err
-	}
-	if s.IsOfferLikedByUser(offerID, userID) {
-		return ErrLikeAlreadyLikedOffer
-	}
-	if offer.UserID == userID {
-		return ErrLikeOwnOffer
-	}
-	return s.likedOfferRepo.Create(&models.LikedOffer{OfferID: offerID, UserID: userID})
-}
-
-func (s *SaleOfferService) DislikeOffer(offerID, userID uint) error {
-	if _, err := s.repo.GetByID(offerID); err != nil {
-		return err
-	}
-	if !s.IsOfferLikedByUser(offerID, userID) {
-		return ErrDislikeNotLikedOffer
-	}
-	return s.likedOfferRepo.Delete(offerID, userID)
-}
-
-func (s *SaleOfferService) IsOfferLikedByUser(offerID, userID uint) bool {
-	return s.likedOfferRepo.IsOfferLikedByUser(offerID, userID)
-}
-
 func (s *SaleOfferService) CanBeModifiedByUser(offerID, userID uint) (bool, error) {
-	offer, err := s.repo.GetByID(offerID)
+	offer, err := s.saleOfferRepo.GetByID(offerID)
 	if err != nil {
 		return false, err
 	}
 	if offer.Auction == nil {
 		return true, nil
 	}
-	bids, err := s.bidRepo.GetByAuctionId(offerID)
+	bids, err := s.bidRetriever.GetByAuctionId(offerID)
 	if err != nil {
 		return false, err
 	}
@@ -151,7 +130,7 @@ func (s *SaleOfferService) setUserFields(userContext *UserContext, offerID uint,
 		userContext.IsLiked = false
 		userContext.CanModify = false
 	} else {
-		userContext.IsLiked = s.IsOfferLikedByUser(offerID, *userID)
+		userContext.IsLiked = s.likedChecker.IsOfferLikedByUser(offerID, *userID)
 		smt, err := s.CanBeModifiedByUser(offerID, *userID)
 		if err != nil {
 			return err
@@ -162,7 +141,7 @@ func (s *SaleOfferService) setUserFields(userContext *UserContext, offerID uint,
 }
 
 func (s *SaleOfferService) setImagesUrls(dto *RetrieveDetailedSaleOfferDTO) error {
-	images, err := s.imageRepo.GetImagesByOfferID(dto.ID)
+	images, err := s.imageRetriever.GetImagesByOfferID(dto.ID)
 	if err != nil {
 		return err
 	}

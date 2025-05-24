@@ -7,6 +7,7 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/image"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/liked_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/review"
@@ -24,6 +25,7 @@ var ManufacturerHandler *manufacturer.Handler
 var ModelHandler *model.Handler
 var ReviewHandler *review.Handler
 var SaleOfferHandler *sale_offer.Handler
+var LikedOfferHandler *liked_offer.Handler
 var UserHandler *user.Handler
 
 func InitializeHandlers() {
@@ -37,5 +39,6 @@ func InitializeHandlers() {
 	ModelHandler = model.NewHandler(ModelService)
 	ReviewHandler = review.NewHandler(ReviewService)
 	SaleOfferHandler = sale_offer.NewHandler(SaleOfferService)
+	LikedOfferHandler = liked_offer.NewHandler(LikedOfferService)
 	UserHandler = user.NewHandler(UserService)
 }

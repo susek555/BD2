@@ -82,8 +82,6 @@ func registerSaleOfferRoutes(router *gin.Engine) {
 		saleOfferRoutes.POST("/my-offers", middleware.Authenticate(initializers.Verifier), initializers.SaleOfferHandler.GetMySaleOffers)
 		saleOfferRoutes.POST("/filtered", middleware.OptionalAuthenticate(initializers.Verifier), initializers.SaleOfferHandler.GetFilteredSaleOffers)
 		saleOfferRoutes.GET("/id/:id", middleware.OptionalAuthenticate(initializers.Verifier), initializers.SaleOfferHandler.GetSaleOfferByID)
-		saleOfferRoutes.POST("/like/:id", middleware.Authenticate(initializers.Verifier), initializers.SaleOfferHandler.LikeOffer)
-		saleOfferRoutes.DELETE("/dislike/:id", middleware.Authenticate(initializers.Verifier), initializers.SaleOfferHandler.DislikeOffer)
 		saleOfferRoutes.GET("/offer-types", initializers.SaleOfferHandler.GetSaleOfferTypes)
 		saleOfferRoutes.GET("/order-keys", initializers.SaleOfferHandler.GetOrderKeys)
 	}
@@ -108,6 +106,14 @@ func registerBidRoutes(router *gin.Engine) {
 	bidRoutes.GET("/auction/:id", initializers.BidHandler.GetBidsByAuctionId)
 	bidRoutes.GET("/highest/:id", initializers.BidHandler.GetHighestBid)
 	bidRoutes.GET("/highest/auction/:auctionId/bidder/:bidderId", initializers.BidHandler.GetHighestBidByUserId)
+}
+
+func registerFavouriteRoutes(router *gin.Engine) {
+	favourtiesRoutes := router.Group("/favourite")
+	{
+		favourtiesRoutes.POST("/like/:id", middleware.Authenticate(initializers.Verifier), initializers.LikedOfferHandler.LikeOffer)
+		favourtiesRoutes.DELETE("/dislike/:id", middleware.Authenticate(initializers.Verifier), initializers.LikedOfferHandler.DislikeOffer)
+	}
 }
 
 func registerImageRoutes(router *gin.Engine) {
