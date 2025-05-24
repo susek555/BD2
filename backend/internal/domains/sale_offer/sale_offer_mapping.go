@@ -1,8 +1,9 @@
 package sale_offer
 
 import (
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"time"
+
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
@@ -59,6 +60,7 @@ func MapToDetailedDTO(offer *models.SaleOffer) *RetrieveDetailedSaleOfferDTO {
 	buyNow, endDate := prepareAuctionValues(offer)
 	return &RetrieveDetailedSaleOfferDTO{
 		ID:                 offer.ID,
+		UserID:             offer.UserID,
 		Username:           offer.User.Username,
 		Description:        offer.Description,
 		Price:              offer.Price,

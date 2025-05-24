@@ -1,8 +1,9 @@
 package sale_offer
 
 import (
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"time"
+
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
 	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
@@ -49,6 +50,7 @@ type RetrieveSaleOfferDTO struct {
 
 type RetrieveDetailedSaleOfferDTO struct {
 	ID                 uint                    `json:"id"`
+	UserID             uint                    `json:"user_id"`
 	Username           string                  `json:"username"`
 	Description        string                  `json:"description"`
 	Price              uint                    `json:"price"`
