@@ -106,7 +106,7 @@ func (h *Handler) UpdateUser(c *gin.Context) {
 	}
 	userID, ok := c.Get("userID")
 	if !ok || userID != userDTO.ID {
-		custom_errors.HandleError(c, ErrForbidden, ErrorMap)
+		custom_errors.HandleError(c, ErrInvalidUserID, ErrorMap)
 		return
 	}
 	if err := h.service.Update(&userDTO); err != nil {
@@ -139,7 +139,7 @@ func (h *Handler) DeleteUser(c *gin.Context) {
 	}
 	userID, ok := c.Get("userID")
 	if !ok || userID != uint(id) {
-		custom_errors.HandleError(c, ErrForbidden, ErrorMap)
+		custom_errors.HandleError(c, ErrInvalidUserID, ErrorMap)
 		return
 	}
 	err = h.service.Delete(uint(id))

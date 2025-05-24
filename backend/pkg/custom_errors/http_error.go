@@ -28,7 +28,7 @@ func GetStatusCode(err error, errorMap map[error]int) int {
 	if statusCode, ok := errorMap[err]; ok {
 		return statusCode
 	}
-	return http.StatusInternalServerError
+	return http.StatusBadRequest
 }
 
 func HandleError(c *gin.Context, err error, errorMap map[error]int) {

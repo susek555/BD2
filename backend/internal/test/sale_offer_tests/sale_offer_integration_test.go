@@ -2,9 +2,10 @@ package sale_offer_tests
 
 import (
 	"encoding/json"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"net/http"
 	"testing"
+
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
@@ -706,7 +707,7 @@ func TestGetSaleOfferById_NegativeID(t *testing.T) {
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/sale-offer/id/-1", nil, nil)
-	assert.Equal(t, http.StatusInternalServerError, receivedStatus)
+	assert.Equal(t, http.StatusBadRequest, receivedStatus)
 	var got custom_errors.HTTPError
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
@@ -719,7 +720,7 @@ func TestGetSaleOfferById_StringID(t *testing.T) {
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
 	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/sale-offer/id/abc", nil, nil)
-	assert.Equal(t, http.StatusInternalServerError, receivedStatus)
+	assert.Equal(t, http.StatusBadRequest, receivedStatus)
 	var got custom_errors.HTTPError
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
