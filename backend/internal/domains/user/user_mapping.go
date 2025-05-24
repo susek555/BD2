@@ -62,21 +62,27 @@ func (dto *CreateUserDTO) validateC() error {
 func MapToDTO(user *models.User) *RetrieveUserDTO {
 	switch user.Selector {
 	case "P":
-		return &RetrieveUserDTO{
-			ID:            user.ID,
-			Username:      user.Username,
-			Email:         user.Email,
-			PersonName:    &user.Person.Name,
-			PersonSurname: &user.Person.Surname,
+		dto := &RetrieveUserDTO{
+			ID:       user.ID,
+			Username: user.Username,
+			Email:    user.Email,
 		}
+		if user.Person != nil {
+			dto.PersonName = &user.Person.Name
+			dto.PersonSurname = &user.Person.Surname
+		}
+		return dto
 	case "C":
-		return &RetrieveUserDTO{
-			ID:          user.ID,
-			Username:    user.Username,
-			Email:       user.Email,
-			CompanyName: &user.Company.Name,
-			CompanyNIP:  &user.Company.NIP,
+		dto := &RetrieveUserDTO{
+			ID:       user.ID,
+			Username: user.Username,
+			Email:    user.Email,
 		}
+		if user.Company != nil {
+			dto.CompanyName = &user.Company.Name
+			dto.CompanyNIP = &user.Company.NIP
+		}
+		return dto
 	}
 	return nil
 }
