@@ -8,7 +8,7 @@ import (
 )
 
 type ImageServiceInterface interface {
-	StoreImages(offerID uint, image []multipart.FileHeader) error
+	StoreImages(offerID uint, image []*multipart.FileHeader) ([]string, error)
 }
 
 type ImageService struct {
@@ -20,23 +20,25 @@ func NewImageService(r ImageRepositoryInterface, b ImageBucketInterface) ImageSe
 	return &ImageService{repo: r, bucket: b}
 }
 
-func (s *ImageService) StoreImages(offerID uint, images []multipart.FileHeader) error {
-	prefix := fmt.Sprintf("sale-offer-%d/", offerID)
+func (s *ImageService) StoreImages(offerID uint, images []*multipart.FileHeader) ([]string, error) {
+	var urls []string
+	folder := fmt.Sprintf("sale-offer-%d/", offerID)
 	for _, image := range images {
-		url, err := s.bucket.UploadImage(prefix, &image)
+		url, err := s.bucket.UploadImage(folder, image)
 		if err != nil {
-			s.cleanup(offerID, prefix)
-			return err
+			s.cleanup(offerID, folder)
+			return nil, err
 		}
 		if err = s.repo.Create(&models.Image{OfferID: offerID, Url: url}); err != nil {
-			s.cleanup(offerID, prefix)
-			return err
+			s.cleanup(offerID, folder)
+			return nil, err
 		}
+		urls = append(urls, url)
 	}
-	return nil
+	return urls, nil
 }
 
-func (s *ImageService) cleanup(offerID uint, prefix string) {
+func (s *ImageService) cleanup(offerID uint, folder string) {
 	_ = s.repo.DeleteByOfferID(offerID)
-	_ = s.bucket.DeleteImagesByPrefix(prefix)
+	_ = s.bucket.DeleteImagesByFolder(folder)
 }

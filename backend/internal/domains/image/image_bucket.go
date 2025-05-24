@@ -10,9 +10,9 @@ import (
 )
 
 type ImageBucketInterface interface {
-	UploadImage(prefix string, file *multipart.FileHeader) (string, error)
+	UploadImage(folder string, file *multipart.FileHeader) (string, error)
 	DeleteImage(publicID string) error
-	DeleteImagesByPrefix(prefix string) error
+	DeleteImagesByFolder(folder string) error
 }
 
 type ImageBucket struct {
@@ -23,9 +23,13 @@ func NewImageBucket(cld *cloudinary.Cloudinary) ImageBucketInterface {
 	return &ImageBucket{CloudinaryClient: cld}
 }
 
-func (b *ImageBucket) UploadImage(prefix string, file *multipart.FileHeader) (string, error) {
+func (b *ImageBucket) UploadImage(folder string, file *multipart.FileHeader) (string, error) {
 	ctx := context.Background()
-	resp, err := b.CloudinaryClient.Upload.Upload(ctx, prefix+file.Filename, uploader.UploadParams{})
+	openedFile, err := file.Open()
+	if err != nil {
+		return "", err
+	}
+	resp, err := b.CloudinaryClient.Upload.Upload(ctx, openedFile, uploader.UploadParams{Folder: folder})
 	if err != nil {
 		return "", err
 	}
@@ -38,9 +42,8 @@ func (b *ImageBucket) DeleteImage(publicID string) error {
 	return err
 }
 
-func (b *ImageBucket) DeleteImagesByPrefix(prefix string) error {
-	prefixes := []string{prefix}
+func (b *ImageBucket) DeleteImagesByFolder(folder string) error {
 	ctx := context.Background()
-	_, err := b.CloudinaryClient.Admin.DeleteAssetsByPrefix(ctx, admin.DeleteAssetsByPrefixParams{Prefix: prefixes})
+	_, err := b.CloudinaryClient.Admin.DeleteFolder(ctx, admin.DeleteFolderParams{Folder: folder})
 	return err
 }
