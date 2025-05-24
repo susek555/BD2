@@ -888,7 +888,7 @@ func TestLikeOffer_OwnOffer(t *testing.T) {
 	var got custom_errors.HTTPError
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
-	assert.Equal(t, got.Description, sale_offer.ErrLikeOwnOffer.Error())
+	assert.Equal(t, got.Description, liked_offer.ErrLikeOwnOffer.Error())
 }
 
 func TestLikeOffer_Successful(t *testing.T) {
@@ -923,7 +923,7 @@ func TestLikeOffer_AlreadyLiked(t *testing.T) {
 	var got custom_errors.HTTPError
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
-	assert.Equal(t, got.Description, sale_offer.ErrLikeAlreadyLikedOffer.Error())
+	assert.Equal(t, got.Description, liked_offer.ErrLikeAlreadyLikedOffer.Error())
 }
 
 // -------------
@@ -966,7 +966,7 @@ func TestDislikeOffer_NotLikedOffer(t *testing.T) {
 	var got custom_errors.HTTPError
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
-	assert.Equal(t, got.Description, sale_offer.ErrDislikeNotLikedOffer.Error())
+	assert.Equal(t, got.Description, liked_offer.ErrDislikeNotLikedOffer.Error())
 }
 
 func TestDislikeOffer_Successful(t *testing.T) {
