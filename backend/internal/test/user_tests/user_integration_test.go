@@ -2,9 +2,10 @@ package user_tests
 
 import (
 	"encoding/json"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"net/http"
 	"testing"
+
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
@@ -274,7 +275,7 @@ func TestUpdateUser_Forbidden(t *testing.T) {
 	var got custom_errors.HTTPError
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
-	assert.NotEmpty(t, user.ErrForbidden.Error())
+	assert.NotEmpty(t, user.ErrInvalidUserID.Error())
 }
 
 func TestUpdateUser_UpdateUsername(t *testing.T) {
@@ -547,7 +548,7 @@ func TestDeleteUser_Forbidden(t *testing.T) {
 	var got custom_errors.HTTPError
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
-	assert.NotEmpty(t, user.ErrForbidden.Error())
+	assert.NotEmpty(t, user.ErrInvalidUserID.Error())
 }
 
 func TestDeleteUser_Person(t *testing.T) {
