@@ -17,13 +17,13 @@ CREATE TABLE manufacturers (
 );
 
 CREATE TABLE people (
-    user_id INTEGER PRIMARY KEY REFERENCES users(id),
+    user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
     name VARCHAR(20) NOT NULL,
     surname VARCHAR(20) NOT NULL
 );
 
 CREATE TABLE companies (
-    user_id INTEGER PRIMARY KEY REFERENCES users(id),
+    user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
     nip VARCHAR(50) NOT NULL,
     name VARCHAR(30) NOT NULL
 );
@@ -128,7 +128,7 @@ CREATE TABLE liked_offers (
 CREATE TABLE refresh_tokens (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id),
-    token VARCHAR(64) NOT NULL,
+    token VARCHAR(500) NOT NULL,
     expiry_date TIMESTAMP NOT NULL
 );
 
