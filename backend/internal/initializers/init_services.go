@@ -8,6 +8,7 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auth"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/bid"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/image"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/notification"
@@ -21,6 +22,7 @@ var AuctionService auction.AuctionServiceInterface
 var AuthService auth.AuthServiceInterface
 var BidService bid.BidServiceInterface
 var CarService car.CarServiceInterface
+var ImageService image.ImageServiceInterface
 var ManufacturerService manufacturer.ManufacturerServiceInterface
 var ModelService model.ModelServiceInterface
 var NotificationService notification.NotificationServiceInterface
@@ -39,6 +41,7 @@ func InitializeServices() {
 	AuthService = auth.NewAuthService(UserRepo, RefreshTokenService, []byte(secret))
 	BidService = bid.NewBidService(BidRepo)
 	CarService = car.NewCarService(ManufacturerRepo, ModelRepo)
+	ImageService = image.NewImageService(ImageRepo, ImageBucket)
 	ManufacturerService = manufacturer.NewManufacturerService(ManufacturerRepo)
 	ModelService = model.NewModelService(ModelRepo)
 	NotificationService = notification.NewNotificationService(NotificationRepo)

@@ -23,6 +23,7 @@ func init() {
 	initializers.ConnectToDatabase()
 	initializers.MigrateModels()
 	initializers.ConnectToRedis(context.Background())
+	initializers.ConnectToCloudinary()
 	initializers.InitializeVerifier()
 	initializers.InitializeHub()
 	initializers.InitializeRepos()

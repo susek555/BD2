@@ -16,6 +16,7 @@ func RegisterRoutes(router *gin.Engine) {
 	registerAuctionRoutes(router)
 	registerBidRoutes(router)
 	registerWebsocket(router)
+	registerImageRoutes(router)
 }
 
 func registerWebsocket(router *gin.Engine) {
@@ -107,4 +108,12 @@ func registerBidRoutes(router *gin.Engine) {
 	bidRoutes.GET("/auction/:id", initializers.BidHandler.GetBidsByAuctionId)
 	bidRoutes.GET("/highest/:id", initializers.BidHandler.GetHighestBid)
 	bidRoutes.GET("/highest/auction/:auctionId/bidder/:bidderId", initializers.BidHandler.GetHighestBidByUserId)
+}
+
+func registerImageRoutes(router *gin.Engine) {
+	imageRoutes := router.Group("/image")
+	{
+		imageRoutes.POST("/:id", middleware.Authenticate(initializers.Verifier), initializers.ImageHandler.UploadImages)
+	}
+
 }

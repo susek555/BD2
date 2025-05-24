@@ -6,6 +6,7 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/bid"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/image"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/review"
@@ -18,6 +19,7 @@ var AuthHandler *auth.Handler
 var BidHandler *bid.Handler
 var CarHandler *car.Handler
 var CarParamHandler *car_params.Handler
+var ImageHandler *image.Handler
 var ManufacturerHandler *manufacturer.Handler
 var ModelHandler *model.Handler
 var ReviewHandler *review.Handler
@@ -30,6 +32,7 @@ func InitializeHandlers() {
 	BidHandler = bid.NewHandler(BidService, RedisClient, Hub, NotificationService)
 	CarHandler = car.NewHandler(CarService)
 	CarParamHandler = car_params.NewHandler()
+	ImageHandler = image.NewHandler(ImageService)
 	ManufacturerHandler = manufacturer.NewHandler(ManufacturerService)
 	ModelHandler = model.NewHandler(ModelService)
 	ReviewHandler = review.NewHandler(ReviewService)
