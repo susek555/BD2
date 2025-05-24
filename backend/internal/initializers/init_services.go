@@ -48,7 +48,7 @@ func InitializeServices() {
 	ModelService = model.NewModelService(ModelRepo)
 	NotificationService = notification.NewNotificationService(NotificationRepo)
 	ReviewService = review.NewReviewService(ReviewRepo)
-	SaleOfferService = sale_offer.NewSaleOfferService(SaleOfferRepo, ManufacturerRepo, BidRepo, ImageRepo, LikedOfferRepo)
+	SaleOfferService = sale_offer.NewSaleOfferService(SaleOfferRepo, ManufacturerRepo, ModelRepo, BidRepo, ImageRepo, LikedOfferRepo)
 	LikedOfferService = liked_offer.NewLikedOfferService(LikedOfferRepo, SaleOfferRepo)
 	UserService = user.NewUserService(UserRepo)
 }
