@@ -3,6 +3,7 @@ package sale_offer
 import (
 	"time"
 
+	"github.com/jinzhu/copier"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 
 	"github.com/go-playground/validator/v10"
@@ -10,6 +11,11 @@ import (
 )
 
 func (dto *CreateSaleOfferDTO) MapToSaleOffer() (*models.SaleOffer, error) {
+	v := validator.New()
+	err := v.Struct(dto)
+	if err != nil {
+		return nil, ErrMissingFields
+	}
 	if err := dto.validateParams(); err != nil {
 		return nil, err
 	}
@@ -17,30 +23,30 @@ func (dto *CreateSaleOfferDTO) MapToSaleOffer() (*models.SaleOffer, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &models.SaleOffer{
-		UserID:      dto.UserID,
-		Description: dto.Description,
-		Price:       dto.Price,
-		Margin:      dto.Margin,
-		Status:      models.PENDING,
-		DateOfIssue: time.Now().UTC(),
-		Car: &models.Car{
-			Vin:                dto.Vin,
-			ProductionYear:     dto.ProductionYear,
-			Mileage:            dto.Mileage,
-			NumberOfDoors:      dto.NumberOfDoors,
-			NumberOfSeats:      dto.NumberOfSeats,
-			EnginePower:        dto.EnginePower,
-			EngineCapacity:     dto.EngineCapacity,
-			RegistrationNumber: dto.RegistrationNumber,
-			RegistrationDate:   *date,
-			Color:              dto.Color,
-			FuelType:           dto.FuelType,
-			Transmission:       dto.Transmission,
-			NumberOfGears:      dto.NumberOfGears,
-			Drive:              dto.Drive,
-		},
-	}, nil
+	offer := &models.SaleOffer{}
+	if err := copier.CopyWithOption(offer, dto, copier.Option{DeepCopy: true}); err != nil {
+		return nil, err
+	}
+	offer.DateOfIssue = time.Now().UTC()
+	offer.Car.RegistrationDate = *date
+	return offer, nil
+}
+
+func (dto *UpdateSaleOfferDTO) UpdateSaleOfferFromDTO(offer *models.SaleOffer) (*models.SaleOffer, error) {
+	if err := dto.validateParams(); err != nil {
+		return nil, err
+	}
+	if dto.RegistrationDate != nil {
+		date, err := ParseDate(*dto.RegistrationDate)
+		if err != nil {
+			return nil, err
+		}
+		offer.Car.RegistrationDate = *date
+	}
+	if err := copier.CopyWithOption(offer, dto, copier.Option{DeepCopy: true}); err != nil {
+		return nil, err
+	}
+	return offer, nil
 }
 
 func MapToDTO(offer *models.SaleOffer) *RetrieveSaleOfferDTO {
@@ -97,11 +103,6 @@ func prepareAuctionValues(offer *models.SaleOffer) (*uint, *time.Time) {
 }
 
 func (dto *CreateSaleOfferDTO) validateParams() error {
-	v := validator.New()
-	err := v.Struct(dto)
-	if err != nil {
-		return ErrMissingFields
-	}
 	if !IsParamValid(dto.Color, car_params.Colors) {
 		return ErrInvalidColor
 	}
@@ -115,6 +116,25 @@ func (dto *CreateSaleOfferDTO) validateParams() error {
 		return ErrInvalidDrive
 	}
 	if !IsParamValid(dto.Margin, models.Margins) {
+		return ErrInvalidMargin
+	}
+	return nil
+}
+
+func (dto *UpdateSaleOfferDTO) validateParams() error {
+	if dto.Color != nil && !IsParamValid(*dto.Color, car_params.Colors) {
+		return ErrInvalidColor
+	}
+	if dto.FuelType != nil && !IsParamValid(*dto.FuelType, car_params.Types) {
+		return ErrInvalidFuelType
+	}
+	if dto.Transmission != nil && !IsParamValid(*dto.Transmission, car_params.Transmissions) {
+		return ErrInvalidTransmission
+	}
+	if dto.Drive != nil && !IsParamValid(*dto.Drive, car_params.Drives) {
+		return ErrInvalidDrive
+	}
+	if dto.Margin != nil && !IsParamValid(*dto.Margin, models.Margins) {
 		return ErrInvalidMargin
 	}
 	return nil
