@@ -26,7 +26,8 @@ func (h *Handler) UploadImages(c *gin.Context) {
 		return
 	}
 	userID, _ := c.Get("userID")
-	offer, err := h.saleOfferService.GetByID(uint(offerID), nil)
+	id := userID.(uint)
+	offer, err := h.saleOfferService.GetByID(uint(offerID), &id)
 	if err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
@@ -47,6 +48,6 @@ func (h *Handler) UploadImages(c *gin.Context) {
 		return
 	}
 	offer.ImagesUrls = urls
-	offer.ImagesStatus = models.READY
+	offer.Status = models.READY
 	c.JSON(http.StatusOK, offer)
 }
