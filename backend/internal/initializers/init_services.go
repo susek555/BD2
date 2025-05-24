@@ -9,6 +9,7 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/bid"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/image"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/liked_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/notification"
@@ -29,6 +30,7 @@ var NotificationService notification.NotificationServiceInterface
 var RefreshTokenService refresh_token.RefreshTokenServiceInterface
 var ReviewService review.ReviewServiceInterface
 var SaleOfferService sale_offer.SaleOfferServiceInterface
+var LikedOfferService liked_offer.LikedOfferServiceInterface
 var UserService user.UserServiceInterface
 
 func InitializeServices() {
@@ -46,6 +48,7 @@ func InitializeServices() {
 	ModelService = model.NewModelService(ModelRepo)
 	NotificationService = notification.NewNotificationService(NotificationRepo)
 	ReviewService = review.NewReviewService(ReviewRepo)
-	SaleOfferService = sale_offer.NewSaleOfferService(SaleOfferRepo, ManufacturerRepo, LikedOfferRepo, BidRepo, ImageRepo)
+	SaleOfferService = sale_offer.NewSaleOfferService(SaleOfferRepo, ManufacturerRepo, BidRepo, ImageRepo, LikedOfferRepo)
+	LikedOfferService = liked_offer.NewLikedOfferService(LikedOfferRepo, SaleOfferRepo)
 	UserService = user.NewUserService(UserRepo)
 }
