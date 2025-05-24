@@ -140,7 +140,7 @@ func (s *AuthService) newRefreshToken(userId uint, userEmail string) (string, er
 	refresh := models.RefreshToken{
 		Token:      token,
 		UserId:     userId,
-		ExpiryDate: time.Now().Add(30 * 24 * time.Hour),
+		ExpiryDate: time.Now().UTC().Add(30 * 24 * time.Hour),
 	}
 	err := s.RefreshTokenService.Create(&refresh)
 	if err != nil {

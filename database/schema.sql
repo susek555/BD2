@@ -39,7 +39,7 @@ CREATE TABLE sale_offers (
 
 CREATE TABLE auctions (
     offer_id INTEGER PRIMARY KEY REFERENCES sale_offers(id),
-    date_end DATE NOT NULL,
+    date_end TIMESTAMPTZ NOT NULL,
     buy_now_price INTEGER
 );
 

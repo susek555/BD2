@@ -10,14 +10,13 @@ import (
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 
+	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/review"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
 	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
 	"github.com/susek555/BD2/car-dealer-api/pkg/middleware"
-
-	"github.com/gin-gonic/gin"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/review"
-	"gorm.io/driver/sqlite"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
@@ -26,20 +25,12 @@ import (
 // ------
 
 func setupDB(users []models.User, reviews []models.Review) (review.ReviewRepositoryInterface, user.UserRepositoryInterface, error) {
-	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	dsn := "host=localhost user=bd2_user password=bd2_password dbname=bd2_test port=5432 sslmode=disable TimeZone=Europe/Warsaw"
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, nil, err
 	}
-
-	err = db.AutoMigrate(
-		&models.User{},
-		&models.Person{},
-		&models.Company{},
-		&models.Review{},
-	)
-	if err != nil {
-		return nil, nil, err
-	}
+	db.Exec("TRUNCATE TABLE reviews, companies, people, users RESTART IDENTITY CASCADE")
 	userRepo := user.NewUserRepository(db)
 	for _, u := range users {
 		err = userRepo.Create(&u)

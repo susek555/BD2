@@ -17,7 +17,7 @@ import (
 	u "github.com/susek555/BD2/car-dealer-api/internal/test/test_utils"
 	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
 	"github.com/susek555/BD2/car-dealer-api/pkg/middleware"
-	"gorm.io/driver/sqlite"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
@@ -51,22 +51,12 @@ var USERS = []models.User{
 // ------
 
 func setupDB() (*gorm.DB, error) {
-	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
-	db.Exec("PRAGMA foreign_keys = ON")
-	db.AutoMigrate(
-		&models.User{},
-		&models.Manufacturer{},
-		&models.Model{},
-		&models.Car{},
-		&models.Auction{},
-		&models.SaleOffer{},
-		&models.LikedOffer{},
-		&models.Bid{},
-		&models.Image{},
-	)
+	dsn := "host=localhost user=bd2_user password=bd2_password dbname=bd2_test port=5432 sslmode=disable TimeZone=Europe/Warsaw"
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
+	db.Exec("TRUNCATE TABLE bids, liked_offers, sale_offers, auctions, cars, models, manufacturers, companies, people, users RESTART IDENTITY CASCADE")
 	if err := u.InsertRecordsIntoDB(db, MANUFACTURERS); err != nil {
 		return nil, err
 	}

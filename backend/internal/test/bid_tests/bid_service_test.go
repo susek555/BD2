@@ -68,7 +68,6 @@ func TestBidService_Create_SerializesPerAuction(t *testing.T) {
 		time.Sleep(10 * time.Millisecond)
 		atomic.AddInt32(&running, -1)
 	}).Return(nil).Times(calls)
-
 	var wg sync.WaitGroup
 	wg.Add(calls)
 
@@ -81,14 +80,6 @@ func TestBidService_Create_SerializesPerAuction(t *testing.T) {
 			_, _ = svc.Create(dto, 1)
 		}()
 	}
-
-	wg.Wait()
-	repo.AssertExpectations(t)
-
-	go func() {
-		defer wg.Done()
-		_, _ = svc.Create(&bid.CreateBidDTO{AuctionID: aucID}, 1)
-	}()
 
 	wg.Wait()
 	repo.AssertExpectations(t)

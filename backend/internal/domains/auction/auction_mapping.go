@@ -2,9 +2,10 @@ package auction
 
 import (
 	"errors"
+	"time"
+
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
-	"time"
 )
 
 func (dto *CreateAuctionDTO) MapToAuction() (*models.Auction, error) {
@@ -52,9 +53,10 @@ func (dto *UpdateAuctionDTO) MapToAuction() (*models.Auction, error) {
 
 func MapToDTO(auction *models.Auction) *RetrieveAuctionDTO {
 	offerDTO := sale_offer.MapToDTO(auction.Offer)
+	dateEnd := auction.DateEnd.UTC().Format("15:04 02/01/2006")
 	return &RetrieveAuctionDTO{
 		offerDTO,
-		auction.DateEnd.Format("15:04 02/01/2006"),
+		dateEnd,
 		auction.BuyNowPrice,
 	}
 }

@@ -48,7 +48,7 @@ func (h *Handler) CreateAuction(c *gin.Context) {
 	}
 	dateEndLocal, err := time.ParseInLocation(
 		"15:04 02/01/2006",
-		dto.DateEnd,
+		in.DateEnd,
 		loc,
 	)
 	if err != nil {
