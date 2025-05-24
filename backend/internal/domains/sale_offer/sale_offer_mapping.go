@@ -39,7 +39,6 @@ func (dto *CreateSaleOfferDTO) MapToSaleOffer() (*models.SaleOffer, error) {
 			Transmission:       dto.Transmission,
 			NumberOfGears:      dto.NumberOfGears,
 			Drive:              dto.Drive,
-			ModelID:            dto.ModelID,
 		},
 	}, nil
 }
