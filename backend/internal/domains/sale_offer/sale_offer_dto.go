@@ -72,6 +72,8 @@ type RetrieveDetailedSaleOfferDTO struct {
 	Drive              car_params.Drive        `json:"drive"`
 	Brand              string                  `json:"brand"`
 	Model              string                  `json:"model"`
+	ImagesStatus       string                  `json:"images_status"`
+	ImagesUrls         []string                `json:"images_urls"`
 	DateEnd            *time.Time              `json:"date_end,omitempty"`
 	BuyNowPrice        *uint                   `json:"buy_now_price,omitempty"`
 	IsAuction          bool                    `json:"is_auction"`
