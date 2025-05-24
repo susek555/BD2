@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 	"github.com/susek555/BD2/car-dealer-api/pkg/custom_errors"
 )
@@ -46,5 +47,6 @@ func (h *Handler) UploadImages(c *gin.Context) {
 		return
 	}
 	offer.ImagesUrls = urls
+	offer.ImagesStatus = models.READY
 	c.JSON(http.StatusOK, offer)
 }
