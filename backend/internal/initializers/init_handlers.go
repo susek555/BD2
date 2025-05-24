@@ -32,7 +32,7 @@ func InitializeHandlers() {
 	BidHandler = bid.NewHandler(BidService, RedisClient, Hub, NotificationService)
 	CarHandler = car.NewHandler(CarService)
 	CarParamHandler = car_params.NewHandler()
-	ImageHandler = image.NewHandler(ImageService)
+	ImageHandler = image.NewHandler(ImageService, SaleOfferService)
 	ManufacturerHandler = manufacturer.NewHandler(ManufacturerService)
 	ModelHandler = model.NewHandler(ModelService)
 	ReviewHandler = review.NewHandler(ReviewService)
