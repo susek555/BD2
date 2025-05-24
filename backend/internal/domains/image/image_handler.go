@@ -45,5 +45,6 @@ func (h *Handler) UploadImages(c *gin.Context) {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
-	c.JSON(http.StatusOK, urls)
+	offer.ImagesUrls = urls
+	c.JSON(http.StatusOK, offer)
 }
