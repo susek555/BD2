@@ -6,8 +6,8 @@ import (
 )
 
 type ModelRepositoryInterface interface {
-	GetByManufacturerID(id uint) ([]models.Model, error)       // Corrected spelling
-	GetByManufacturerName(name string) ([]models.Model, error) // Corrected spelling
+	GetByManufacturerID(id uint) ([]models.Model, error)
+	GetByManufacturerName(name string) ([]models.Model, error)
 }
 
 type ModelRepository struct {
@@ -18,13 +18,13 @@ func NewModelRepository(db *gorm.DB) ModelRepositoryInterface {
 	return &ModelRepository{DB: db}
 }
 
-func (r *ModelRepository) GetByManufacturerID(id uint) ([]models.Model, error) { // Corrected spelling
+func (r *ModelRepository) GetByManufacturerID(id uint) ([]models.Model, error) {
 	var models []models.Model
 	err := r.DB.Where("manufacturer_id = ?", id).Find(&models).Error
 	return models, err
 }
 
-func (r *ModelRepository) GetByManufacturerName(name string) ([]models.Model, error) { // Corrected spelling
+func (r *ModelRepository) GetByManufacturerName(name string) ([]models.Model, error) {
 	var models []models.Model
 	err := r.DB.
 		Preload("Manufacturer").
