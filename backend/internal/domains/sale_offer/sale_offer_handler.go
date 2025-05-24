@@ -49,7 +49,7 @@ func (h *Handler) CreateSaleOffer(c *gin.Context) {
 	}
 	userID, _ := c.Get("userID")
 	offerDTO.UserID = userID.(uint)
-	retrieveDTO, err := h.service.Create(offerDTO)
+	retrieveDTO, err := h.service.Create(&offerDTO)
 	if err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
