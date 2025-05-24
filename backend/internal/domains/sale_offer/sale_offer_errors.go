@@ -22,7 +22,6 @@ var (
 	ErrLikeOwnOffer          = errors.New("your own offer cannot be liked")
 	ErrLikeAlreadyLikedOffer = errors.New("offer already liked")
 	ErrDislikeNotLikedOffer  = errors.New("offer not liked before cannot be disliked")
-	ErrAuthorization         = errors.New("you have to be logged in to create an offer")
 )
 
 var ErrorMap = map[error]int{
@@ -40,6 +39,5 @@ var ErrorMap = map[error]int{
 	ErrLikeOwnOffer:          http.StatusBadRequest,
 	ErrLikeAlreadyLikedOffer: http.StatusBadRequest,
 	ErrDislikeNotLikedOffer:  http.StatusBadRequest,
-	ErrAuthorization:         http.StatusUnauthorized,
 	gorm.ErrRecordNotFound:   http.StatusNotFound,
 }
