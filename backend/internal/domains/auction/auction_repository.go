@@ -37,11 +37,11 @@ func (a *AuctionRepository) Create(auction *models.Auction) error {
 func (a *AuctionRepository) GetAll() ([]models.Auction, error) {
 	db := a.DB
 	var auctions []models.Auction
-	err := db.Preload("Auction").
-		Preload("Auction.Car").
-		Preload("Auction.Car.Model").
-		Preload("Auction.Car.Model.Manufacturer").
-		Preload("Auction.User").
+	err := db.Preload("Offer").
+		Preload("Offer.Car").
+		Preload("Offer.Car.Model").
+		Preload("Offer.Car.Model.Manufacturer").
+		Preload("Offer.User").
 		Find(&auctions).Error
 	if err != nil {
 		return nil, err
@@ -52,11 +52,11 @@ func (a *AuctionRepository) GetAll() ([]models.Auction, error) {
 func (a *AuctionRepository) GetById(id uint) (*models.Auction, error) {
 	db := a.DB
 	var auction models.Auction
-	err := db.Preload("Auction").
-		Preload("Auction.Car").
-		Preload("Auction.Car.Model").
-		Preload("Auction.Car.Model.Manufacturer").
-		Preload("Auction.User").
+	err := db.Preload("Offer").
+		Preload("Offer.Car").
+		Preload("Offer.Car.Model").
+		Preload("Offer.Car.Model.Manufacturer").
+		Preload("Offer.User").
 		First(&auction, id).Error
 	if err != nil {
 		return nil, err
@@ -72,8 +72,8 @@ func (a *AuctionRepository) Update(auction *models.Auction) error {
 				return err
 			}
 			return tx.
-				Preload("Auction.Car.Model.Manufacturer").
-				Preload("Auction.User").
+				Preload("Offer.Car.Model.Manufacturer").
+				Preload("Offer.User").
 				First(auction, "offer_id = ?", auction.OfferID).Error
 		})
 }

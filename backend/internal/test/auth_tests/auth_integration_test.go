@@ -18,7 +18,7 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
 	"github.com/susek555/BD2/car-dealer-api/pkg/middleware"
 	"github.com/susek555/BD2/car-dealer-api/pkg/passwords"
-	"gorm.io/driver/sqlite"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
@@ -27,19 +27,12 @@ import (
 // ------
 
 func setupDB(users []models.User, refreshTokens []models.RefreshToken) (user.UserRepositoryInterface, refresh_token.RefreshTokenServiceInterface, error) {
-	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	dsn := "host=localhost user=bd2_user password=bd2_password dbname=bd2_test port=5432 sslmode=disable TimeZone=Europe/Warsaw"
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, nil, err
 	}
-	err = db.AutoMigrate(
-		&models.User{},
-		&models.Person{},
-		&models.Company{},
-		&models.RefreshToken{},
-	)
-	if err != nil {
-		return nil, nil, err
-	}
+	db.Exec("TRUNCATE TABLE refresh_tokens, companies, people, users RESTART IDENTITY CASCADE")
 	repo := user.NewUserRepository(db)
 	for _, user_ := range users {
 		err = repo.Create(&user_)
@@ -150,7 +143,7 @@ func TestRegisterPersonEmailAlreadyExists(t *testing.T) {
 	payload := `
 	{
 		"username": "unique_username",
-		"email": "taken@example.com", 
+		"email": "taken@example.com",
 		"password": "PolskaGurom",
 		"selector": "P",
 		"person_name": "Herakles",
@@ -217,7 +210,7 @@ func TestRegisterPersonInvalidEmail(t *testing.T) {
 	payload := `
 	{
 		"username": "unique_username",
-		"email": "invalid_email", 
+		"email": "invalid_email",
 		"password": "PolskaGurom",
 		"selector": "P",
 		"person_name": "Herakles",
@@ -561,7 +554,18 @@ func TestRefreshInvalidToken(t *testing.T) {
 
 func TestRefreshExpiredToken(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	var seedUsers []models.User
+	seedUsers := []models.User{
+		{
+			Username: "test_user",
+			Email:    "test@example.com",
+			Password: "hashed_password",
+			Selector: "P",
+			Person: &models.Person{
+				Name:    "Test",
+				Surname: "User",
+			},
+		},
+	}
 	seedRefreshTokens := []models.RefreshToken{
 		{
 			UserId:     1,
@@ -860,7 +864,7 @@ func TestLogoutAllDevicesNonExistingToken(t *testing.T) {
 		{
 			UserId:     1,
 			Token:      "valid_refresh_token",
-			ExpiryDate: time.Now().Add(30 * 24 * time.Hour),
+			ExpiryDate: time.Now().UTC().Add(30 * 24 * time.Hour),
 		},
 	}
 	server, _, rtSvc, err := newTestServer(seedUsers, seedRefreshTokens)
@@ -890,7 +894,7 @@ func TestLogoutAllDevicesNonExistingToken(t *testing.T) {
 	assert.Len(t, user1Tokens, 1)
 	assert.Equal(t, "valid_refresh_token", user1Tokens[0].Token)
 	assert.Equal(t, uint(1), user1Tokens[0].UserId)
-	assert.Equal(t, time.Now().Add(30*24*time.Hour).Format(time.RFC3339), user1Tokens[0].ExpiryDate.Format(time.RFC3339))
+	assert.Equal(t, time.Now().UTC().Add(30*24*time.Hour).Format(time.RFC3339), user1Tokens[0].ExpiryDate.Format(time.RFC3339))
 }
 
 func TestLogoutAllDevicesEmptyToken(t *testing.T) {
@@ -911,7 +915,7 @@ func TestLogoutAllDevicesEmptyToken(t *testing.T) {
 		{
 			UserId:     1,
 			Token:      "valid_refresh_token",
-			ExpiryDate: time.Now().Add(30 * 24 * time.Hour),
+			ExpiryDate: time.Now().UTC().Add(30 * 24 * time.Hour),
 		},
 	}
 	server, _, rtSvc, err := newTestServer(seedUsers, seedRefreshTokens)
@@ -941,7 +945,7 @@ func TestLogoutAllDevicesEmptyToken(t *testing.T) {
 	assert.Len(t, user1Tokens, 1)
 	assert.Equal(t, "valid_refresh_token", user1Tokens[0].Token)
 	assert.Equal(t, uint(1), user1Tokens[0].UserId)
-	assert.Equal(t, time.Now().Add(30*24*time.Hour).Format(time.RFC3339), user1Tokens[0].ExpiryDate.Format(time.RFC3339))
+	assert.Equal(t, time.Now().UTC().Add(30*24*time.Hour).Format(time.RFC3339), user1Tokens[0].ExpiryDate.Format(time.RFC3339))
 }
 
 func TestLogoutAllDevicesInvalidBody(t *testing.T) {

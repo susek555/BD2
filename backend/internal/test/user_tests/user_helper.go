@@ -2,6 +2,7 @@ package user_tests
 
 import (
 	"fmt"
+
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 
 	"github.com/gin-gonic/gin"
@@ -10,7 +11,7 @@ import (
 	u "github.com/susek555/BD2/car-dealer-api/internal/test/test_utils"
 	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
 	"github.com/susek555/BD2/car-dealer-api/pkg/middleware"
-	"gorm.io/driver/sqlite"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
@@ -19,16 +20,13 @@ import (
 // -----
 
 func setupDB() (*gorm.DB, error) {
-	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
-	db.Exec("PRAGMA foreign_keys = ON")
-	db.AutoMigrate(
-		&models.User{},
-		&models.Company{},
-		&models.Person{},
-	)
+	dsn := "host=localhost user=bd2_user password=bd2_password dbname=bd2_test port=5432 sslmode=disable TimeZone=Europe/Warsaw"
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
+	db.Exec("TRUNCATE TABLE companies, people, users RESTART IDENTITY CASCADE")
+
 	return db, nil
 }
 
