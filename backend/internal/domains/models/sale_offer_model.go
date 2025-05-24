@@ -12,6 +12,7 @@ type SaleOffer struct {
 	Price       uint        `json:"price"`
 	Margin      MarginValue `json:"margin"`
 	DateOfIssue time.Time   `json:"date_of_issue"`
+	Status      Status      `json:"status"`
 	Car         *Car        `gorm:"foreignKey:OfferID;references:ID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE"`
 	Auction     *Auction    `gorm:"foreignKey:OfferID;references:ID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE"`
 }

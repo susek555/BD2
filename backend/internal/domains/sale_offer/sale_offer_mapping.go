@@ -22,6 +22,7 @@ func (dto *CreateSaleOfferDTO) MapToSaleOffer() (*models.SaleOffer, error) {
 		Description: dto.Description,
 		Price:       dto.Price,
 		Margin:      dto.Margin,
+		Status:      models.PENDING,
 		DateOfIssue: time.Now().UTC(),
 		Car: &models.Car{
 			Vin:                dto.Vin,
@@ -82,6 +83,7 @@ func MapToDetailedDTO(offer *models.SaleOffer) *RetrieveDetailedSaleOfferDTO {
 		Drive:              offer.Car.Drive,
 		Brand:              offer.Car.Model.Manufacturer.Name,
 		Model:              offer.Car.Model.Name,
+		ImagesStatus:       offer.Status,
 		DateEnd:            endDate,
 		BuyNowPrice:        buyNow,
 		IsAuction:          offer.Auction != nil,
