@@ -94,13 +94,12 @@ func TestCreateOffer_SettingUserIDManually(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, user.Username, got.Username)
 }
-
-func TestCreateOffer_NonExistentModel(t *testing.T) {
+func TestCreateOffer_NonExistentManufacturer(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	var seedOffers []models.SaleOffer
 	db, _ := setupDB()
 	server, _ := newTestServer(db, seedOffers)
-	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("ModelID", uint(6))))
+	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("Manufacturer", "invalid")))
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
@@ -109,7 +108,41 @@ func TestCreateOffer_NonExistentModel(t *testing.T) {
 	var got custom_errors.HTTPError
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
-	assert.NotEmpty(t, got.Description)
+	assert.NotEmpty(t, got.Description, sale_offer.ErrInvalidManufacturer.Error())
+}
+
+func TestCreateOffer_NonExistentModel(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	var seedOffers []models.SaleOffer
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedOffers)
+	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("Model", "invalid")))
+	assert.NoError(t, err)
+	user := USERS[0]
+	token, _ := u.GetValidToken(user.ID, user.Email)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
+	assert.Equal(t, http.StatusBadRequest, receivedStatus)
+	var got custom_errors.HTTPError
+	err = json.Unmarshal(response, &got)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, got.Description, sale_offer.ErrInvalidModel.Error())
+}
+
+func TestCreateOffer_ModelDoesNotBelongToManufacturer(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	var seedOffers []models.SaleOffer
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedOffers)
+	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("Manufacturer", "Audi"), u.WithField[sale_offer.CreateSaleOfferDTO]("Model", "invalid")))
+	assert.NoError(t, err)
+	user := USERS[0]
+	token, _ := u.GetValidToken(user.ID, user.Email)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
+	assert.Equal(t, http.StatusBadRequest, receivedStatus)
+	var got custom_errors.HTTPError
+	err = json.Unmarshal(response, &got)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, got.Description, sale_offer.ErrInvalidModel.Error())
 }
 
 func TestCreateOffer_InvalidNumberOfDoorsGreater(t *testing.T) {
@@ -535,6 +568,21 @@ func TestCreateOffer_ValidDrive(t *testing.T) {
 	assert.Equal(t, *offer, got)
 	assert.True(t, wasEntityAddedToDB[models.Car](db, uint(1)))
 	assert.False(t, wasEntityAddedToDB[models.Auction](db, uint(1)))
+}
+
+// -----------------------
+// Update sale offer tests
+// ----------------------
+
+func TestUpdateOffer_NotAuthorized(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	var seedOffers []models.SaleOffer
+	db, _ := setupDB()
+	server, _ := newTestServer(db, seedOffers)
+	body, err := json.Marshal(*createSaleOfferDTO())
+	assert.NoError(t, err)
+	_, receivedStatus := u.PerformRequest(server, http.MethodPut, "/sale-offer/1", body, nil)
+	assert.Equal(t, http.StatusUnauthorized, receivedStatus)
 }
 
 // ------------------------------

@@ -96,7 +96,7 @@ func newTestServer(t *testing.T, seedManufacturers []models.Manufacturer, seedMo
 	ms := new(mocks.SchedulerInterface)
 	ms.
 		On("AddAuction",
-			mock.AnythingOfType("string"),      // ID aukcji
+			mock.AnythingOfType("string"),    // ID aukcji
 			mock.AnythingOfType("time.Time"), // termin zakończenia
 		).
 		Return(nil)
@@ -214,7 +214,8 @@ func TestCreateAuctionSuccess(t *testing.T) {
 			Transmission:       car_params.MANUAL,
 			NumberOfGears:      6,
 			Drive:              car_params.FWD,
-			ModelID:            1,
+			Manufacturer:       "Testla",
+			Model:              "ModelS",
 		},
 		DateEnd:     "15:04 02/01/2026",
 		BuyNowPrice: 12000,
@@ -295,7 +296,8 @@ func TestCreateAuctionInvalidDate(t *testing.T) {
 			Transmission:       car_params.MANUAL,
 			NumberOfGears:      6,
 			Drive:              car_params.FWD,
-			ModelID:            1,
+			Manufacturer:       "Corolla",
+			Model:              "Toyota",
 		},
 		DateEnd:     "15:04 02/01/2025",
 		BuyNowPrice: 12000,
@@ -370,7 +372,8 @@ func TestCreateAuctionInvalidDateFormat(t *testing.T) {
 			Transmission:       car_params.MANUAL,
 			NumberOfGears:      6,
 			Drive:              car_params.FWD,
-			ModelID:            1,
+			Manufacturer:       "Toyota",
+			Model:              "Corolla",
 		},
 		DateEnd:     "25:04 02/01/2025",
 		BuyNowPrice: 12000,
@@ -503,7 +506,7 @@ func TestCreateAuctionBuyNowPriceLessThanOfferPrice(t *testing.T) {
 		"number_of_doors": 4,
 		"number_of_seats": 5,
 		"engine_power": 150,
-		"price": 10000,	
+		"price": 10000,
 		"engine_capacity": 2000,
 		"registration_number": "ABC123",
 		"registration_date": "2023-10-01",

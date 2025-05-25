@@ -2,9 +2,10 @@ package auction_test
 
 import (
 	"errors"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"testing"
 	"time"
+
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -68,7 +69,8 @@ func makeValidCreateDTO() *auction.CreateAuctionDTO {
 			Transmission:       car_params.MANUAL,
 			NumberOfGears:      6,
 			Drive:              car_params.FWD,
-			ModelID:            7,
+			Manufacturer:       "Tesla",
+			Model:              "ModelS",
 		},
 		DateEnd:     future.Format("15:04 02/01/2006"),
 		BuyNowPrice: 5000,
