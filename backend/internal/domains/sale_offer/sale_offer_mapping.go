@@ -49,6 +49,9 @@ func (dto *UpdateSaleOfferDTO) UpdateSaleOfferFromDTO(offer *models.SaleOffer) (
 	if err := copier.CopyWithOption(offer, dto, copier.Option{DeepCopy: true}); err != nil {
 		return nil, err
 	}
+	if err := copier.CopyWithOption(offer.Car, dto, copier.Option{DeepCopy: true}); err != nil {
+		return nil, err
+	}
 	return offer, nil
 }
 
