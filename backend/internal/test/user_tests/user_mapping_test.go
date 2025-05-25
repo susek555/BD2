@@ -261,11 +261,11 @@ func TestUpdateUserFromDTO_Email(t *testing.T) {
 		Email: &email,
 	}
 	user := createPerson(1)
-	new_user, _ := dto.UpdateUserFromDTO(user)
-	assert.Equal(t, email, new_user.Email)
-	assert.Equal(t, user.Username, new_user.Username)
-	assert.Equal(t, user.Password, new_user.Password)
-	assert.Equal(t, user.Selector, new_user.Selector)
+	newUser, _ := dto.UpdateUserFromDTO(user)
+	assert.Equal(t, email, newUser.Email)
+	assert.Equal(t, user.Username, newUser.Username)
+	assert.Equal(t, user.Password, newUser.Password)
+	assert.Equal(t, user.Selector, newUser.Selector)
 }
 
 func TestUpdateUserFromDTO_Password(t *testing.T) {
@@ -275,11 +275,11 @@ func TestUpdateUserFromDTO_Password(t *testing.T) {
 		Password: &password,
 	}
 	user := createPerson(1)
-	new_user, _ := dto.UpdateUserFromDTO(user)
-	assert.Equal(t, user.Email, new_user.Email)
-	assert.Equal(t, user.Username, new_user.Username)
-	assert.Equal(t, passwords.Match(password, new_user.Password), true)
-	assert.Equal(t, user.Selector, new_user.Selector)
+	newUser, _ := dto.UpdateUserFromDTO(user)
+	assert.Equal(t, user.Email, newUser.Email)
+	assert.Equal(t, user.Username, newUser.Username)
+	assert.Equal(t, passwords.Match(password, newUser.Password), true)
+	assert.Equal(t, user.Selector, newUser.Selector)
 }
 
 func TestUpdateUserFromDTO_Username(t *testing.T) {
@@ -289,11 +289,11 @@ func TestUpdateUserFromDTO_Username(t *testing.T) {
 		Username: &username,
 	}
 	user := createPerson(1)
-	new_user, _ := dto.UpdateUserFromDTO(user)
-	assert.Equal(t, user.Email, new_user.Email)
-	assert.Equal(t, user.Password, new_user.Password)
-	assert.Equal(t, username, new_user.Username)
-	assert.Equal(t, user.Selector, new_user.Selector)
+	newUser, _ := dto.UpdateUserFromDTO(user)
+	assert.Equal(t, user.Email, newUser.Email)
+	assert.Equal(t, user.Password, newUser.Password)
+	assert.Equal(t, username, newUser.Username)
+	assert.Equal(t, user.Selector, newUser.Selector)
 }
 
 func TestUpdateUserFromDTO_CompanyNameAsCompany(t *testing.T) {
@@ -303,11 +303,11 @@ func TestUpdateUserFromDTO_CompanyNameAsCompany(t *testing.T) {
 		CompanyName: &companyName,
 	}
 	user := createCompany(1)
-	new_user, _ := dto.UpdateUserFromDTO(user)
-	assert.Equal(t, user.Email, new_user.Email)
-	assert.Equal(t, user.Password, new_user.Password)
-	assert.Equal(t, user.Username, new_user.Username)
-	assert.Equal(t, companyName, new_user.Company.Name)
+	newUser, _ := dto.UpdateUserFromDTO(user)
+	assert.Equal(t, user.Email, newUser.Email)
+	assert.Equal(t, user.Password, newUser.Password)
+	assert.Equal(t, user.Username, newUser.Username)
+	assert.Equal(t, companyName, newUser.Company.Name)
 }
 
 func TestUpdateUserFromDTO_CompanyNameAsPerson(t *testing.T) {
@@ -328,11 +328,11 @@ func TestUpdateUserFromDTO_CompanyNIPAsCompany(t *testing.T) {
 		CompanyNIP: &companyNIP,
 	}
 	user := createCompany(1)
-	new_user, _ := dto.UpdateUserFromDTO(user)
-	assert.Equal(t, user.Email, new_user.Email)
-	assert.Equal(t, user.Password, new_user.Password)
-	assert.Equal(t, user.Username, new_user.Username)
-	assert.Equal(t, companyNIP, new_user.Company.NIP)
+	newUser, _ := dto.UpdateUserFromDTO(user)
+	assert.Equal(t, user.Email, newUser.Email)
+	assert.Equal(t, user.Password, newUser.Password)
+	assert.Equal(t, user.Username, newUser.Username)
+	assert.Equal(t, companyNIP, newUser.Company.NIP)
 }
 
 func TestUpdateUserFromDTO_CompanyNIPAsPerson(t *testing.T) {
@@ -353,11 +353,11 @@ func TestUpdateUserFromDTO_PersonNameAsPerson(t *testing.T) {
 		PersonName: &name,
 	}
 	user := createPerson(1)
-	new_user, _ := dto.UpdateUserFromDTO(user)
-	assert.Equal(t, user.Email, new_user.Email)
-	assert.Equal(t, user.Password, new_user.Password)
-	assert.Equal(t, user.Username, new_user.Username)
-	assert.Equal(t, name, new_user.Person.Name)
+	newUser, _ := dto.UpdateUserFromDTO(user)
+	assert.Equal(t, user.Email, newUser.Email)
+	assert.Equal(t, user.Password, newUser.Password)
+	assert.Equal(t, user.Username, newUser.Username)
+	assert.Equal(t, name, newUser.Person.Name)
 }
 
 func TestUpdateUserFromDTO_PersonNameAsCompany(t *testing.T) {
@@ -378,11 +378,11 @@ func TestUpdateUserFromDTO_PersonSurnameAsPerson(t *testing.T) {
 		PersonSurname: &surname,
 	}
 	user := createPerson(1)
-	new_user, _ := dto.UpdateUserFromDTO(user)
-	assert.Equal(t, user.Email, new_user.Email)
-	assert.Equal(t, user.Password, new_user.Password)
-	assert.Equal(t, user.Username, new_user.Username)
-	assert.Equal(t, surname, new_user.Person.Surname)
+	newUser, _ := dto.UpdateUserFromDTO(user)
+	assert.Equal(t, user.Email, newUser.Email)
+	assert.Equal(t, user.Password, newUser.Password)
+	assert.Equal(t, user.Username, newUser.Username)
+	assert.Equal(t, surname, newUser.Person.Surname)
 }
 
 func TestUpdateUserFromDTO_PersonSurnameAsCompany(t *testing.T) {
@@ -401,9 +401,9 @@ func TestUpdateUserFromDTO_Empty(t *testing.T) {
 		ID: 1,
 	}
 	user := createPerson(1)
-	new_user, _ := dto.UpdateUserFromDTO(user)
-	assert.Equal(t, user.Email, new_user.Email)
-	assert.Equal(t, user.Password, new_user.Password)
-	assert.Equal(t, user.Username, new_user.Username)
-	assert.Equal(t, user.Selector, new_user.Selector)
+	newUser, _ := dto.UpdateUserFromDTO(user)
+	assert.Equal(t, user.Email, newUser.Email)
+	assert.Equal(t, user.Password, newUser.Password)
+	assert.Equal(t, user.Username, newUser.Username)
+	assert.Equal(t, user.Selector, newUser.Selector)
 }
