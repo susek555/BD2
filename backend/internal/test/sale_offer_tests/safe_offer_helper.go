@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/image"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 
 	"github.com/gin-gonic/gin"
@@ -90,10 +91,11 @@ func newTestServer(db *gorm.DB, seedOffers []models.SaleOffer) (*gin.Engine, sal
 	verifier := jwt.NewJWTVerifier(u.JWTSECRET)
 	saleOfferRepo := getRepositoryWithSaleOffers(db, seedOffers)
 	manufacturerRepo := manufacturer.NewManufacturerRepository(db)
+	modelRepo := model.NewModelRepository(db)
 	likedOfferRepository := liked_offer.NewLikedOfferRepository(db)
 	bidRepository := bid.NewBidRepository(db)
 	imageRepo := image.NewImageRepository(db)
-	saleOfferService := sale_offer.NewSaleOfferService(saleOfferRepo, manufacturerRepo, bidRepository, imageRepo, likedOfferRepository)
+	saleOfferService := sale_offer.NewSaleOfferService(saleOfferRepo, manufacturerRepo, modelRepo, bidRepository, imageRepo, likedOfferRepository)
 	likedOfferService := liked_offer.NewLikedOfferService(likedOfferRepository, saleOfferRepo)
 	likedOfferHandler := liked_offer.NewHandler(likedOfferService)
 	saleOfferHandler := sale_offer.NewHandler(saleOfferService)
@@ -200,7 +202,8 @@ func createSaleOfferDTO() *sale_offer.CreateSaleOfferDTO {
 		Transmission:       car_params.MANUAL,
 		NumberOfGears:      6,
 		Drive:              car_params.FWD,
-		ModelID:            1,
+		Manufacturer:       "Audi",
+		Model:              "A3",
 	}
 }
 
@@ -219,8 +222,8 @@ func doSaleOfferAndRetrieveSaleOfferDTOsMatch(offer models.SaleOffer, dto sale_o
 		likedCondition = false
 		bidCondition = false
 	} else {
-		likedCondition = s.IsOfferLikedByUser(offer.ID, *userID)
-		bidCondition, _ = s.CanBeModifiedByUser(offer.ID, *userID)
+		likedCondition = s.IsOfferLikedByUser(offer.ID, userID)
+		bidCondition, _ = s.CanBeModifiedByUser(offer.ID, userID)
 	}
 	return condition && bidCondition == dto.CanModify && likedCondition == dto.IsLiked
 }
