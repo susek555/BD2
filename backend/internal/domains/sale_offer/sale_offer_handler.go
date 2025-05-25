@@ -44,7 +44,7 @@ func NewHandler(s SaleOfferServiceInterface) *Handler {
 func (h *Handler) CreateSaleOffer(c *gin.Context) {
 	var offerDTO CreateSaleOfferDTO
 	if err := c.ShouldBindJSON(&offerDTO); err != nil {
-		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
 	userID, _ := c.Get("userID")
@@ -55,6 +55,22 @@ func (h *Handler) CreateSaleOffer(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusCreated, retrieveDTO)
+}
+
+func (h *Handler) UpdateSaleOffer(c *gin.Context) {
+	var offerDTO UpdateSaleOfferDTO
+	if err := c.ShouldBindJSON(&offerDTO); err != nil {
+		custom_errors.HandleError(c, err, ErrorMap)
+		return
+	}
+	userID, _ := c.Get("userID")
+	id := userID.(uint)
+	retrieveDTO, err := h.service.Update(&offerDTO, id)
+	if err != nil {
+		custom_errors.HandleError(c, err, ErrorMap)
+		return
+	}
+	c.JSON(http.StatusOK, retrieveDTO)
 }
 
 // GetFilteredSaleOffers godoc

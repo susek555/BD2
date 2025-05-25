@@ -23,8 +23,11 @@ func (dto *CreateSaleOfferDTO) MapToSaleOffer() (*models.SaleOffer, error) {
 	if err != nil {
 		return nil, err
 	}
-	offer := &models.SaleOffer{}
+	offer := &models.SaleOffer{Car: &models.Car{}}
 	if err := copier.CopyWithOption(offer, dto, copier.Option{DeepCopy: true}); err != nil {
+		return nil, err
+	}
+	if err := copier.CopyWithOption(offer.Car, dto, copier.Option{DeepCopy: true}); err != nil {
 		return nil, err
 	}
 	offer.DateOfIssue = time.Now().UTC()
