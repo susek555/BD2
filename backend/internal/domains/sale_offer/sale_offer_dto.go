@@ -34,6 +34,7 @@ type CreateSaleOfferDTO struct {
 
 type UpdateSaleOfferDTO struct {
 	ID                 uint                     `json:"id"`
+	UserID             uint                     `json:"user_id"`
 	Description        *string                  `json:"description"`
 	Price              *uint                    `json:"price"`
 	Margin             *models.MarginValue      `json:"margin"`

@@ -29,10 +29,12 @@ type ModelRetrieverInterface interface {
 
 type SaleOfferServiceInterface interface {
 	Create(in *CreateSaleOfferDTO) (*RetrieveDetailedSaleOfferDTO, error)
-	Update(in *UpdateSaleOfferDTO) (*RetrieveDetailedSaleOfferDTO, error)
+	Update(in *UpdateSaleOfferDTO, userID uint) (*RetrieveDetailedSaleOfferDTO, error)
 	GetFiltered(filter *OfferFilter) (*RetrieveOffersWithPagination, error)
 	GetByID(id uint, userID *uint) (*RetrieveDetailedSaleOfferDTO, error)
 	GetByUserID(id uint, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error)
+	CanBeModifiedByUser(offerID uint, userID *uint) (bool, error)
+	IsOfferLikedByUser(offerID uint, userID *uint) bool
 }
 
 type SaleOfferService struct {
@@ -78,10 +80,13 @@ func (s *SaleOfferService) Create(in *CreateSaleOfferDTO) (*RetrieveDetailedSale
 	return s.GetByID(offer.ID, &offer.UserID)
 }
 
-func (s *SaleOfferService) Update(in *UpdateSaleOfferDTO) (*RetrieveDetailedSaleOfferDTO, error) {
+func (s *SaleOfferService) Update(in *UpdateSaleOfferDTO, userID uint) (*RetrieveDetailedSaleOfferDTO, error) {
 	offer, err := s.saleOfferRepo.GetByID(in.ID)
 	if err != nil {
 		return nil, err
+	}
+	if offer.UserID != userID {
+		return nil, ErrModificationForbidden
 	}
 	updatedOffer, err := in.UpdateSaleOfferFromDTO(offer)
 	if err != nil {
@@ -140,7 +145,7 @@ func (s *SaleOfferService) GetByUserID(id uint, pagRequest *pagination.Paginatio
 	return &RetrieveOffersWithPagination{Offers: offerDTOs, PaginationResponse: pagResponse}, nil
 }
 
-func (s *SaleOfferService) canBeModifiedByUser(offerID uint, userID *uint) (bool, error) {
+func (s *SaleOfferService) CanBeModifiedByUser(offerID uint, userID *uint) (bool, error) {
 	if userID == nil {
 		return false, nil
 	}
@@ -158,7 +163,7 @@ func (s *SaleOfferService) canBeModifiedByUser(offerID uint, userID *uint) (bool
 	return len(bids) == 0, nil
 }
 
-func (s *SaleOfferService) isOfferLikedByUser(offerID uint, userID *uint) bool {
+func (s *SaleOfferService) IsOfferLikedByUser(offerID uint, userID *uint) bool {
 	if userID == nil {
 		return false
 	}
@@ -206,8 +211,8 @@ func (s *SaleOfferService) setImagesUrls(dto *RetrieveDetailedSaleOfferDTO) erro
 }
 
 func (s *SaleOfferService) setUserFields(userContext *UserContext, offerID uint, userID *uint) error {
-	userContext.IsLiked = s.isOfferLikedByUser(offerID, userID)
-	stmt, err := s.canBeModifiedByUser(offerID, userID)
+	userContext.IsLiked = s.IsOfferLikedByUser(offerID, userID)
+	stmt, err := s.CanBeModifiedByUser(offerID, userID)
 	if err != nil {
 		return err
 	}
