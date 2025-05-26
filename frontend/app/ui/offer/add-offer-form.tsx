@@ -72,6 +72,7 @@ export function OfferForm(
             setDetailsPart(false);
         }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     , [state]);
 
     const [detailsPart, setDetailsPart] = React.useState<boolean>(true);
@@ -148,7 +149,9 @@ export function OfferForm(
                     defaultValue={
                         typeof state?.values?.[id] === "string"
                             ? state.values[id]
-                            : ""
+                            : typeof state.values?.[id] === "number"
+                                ? state.values[id].toString()
+                                : ""
                     }
                 >
                     <option value="" disabled>Select a {name}...</option>
