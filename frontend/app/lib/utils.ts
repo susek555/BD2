@@ -1,4 +1,4 @@
-import { offerFormState } from "./definitions/offer-form";
+import { OfferFormState } from "./definitions/offer-form";
 import { OfferDetailsFormSchema, CombinedOfferFormSchema } from "./definitions/offer-form";
 
 
@@ -7,7 +7,7 @@ export const OfferFormEnum = {
   pricingPartLeft: false
 } as const;
 
-export const parseOfferForm = (formData: FormData, detailsPart: boolean) : {boolean: boolean, offerFormState: offerFormState} => {
+export const parseOfferForm = (formData: FormData, detailsPart: boolean) : {boolean: boolean, offerFormState: OfferFormState} => {
 
     const formDataObj = Object.fromEntries(formData.entries());
 
@@ -42,7 +42,7 @@ export const parseOfferForm = (formData: FormData, detailsPart: boolean) : {bool
         boolean: OfferFormEnum.pricingPartLeft,
         offerFormState: {
         errors: validatedFields.error.flatten().fieldErrors,
-        values: normalizedData as offerFormState['values']
+        values: normalizedData as OfferFormState['values']
         }
       };
     }
@@ -61,7 +61,7 @@ export const parseOfferForm = (formData: FormData, detailsPart: boolean) : {bool
       boolean: detailsPart ? OfferFormEnum.pricingPartLeft : OfferFormEnum.readyToApi,
       offerFormState: {
       errors: {},
-      values: normalizedData as offerFormState['values']
+      values: normalizedData as OfferFormState['values']
       }
     };
 }

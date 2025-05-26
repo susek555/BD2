@@ -2,7 +2,7 @@ import { getColors, getDrives, getFuelTypes, getProducersAndModels, getTransmiss
 import { getOfferTypes } from "@/app/lib//api/offerType";
 import { getOrderKeys } from "@/app/lib//api/orderKeys";
 import { FilterFieldData, ModelFieldData, RangeFieldData } from "@/app/lib//definitions/filters-sidebar";
-import { offerFormData } from "@/app/lib/definitions/offer-form";
+import { OfferFormData } from "@/app/lib/definitions/offer-form";
 
 // Offer types
 
@@ -163,7 +163,7 @@ export function prepareRangeFields() : RangeFieldData[] {
 
 // Add offer
 
-export async function fetchAddOfferFormData() : Promise<offerFormData> {
+export async function fetchOfferFormData() : Promise<OfferFormData> {
 
     // TODO remove delay
     await new Promise(resolve => setTimeout(resolve, 1000));

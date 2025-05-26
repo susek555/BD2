@@ -1,9 +1,9 @@
-import { fetchAddOfferFormData } from "@/app/lib/data/filters-sidebar/data";
+import { fetchOfferFormData } from "@/app/lib/data/filters-sidebar/data";
 import { OfferForm } from "@/app/ui/offer/add-offer-form";
 
 export default async function Page() {
 
-    const formData = await fetchAddOfferFormData();
+    const formData = await fetchOfferFormData();
 
     return (
         <div className="px-20 py-10">

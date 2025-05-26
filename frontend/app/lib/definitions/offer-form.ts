@@ -175,7 +175,7 @@ export const CombinedOfferFormSchema = z
 
 
 
-export type offerFormState = {
+export type OfferFormState = {
   errors?: {
     [key: string]: string[] | undefined;
     producer?: string[];
@@ -229,7 +229,7 @@ export type offerFormState = {
   }
 }
 
-export type offerFormData = {
+export type OfferFormData = {
   producers: string[];
   models: string[][];
   colors: string[];

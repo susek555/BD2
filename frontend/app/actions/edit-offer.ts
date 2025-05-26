@@ -1,11 +1,11 @@
-import { offerFormState, RegularOfferData } from "@/app/lib/definitions/offer-form";
+import { OfferFormState, RegularOfferData } from "@/app/lib/definitions/offer-form";
 import { permanentRedirect } from "next/navigation";
 import { editRegularOffer } from "../lib/api/edit-offer/edit-offer";
 
 export async function editOffer(
-    state: offerFormState,
+    state: OfferFormState,
     id: string
-): Promise<offerFormState> {
+): Promise<OfferFormState> {
     let validatedFields = state.values!;
 
     // This property exists, the error is incorrect
@@ -31,7 +31,7 @@ export async function editOffer(
         }
         return {
             errors: {},
-            values: { ...validatedFields, is_auction } as offerFormState['values']
+            values: { ...validatedFields, is_auction } as OfferFormState['values']
         }
     }
 }

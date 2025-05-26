@@ -1,6 +1,6 @@
 "use client"
 
-import { offerFormData, offerFormState } from "@/app/lib/definitions/offer-form";
+import { OfferFormData, OfferFormState } from "@/app/lib/definitions/offer-form";
 import React, { useActionState, useEffect } from "react";
 import { getAvailableModels } from "@/app/ui/(filters-sidebar)/producers-and-models";
 import { addOffer } from "@/app/actions/add-offer";
@@ -19,8 +19,8 @@ export function OfferForm(
     apiAction = offerActionEnum.ADD_OFFER,
     id = undefined
 } : {
-    inputsData : offerFormData
-    initialValues?: Partial<offerFormState['values']>,
+    inputsData : OfferFormData
+    initialValues?: Partial<OfferFormState['values']>,
     apiAction?: boolean
     id?: string | undefined
 }) {
@@ -28,14 +28,14 @@ export function OfferForm(
     if (apiAction === offerActionEnum.EDIT_OFFER && id === undefined) {
         throw new Error("ID is required when editing an offer");
     }
-    
 
-    const initialState: offerFormState = {
+
+    const initialState: OfferFormState = {
         errors: {},
-        values: initialValues as offerFormState['values'],
+        values: initialValues as OfferFormState['values'],
     };
 
-    const offerWrapper = (state: offerFormState, formData: FormData) => {
+    const offerWrapper = (state: OfferFormState, formData: FormData) => {
             const detailsPart = formData.get('detailsPart') === 'true';
             formData.delete('detailsPart');
 
