@@ -1,24 +1,24 @@
 "use client"
 
-import { AddOfferFormData, AddOfferFormState } from "@/app/lib/definitions/offer-form";
+import { offerFormData, offerFormState } from "@/app/lib/definitions/offer-form";
 import React, { useActionState, useEffect } from "react";
 import { getAvailableModels } from "@/app/ui/(filters-sidebar)/producers-and-models";
 import { addOffer } from "@/app/actions/add-offer";
 
-export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFormData}) {
-    const initialState: AddOfferFormState = {
+export default function OfferForm({ inputsData } : { inputsData : offerFormData}) {
+    const initialState: offerFormState = {
         errors: {},
         values: {is_auction: false},
     };
 
-    const addOfferWrapper = (state: AddOfferFormState, formData: FormData) => {
+    const offerWrapper = (state: offerFormState, formData: FormData) => {
         // Store the detailsPart value in the formData
         const detailsPart = formData.get('detailsPart') === 'true';
         formData.delete('detailsPart');
         return addOffer(state, formData, detailsPart);
     };
 
-    const [state, action] = useActionState(addOfferWrapper, initialState);
+    const [state, action] = useActionState(offerWrapper, initialState);
 
     useEffect(() => {
         if (state.values?.producer) {
@@ -378,7 +378,7 @@ export default function AddOfferForm({ inputsData } : { inputsData : AddOfferFor
                     )}
 
                     <button type="button" className="bg-blue-600 text-white rounded p-2" onClick={() => setDetailsPart(true)}>Back to Details</button>
-                    <button type="submit" className="bg-blue-600 text-white rounded p-2">Add Offer</button>
+                    <button type="submit" className="bg-blue-600 text-white rounded p-2">Confirm Offer</button>
                 </>
             </div>
         </form>

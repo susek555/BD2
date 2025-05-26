@@ -1,12 +1,12 @@
-import { OfferDetailsFormSchema, AddOfferFormState, CombinedOfferFormSchema, RegularOfferData } from "@/app/lib/definitions/offer-form";
+import { OfferDetailsFormSchema, offerFormState, CombinedOfferFormSchema, RegularOfferData } from "@/app/lib/definitions/offer-form";
 import { permanentRedirect } from "next/navigation";
 import { postRegularOffer } from "@/app/lib/api/add-offer/add-offer";
 
 export async function addOffer(
-    state: AddOfferFormState,
+    state: offerFormState,
     formData: FormData,
     detailsPart: boolean
-): Promise<AddOfferFormState> {
+): Promise<offerFormState> {
     console.log("Add Offer form data:", Object.fromEntries(formData.entries()));
 
     const formDataObj = Object.fromEntries(formData.entries());
@@ -40,14 +40,14 @@ export async function addOffer(
         console.log("Add Offer validation errors:", validatedFields.error.flatten().fieldErrors);
         return {
             errors: validatedFields.error.flatten().fieldErrors,
-            values: normalizedData as AddOfferFormState['values']
+            values: normalizedData as offerFormState['values']
         };
     }
 
     if (detailsPart) {
         return {
             errors: {},
-            values: normalizedData as AddOfferFormState['values']
+            values: normalizedData as offerFormState['values']
         };
     }
 
@@ -83,7 +83,7 @@ export async function addOffer(
         }
         return {
             errors: {},
-            values: normalizedData as AddOfferFormState['values']
+            values: normalizedData as offerFormState['values']
         }
     }
 }

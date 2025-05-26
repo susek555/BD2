@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-// Add Offer
+// Add / Edit Offer
 
 export const OfferDetailsFormSchema = z.object({
   producer: z.string().min(1, { message: 'Producer is required' }),
@@ -175,7 +175,7 @@ export const CombinedOfferFormSchema = z
 
 
 
-export type AddOfferFormState = {
+export type offerFormState = {
   errors?: {
     [key: string]: string[] | undefined;
     producer?: string[];
@@ -229,7 +229,7 @@ export type AddOfferFormState = {
   }
 }
 
-export type AddOfferFormData = {
+export type offerFormData = {
   producers: string[];
   models: string[][];
   colors: string[];
