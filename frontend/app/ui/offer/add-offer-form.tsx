@@ -23,13 +23,12 @@ export default function OfferForm(
     };
 
     const offerWrapper = (state: offerFormState, formData: FormData) => {
-            // Store the detailsPart value in the formData
             const detailsPart = formData.get('detailsPart') === 'true';
             formData.delete('detailsPart');
 
             const { boolean: result, offerFormState } = parseOfferForm(formData, detailsPart);
 
-            // If there are validation errors, return the new state without calling API
+            // If there are validation errors or pricing is to be set, return the new state without calling API
             if (result === OfferFormEnum.pricingPartLeft) {
                 return offerFormState;
             }
