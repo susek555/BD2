@@ -4,6 +4,7 @@ import { offerFormData, offerFormState } from "@/app/lib/definitions/offer-form"
 import React, { useActionState, useEffect } from "react";
 import { getAvailableModels } from "@/app/ui/(filters-sidebar)/producers-and-models";
 import { addOffer } from "@/app/actions/add-offer";
+import { parseOfferForm, OfferFormEnum } from "@/app/lib/utils";
 
 export default function OfferForm(
 {
@@ -22,10 +23,19 @@ export default function OfferForm(
     };
 
     const offerWrapper = (state: offerFormState, formData: FormData) => {
-        // Store the detailsPart value in the formData
-        const detailsPart = formData.get('detailsPart') === 'true';
-        formData.delete('detailsPart');
-        return apiAction(state, formData, detailsPart);
+            // Store the detailsPart value in the formData
+            const detailsPart = formData.get('detailsPart') === 'true';
+            formData.delete('detailsPart');
+
+            const { boolean: result, offerFormState } = parseOfferForm(formData, detailsPart);
+
+            // If there are validation errors, return the new state without calling API
+            if (result === OfferFormEnum.pricingPartLeft) {
+                return offerFormState;
+            }
+
+            // Otherwise call the API action with validated data
+            return apiAction(offerFormState, formData, detailsPart);
     };
 
     const [state, action] = useActionState(offerWrapper, initialState);

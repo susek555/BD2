@@ -1,68 +1,15 @@
-import { OfferDetailsFormSchema, offerFormState, CombinedOfferFormSchema, RegularOfferData } from "@/app/lib/definitions/offer-form";
+import { offerFormState, RegularOfferData } from "@/app/lib/definitions/offer-form";
 import { permanentRedirect } from "next/navigation";
 import { postRegularOffer } from "@/app/lib/api/add-offer/add-offer";
 
 export async function addOffer(
     state: offerFormState,
-    formData: FormData,
-    detailsPart: boolean
 ): Promise<offerFormState> {
-    console.log("Add Offer form data:", Object.fromEntries(formData.entries()));
-
-    const formDataObj = Object.fromEntries(formData.entries());
-
-    const normalizedData = {
-        ...formDataObj,
-        production_year: formDataObj.production_year ? parseInt(formDataObj.production_year as string) || undefined : undefined,
-        mileage: formDataObj.mileage ? parseInt(formDataObj.mileage as string) || undefined : undefined,
-        number_of_doors: formDataObj.number_of_doors ? parseInt(formDataObj.number_of_doors as string) || undefined : undefined,
-        number_of_seats: formDataObj.number_of_seats ? parseInt(formDataObj.number_of_seats as string) || undefined : undefined,
-        number_of_gears: formDataObj.number_of_gears ? parseInt(formDataObj.number_of_gears as string) || undefined : undefined,
-        engine_power: formDataObj.engine_power ? parseInt(formDataObj.engine_power as string) || undefined : undefined,
-        engine_capacity: formDataObj.engine_capacity ? parseInt(formDataObj.engine_capacity as string) || undefined : undefined,
-        price: formDataObj.price ? parseInt(formDataObj.price as string) || undefined : undefined,
-        margin: formDataObj.margin
-            ? (parseInt((formDataObj.margin as string).replace('%', '')) || undefined)
-            : undefined,
-        is_auction: formDataObj.is_auction === "true" ? true : false,
-        buy_now_auction_price: formDataObj.buy_now_auction_price
-            ? parseInt(formDataObj.buy_now_auction_price as string) || undefined
-            : undefined
-    }
-
-    const validatedFields = detailsPart
-        ? OfferDetailsFormSchema.safeParse(normalizedData)
-        : CombinedOfferFormSchema.safeParse(normalizedData);;
-
-
-
-    if (!validatedFields.success) {
-        console.log("Add Offer validation errors:", validatedFields.error.flatten().fieldErrors);
-        return {
-            errors: validatedFields.error.flatten().fieldErrors,
-            values: normalizedData as offerFormState['values']
-        };
-    }
-
-    if (detailsPart) {
-        return {
-            errors: {},
-            values: normalizedData as offerFormState['values']
-        };
-    }
-
-
-    // convert model from "producer model" to "model"
-    if ('model' in validatedFields.data) {
-        const firstSpaceIndex = validatedFields.data.model.indexOf(' ');
-        if (firstSpaceIndex !== -1) {
-            validatedFields.data.model = validatedFields.data.model.substring(firstSpaceIndex + 1);
-        }
-    }
+    let validatedFields = state.values!;
 
     // This property exists, the error is incorrect
-    const { is_auction, ...offerData } = validatedFields.data;
-    validatedFields.data = offerData;
+    const { is_auction, ...offerData } = validatedFields;
+    validatedFields = offerData;
 
     console.log("Is auction:", is_auction);
     console.log("Add Offer validated fields:", validatedFields.data);
@@ -72,7 +19,7 @@ export async function addOffer(
         if (is_auction) {
             console.log("Adding auction offer");
         } else {
-            const regularOfferData: RegularOfferData = validatedFields.data as RegularOfferData;
+            const regularOfferData: RegularOfferData = validatedFields as RegularOfferData;
             await postRegularOffer(regularOfferData);
         }
 
@@ -83,7 +30,7 @@ export async function addOffer(
         }
         return {
             errors: {},
-            values: normalizedData as offerFormState['values']
+            values: { ...validatedFields, is_auction } as offerFormState['values']
         }
     }
 }
