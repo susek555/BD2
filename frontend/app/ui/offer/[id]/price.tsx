@@ -1,4 +1,4 @@
-import { AuctionData } from "@/app/lib/definitions/reviews";
+import { AuctionData } from "@/app/lib/definitions/sale-offer-details";
 import { BasePriceButton } from "./price-buttons/base-price-button";
 import { CurrencyDollarIcon, ArrowRightIcon } from "@heroicons/react/20/solid";
 import TimeLeft from "./time-left";

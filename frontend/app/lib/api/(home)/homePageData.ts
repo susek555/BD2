@@ -1,7 +1,6 @@
 import { SaleOffer } from "@/app/lib/definitions/SaleOffer";
 import { SearchParams } from "@/app/lib/definitions/SearchParams";
-
-const API_URL = process.env.API_URL;
+import { API_URL } from "../../constants";
 
 export async function getHomePageData(params : SearchParams) : Promise<
 

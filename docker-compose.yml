@@ -57,7 +57,11 @@ services:
       dockerfile: Dockerfile
     container_name: bd2-frontend
     environment:
+      - API_URL=http://backend:8080
       - NEXT_PUBLIC_API_URL=http://localhost:8080
+      - NEXTAUTH_URL=http://localhost:3000
+      - NEXTAUTH_SECRET=secret-here
+      - NODE_ENV=production
     ports:
       - "3000:3000"
     depends_on:

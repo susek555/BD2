@@ -3,7 +3,7 @@ import { fetchWithRefresh } from "@/app/lib/api/fetchWithRefresh"
 import { getServerSession } from "next-auth/next"
 import { NextResponse } from "next/server"
 
-const API_URL = process.env.API_URL
+const API_URL = process.env.API_URL;
 
 export async function POST() {
   const session = await getServerSession(authConfig)

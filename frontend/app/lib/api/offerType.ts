@@ -1,4 +1,4 @@
-const API_URL = process.env.API_URL;
+import { API_URL } from '../constants';
 
 export async function getOfferTypes() : Promise<string[]> {
   const response = await fetch(`${API_URL}/sale-offer/offer-types`, {

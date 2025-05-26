@@ -1,4 +1,4 @@
-import { HistoryOffer } from '@/app/lib/definitions/reviews';
+import { HistoryOffer } from '@/app/lib/definitions/SaleOffer';
 import GenericOfferCard from '@/app/ui/(offers-table)/generic-offer-card';
 
 export default function SingleHistoryOffer({ offer }: { offer: HistoryOffer }) {
