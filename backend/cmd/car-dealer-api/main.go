@@ -11,7 +11,6 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/routes"
 
 	"github.com/gin-gonic/gin"
-
 	_ "github.com/susek555/BD2/car-dealer-api/docs"
 	"github.com/susek555/BD2/car-dealer-api/internal/initializers"
 	swaggerFiles "github.com/swaggo/files"
