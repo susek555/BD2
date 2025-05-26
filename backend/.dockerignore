@@ -1,0 +1,46 @@
+# Git
+.git
+.gitignore
+
+# Documentation
+README.md
+docs/
+
+# Test files
+*_test.go
+internal/test/
+**/*_test.go
+
+# Development files
+.env.local
+.env.development
+.env.test
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+main
+car-dealer-api
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Logs
+*.log
+
+# Temporary files
+tmp/
+temp/
+
+# Generated docs (will be regenerated during build)
+docs/
