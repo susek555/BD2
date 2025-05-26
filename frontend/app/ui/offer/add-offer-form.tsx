@@ -5,17 +5,27 @@ import React, { useActionState, useEffect } from "react";
 import { getAvailableModels } from "@/app/ui/(filters-sidebar)/producers-and-models";
 import { addOffer } from "@/app/actions/add-offer";
 
-export default function OfferForm({ inputsData } : { inputsData : offerFormData}) {
+export default function OfferForm(
+{
+    inputsData,
+    initialValues = {is_auction: false},
+    apiAction = addOffer
+} : {
+    inputsData : offerFormData
+    initialValues?: Partial<offerFormState['values']>,
+    apiAction?: (state: offerFormState, formData: FormData, detailsPart: boolean) => Promise<offerFormState>
+}) {
+
     const initialState: offerFormState = {
         errors: {},
-        values: {is_auction: false},
+        values: initialValues as offerFormState['values'],
     };
 
     const offerWrapper = (state: offerFormState, formData: FormData) => {
         // Store the detailsPart value in the formData
         const detailsPart = formData.get('detailsPart') === 'true';
         formData.delete('detailsPart');
-        return addOffer(state, formData, detailsPart);
+        return apiAction(state, formData, detailsPart);
     };
 
     const [state, action] = useActionState(offerWrapper, initialState);
