@@ -1,5 +1,5 @@
 import { fetchAddOfferFormData } from "@/app/lib/data/filters-sidebar/data";
-import OfferForm from "@/app/ui/offer/add-offer-form";
+import { OfferForm } from "@/app/ui/offer/add-offer-form";
 
 export default async function Page() {
 

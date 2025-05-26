@@ -1,9 +1,10 @@
 import { offerFormState, RegularOfferData } from "@/app/lib/definitions/offer-form";
 import { permanentRedirect } from "next/navigation";
-import { postRegularOffer } from "@/app/lib/api/add-offer/add-offer";
+import { editRegularOffer } from "../lib/api/edit-offer/edit-offer";
 
 export async function editOffer(
     state: offerFormState,
+    id: string
 ): Promise<offerFormState> {
     let validatedFields = state.values!;
 
@@ -20,7 +21,7 @@ export async function editOffer(
             console.log("Editing auction offer");
         } else {
             const regularOfferData: RegularOfferData = validatedFields as RegularOfferData;
-            await postRegularOffer(regularOfferData);
+            await editRegularOffer(regularOfferData, id);
         }
 
         permanentRedirect("/account/listings");

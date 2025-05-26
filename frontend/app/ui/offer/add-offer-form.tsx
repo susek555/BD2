@@ -4,18 +4,31 @@ import { offerFormData, offerFormState } from "@/app/lib/definitions/offer-form"
 import React, { useActionState, useEffect } from "react";
 import { getAvailableModels } from "@/app/ui/(filters-sidebar)/producers-and-models";
 import { addOffer } from "@/app/actions/add-offer";
+import { editOffer } from "@/app/actions/edit-offer";
 import { parseOfferForm, OfferFormEnum } from "@/app/lib/utils";
 
-export default function OfferForm(
+export const offerActionEnum = {
+    ADD_OFFER: true,
+    EDIT_OFFER: false
+}
+
+export function OfferForm(
 {
     inputsData,
     initialValues = {is_auction: false},
-    apiAction = addOffer
+    apiAction = offerActionEnum.ADD_OFFER,
+    id = undefined
 } : {
     inputsData : offerFormData
     initialValues?: Partial<offerFormState['values']>,
-    apiAction?: (state: offerFormState, formData: FormData, detailsPart: boolean) => Promise<offerFormState>
+    apiAction?: boolean
+    id?: string | undefined
 }) {
+    // Validate that ID is provided when edit mode is active
+    if (apiAction === offerActionEnum.EDIT_OFFER && id === undefined) {
+        throw new Error("ID is required when editing an offer");
+    }
+    
 
     const initialState: offerFormState = {
         errors: {},
@@ -34,7 +47,11 @@ export default function OfferForm(
             }
 
             // Otherwise call the API action with validated data
-            return apiAction(offerFormState, formData, detailsPart);
+            if (apiAction) {
+                return addOffer(offerFormState);
+            } else {
+                return editOffer(offerFormState, id!);
+            }
     };
 
     const [state, action] = useActionState(offerWrapper, initialState);
