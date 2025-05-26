@@ -1,9 +1,11 @@
 package manufacturer
 
-import "github.com/susek555/BD2/car-dealer-api/internal/domains/models"
+import (
+	"github.com/susek555/BD2/car-dealer-api/pkg/mapping"
+)
 
 type ManufacturerServiceInterface interface {
-	GetAll() ([]models.Manufacturer, error)
+	GetAll() ([]RetrieveManufacturerDTO, error)
 	GetAllAsNames() ([]string, error)
 }
 
@@ -15,12 +17,16 @@ func NewManufacturerService(manufacturerRepository ManufacturerRepositoryInterfa
 	return &ManufacturerService{repo: manufacturerRepository}
 }
 
-func (s *ManufacturerService) GetAll() ([]models.Manufacturer, error) {
-	return s.repo.GetAll()
+func (s *ManufacturerService) GetAll() ([]RetrieveManufacturerDTO, error) {
+	manufacturers, err := s.repo.GetAll()
+	if err != nil {
+		return nil, err
+	}
+	return mapping.MapSliceToDTOs(manufacturers, MapToDTO), nil
 }
 
 func (s *ManufacturerService) GetAllAsNames() ([]string, error) {
-	manufacturers, err := s.GetAll()
+	manufacturers, err := s.repo.GetAll()
 	if err != nil {
 		return nil, err
 	}

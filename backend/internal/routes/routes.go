@@ -1,6 +1,8 @@
 package routes
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auctionws"
 	"github.com/susek555/BD2/car-dealer-api/internal/initializers"
@@ -8,6 +10,14 @@ import (
 )
 
 func RegisterRoutes(router *gin.Engine) {
+	// Health check endpoint
+	router.GET("/health", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"status":  "ok",
+			"message": "Server is healthy",
+		})
+	})
+
 	registerAuthRoutes(router)
 	registerUserRoutes(router)
 	registerReviewRoutes(router)
