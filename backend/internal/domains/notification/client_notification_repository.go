@@ -46,3 +46,21 @@ func (r *ClientNotificationRepository) GetAll() ([]models.ClientNotification, er
 	}
 	return clientNotifications, nil
 }
+
+func (r *ClientNotificationRepository) GetByUserId(userId uint) ([]models.ClientNotification, error) {
+	db := r.DB
+	var clientNotifications []models.ClientNotification
+	if err := db.Where("user_id = ?", userId).Find(&clientNotifications).Error; err != nil {
+		return nil, err
+	}
+	return clientNotifications, nil
+}
+
+func (r *ClientNotificationRepository) GetFourLatestByUserId(userId uint) ([]models.ClientNotification, error) {
+	db := r.DB
+	var clientNotifications []models.ClientNotification
+	if err := db.Where("user_id = ?", userId).Order("created_at DESC").Limit(4).Find(&clientNotifications).Error; err != nil {
+		return nil, err
+	}
+	return clientNotifications, nil
+}
