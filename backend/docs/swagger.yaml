@@ -1,4 +1,157 @@
 definitions:
+  auction.CreateAuctionDTO:
+    properties:
+      buy_now_price:
+        type: integer
+      color:
+        $ref: '#/definitions/car_params.Color'
+      date_end:
+        type: string
+      description:
+        type: string
+      drive:
+        $ref: '#/definitions/car_params.Drive'
+      engine_capacity:
+        type: integer
+      engine_power:
+        type: integer
+      fuel_type:
+        $ref: '#/definitions/car_params.FuelType'
+      margin:
+        $ref: '#/definitions/models.MarginValue'
+      mileage:
+        type: integer
+      model_id:
+        type: integer
+      number_of_doors:
+        type: integer
+      number_of_gears:
+        type: integer
+      number_of_seats:
+        type: integer
+      price:
+        type: integer
+      production_year:
+        type: integer
+      registration_date:
+        type: string
+      registration_number:
+        type: string
+      transmission:
+        $ref: '#/definitions/car_params.Transmission'
+      vin:
+        type: string
+    required:
+    - color
+    - description
+    - drive
+    - engine_capacity
+    - engine_power
+    - fuel_type
+    - margin
+    - mileage
+    - model_id
+    - number_of_doors
+    - number_of_gears
+    - number_of_seats
+    - price
+    - production_year
+    - registration_date
+    - registration_number
+    - transmission
+    - vin
+    type: object
+  auction.RetrieveAuctionDTO:
+    properties:
+      buy_now_price:
+        type: integer
+      can_modify:
+        type: boolean
+      color:
+        $ref: '#/definitions/car_params.Color'
+      date_end:
+        type: string
+      id:
+        type: integer
+      is_auction:
+        type: boolean
+      is_liked:
+        type: boolean
+      mileage:
+        type: integer
+      name:
+        type: string
+      price:
+        type: integer
+      production_year:
+        type: integer
+      username:
+        type: string
+    type: object
+  auction.UpdateAuctionDTO:
+    properties:
+      buy_now_price:
+        type: integer
+      color:
+        $ref: '#/definitions/car_params.Color'
+      date_end:
+        type: string
+      description:
+        type: string
+      drive:
+        $ref: '#/definitions/car_params.Drive'
+      engine_capacity:
+        type: integer
+      engine_power:
+        type: integer
+      fuel_type:
+        $ref: '#/definitions/car_params.FuelType'
+      id:
+        type: integer
+      margin:
+        $ref: '#/definitions/models.MarginValue'
+      mileage:
+        type: integer
+      model_id:
+        type: integer
+      number_of_doors:
+        type: integer
+      number_of_gears:
+        type: integer
+      number_of_seats:
+        type: integer
+      price:
+        type: integer
+      production_year:
+        type: integer
+      registration_date:
+        type: string
+      registration_number:
+        type: string
+      transmission:
+        $ref: '#/definitions/car_params.Transmission'
+      vin:
+        type: string
+    required:
+    - color
+    - description
+    - drive
+    - engine_capacity
+    - engine_power
+    - fuel_type
+    - margin
+    - mileage
+    - model_id
+    - number_of_doors
+    - number_of_gears
+    - number_of_seats
+    - price
+    - production_year
+    - registration_date
+    - registration_number
+    - transmission
+    - vin
+    type: object
   auth.ChangePasswordDTO:
     properties:
       new_password:
@@ -184,6 +337,13 @@ definitions:
       error_description:
         type: string
     type: object
+  manufacturer.RetrieveManufacturerDTO:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
   model.RetrieveModelDTO:
     properties:
       id:
@@ -197,13 +357,6 @@ definitions:
         type: integer
       user_id:
         type: integer
-    type: object
-  models.Manufacturer:
-    properties:
-      id:
-        type: integer
-      name:
-        type: string
     type: object
   models.MarginValue:
     enum:
@@ -596,6 +749,142 @@ info:
   title: Car‑Dealer API
   version: "1.0"
 paths:
+  /auction:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves all available auctions from the system
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/auction.RetrieveAuctionDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Get all auctions
+      tags:
+      - auction
+    post:
+      consumes:
+      - application/json
+      description: Creates a new auction with the provided details
+      parameters:
+      - description: Auction details
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/auction.CreateAuctionDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created auction
+          schema:
+            $ref: '#/definitions/auction.RetrieveAuctionDTO'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      security:
+      - BearerAuth: []
+      summary: Create Auction
+      tags:
+      - auction
+    put:
+      consumes:
+      - application/json
+      description: Updates an existing auction with the provided details
+      parameters:
+      - description: Auction details
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/auction.UpdateAuctionDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated auction
+          schema:
+            $ref: '#/definitions/auction.RetrieveAuctionDTO'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      security:
+      - BearerAuth: []
+      summary: Update auction
+      tags:
+      - auction
+  /auction/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a specific auction by its ID
+      parameters:
+      - description: Auction ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      security:
+      - BearerAuth: []
+      summary: Delete auction by ID
+      tags:
+      - auction
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a specific auction by its ID
+      parameters:
+      - description: Auction ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auction.RetrieveAuctionDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Get auction by ID
+      tags:
+      - auction
   /auth/change-password:
     put:
       consumes:
@@ -827,7 +1116,7 @@ paths:
           description: List of manufacturers
           schema:
             items:
-              $ref: '#/definitions/models.Manufacturer'
+              $ref: '#/definitions/manufacturer.RetrieveManufacturerDTO'
             type: array
         "500":
           description: Internal server error
