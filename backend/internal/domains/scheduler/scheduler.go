@@ -3,12 +3,13 @@ package scheduler
 import (
 	"container/heap"
 	"context"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 	"log"
 	"strconv"
 	"sync"
 	"time"
+
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 
 	"github.com/redis/go-redis/v9"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auctionws"
