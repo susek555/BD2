@@ -209,16 +209,25 @@ export function OfferForm(
     }
 
     function DateSelectionField({ id, name, hasHour = false }: { id: string, name: string, hasHour?: boolean }) {
+        // Parse initial values from the date string
         const initialDate = state.values?.[id]?.toString() ?? "";
-        const initialDay = initialDate ? initialDate.split("-")[2] ?? "" : "";
-        const initialMonth = initialDate ? initialDate.split("-")[1] ?? "" : "";
-        const initialYear = initialDate ? initialDate.split("-")[0] ?? "" : "";
+        const dateTimePattern = /^(\d{2}):(\d{2}) (\d{4})-(\d{2})-(\d{2})$/; // Pattern for "11:45 2026-12-21"
+        const dateOnlyPattern = /^(\d{4})-(\d{2})-(\d{2})$/; // Pattern for "2026-12-21"
 
-        // Extract hour and minute if available
-        const initialHour = initialDate && initialDate.includes("T") ?
-            initialDate.split("T")[1]?.split(":")[0] ?? "" : "";
-        const initialMinute = initialDate && initialDate.includes("T") ?
-            initialDate.split("T")[1]?.split(":")[1]?.substring(0, 2) ?? "" : "";
+        // Extract values using destructuring and nullish coalescing to provide defaults
+        const [
+            initialHour = "",
+            initialMinute = "",
+            initialYear = "",
+            initialMonth = "",
+            initialDay = ""
+        ] = initialDate
+            ? dateTimePattern.test(initialDate)
+                ? initialDate.match(dateTimePattern)?.slice(1, 6) || []
+                : dateOnlyPattern.test(initialDate)
+                    ? [...Array(2).fill(""), ...initialDate.match(dateOnlyPattern)?.slice(1, 4) || []]
+                    : []
+            : [];
 
         return (
             <>
