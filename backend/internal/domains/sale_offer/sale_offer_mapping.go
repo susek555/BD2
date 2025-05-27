@@ -24,18 +24,19 @@ func (dto *CreateSaleOfferDTO) MapToSaleOffer() (*models.SaleOffer, error) {
 		return nil, err
 	}
 	offer := &models.SaleOffer{Car: &models.Car{}}
-	if err := copier.CopyWithOption(offer, dto, copier.Option{DeepCopy: true}); err != nil {
+	if err := copier.Copy(offer, dto); err != nil {
 		return nil, err
 	}
-	if err := copier.CopyWithOption(offer.Car, dto, copier.Option{DeepCopy: true}); err != nil {
+	if err := copier.Copy(offer.Car, dto); err != nil {
 		return nil, err
 	}
 	offer.DateOfIssue = time.Now().UTC()
 	offer.Car.RegistrationDate = *date
+	offer.Status = models.PENDING
 	return offer, nil
 }
 
-func (dto *UpdateSaleOfferDTO) UpdateSaleOfferFromDTO(offer *models.SaleOffer) (*models.SaleOffer, error) {
+func (dto *UpdateSaleOfferDTO) UpdatedOfferFromDTO(offer *models.SaleOffer) (*models.SaleOffer, error) {
 	if err := dto.validateParams(); err != nil {
 		return nil, err
 	}
@@ -46,10 +47,10 @@ func (dto *UpdateSaleOfferDTO) UpdateSaleOfferFromDTO(offer *models.SaleOffer) (
 		}
 		offer.Car.RegistrationDate = *date
 	}
-	if err := copier.CopyWithOption(offer, dto, copier.Option{DeepCopy: true}); err != nil {
+	if err := copier.Copy(offer, dto); err != nil {
 		return nil, err
 	}
-	if err := copier.CopyWithOption(offer.Car, dto, copier.Option{DeepCopy: true}); err != nil {
+	if err := copier.Copy(offer.Car, dto); err != nil {
 		return nil, err
 	}
 	return offer, nil

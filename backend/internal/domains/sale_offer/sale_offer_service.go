@@ -24,17 +24,15 @@ type ManufacturerRetrieverInterface interface {
 }
 
 type ModelRetrieverInterface interface {
-	GetByManufacturerName(name string) ([]models.Model, error)
+	GetByManufacturerAndModelName(manufacturerName, modelName string) (*models.Model, error)
 }
 
 type SaleOfferServiceInterface interface {
 	Create(in *CreateSaleOfferDTO) (*RetrieveDetailedSaleOfferDTO, error)
 	Update(in *UpdateSaleOfferDTO, userID uint) (*RetrieveDetailedSaleOfferDTO, error)
-	GetFiltered(filter *OfferFilter) (*RetrieveOffersWithPagination, error)
 	GetByID(id uint, userID *uint) (*RetrieveDetailedSaleOfferDTO, error)
 	GetByUserID(id uint, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error)
-	CanBeModifiedByUser(offerID uint, userID *uint) (bool, error)
-	IsOfferLikedByUser(offerID uint, userID *uint) bool
+	GetFiltered(filter *OfferFilter) (*RetrieveOffersWithPagination, error)
 }
 
 type SaleOfferService struct {
@@ -77,7 +75,7 @@ func (s *SaleOfferService) Create(in *CreateSaleOfferDTO) (*RetrieveDetailedSale
 	if err := s.saleOfferRepo.Create(offer); err != nil {
 		return nil, err
 	}
-	return s.GetByID(offer.ID, &offer.UserID)
+	return MapToDetailedDTO(offer), nil
 }
 
 func (s *SaleOfferService) Update(in *UpdateSaleOfferDTO, userID uint) (*RetrieveDetailedSaleOfferDTO, error) {
@@ -88,17 +86,51 @@ func (s *SaleOfferService) Update(in *UpdateSaleOfferDTO, userID uint) (*Retriev
 	if offer.UserID != userID {
 		return nil, ErrModificationForbidden
 	}
-	updatedOffer, err := in.UpdateSaleOfferFromDTO(offer)
+	modelID, err := s.determineNewModelID(offer, in)
 	if err != nil {
 		return nil, err
 	}
-	if err := s.updateModelID(updatedOffer, in); err != nil {
+
+	updatedOffer, err := in.UpdatedOfferFromDTO(offer)
+	if err != nil {
 		return nil, err
 	}
+	updatedOffer.Car.ModelID = modelID
 	if err = s.saleOfferRepo.Update(updatedOffer); err != nil {
 		return nil, err
 	}
-	return s.GetByID(updatedOffer.ID, &offer.UserID)
+	return MapToDetailedDTO(updatedOffer), nil
+}
+
+func (s *SaleOfferService) GetByID(id uint, userID *uint) (*RetrieveDetailedSaleOfferDTO, error) {
+	offer, err := s.saleOfferRepo.GetByID(id)
+	if err != nil {
+		return nil, err
+	}
+	offerDTO := MapToDetailedDTO(offer)
+	userContext, err := s.getUserContextFields(offer, userID)
+	if err != nil {
+		return nil, err
+	}
+	offerDTO.UserContext = *userContext
+	urls, err := s.getOfferImagesURLs(offer)
+	if err != nil {
+		return nil, err
+	}
+	offerDTO.ImagesUrls = urls
+	return offerDTO, nil
+}
+
+func (s *SaleOfferService) GetByUserID(id uint, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error) {
+	offers, pagResponse, err := s.saleOfferRepo.GetByUserID(id, pagRequest)
+	if err != nil {
+		return nil, err
+	}
+	offerDTOs, err := s.mapOfferSliceWithAdditionalFields(offers, &id)
+	if err != nil {
+		return nil, err
+	}
+	return &RetrieveOffersWithPagination{Offers: offerDTOs, PaginationResponse: pagResponse}, nil
 }
 
 func (s *SaleOfferService) GetFiltered(filter *OfferFilter) (*RetrieveOffersWithPagination, error) {
@@ -118,115 +150,88 @@ func (s *SaleOfferService) GetFiltered(filter *OfferFilter) (*RetrieveOffersWith
 	return &RetrieveOffersWithPagination{Offers: offerDTOs, PaginationResponse: pagResponse}, nil
 }
 
-func (s *SaleOfferService) GetByID(id uint, userID *uint) (*RetrieveDetailedSaleOfferDTO, error) {
-	offer, err := s.saleOfferRepo.GetByID(id)
-	if err != nil {
-		return nil, err
-	}
-	offerDTO := MapToDetailedDTO(offer)
-	if err = s.setUserFields(&offerDTO.UserContext, offer.ID, userID); err != nil {
-		return nil, err
-	}
-	if err = s.setImagesUrls(offerDTO); err != nil {
-		return nil, err
-	}
-	return offerDTO, nil
-}
-
-func (s *SaleOfferService) GetByUserID(id uint, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error) {
-	offers, pagResponse, err := s.saleOfferRepo.GetByUserID(id, pagRequest)
-	if err != nil {
-		return nil, err
-	}
-	offerDTOs, err := s.mapOfferSliceWithAdditionalFields(offers, &id)
-	if err != nil {
-		return nil, err
-	}
-	return &RetrieveOffersWithPagination{Offers: offerDTOs, PaginationResponse: pagResponse}, nil
-}
-
-func (s *SaleOfferService) CanBeModifiedByUser(offerID uint, userID *uint) (bool, error) {
+func (s *SaleOfferService) canBeModifiedByUser(offer *models.SaleOffer, userID *uint) (bool, error) {
 	if userID == nil {
 		return false, nil
 	}
-	offer, err := s.saleOfferRepo.GetByID(offerID)
-	if err != nil {
-		return false, err
-	}
-	if offer.Auction == nil {
+	if !s.isAuction(offer) {
 		return true, nil
 	}
-	bids, err := s.bidRetriever.GetByAuctionId(offerID)
+	hasBids, err := s.hasBids(offer)
 	if err != nil {
 		return false, err
 	}
-	return len(bids) == 0, nil
+	return !hasBids, nil
 }
 
-func (s *SaleOfferService) IsOfferLikedByUser(offerID uint, userID *uint) bool {
+func (s *SaleOfferService) isOfferLikedByUser(offer *models.SaleOffer, userID *uint) bool {
 	if userID == nil {
 		return false
 	}
-	return s.likedChecker.IsOfferLikedByUser(offerID, *userID)
+	return s.likedChecker.IsOfferLikedByUser(offer.ID, *userID)
+}
+
+func (s *SaleOfferService) isAuction(offer *models.SaleOffer) bool {
+	return offer.Auction == nil
+}
+
+func (s *SaleOfferService) hasBids(offer *models.SaleOffer) (bool, error) {
+	bids, err := s.bidRetriever.GetByAuctionId(offer.ID)
+	if err != nil {
+		return false, err
+	}
+	return len(bids) > 0, nil
 }
 
 func (s *SaleOfferService) getModelID(manufacturerName, modelName string) (uint, error) {
-	models, err := s.modelRetriever.GetByManufacturerName(manufacturerName)
+	model, err := s.modelRetriever.GetByManufacturerAndModelName(manufacturerName, modelName)
 	if err != nil {
-		return 0, ErrInvalidManufacturer
+		return 0, ErrInvalidManufacturerModelPair
 	}
-	for _, model := range models {
-		if model.Name == modelName {
-			return model.ID, nil
-		}
-	}
-	return 0, ErrInvalidModel
+	return model.ID, nil
 }
 
-func (s *SaleOfferService) updateModelID(updatedOffer *models.SaleOffer, in *UpdateSaleOfferDTO) error {
-	if in.Manufacturer == nil && in.Model != nil {
-		modelID, err := s.getModelID(updatedOffer.Car.Model.Manufacturer.Name, *in.Model)
-		if err != nil {
-			return err
-		}
-		updatedOffer.Car.ModelID = modelID
-	} else if in.Manufacturer != nil && in.Model != nil {
-		modelID, err := s.getModelID(*in.Manufacturer, *in.Model)
-		if err != nil {
-			return err
-		}
-		updatedOffer.Car.ModelID = modelID
+func (s *SaleOfferService) determineNewModelID(offer *models.SaleOffer, dto *UpdateSaleOfferDTO) (uint, error) {
+	if dto.Model == nil {
+		return 0, nil
 	}
-	return nil
+	manufacturerName := offer.Car.Model.Manufacturer.Name // previous manufacturer
+	if dto.Manufacturer != nil {
+		manufacturerName = *dto.Manufacturer
+	}
+	modelID, err := s.getModelID(manufacturerName, *dto.Model)
+	if err != nil {
+		return 0, err
+	}
+	return modelID, err
 }
 
-func (s *SaleOfferService) setImagesUrls(dto *RetrieveDetailedSaleOfferDTO) error {
-	images, err := s.imageRetriever.GetImagesByOfferID(dto.ID)
+func (s *SaleOfferService) getOfferImagesURLs(offer *models.SaleOffer) ([]string, error) {
+	images, err := s.imageRetriever.GetImagesByOfferID(offer.ID)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	urls := mapping.MapSliceToDTOs(images, func(m *models.Image) *string { return &m.Url })
-	dto.ImagesUrls = urls
-	return nil
+	return mapping.MapSliceToDTOs(images, func(m *models.Image) *string { return &m.Url }), nil
 }
 
-func (s *SaleOfferService) setUserFields(userContext *UserContext, offerID uint, userID *uint) error {
-	userContext.IsLiked = s.IsOfferLikedByUser(offerID, userID)
-	stmt, err := s.CanBeModifiedByUser(offerID, userID)
+func (s *SaleOfferService) getUserContextFields(offer *models.SaleOffer, userID *uint) (*UserContext, error) {
+	isLiked := s.isOfferLikedByUser(offer, userID)
+	canModify, err := s.canBeModifiedByUser(offer, userID)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	userContext.CanModify = stmt
-	return nil
+	return &UserContext{IsLiked: isLiked, CanModify: canModify}, nil
 }
 
 func (s *SaleOfferService) mapOfferSliceWithAdditionalFields(offers []models.SaleOffer, userID *uint) ([]RetrieveSaleOfferDTO, error) {
 	offerDTOs := make([]RetrieveSaleOfferDTO, 0, len(offers))
 	for _, offer := range offers {
 		dto := MapToDTO(&offer)
-		if err := s.setUserFields(&dto.UserContext, offer.ID, userID); err != nil {
+		userContext, err := s.getUserContextFields(&offer, userID)
+		if err != nil {
 			return nil, err
 		}
+		dto.UserContext = *userContext
 		offerDTOs = append(offerDTOs, *dto)
 	}
 	return offerDTOs, nil
