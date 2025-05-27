@@ -1,7 +1,6 @@
 package bid
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
 	"strconv"
@@ -74,15 +73,10 @@ func (h *Handler) CreateBid(c *gin.Context) {
 		log.Println("Error creating notification:", err)
 		return
 	}
-	env := auctionws.NewNotificationEnvelope(notification)
-	data, err := json.Marshal(env)
-	if err != nil {
-		log.Println("Error marshalling envelope:", err)
-		return
-	}
-	h.hub.BroadcastLocal(auctionIDStr, data, userIDStr)
+	h.hub.SaveNotificationForClients(auctionIDStr, notification)
 	// TODO: think about the best way to do this
 	// auctionws.PublishAuctionEvent(c, h.redisClient, auctionIDStr, env)
+	h.hub.SendFourLatestNotificationsToClient(auctionIDStr, userIDStr)
 
 	h.hub.SubscribeUser(userIDStr, auctionIDStr)
 }
