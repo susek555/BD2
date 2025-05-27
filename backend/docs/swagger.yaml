@@ -233,6 +233,31 @@ definitions:
           type: array
         type: object
     type: object
+  bid.CreateBidDTO:
+    properties:
+      amount:
+        type: integer
+      auction_id:
+        type: integer
+    required:
+    - amount
+    - auction_id
+    type: object
+  bid.RetrieveBidDTO:
+    properties:
+      amount:
+        type: integer
+      auction:
+        $ref: '#/definitions/models.Auction'
+      auction_id:
+        type: integer
+      bidder_id:
+        type: integer
+    required:
+    - amount
+    - auction_id
+    - bidder_id
+    type: object
   car.ManufacturerModelMap:
     properties:
       manufacturers:
@@ -351,12 +376,78 @@ definitions:
       name:
         type: string
     type: object
+  models.Auction:
+    properties:
+      buy_now_price:
+        type: integer
+      date_end:
+        type: string
+      id:
+        type: integer
+      offer:
+        $ref: '#/definitions/models.SaleOffer'
+    type: object
+  models.Car:
+    properties:
+      color:
+        $ref: '#/definitions/car_params.Color'
+      drive:
+        $ref: '#/definitions/car_params.Drive'
+      engine_capacity:
+        type: integer
+      engine_power:
+        type: integer
+      fuel_type:
+        $ref: '#/definitions/car_params.FuelType'
+      id:
+        type: integer
+      mileage:
+        type: integer
+      model:
+        $ref: '#/definitions/models.Model'
+      model_id:
+        type: integer
+      number_of_door:
+        type: integer
+      number_of_gears:
+        type: integer
+      number_of_seats:
+        type: integer
+      production_year:
+        type: integer
+      registration_date:
+        type: string
+      registration_number:
+        type: string
+      transmission:
+        $ref: '#/definitions/car_params.Transmission'
+      vin:
+        type: string
+    type: object
+  models.Company:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      nip:
+        type: string
+      user:
+        $ref: '#/definitions/models.User'
+    type: object
   models.LikedOffer:
     properties:
       offer_id:
         type: integer
       user_id:
         type: integer
+    type: object
+  models.Manufacturer:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
     type: object
   models.MarginValue:
     enum:
@@ -368,6 +459,66 @@ definitions:
     - LOW_MARGIN
     - MEDIUM_MARGIN
     - HIGH_MARGIN
+  models.Model:
+    properties:
+      id:
+        type: integer
+      manufacturer:
+        $ref: '#/definitions/models.Manufacturer'
+      manufacturer_id:
+        type: integer
+      name:
+        type: string
+    type: object
+  models.Person:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      surname:
+        type: string
+      user:
+        $ref: '#/definitions/models.User'
+    type: object
+  models.SaleOffer:
+    properties:
+      auction:
+        $ref: '#/definitions/models.Auction'
+      car:
+        $ref: '#/definitions/models.Car'
+      date_of_issue:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      margin:
+        $ref: '#/definitions/models.MarginValue'
+      price:
+        type: integer
+      user:
+        $ref: '#/definitions/models.User'
+      user_id:
+        type: integer
+    type: object
+  models.User:
+    properties:
+      company:
+        $ref: '#/definitions/models.Company'
+      email:
+        type: string
+      id:
+        type: integer
+      password:
+        type: string
+      person:
+        $ref: '#/definitions/models.Person'
+      selector:
+        type: string
+      username:
+        type: string
+    type: object
   pagination.PaginationRequest:
     properties:
       page:
@@ -1024,6 +1175,193 @@ paths:
       summary: Register new user
       tags:
       - auth
+  /bid:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all bids
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of bids
+          schema:
+            items:
+              $ref: '#/definitions/bid.RetrieveBidDTO'
+            type: array
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Get all bids
+      tags:
+      - bid
+    post:
+      consumes:
+      - application/json
+      description: Create a new bid for an auction
+      parameters:
+      - description: Bid details
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/bid.CreateBidDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created bid
+          schema:
+            $ref: '#/definitions/bid.RetrieveBidDTO'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      security:
+      - BearerAuth: []
+      summary: Create a new bid
+      tags:
+      - bid
+  /bid/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a bid by its ID
+      parameters:
+      - description: Bid ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Bid details
+          schema:
+            $ref: '#/definitions/bid.RetrieveBidDTO'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Get bid by ID
+      tags:
+      - bid
+  /bid/auction/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves all bids placed on a specific auction
+      parameters:
+      - description: Auction ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of bids
+          schema:
+            items:
+              $ref: '#/definitions/bid.RetrieveBidDTO'
+            type: array
+        "400":
+          description: Invalid auction ID or retrieval error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Get bids by auction ID
+      tags:
+      - bid
+  /bid/bidder/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves all bids placed by a specific bidder
+      parameters:
+      - description: Bidder ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of bids
+          schema:
+            items:
+              $ref: '#/definitions/bid.RetrieveBidDTO'
+            type: array
+        "400":
+          description: Invalid bidder ID or retrieval error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Get bids by bidder ID
+      tags:
+      - bid
+  /bid/highest/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves the highest bid for a specific auction
+      parameters:
+      - description: Auction ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Highest bid details
+          schema:
+            $ref: '#/definitions/bid.RetrieveBidDTO'
+        "400":
+          description: Invalid auction ID or retrieval error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Get the highest bid for an auction
+      tags:
+      - bid
+  /bid/highest/auction/{auctionId}/bidder/{bidderId}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves the highest bid placed by a specific user on a specific
+        auction
+      parameters:
+      - description: Auction ID
+        in: path
+        name: auctionId
+        required: true
+        type: integer
+      - description: Bidder ID
+        in: path
+        name: bidderId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Highest bid details
+          schema:
+            $ref: '#/definitions/bid.RetrieveBidDTO'
+        "400":
+          description: Invalid auction ID, bidder ID, or retrieval error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Get the highest bid by a user for a specific auction
+      tags:
+      - bid
   /car/colors:
     get:
       consumes:
