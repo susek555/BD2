@@ -2,6 +2,7 @@ package auctionws
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 	"strconv"
 	"strings"
@@ -188,5 +189,54 @@ func (h *Hub) SaveNotificationForClients(auctionID string, n *models.Notificatio
 			continue
 		}
 	}
+	return nil
+}
+
+func (h *Hub) SendFourLatestNotificationsToClient(auctionID, userID string) error {
+	h.mu.RLock()
+	room, ok := h.rooms[auctionID]
+	h.mu.RUnlock()
+	if !ok {
+		return nil
+	}
+
+	var client *Client
+	for c := range room {
+		if c.userID == userID {
+			client = c
+			break
+		}
+	}
+	if client == nil {
+		return nil
+	}
+
+	uid, err := strconv.ParseUint(userID, 10, 64)
+	if err != nil {
+		return err
+	}
+
+	notifications, err := h.clientNotificationRepo.GetLatestByUserId(uint(uid), 4)
+	if err != nil {
+		return err
+	}
+
+	for _, not := range notifications {
+		bare := notification.MapToNotification(&not)
+
+		payload, err := json.Marshal(bare)
+		if err != nil {
+			log.Printf("cannot marshal notification %d: %v", bare.ID, err)
+			continue
+		}
+
+		select {
+		case client.send <- payload:
+		default:
+			log.Printf("dropping notification %d for user %s - channel full", bare.ID, userID)
+			go client.conn.Close()
+		}
+	}
+
 	return nil
 }
