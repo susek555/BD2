@@ -204,7 +204,7 @@ func (of *OfferFilter) validateEnums() error {
 func (of *OfferFilter) validateRanges() error {
 	ranges := []*MinMax[uint]{of.PriceRange, of.YearRange, of.MileageRange, of.EnginePowerRange, of.EngineCapacityRange}
 	for _, r := range ranges {
-		if r != nil && !areMinMaxValidNumbers(*r) {
+		if r != nil && !isMinMaxValidNumbers(*r) {
 			return ErrInvalidRange
 		}
 	}
@@ -260,7 +260,7 @@ func parseDateRange(minmax *MinMax[string]) (*MinMax[time.Time], error) {
 	return &MinMax[time.Time]{Min: minValue, Max: maxValue}, nil
 }
 
-func areMinMaxValidNumbers(minmax MinMax[uint]) bool {
+func isMinMaxValidNumbers(minmax MinMax[uint]) bool {
 	if minmax.Min != nil && minmax.Max != nil {
 		return *minmax.Max > *minmax.Min
 	}

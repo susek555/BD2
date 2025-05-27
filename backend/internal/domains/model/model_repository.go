@@ -8,6 +8,7 @@ import (
 type ModelRepositoryInterface interface {
 	GetByManufacturerID(id uint) ([]models.Model, error)
 	GetByManufacturerName(name string) ([]models.Model, error)
+	GetByManufacturerAndModelName(manufacturerName, modelName string) (*models.Model, error)
 }
 
 type ModelRepository struct {
@@ -32,4 +33,14 @@ func (r *ModelRepository) GetByManufacturerName(name string) ([]models.Model, er
 		Where("manufacturers.name = ?", name).
 		Find(&models).Error
 	return models, err
+}
+
+func (r *ModelRepository) GetByManufacturerAndModelName(manufacturerName, modelName string) (*models.Model, error) {
+	var model models.Model
+	err := r.DB.
+		Preload("Manufacturer").
+		Joins("JOIN manufacturers ON manufacturers.id = models.manufacturer_id").
+		Where("manufactuer.name = ? AND models.name = ?", manufacturerName, modelName).
+		First(&model).Error
+	return &model, err
 }
