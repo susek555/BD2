@@ -192,51 +192,46 @@ func (h *Hub) SaveNotificationForClients(auctionID string, n *models.Notificatio
 	return nil
 }
 
-func (h *Hub) SendFourLatestNotificationsToClient(auctionID, userID string) error {
+func (h *Hub) SendFourLatestNotificationsToClient(auctionID, userID string) {
 	h.mu.RLock()
 	room, ok := h.rooms[auctionID]
 	h.mu.RUnlock()
 	if !ok {
-		return nil
+		return
 	}
 
-	var client *Client
-	for c := range room {
-		if c.userID == userID {
-			client = c
-			break
-		}
-	}
-	if client == nil {
-		return nil
-	}
-
-	uid, err := strconv.ParseUint(userID, 10, 64)
-	if err != nil {
-		return err
-	}
-
-	notifications, err := h.clientNotificationRepo.GetLatestByUserId(uint(uid), 4)
-	if err != nil {
-		return err
-	}
-
-	for _, not := range notifications {
-		bare := notification.MapToNotification(&not)
-
-		payload, err := json.Marshal(bare)
-		if err != nil {
-			log.Printf("cannot marshal notification %d: %v", bare.ID, err)
+	for client := range room {
+		if client.userID == userID {
 			continue
 		}
 
-		select {
-		case client.send <- payload:
-		default:
-			log.Printf("dropping notification %d for user %s - channel full", bare.ID, userID)
-			go client.conn.Close()
+		uid, err := strconv.ParseUint(userID, 10, 64)
+		if err != nil {
+			log.Printf("hub: invalid userID %q: %v", client.userID, err)
+			continue
+		}
+
+		notifications, err := h.clientNotificationRepo.GetLatestByUserId(uint(uid), 4)
+		if err != nil {
+			log.Printf("hub: cannot fetch latest notification for userID %q: %v", client.userID, err)
+			continue
+		}
+
+		for _, not := range notifications {
+			bare := notification.MapToNotification(&not)
+
+			payload, err := json.Marshal(bare)
+			if err != nil {
+				log.Printf("cannot marshal notification %d: %v", bare.ID, err)
+				continue
+			}
+
+			select {
+			case client.send <- payload:
+			default:
+				log.Printf("dropping notification %d for user %s - channel full", bare.ID, userID)
+				go client.conn.Close()
+			}
 		}
 	}
-
-	return nil
 }
