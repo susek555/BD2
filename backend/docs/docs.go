@@ -20,6 +20,218 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/auction": {
+            "get": {
+                "description": "Retrieves all available auctions from the system",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auction"
+                ],
+                "summary": "Get all auctions",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/auction.RetrieveAuctionDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates an existing auction with the provided details",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auction"
+                ],
+                "summary": "Update auction",
+                "parameters": [
+                    {
+                        "description": "Auction details",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/auction.UpdateAuctionDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated auction",
+                        "schema": {
+                            "$ref": "#/definitions/auction.RetrieveAuctionDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Creates a new auction with the provided details",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auction"
+                ],
+                "summary": "Create Auction",
+                "parameters": [
+                    {
+                        "description": "Auction details",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/auction.CreateAuctionDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created auction",
+                        "schema": {
+                            "$ref": "#/definitions/auction.RetrieveAuctionDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/auction/{id}": {
+            "get": {
+                "description": "Retrieves a specific auction by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auction"
+                ],
+                "summary": "Get auction by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Auction ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/auction.RetrieveAuctionDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Deletes a specific auction by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auction"
+                ],
+                "summary": "Delete auction by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Auction ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/change-password": {
             "put": {
                 "security": [
@@ -371,7 +583,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Manufacturer"
+                                "$ref": "#/definitions/manufacturer.RetrieveManufacturerDTO"
                             }
                         }
                     },
@@ -1593,6 +1805,220 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "auction.CreateAuctionDTO": {
+            "type": "object",
+            "required": [
+                "color",
+                "description",
+                "drive",
+                "engine_capacity",
+                "engine_power",
+                "fuel_type",
+                "margin",
+                "mileage",
+                "model_id",
+                "number_of_doors",
+                "number_of_gears",
+                "number_of_seats",
+                "price",
+                "production_year",
+                "registration_date",
+                "registration_number",
+                "transmission",
+                "vin"
+            ],
+            "properties": {
+                "buy_now_price": {
+                    "type": "integer"
+                },
+                "color": {
+                    "$ref": "#/definitions/car_params.Color"
+                },
+                "date_end": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "drive": {
+                    "$ref": "#/definitions/car_params.Drive"
+                },
+                "engine_capacity": {
+                    "type": "integer"
+                },
+                "engine_power": {
+                    "type": "integer"
+                },
+                "fuel_type": {
+                    "$ref": "#/definitions/car_params.FuelType"
+                },
+                "margin": {
+                    "$ref": "#/definitions/models.MarginValue"
+                },
+                "mileage": {
+                    "type": "integer"
+                },
+                "model_id": {
+                    "type": "integer"
+                },
+                "number_of_doors": {
+                    "type": "integer"
+                },
+                "number_of_gears": {
+                    "type": "integer"
+                },
+                "number_of_seats": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "production_year": {
+                    "type": "integer"
+                },
+                "registration_date": {
+                    "type": "string"
+                },
+                "registration_number": {
+                    "type": "string"
+                },
+                "transmission": {
+                    "$ref": "#/definitions/car_params.Transmission"
+                },
+                "vin": {
+                    "type": "string"
+                }
+            }
+        },
+        "auction.RetrieveAuctionDTO": {
+            "type": "object",
+            "properties": {
+                "buy_now_price": {
+                    "type": "integer"
+                },
+                "can_modify": {
+                    "type": "boolean"
+                },
+                "color": {
+                    "$ref": "#/definitions/car_params.Color"
+                },
+                "date_end": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_auction": {
+                    "type": "boolean"
+                },
+                "is_liked": {
+                    "type": "boolean"
+                },
+                "mileage": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "production_year": {
+                    "type": "integer"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "auction.UpdateAuctionDTO": {
+            "type": "object",
+            "required": [
+                "color",
+                "description",
+                "drive",
+                "engine_capacity",
+                "engine_power",
+                "fuel_type",
+                "margin",
+                "mileage",
+                "model_id",
+                "number_of_doors",
+                "number_of_gears",
+                "number_of_seats",
+                "price",
+                "production_year",
+                "registration_date",
+                "registration_number",
+                "transmission",
+                "vin"
+            ],
+            "properties": {
+                "buy_now_price": {
+                    "type": "integer"
+                },
+                "color": {
+                    "$ref": "#/definitions/car_params.Color"
+                },
+                "date_end": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "drive": {
+                    "$ref": "#/definitions/car_params.Drive"
+                },
+                "engine_capacity": {
+                    "type": "integer"
+                },
+                "engine_power": {
+                    "type": "integer"
+                },
+                "fuel_type": {
+                    "$ref": "#/definitions/car_params.FuelType"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "margin": {
+                    "$ref": "#/definitions/models.MarginValue"
+                },
+                "mileage": {
+                    "type": "integer"
+                },
+                "model_id": {
+                    "type": "integer"
+                },
+                "number_of_doors": {
+                    "type": "integer"
+                },
+                "number_of_gears": {
+                    "type": "integer"
+                },
+                "number_of_seats": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "production_year": {
+                    "type": "integer"
+                },
+                "registration_date": {
+                    "type": "string"
+                },
+                "registration_number": {
+                    "type": "string"
+                },
+                "transmission": {
+                    "$ref": "#/definitions/car_params.Transmission"
+                },
+                "vin": {
+                    "type": "string"
+                }
+            }
+        },
         "auth.ChangePasswordDTO": {
             "type": "object",
             "required": [
@@ -1843,6 +2269,17 @@ const docTemplate = `{
                 }
             }
         },
+        "manufacturer.RetrieveManufacturerDTO": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "model.RetrieveModelDTO": {
             "type": "object",
             "properties": {
@@ -1862,17 +2299,6 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "integer"
-                }
-            }
-        },
-        "models.Manufacturer": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
                 }
             }
         },
