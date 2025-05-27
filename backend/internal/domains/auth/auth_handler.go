@@ -169,18 +169,18 @@ func (h *Handler) Logout(c *gin.Context) {
 }
 
 // ChangePassword godoc
-// @Summary Change user password
-// @Description Changes the password of the authenticated user
-// @Tags auth
-// @Accept json
-// @Produce json
-// @Param Authorization header string true "Bearer token"
-// @Param request body ChangePasswordDTO true "Password change details"
-// @Success 200 "Password successfully changed"
-// @Failure 400 {object} ChangePasswordResponse "Invalid request or password validation failed"
-// @Failure 401 {object} ChangePasswordResponse "Unauthorized access"
-// @Router /auth/change-password [put]
-// @Security Bearer
+//	@Summary		Change user password
+//	@Description	Changes the password of the authenticated user
+//	@Tags			auth
+//	@Accept			json
+//	@Produce		json
+//	@Param			Authorization	header	string				true	"Bearer token"
+//	@Param			request			body	ChangePasswordDTO	true	"Password change details"
+//	@Success		200				"Password successfully changed"
+//	@Failure		400				{object}	ChangePasswordResponse	"Invalid request or password validation failed"
+//	@Failure		401				{object}	ChangePasswordResponse	"Unauthorized access"
+//	@Router			/auth/change-password [put]
+//	@Security		Bearer
 func (h *Handler) ChangePassword(c *gin.Context) {
 	var req ChangePasswordDTO
 	if err := c.ShouldBindJSON(&req); err != nil {

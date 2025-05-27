@@ -91,8 +91,8 @@ func (h *Handler) GetUserByEmail(c *gin.Context) {
 //	@Tags			users
 //	@Accept			json
 //	@Produce		json
-//	@Param			body	body		UpdateUserDTO			true	"Update form"
-//	@Success		200		{object}	UpdateUserDTO			"User updated"
+//	@Param			body	body		UpdateUserDTO	true	"Update form"
+//	@Success		200		{object}	UpdateUserDTO	"User updated"
 //	@Failure		400		{object}	UpdateResponse	"Invalid input data - email, username or nip taken"
 //	@Failure		404		{object}	UpdateResponse	"User not found"
 //	@Failure		500		{object}	UpdateResponse	"Internal server error"
