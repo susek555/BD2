@@ -76,7 +76,7 @@ func (h *Handler) CreateBid(c *gin.Context) {
 	h.hub.SaveNotificationForClients(auctionIDStr, notification)
 	// TODO: think about the best way to do this
 	// auctionws.PublishAuctionEvent(c, h.redisClient, auctionIDStr, env)
-	h.hub.SendFourLatestNotificationsToClient(auctionIDStr, userIDStr)
+	go h.hub.SendFourLatestNotificationsToClient(auctionIDStr, userIDStr)
 
 	h.hub.SubscribeUser(userIDStr, auctionIDStr)
 }
