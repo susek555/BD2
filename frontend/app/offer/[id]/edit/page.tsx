@@ -44,7 +44,6 @@ export default async function Page(props: { params: Promise<{id: string }> }) {
                     inputsData = {formData}
                     initialValues={initialData}
                     apiAction={offerActionEnum.EDIT_OFFER}
-                    id={id}
                 />
             </Suspense>
         </div>

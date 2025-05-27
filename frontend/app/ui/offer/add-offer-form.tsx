@@ -21,7 +21,6 @@ export function OfferForm(
     inputsData : OfferFormData
     initialValues?: Partial<OfferFormState['values']>,
     apiAction?: boolean
-    id?: string | undefined
 }) {
     // Validate that ID is provided when edit mode is active
     // if (apiAction === offerActionEnum.EDIT_OFFER && id === undefined) {
@@ -198,11 +197,17 @@ export function OfferForm(
         )
     }
 
-    function DateSelectionField({ id, name }: { id: string, name: string }) {
+    function DateSelectionField({ id, name, hasHour = false }: { id: string, name: string, hasHour?: boolean }) {
         const initialDate = state.values?.[id]?.toString() ?? "";
         const initialDay = initialDate ? initialDate.split("-")[2] ?? "" : "";
         const initialMonth = initialDate ? initialDate.split("-")[1] ?? "" : "";
         const initialYear = initialDate ? initialDate.split("-")[0] ?? "" : "";
+
+        // Extract hour and minute if available
+        const initialHour = initialDate && initialDate.includes("T") ?
+            initialDate.split("T")[1]?.split(":")[0] ?? "" : "";
+        const initialMinute = initialDate && initialDate.includes("T") ?
+            initialDate.split("T")[1]?.split(":")[1]?.substring(0, 2) ?? "" : "";
 
         return (
             <>
@@ -241,6 +246,33 @@ export function OfferForm(
                         required
                         placeholder="Year"
                     />
+                    {hasHour && (
+                        <>
+                        <div className="mx-2 flex items-center self-center">at</div>
+                            <input
+                                type="number"
+                                id={`${id}-hour`}
+                                name={`${id}-hour`}
+                                min={0}
+                                max={23}
+                                className="border rounded p-2 w-20"
+                                defaultValue={initialHour}
+                                required
+                                placeholder="Hour"
+                            />
+                            <input
+                                type="number"
+                                id={`${id}-minute`}
+                                name={`${id}-minute`}
+                                min={0}
+                                max={59}
+                                className="border rounded p-2 w-20"
+                                defaultValue={initialMinute}
+                                required
+                                placeholder="Min"
+                            />
+                        </>
+                    )}
                 </div>
                 <div id="username-error" aria-live="polite" aria-atomic="true">
                     {state?.errors?.[id]?.map((error: string) => (
@@ -329,7 +361,7 @@ export function OfferForm(
                     <NumberInputField id="number_of_seats" name="Number of seats" />
                     <NumberInputField id="engine_power" name="Power" />
                     <NumberInputField id="engine_capacity" name="Engine displacement" />
-                    <DateSelectionField id="registration_date" name="Date of first registration" />
+                    <DateSelectionField id="registration_date" name="Date of first registration"/>
                     <TextInputField id="registration_number" name="Plate number" />
                     <TextInputField id="vin" name="VIN" />
 
@@ -410,7 +442,7 @@ export function OfferForm(
 
                     {is_auction && (
                         <>
-                            <DateSelectionField id="auction_end_date" name="Auction end date" />
+                            <DateSelectionField id="auction_end_date" name="Auction end date" hasHour={true}/>
                             <NumberInputField id="buy_now_auction_price" name="Buy now price [ optional ]" />
                         </>
                     )}
