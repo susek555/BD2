@@ -24,6 +24,18 @@ func NewHandler(service AuctionServiceInterface, sched scheduler.SchedulerInterf
 	}
 }
 
+// @Summary Create Auction
+// @Description Creates a new auction with the provided details
+// @Tags auctions
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param body body CreateAuctionDTO true "Auction details"
+// @Success 201 {object} Auction "Created auction"
+// @Failure 400 {object} custom_errors.HTTPError "Bad request"
+// @Failure 401 {object} custom_errors.HTTPError "Unauthorized"
+// @Router /auctions [post]
+// @Security BearerAuth
 func (h *Handler) CreateAuction(c *gin.Context) {
 	userId, err := auth.GetUserId(c)
 	if err != nil {
