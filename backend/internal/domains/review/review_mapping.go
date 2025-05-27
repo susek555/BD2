@@ -1,8 +1,9 @@
 package review
 
 import (
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"time"
+
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 )
 
 func (ri *CreateReviewDTO) MapToObject(reviewerId uint) (*models.Review, error) {
@@ -14,7 +15,7 @@ func (ri *CreateReviewDTO) MapToObject(reviewerId uint) (*models.Review, error) 
 		Rating:      ri.Rating,
 		ReviewerID:  reviewerId,
 		RevieweeId:  ri.RevieweeId,
-		ReviewDate:  time.Now().Format("2006-01-02 15:04:05"),
+		ReviewDate:  time.Now(),
 	}, nil
 }
 
@@ -28,7 +29,7 @@ func (ur *UpdateReviewDTO) MapToObject(reviewerId, revieweeId uint) (*models.Rev
 		Rating:      ur.Rating,
 		ReviewerID:  reviewerId,
 		RevieweeId:  revieweeId,
-		ReviewDate:  time.Now().Format("2006-01-02 15:04:05"),
+		ReviewDate:  time.Now(),
 	}, nil
 }
 
@@ -41,7 +42,7 @@ func MapToDTO(r *models.Review) *RetrieveReviewDTO {
 	reviewDTO.Reviewee = reviewee
 	reviewer := MapToUserDTO(r.Reviewer)
 	reviewDTO.Reviewer = reviewer
-	reviewDTO.ReviewDate = r.ReviewDate
+	reviewDTO.ReviewDate = r.ReviewDate.Format(time.RFC3339)
 	return &reviewDTO
 }
 
