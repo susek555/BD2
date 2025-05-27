@@ -40,7 +40,7 @@ func (r *ModelRepository) GetByManufacturerAndModelName(manufacturerName, modelN
 	err := r.DB.
 		Preload("Manufacturer").
 		Joins("JOIN manufacturers ON manufacturers.id = models.manufacturer_id").
-		Where("manufactuer.name = ? AND models.name = ?", manufacturerName, modelName).
+		Where("manufacturers.name = ? AND models.name = ?", manufacturerName, modelName).
 		First(&model).Error
 	return &model, err
 }
