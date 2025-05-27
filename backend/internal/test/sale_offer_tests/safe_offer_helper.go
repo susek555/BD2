@@ -77,7 +77,7 @@ func getRepositoryWithSaleOffers(db *gorm.DB, offers []models.SaleOffer) sale_of
 	return repo
 }
 
-func newTestServer(db *gorm.DB, seedOffers []models.SaleOffer) (*gin.Engine, sale_offer.SaleOfferServiceInterface) {
+func newTestServer(db *gorm.DB, seedOffers []models.SaleOffer) (*gin.Engine, sale_offer.SaleOfferServiceInterface, sale_offer.OfferAccessEvaluatorInterface) {
 	verifier := jwt.NewJWTVerifier(u.JWTSECRET)
 	saleOfferRepo := getRepositoryWithSaleOffers(db, seedOffers)
 	manufacturerRepo := manufacturer.NewManufacturerRepository(db)
@@ -85,7 +85,8 @@ func newTestServer(db *gorm.DB, seedOffers []models.SaleOffer) (*gin.Engine, sal
 	likedOfferRepository := liked_offer.NewLikedOfferRepository(db)
 	bidRepository := bid.NewBidRepository(db)
 	imageRepo := image.NewImageRepository(db)
-	saleOfferService := sale_offer.NewSaleOfferService(saleOfferRepo, manufacturerRepo, modelRepo, bidRepository, imageRepo, likedOfferRepository)
+	accessEvaluator := sale_offer.NewAccessEvaluator(bidRepository, likedOfferRepository)
+	saleOfferService := sale_offer.NewSaleOfferService(saleOfferRepo, manufacturerRepo, modelRepo, imageRepo, accessEvaluator)
 	likedOfferService := liked_offer.NewLikedOfferService(likedOfferRepository, saleOfferRepo)
 	likedOfferHandler := liked_offer.NewHandler(likedOfferService)
 	saleOfferHandler := sale_offer.NewHandler(saleOfferService)
@@ -102,7 +103,7 @@ func newTestServer(db *gorm.DB, seedOffers []models.SaleOffer) (*gin.Engine, sal
 		saleOfferRoutes.GET("/offer-types", saleOfferHandler.GetSaleOfferTypes)
 		saleOfferRoutes.GET("/order-keys", saleOfferHandler.GetOrderKeys)
 	}
-	return r, saleOfferService
+	return r, saleOfferService, accessEvaluator
 }
 
 // ------------
@@ -202,4 +203,25 @@ func wasEntityAddedToDB[T any](db *gorm.DB, id uint) bool {
 	repo := generic.GetGormRepository[T](db)
 	_, err := repo.GetById(id)
 	return err == nil
+}
+
+func doSaleOfferAndRetrieveSaleOfferDTOsMatch(offer models.SaleOffer, dto sale_offer.RetrieveSaleOfferDTO, a sale_offer.OfferAccessEvaluatorInterface, userID *uint) bool {
+	var likedCondition bool
+	var bidCondition bool
+	condition := offer.ID == dto.ID &&
+		offer.User.Username == dto.Username &&
+		offer.Car.Model.Manufacturer.Name+" "+offer.Car.Model.Name == dto.Name &&
+		offer.Price == dto.Price &&
+		offer.Car.Mileage == dto.Mileage &&
+		offer.Car.ProductionYear == dto.ProductionYear &&
+		offer.Car.Color == dto.Color &&
+		(offer.Auction != nil) == dto.IsAuction
+	if userID == nil {
+		likedCondition = false
+		bidCondition = false
+	} else {
+		likedCondition = a.IsOfferLikedByUser(&offer, userID)
+		bidCondition, _ = a.CanBeModifiedByUser(&offer, userID)
+	}
+	return condition && bidCondition == dto.CanModify && likedCondition == dto.IsLiked
 }
