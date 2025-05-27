@@ -1,4 +1,4 @@
-import { UserProfile } from '@/app/lib/definitions/reviews';
+import { UserProfile } from '@/app/lib/definitions/user';
 import {
   fetchAverageRating,
   fetchRatingDistribution,

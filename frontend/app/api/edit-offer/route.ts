@@ -1,4 +1,4 @@
-// app/api/post-offer/route.ts
+// app/api/edit-offer/route.ts
 import { fetchWithRefresh } from "@/app/lib/api/fetchWithRefresh";
 import { getServerSession } from "next-auth";
 import { authConfig } from "@/app/lib/authConfig";
@@ -7,8 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 const API_URL = process.env.API_URL;
 
 export async function PUT(
-    req: NextRequest,
-    { params }: { params: { id: string } }
+    req: NextRequest
 ) {
     const session = await getServerSession(authConfig);
     if (!session) {
@@ -16,7 +15,7 @@ export async function PUT(
     }
 
     const data = await req.json();
-    const { id } = params;
+    const id = req.nextUrl.pathname.split('/').pop();
 
     const response = await fetchWithRefresh(`${API_URL}/sale-offer/${id}`, {
         // TODO update URL

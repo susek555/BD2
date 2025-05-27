@@ -1,7 +1,7 @@
 import { RegularOfferData } from "../../definitions/offer-form";
 
-export async function editRegularOffer(data: RegularOfferData, id: string): Promise<number> {
-    const response = await fetch(`/api/edit-offer/${id}`, {
+export async function editRegularOffer(data: RegularOfferData): Promise<number> {
+    const response = await fetch(`/api/edit-offer`, {
         method: "PUT",
         body: JSON.stringify(data),
         headers: {

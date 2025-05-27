@@ -16,8 +16,7 @@ export function OfferForm(
 {
     inputsData,
     initialValues = {is_auction: false},
-    apiAction = offerActionEnum.ADD_OFFER,
-    id = undefined
+    apiAction = offerActionEnum.ADD_OFFER
 } : {
     inputsData : OfferFormData
     initialValues?: Partial<OfferFormState['values']>,
@@ -25,9 +24,9 @@ export function OfferForm(
     id?: string | undefined
 }) {
     // Validate that ID is provided when edit mode is active
-    if (apiAction === offerActionEnum.EDIT_OFFER && id === undefined) {
-        throw new Error("ID is required when editing an offer");
-    }
+    // if (apiAction === offerActionEnum.EDIT_OFFER && id === undefined) {
+    //     throw new Error("ID is required when editing an offer");
+    // }
 
 
     const initialState: OfferFormState = {
@@ -50,7 +49,7 @@ export function OfferForm(
             if (apiAction) {
                 return addOffer(offerFormState);
             } else {
-                return editOffer(offerFormState, id!);
+                return editOffer(offerFormState);
             }
     };
 
