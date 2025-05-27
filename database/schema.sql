@@ -34,7 +34,8 @@ CREATE TABLE sale_offers (
     description VARCHAR(2000) NOT NULL,
     price INTEGER NOT NULL,
     margin FLOAT NOT NULL,
-    date_of_issue TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    date_of_issue TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    status VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE auctions (
@@ -162,3 +163,9 @@ CREATE TABLE reviews (
     CHECK (reviewer_id <> reviewee_id),
     UNIQUE (reviewer_id, reviewee_id)
 );
+
+CREATE TABLE images (
+    id SERIAL PRIMARY KEY,
+    offer_id INTEGER REFERENCES sale_offers(id),
+    url VARCHAR(200) NOT NULL
+)
