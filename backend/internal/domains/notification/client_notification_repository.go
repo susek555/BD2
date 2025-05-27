@@ -9,6 +9,8 @@ type ClientNotificationRepositoryInterface interface {
 	Create(clientNotification *models.ClientNotification) error
 	GetById(id uint) (*models.ClientNotification, error)
 	GetAll() ([]models.ClientNotification, error)
+	GetByUserId(userId uint) ([]models.ClientNotification, error)
+	GetLatestByUserId(userId uint, count int) ([]models.ClientNotification, error)
 }
 
 type ClientNotificationRepository struct {
