@@ -3,22 +3,26 @@ package auctionws
 import (
 	"context"
 	"log"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
 
 	"github.com/redis/go-redis/v9"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/notification"
 )
 
 type Hub struct {
-	rooms       map[string]map[*Client]struct{}
-	clients     map[string]*Client
-	register    chan *Client
-	unregister  chan *Client
-	subscribe   chan subscription
-	unsubscribe chan subscription
-	broadcast   chan outbound
-	mu          sync.RWMutex
+	rooms                  map[string]map[*Client]struct{}
+	clients                map[string]*Client
+	register               chan *Client
+	unregister             chan *Client
+	subscribe              chan subscription
+	unsubscribe            chan subscription
+	broadcast              chan outbound
+	mu                     sync.RWMutex
+	clientNotificationRepo notification.ClientNotificationRepositoryInterface
 }
 type subscription struct {
 	auctionID string
@@ -30,15 +34,16 @@ type outbound struct {
 	excludeID string
 }
 
-func NewHub() *Hub {
+func NewHub(clientNotificationRepo notification.ClientNotificationRepositoryInterface) *Hub {
 	return &Hub{
-		rooms:       make(map[string]map[*Client]struct{}),
-		clients:     make(map[string]*Client),
-		register:    make(chan *Client),
-		unregister:  make(chan *Client),
-		subscribe:   make(chan subscription),
-		unsubscribe: make(chan subscription),
-		broadcast:   make(chan outbound, 1024),
+		rooms:                  make(map[string]map[*Client]struct{}),
+		clients:                make(map[string]*Client),
+		register:               make(chan *Client),
+		unregister:             make(chan *Client),
+		subscribe:              make(chan subscription),
+		unsubscribe:            make(chan subscription),
+		broadcast:              make(chan outbound, 1024),
+		clientNotificationRepo: clientNotificationRepo,
 	}
 }
 
@@ -162,4 +167,26 @@ func (h *Hub) BroadcastLocal(auctionID string, data []byte, excludeID string) {
 		data:      data,
 		excludeID: excludeID,
 	}
+}
+
+func (h *Hub) SaveNotificationForClients(auctionID string, n *models.Notification) error {
+	h.mu.RLock()
+	clients, ok := h.rooms[auctionID]
+	h.mu.RUnlock()
+	if !ok {
+		return nil
+	}
+	for client := range clients {
+		clientID, err := strconv.ParseUint(client.userID, 10, 64)
+		if err != nil {
+			log.Printf("Failed to convert userID %s to uint: %v", client.userID, err)
+			continue
+		}
+		clientNotification := notification.MapToClientNotification(n, uint(clientID))
+		if err := h.clientNotificationRepo.Create(clientNotification); err != nil {
+			log.Printf("Failed to save notification for client %s: %v", client.userID, err)
+			continue
+		}
+	}
+	return nil
 }
