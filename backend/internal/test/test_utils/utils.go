@@ -67,3 +67,20 @@ func InsertRecordsIntoDB[T any](db *gorm.DB, records []T) error {
 	}
 	return nil
 }
+
+func CloseDBConnection(db *gorm.DB) {
+	sqlDB, err := db.DB()
+	if err != nil {
+		panic("Failed to get database connection")
+	}
+	if err := sqlDB.Close(); err != nil {
+		panic("Failed to close database connection")
+	}
+}
+
+func CleanDB(db *gorm.DB) error {
+	if err := db.Exec("TRUNCATE TABLE bids, liked_offers, sale_offers, auctions RESTART IDENTITY CASCADE").Error; err != nil {
+		return err
+	}
+	return nil
+}
