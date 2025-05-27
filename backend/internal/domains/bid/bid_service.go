@@ -7,7 +7,7 @@ import (
 )
 
 type BidServiceInterface interface {
-	Create(bidDTO *CreateBidDTO, bidderID uint) (*RetrieveBidDTO, error)
+	Create(bidDTO *CreateBidDTO, bidderID uint) (*ProcessingBidDTO, error)
 	GetAll() ([]RetrieveBidDTO, error)
 	GetById(id uint) (*RetrieveBidDTO, error)
 	GetByBidderId(bidderId uint) ([]RetrieveBidDTO, error)
@@ -28,7 +28,7 @@ func NewBidService(repo BidRepositoryInterface) BidServiceInterface {
 
 var auctionLocks sync.Map
 
-func (service *BidService) Create(bidDTO *CreateBidDTO, bidderID uint) (*RetrieveBidDTO, error) {
+func (service *BidService) Create(bidDTO *CreateBidDTO, bidderID uint) (*ProcessingBidDTO, error) {
 	bid := bidDTO.MapToBid(bidderID)
 	l, _ := auctionLocks.LoadOrStore(bid.AuctionID, &sync.Mutex{})
 	m := l.(*sync.Mutex)
@@ -40,7 +40,7 @@ func (service *BidService) Create(bidDTO *CreateBidDTO, bidderID uint) (*Retriev
 	if err != nil {
 		return nil, err
 	}
-	return MapToDTO(bid), nil
+	return MapToProcessingDTO(bid), nil
 }
 
 func (service *BidService) GetAll() ([]RetrieveBidDTO, error) {
