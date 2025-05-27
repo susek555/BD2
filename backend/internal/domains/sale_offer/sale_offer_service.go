@@ -195,7 +195,7 @@ func (s *SaleOfferService) determineNewModelID(offer *models.SaleOffer, dto *Upd
 	if dto.Model == nil {
 		return 0, nil
 	}
-	manufacturerName := offer.Car.Model.Manufacturer.Name // previous manufacturer
+	manufacturerName := offer.Car.Model.Manufacturer.Name
 	if dto.Manufacturer != nil {
 		manufacturerName = *dto.Manufacturer
 	}
