@@ -98,8 +98,17 @@ export const OfferPricingFormSchema = z.object({
       const [year, month, day] = dateStr.split('-').map(Number);
 
       const parsedDate = new Date(year, month - 1, day, hours, minutes);
-      return parsedDate > new Date();
-    }, { message: 'Date must be in the future' }),
+      const now = new Date();
+
+      // Check if the date is in the future
+      if (parsedDate <= now) return false;
+
+      // Check if the date is within a week from now
+      const oneWeekFromNow = new Date();
+      oneWeekFromNow.setDate(oneWeekFromNow.getDate() + 7);
+
+      return parsedDate <= oneWeekFromNow;
+    }, { message: 'Date must be in the future but not more than a week from now' }),
   buy_now_auction_price: z
     .number()
     .nullish()
