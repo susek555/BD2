@@ -56,10 +56,17 @@ func (r *ClientNotificationRepository) GetByUserId(userId uint) ([]models.Client
 	return clientNotifications, nil
 }
 
-func (r *ClientNotificationRepository) GetFourLatestByUserId(userId uint) ([]models.ClientNotification, error) {
+func (r *ClientNotificationRepository) GetLatestByUserId(userId uint, count int) ([]models.ClientNotification, error) {
 	db := r.DB
 	var clientNotifications []models.ClientNotification
-	if err := db.Where("user_id = ?", userId).Order("created_at DESC").Limit(4).Find(&clientNotifications).Error; err != nil {
+	err := db.
+		Where("user_id = ?", userId).
+		Order("created_at DESC").
+		Limit(count).
+		Preload("Notification").
+		Find(&clientNotifications).
+		Error
+	if err != nil {
 		return nil, err
 	}
 	return clientNotifications, nil
