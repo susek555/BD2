@@ -110,7 +110,7 @@ CREATE TABLE notifications (
     offer_id INTEGER REFERENCES sale_offers(id),
     title VARCHAR(100) NOT NULL,
     description VARCHAR(200) NOT NULL,
-    date VARCHAR(50) NOT NULL
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 );
 
 CREATE TABLE client_notifications (
