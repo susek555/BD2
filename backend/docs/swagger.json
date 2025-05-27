@@ -444,6 +444,290 @@
                 }
             }
         },
+        "/bid": {
+            "get": {
+                "description": "Retrieve all bids",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "bid"
+                ],
+                "summary": "Get all bids",
+                "responses": {
+                    "200": {
+                        "description": "List of bids",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/bid.RetrieveBidDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create a new bid for an auction",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "bid"
+                ],
+                "summary": "Create a new bid",
+                "parameters": [
+                    {
+                        "description": "Bid details",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/bid.CreateBidDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created bid",
+                        "schema": {
+                            "$ref": "#/definitions/bid.RetrieveBidDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/bid/auction/{id}": {
+            "get": {
+                "description": "Retrieves all bids placed on a specific auction",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "bid"
+                ],
+                "summary": "Get bids by auction ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Auction ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of bids",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/bid.RetrieveBidDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid auction ID or retrieval error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/bid/bidder/{id}": {
+            "get": {
+                "description": "Retrieves all bids placed by a specific bidder",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "bid"
+                ],
+                "summary": "Get bids by bidder ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Bidder ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of bids",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/bid.RetrieveBidDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid bidder ID or retrieval error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/bid/highest/auction/{auctionId}/bidder/{bidderId}": {
+            "get": {
+                "description": "Retrieves the highest bid placed by a specific user on a specific auction",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "bid"
+                ],
+                "summary": "Get the highest bid by a user for a specific auction",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Auction ID",
+                        "name": "auctionId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Bidder ID",
+                        "name": "bidderId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Highest bid details",
+                        "schema": {
+                            "$ref": "#/definitions/bid.RetrieveBidDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid auction ID, bidder ID, or retrieval error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/bid/highest/{id}": {
+            "get": {
+                "description": "Retrieves the highest bid for a specific auction",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "bid"
+                ],
+                "summary": "Get the highest bid for an auction",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Auction ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Highest bid details",
+                        "schema": {
+                            "$ref": "#/definitions/bid.RetrieveBidDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid auction ID or retrieval error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/bid/{id}": {
+            "get": {
+                "description": "Retrieve a bid by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "bid"
+                ],
+                "summary": "Get bid by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Bid ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Bid details",
+                        "schema": {
+                            "$ref": "#/definitions/bid.RetrieveBidDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/car/colors": {
             "get": {
                 "description": "Returns a list of all possible colors that are accepted when creating a new offer. If the color of your car is not in the list, choose 'other'.",
@@ -2139,6 +2423,43 @@
                 }
             }
         },
+        "bid.CreateBidDTO": {
+            "type": "object",
+            "required": [
+                "amount",
+                "auction_id"
+            ],
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "auction_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "bid.RetrieveBidDTO": {
+            "type": "object",
+            "required": [
+                "amount",
+                "auction_id",
+                "bidder_id"
+            ],
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "auction": {
+                    "$ref": "#/definitions/models.Auction"
+                },
+                "auction_id": {
+                    "type": "integer"
+                },
+                "bidder_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "car.ManufacturerModelMap": {
             "type": "object",
             "properties": {
@@ -2287,6 +2608,96 @@
                 }
             }
         },
+        "models.Auction": {
+            "type": "object",
+            "properties": {
+                "buy_now_price": {
+                    "type": "integer"
+                },
+                "date_end": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "offer": {
+                    "$ref": "#/definitions/models.SaleOffer"
+                }
+            }
+        },
+        "models.Car": {
+            "type": "object",
+            "properties": {
+                "color": {
+                    "$ref": "#/definitions/car_params.Color"
+                },
+                "drive": {
+                    "$ref": "#/definitions/car_params.Drive"
+                },
+                "engine_capacity": {
+                    "type": "integer"
+                },
+                "engine_power": {
+                    "type": "integer"
+                },
+                "fuel_type": {
+                    "$ref": "#/definitions/car_params.FuelType"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "mileage": {
+                    "type": "integer"
+                },
+                "model": {
+                    "$ref": "#/definitions/models.Model"
+                },
+                "model_id": {
+                    "type": "integer"
+                },
+                "number_of_door": {
+                    "type": "integer"
+                },
+                "number_of_gears": {
+                    "type": "integer"
+                },
+                "number_of_seats": {
+                    "type": "integer"
+                },
+                "production_year": {
+                    "type": "integer"
+                },
+                "registration_date": {
+                    "type": "string"
+                },
+                "registration_number": {
+                    "type": "string"
+                },
+                "transmission": {
+                    "$ref": "#/definitions/car_params.Transmission"
+                },
+                "vin": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Company": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "nip": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/models.User"
+                }
+            }
+        },
         "models.LikedOffer": {
             "type": "object",
             "properties": {
@@ -2295,6 +2706,17 @@
                 },
                 "user_id": {
                     "type": "integer"
+                }
+            }
+        },
+        "models.Manufacturer": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
                 }
             }
         },
@@ -2310,6 +2732,98 @@
                 "MEDIUM_MARGIN",
                 "HIGH_MARGIN"
             ]
+        },
+        "models.Model": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "manufacturer": {
+                    "$ref": "#/definitions/models.Manufacturer"
+                },
+                "manufacturer_id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Person": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "surname": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/models.User"
+                }
+            }
+        },
+        "models.SaleOffer": {
+            "type": "object",
+            "properties": {
+                "auction": {
+                    "$ref": "#/definitions/models.Auction"
+                },
+                "car": {
+                    "$ref": "#/definitions/models.Car"
+                },
+                "date_of_issue": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "margin": {
+                    "$ref": "#/definitions/models.MarginValue"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "user": {
+                    "$ref": "#/definitions/models.User"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.User": {
+            "type": "object",
+            "properties": {
+                "company": {
+                    "$ref": "#/definitions/models.Company"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "person": {
+                    "$ref": "#/definitions/models.Person"
+                },
+                "selector": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
         },
         "pagination.PaginationRequest": {
             "type": "object",
