@@ -198,27 +198,6 @@ func createSaleOfferDTO() *sale_offer.CreateSaleOfferDTO {
 	}
 }
 
-func doSaleOfferAndRetrieveSaleOfferDTOsMatch(offer models.SaleOffer, dto sale_offer.RetrieveSaleOfferDTO, s sale_offer.SaleOfferServiceInterface, userID *uint) bool {
-	var likedCondition bool
-	var bidCondition bool
-	condition := offer.ID == dto.ID &&
-		offer.User.Username == dto.Username &&
-		offer.Car.Model.Manufacturer.Name+" "+offer.Car.Model.Name == dto.Name &&
-		offer.Price == dto.Price &&
-		offer.Car.Mileage == dto.Mileage &&
-		offer.Car.ProductionYear == dto.ProductionYear &&
-		offer.Car.Color == dto.Color &&
-		(offer.Auction != nil) == dto.IsAuction
-	if userID == nil {
-		likedCondition = false
-		bidCondition = false
-	} else {
-		likedCondition = s.IsOfferLikedByUser(offer.ID, userID)
-		bidCondition, _ = s.CanBeModifiedByUser(offer.ID, userID)
-	}
-	return condition && bidCondition == dto.CanModify && likedCondition == dto.IsLiked
-}
-
 func wasEntityAddedToDB[T any](db *gorm.DB, id uint) bool {
 	repo := generic.GetGormRepository[T](db)
 	_, err := repo.GetById(id)
