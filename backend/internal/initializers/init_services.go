@@ -31,6 +31,7 @@ var RefreshTokenService refresh_token.RefreshTokenServiceInterface
 var ReviewService review.ReviewServiceInterface
 var SaleOfferService sale_offer.SaleOfferServiceInterface
 var LikedOfferService liked_offer.LikedOfferServiceInterface
+var AccessEvaluator sale_offer.OfferAccessEvaluatorInterface
 var UserService user.UserServiceInterface
 
 func InitializeServices() {
@@ -48,7 +49,8 @@ func InitializeServices() {
 	ModelService = model.NewModelService(ModelRepo)
 	NotificationService = notification.NewNotificationService(NotificationRepo)
 	ReviewService = review.NewReviewService(ReviewRepo)
-	SaleOfferService = sale_offer.NewSaleOfferService(SaleOfferRepo, ManufacturerRepo, ModelRepo, BidRepo, ImageRepo, LikedOfferRepo)
+	AccessEvaluator = sale_offer.NewAccessEvaluator(BidRepo, LikedOfferRepo)
+	SaleOfferService = sale_offer.NewSaleOfferService(SaleOfferRepo, ManufacturerRepo, ModelRepo, ImageRepo, AccessEvaluator)
 	LikedOfferService = liked_offer.NewLikedOfferService(LikedOfferRepo, SaleOfferRepo)
 	UserService = user.NewUserService(UserRepo)
 }

@@ -11,14 +11,6 @@ type ImageRetrieverInterface interface {
 	GetImagesByOfferID(offerID uint) ([]models.Image, error)
 }
 
-type LikedOfferCheckerInterface interface {
-	IsOfferLikedByUser(offerID, userID uint) bool
-}
-
-type BidRetrieverInterface interface {
-	GetByAuctionId(auctionID uint) ([]models.Bid, error)
-}
-
 type ManufacturerRetrieverInterface interface {
 	GetAll() ([]models.Manufacturer, error)
 }
@@ -36,29 +28,26 @@ type SaleOfferServiceInterface interface {
 }
 
 type SaleOfferService struct {
-	saleOfferRepo  SaleOfferRepositoryInterface
-	manRetriever   ManufacturerRetrieverInterface
-	modelRetriever ModelRetrieverInterface
-	imageRetriever ImageRetrieverInterface
-	bidRetriever   BidRetrieverInterface
-	likedChecker   LikedOfferCheckerInterface
+	saleOfferRepo   SaleOfferRepositoryInterface
+	manRetriever    ManufacturerRetrieverInterface
+	modelRetriever  ModelRetrieverInterface
+	imageRetriever  ImageRetrieverInterface
+	accessEvaluator OfferAccessEvaluatorInterface
 }
 
 func NewSaleOfferService(
 	saleOfferRepository SaleOfferRepositoryInterface,
 	manufacturerRetriever ManufacturerRetrieverInterface,
 	modelRetriever ModelRetrieverInterface,
-	bidRetriever BidRetrieverInterface,
 	imageRetriever ImageRetrieverInterface,
-	likedChecker LikedOfferCheckerInterface,
+	accessEvaluator OfferAccessEvaluatorInterface,
 ) SaleOfferServiceInterface {
 	return &SaleOfferService{
-		saleOfferRepo:  saleOfferRepository,
-		manRetriever:   manufacturerRetriever,
-		modelRetriever: modelRetriever,
-		bidRetriever:   bidRetriever,
-		imageRetriever: imageRetriever,
-		likedChecker:   likedChecker,
+		saleOfferRepo:   saleOfferRepository,
+		manRetriever:    manufacturerRetriever,
+		modelRetriever:  modelRetriever,
+		imageRetriever:  imageRetriever,
+		accessEvaluator: accessEvaluator,
 	}
 }
 
@@ -72,10 +61,11 @@ func (s *SaleOfferService) Create(in *CreateSaleOfferDTO) (*RetrieveDetailedSale
 		return nil, err
 	}
 	offer.Car.ModelID = modelID
+	offer.Status = models.PENDING
 	if err := s.saleOfferRepo.Create(offer); err != nil {
 		return nil, err
 	}
-	return MapToDetailedDTO(offer), nil
+	return s.GetByID(offer.ID, &offer.UserID)
 }
 
 func (s *SaleOfferService) Update(in *UpdateSaleOfferDTO, userID uint) (*RetrieveDetailedSaleOfferDTO, error) {
@@ -99,7 +89,7 @@ func (s *SaleOfferService) Update(in *UpdateSaleOfferDTO, userID uint) (*Retriev
 	if err = s.saleOfferRepo.Update(updatedOffer); err != nil {
 		return nil, err
 	}
-	return MapToDetailedDTO(updatedOffer), nil
+	return s.GetByID(offer.ID, &offer.UserID)
 }
 
 func (s *SaleOfferService) GetByID(id uint, userID *uint) (*RetrieveDetailedSaleOfferDTO, error) {
@@ -150,39 +140,6 @@ func (s *SaleOfferService) GetFiltered(filter *OfferFilter) (*RetrieveOffersWith
 	return &RetrieveOffersWithPagination{Offers: offerDTOs, PaginationResponse: pagResponse}, nil
 }
 
-func (s *SaleOfferService) canBeModifiedByUser(offer *models.SaleOffer, userID *uint) (bool, error) {
-	if userID == nil {
-		return false, nil
-	}
-	if !s.isAuction(offer) {
-		return true, nil
-	}
-	hasBids, err := s.hasBids(offer)
-	if err != nil {
-		return false, err
-	}
-	return !hasBids, nil
-}
-
-func (s *SaleOfferService) isOfferLikedByUser(offer *models.SaleOffer, userID *uint) bool {
-	if userID == nil {
-		return false
-	}
-	return s.likedChecker.IsOfferLikedByUser(offer.ID, *userID)
-}
-
-func (s *SaleOfferService) isAuction(offer *models.SaleOffer) bool {
-	return offer.Auction == nil
-}
-
-func (s *SaleOfferService) hasBids(offer *models.SaleOffer) (bool, error) {
-	bids, err := s.bidRetriever.GetByAuctionId(offer.ID)
-	if err != nil {
-		return false, err
-	}
-	return len(bids) > 0, nil
-}
-
 func (s *SaleOfferService) getModelID(manufacturerName, modelName string) (uint, error) {
 	model, err := s.modelRetriever.GetByManufacturerAndModelName(manufacturerName, modelName)
 	if err != nil {
@@ -215,8 +172,8 @@ func (s *SaleOfferService) getOfferImagesURLs(offer *models.SaleOffer) ([]string
 }
 
 func (s *SaleOfferService) getUserContextFields(offer *models.SaleOffer, userID *uint) (*UserContext, error) {
-	isLiked := s.isOfferLikedByUser(offer, userID)
-	canModify, err := s.canBeModifiedByUser(offer, userID)
+	isLiked := s.accessEvaluator.IsOfferLikedByUser(offer, userID)
+	canModify, err := s.accessEvaluator.CanBeModifiedByUser(offer, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -235,4 +192,8 @@ func (s *SaleOfferService) mapOfferSliceWithAdditionalFields(offers []models.Sal
 		offerDTOs = append(offerDTOs, *dto)
 	}
 	return offerDTOs, nil
+}
+
+func isAuction(offer *models.SaleOffer) bool {
+	return offer.Auction != nil
 }
