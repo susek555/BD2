@@ -60,7 +60,8 @@ func (h *Handler) CreateBid(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
-	c.JSON(http.StatusCreated, dto)
+	retrieveDTO := ProcessingToRetrieve(dto)
+	c.JSON(http.StatusCreated, retrieveDTO)
 	auctionIDStr := strconv.FormatUint(uint64(dto.AuctionID), 10)
 	userIDStr := strconv.FormatUint(uint64(userId), 10)
 	amountInt64 := int64(dto.Amount)
