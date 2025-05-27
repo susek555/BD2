@@ -2,8 +2,9 @@ package notification
 
 import (
 	"fmt"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"time"
+
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 )
 
 type NotificationServiceInterface interface {
@@ -23,14 +24,14 @@ func NewNotificationService(notificationRepository NotificationRepositoryInterfa
 }
 
 func (s *NotificationService) CreateOutbidNotification(notification *models.Notification, amount int64, offer *models.Auction) error {
-	notification.Date = time.Now().Format("2006-01-02 15:04:05")
+	notification.CreatedAt = time.Now().UTC()
 	notification.Title = fmt.Sprintf("Someone outbid you on %s %s \n", offer.Offer.Car.Model.Manufacturer.Name, offer.Offer.Car.Model.Name)
 	notification.Description = fmt.Sprintf("You were outbid on your offer for %s %s. \n New price: %d \n", offer.Offer.Car.Model.Manufacturer.Name, offer.Offer.Car.Model.Name, amount)
 	return s.NotificationRepository.Create(notification)
 }
 
 func (s *NotificationService) CreateEndAuctionNotification(notification *models.Notification, winner string, winningBid int64, offer *models.SaleOffer) error {
-	notification.Date = time.Now().Format("2006-01-02 15:04:05")
+	notification.CreatedAt = time.Now().UTC()
 	notification.Title = fmt.Sprintf("Auction ended for %s %s \n", offer.Car.Model.Manufacturer.Name, offer.Car.Model.Name)
 	notification.Description = fmt.Sprintf("The auction for %s %s has ended. \n Winner: %s \n Winning bid: %d", offer.Car.Model.Manufacturer.Name, offer.Car.Model.Name, winner, winningBid)
 	return s.NotificationRepository.Create(notification)
