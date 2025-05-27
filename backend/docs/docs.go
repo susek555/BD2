@@ -2453,9 +2453,6 @@ const docTemplate = `{
                 "amount": {
                     "type": "integer"
                 },
-                "auction": {
-                    "$ref": "#/definitions/models.Auction"
-                },
                 "auction_id": {
                     "type": "integer"
                 },
@@ -2612,96 +2609,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Auction": {
-            "type": "object",
-            "properties": {
-                "buy_now_price": {
-                    "type": "integer"
-                },
-                "date_end": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "offer": {
-                    "$ref": "#/definitions/models.SaleOffer"
-                }
-            }
-        },
-        "models.Car": {
-            "type": "object",
-            "properties": {
-                "color": {
-                    "$ref": "#/definitions/car_params.Color"
-                },
-                "drive": {
-                    "$ref": "#/definitions/car_params.Drive"
-                },
-                "engine_capacity": {
-                    "type": "integer"
-                },
-                "engine_power": {
-                    "type": "integer"
-                },
-                "fuel_type": {
-                    "$ref": "#/definitions/car_params.FuelType"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "mileage": {
-                    "type": "integer"
-                },
-                "model": {
-                    "$ref": "#/definitions/models.Model"
-                },
-                "model_id": {
-                    "type": "integer"
-                },
-                "number_of_door": {
-                    "type": "integer"
-                },
-                "number_of_gears": {
-                    "type": "integer"
-                },
-                "number_of_seats": {
-                    "type": "integer"
-                },
-                "production_year": {
-                    "type": "integer"
-                },
-                "registration_date": {
-                    "type": "string"
-                },
-                "registration_number": {
-                    "type": "string"
-                },
-                "transmission": {
-                    "$ref": "#/definitions/car_params.Transmission"
-                },
-                "vin": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.Company": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "nip": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/models.User"
-                }
-            }
-        },
         "models.LikedOffer": {
             "type": "object",
             "properties": {
@@ -2710,17 +2617,6 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "integer"
-                }
-            }
-        },
-        "models.Manufacturer": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
                 }
             }
         },
@@ -2736,98 +2632,6 @@ const docTemplate = `{
                 "MEDIUM_MARGIN",
                 "HIGH_MARGIN"
             ]
-        },
-        "models.Model": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "manufacturer": {
-                    "$ref": "#/definitions/models.Manufacturer"
-                },
-                "manufacturer_id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.Person": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "surname": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/models.User"
-                }
-            }
-        },
-        "models.SaleOffer": {
-            "type": "object",
-            "properties": {
-                "auction": {
-                    "$ref": "#/definitions/models.Auction"
-                },
-                "car": {
-                    "$ref": "#/definitions/models.Car"
-                },
-                "date_of_issue": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "margin": {
-                    "$ref": "#/definitions/models.MarginValue"
-                },
-                "price": {
-                    "type": "integer"
-                },
-                "user": {
-                    "$ref": "#/definitions/models.User"
-                },
-                "user_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "models.User": {
-            "type": "object",
-            "properties": {
-                "company": {
-                    "$ref": "#/definitions/models.Company"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "password": {
-                    "type": "string"
-                },
-                "person": {
-                    "$ref": "#/definitions/models.Person"
-                },
-                "selector": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
         },
         "pagination.PaginationRequest": {
             "type": "object",
