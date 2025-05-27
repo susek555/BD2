@@ -1,16 +1,33 @@
 package bid
 
 import (
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"time"
+
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 )
+
+func MapToProcessingDTO(b *models.Bid) *ProcessingBidDTO {
+	return &ProcessingBidDTO{
+		AuctionID: b.AuctionID,
+		BidderID:  b.BidderID,
+		Amount:    b.Amount,
+		Auction:   b.Auction,
+	}
+}
 
 func MapToDTO(b *models.Bid) *RetrieveBidDTO {
 	return &RetrieveBidDTO{
 		AuctionID: b.AuctionID,
 		BidderID:  b.BidderID,
 		Amount:    b.Amount,
-		Auction:   b.Auction,
+	}
+}
+
+func ProcessingToRetrieve(b *ProcessingBidDTO) *RetrieveBidDTO {
+	return &RetrieveBidDTO{
+		AuctionID: b.AuctionID,
+		BidderID:  b.BidderID,
+		Amount:    b.Amount,
 	}
 }
 
