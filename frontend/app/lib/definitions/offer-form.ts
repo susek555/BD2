@@ -89,7 +89,15 @@ export const OfferPricingFormSchema = z.object({
     .optional()
     .refine((date) => {
       if (!date) return true;
-      const parsedDate = new Date(date);
+
+      const regex = /^([01]\d|2[0-3]):([0-5]\d) (\d{4})-(\d{2})-(\d{2})$/;
+      if (!regex.test(date)) return false;
+
+      const [time, dateStr] = date.split(' ');
+      const [hours, minutes] = time.split(':').map(Number);
+      const [year, month, day] = dateStr.split('-').map(Number);
+
+      const parsedDate = new Date(year, month - 1, day, hours, minutes);
       return parsedDate > new Date();
     }, { message: 'Date must be in the future' }),
   buy_now_auction_price: z

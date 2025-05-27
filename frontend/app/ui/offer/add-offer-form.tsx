@@ -209,12 +209,10 @@ export function OfferForm(
     }
 
     function DateSelectionField({ id, name, hasHour = false }: { id: string, name: string, hasHour?: boolean }) {
-        // Parse initial values from the date string
         const initialDate = state.values?.[id]?.toString() ?? "";
         const dateTimePattern = /^(\d{2}):(\d{2}) (\d{4})-(\d{2})-(\d{2})$/; // Pattern for "11:45 2026-12-21"
         const dateOnlyPattern = /^(\d{4})-(\d{2})-(\d{2})$/; // Pattern for "2026-12-21"
 
-        // Extract values using destructuring and nullish coalescing to provide defaults
         const [
             initialHour = "",
             initialMinute = "",
