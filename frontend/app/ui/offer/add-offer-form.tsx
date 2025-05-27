@@ -106,16 +106,27 @@ export function OfferForm(
             formData.delete("registration_date-year");
             // updateField("registration_date", date);
         }
-        const auction_day = formData.get("auction_end_date-day");
-        const auction_month = formData.get("auction_end_date-month");
-        const auction_year = formData.get("auction_end_date-year");
-        if (auction_day && auction_month && auction_year) {
-            const auctionDate = `${auction_year.toString().padStart(4, "0")}-${auction_month.toString().padStart(2, "0")}-${auction_day.toString().padStart(2, "0")}`;
-            formData.set("auction_end_date", auctionDate);
-            formData.delete("auction_end_date-day");
-            formData.delete("auction_end_date-month");
-        // Add detailsPart to formData
+        // Process auction date only when is_auction is true
+        const is_auction_value = formData.get("is_auction") === "true";
+        if (is_auction_value) {
+            const auction_day = formData.get("auction_end_date-day");
+            const auction_month = formData.get("auction_end_date-month");
+            const auction_year = formData.get("auction_end_date-year");
+            const auction_hour = formData.get("auction_end_date-hour");
+            const auction_minute = formData.get("auction_end_date-minute");
+
+            if (auction_day && auction_month && auction_year && auction_hour && auction_minute) {
+                const auctionDate = `${auction_hour.toString().padStart(2, "0")}:${auction_minute.toString().padStart(2, "0")} ${auction_year.toString().padStart(4, "0")}-${auction_month.toString().padStart(2, "0")}-${auction_day.toString().padStart(2, "0")}`;
+
+                formData.set("auction_end_date", auctionDate);
+                formData.delete("auction_end_date-day");
+                formData.delete("auction_end_date-month");
+                formData.delete("auction_end_date-year");
+                formData.delete("auction_end_date-hour");
+                formData.delete("auction_end_date-minute");
+            }
         }
+
         formData.append('detailsPart', detailsPart.toString());
 
         setProducer(formData.get("producer")?.toString() ?? "");
