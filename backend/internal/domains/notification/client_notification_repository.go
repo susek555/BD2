@@ -62,8 +62,9 @@ func (r *ClientNotificationRepository) GetLatestByUserId(userId uint, count int)
 	db := r.DB
 	var clientNotifications []models.ClientNotification
 	err := db.
-		Where("user_id = ?", userId).
-		Order("created_at DESC").
+		Joins("JOIN notifications ON notifications.id = client_notifications.notification_id").
+		Where("client_notifications.user_id = ?", userId).
+		Order("notifications.created_at DESC").
 		Limit(count).
 		Preload("Notification").
 		Find(&clientNotifications).
