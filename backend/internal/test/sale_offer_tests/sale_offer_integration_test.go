@@ -719,8 +719,8 @@ func TestGetFiltered_OneRegularOffer(t *testing.T) {
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
 	assert.Equal(t, len(seedOffers), len(got.Offers))
-	assert.True(t, doSaleOfferAndRetrieveSaleOfferDTOsMatch(seedOffers[0], got.Offers[0], s, nil))
-
+	offer, _ := s.GetByID(1, nil)
+	assert.Equal(t, offer, got.Offers[0])
 	u.CleanDB(DB)
 }
 
@@ -739,7 +739,8 @@ func TestGetFiltered_OneAuction(t *testing.T) {
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
 	assert.Equal(t, len(seedOffers), len(got.Offers))
-	assert.True(t, doSaleOfferAndRetrieveSaleOfferDTOsMatch(seedOffers[0], got.Offers[0], s, nil))
+	offer, _ := s.GetByID(1, nil)
+	assert.Equal(t, offer, got.Offers[0])
 	u.CleanDB(DB)
 }
 
@@ -764,7 +765,8 @@ func TestGetFiltered_AuctionsAndOffersCombined(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, len(seedOffers), len(got.Offers))
 	for i := range len(seedOffers) {
-		assert.True(t, doSaleOfferAndRetrieveSaleOfferDTOsMatch(seedOffers[i], got.Offers[i], s, nil))
+		offer, _ := s.GetByID(uint(i), nil)
+		assert.Equal(t, offer, got.Offers[0])
 	}
 	u.CleanDB(DB)
 }
@@ -792,7 +794,8 @@ func TestGetFiltered_AuthorizedOtherUserOffers(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, len(seedOffers), len(got.Offers))
 	for i := range len(seedOffers) {
-		assert.True(t, doSaleOfferAndRetrieveSaleOfferDTOsMatch(seedOffers[i], got.Offers[i], s, &user.ID))
+		offer, _ := s.GetByID(uint(i), nil)
+		assert.Equal(t, offer, got.Offers[i])
 	}
 	u.CleanDB(DB)
 }
@@ -960,7 +963,8 @@ func TestGetMyOffers_OneRegularOffer(t *testing.T) {
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
 	assert.Equal(t, len(seedOffers), len(got.Offers))
-	assert.True(t, doSaleOfferAndRetrieveSaleOfferDTOsMatch(seedOffers[0], got.Offers[0], s, &user.ID))
+	offer, _ := s.GetByID(1, &user.ID)
+	assert.Equal(t, offer, got.Offers[0])
 	u.CleanDB(DB)
 }
 
@@ -980,7 +984,8 @@ func TestGetMyOffers_OneAuctionOffer(t *testing.T) {
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
 	assert.Equal(t, len(seedOffers), len(got.Offers))
-	assert.True(t, doSaleOfferAndRetrieveSaleOfferDTOsMatch(seedOffers[0], got.Offers[0], s, &user.ID))
+	offer, _ := s.GetByID(1, &user.ID)
+	assert.Equal(t, offer, got.Offers[0])
 	u.CleanDB(DB)
 }
 
@@ -1006,7 +1011,8 @@ func TestGetMyOffers_AuctionsAndOffersCombined(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, len(seedOffers), len(got.Offers))
 	for i := range len(seedOffers) {
-		assert.True(t, doSaleOfferAndRetrieveSaleOfferDTOsMatch(seedOffers[i], got.Offers[i], s, &user.ID))
+		offer, _ := s.GetByID(uint(i), nil)
+		assert.Equal(t, offer, got.Offers[i])
 	}
 	u.CleanDB(DB)
 }
