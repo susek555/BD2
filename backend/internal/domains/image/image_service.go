@@ -8,7 +8,9 @@ import (
 )
 
 type ImageServiceInterface interface {
-	StoreImages(offerID uint, image []*multipart.FileHeader) error
+	Store(offerID uint, image []*multipart.FileHeader) error
+	DeleteByURL(url string) error
+	DeleteByOfferID(offerID uint) error
 }
 
 type ImageService struct {
@@ -20,15 +22,50 @@ func NewImageService(r ImageRepositoryInterface, b ImageBucketInterface) ImageSe
 	return &ImageService{repo: r, bucket: b}
 }
 
-func (s *ImageService) StoreImages(offerID uint, images []*multipart.FileHeader) error {
+func (s *ImageService) Store(offerID uint, images []*multipart.FileHeader) error {
 	if err := s.validateImageLimit(offerID, len(images), 10); err != nil {
 		return nil
 	}
 	return s.saveImagesToStorageAndDB(offerID, images)
 }
 
+func (s *ImageService) DeleteByURL(url string) error {
+	image, err := s.repo.GetByURL(url)
+	if err != nil {
+		return err
+	}
+	if err := s.repo.Delete(image.ID); err != nil {
+		return err
+	}
+	if err := s.bucket.Delete(image.PublicID); err != nil {
+		if restoreErr := s.repo.Create(image); restoreErr != nil {
+			return restoreErr
+		}
+		return err
+	}
+	return nil
+}
+
+func (s *ImageService) DeleteByOfferID(offerID uint) error {
+	folder := fmt.Sprintf("sale-offer-%d/", offerID)
+	images, err := s.repo.GetByOfferID(offerID)
+	if err != nil {
+		return err
+	}
+	if err := s.repo.DeleteByOfferID(offerID); err != nil {
+		return err
+	}
+	if err := s.bucket.DeleteByFolderName(folder); err != nil {
+		if restoreErr := s.repo.BatchCreate(images); restoreErr != nil {
+			return restoreErr
+		}
+		return err
+	}
+	return nil
+}
+
 func (s *ImageService) validateImageLimit(offerID uint, nImages int, maxImages int) error {
-	storedImages, err := s.repo.GetImagesByOfferID(offerID)
+	storedImages, err := s.repo.GetByOfferID(offerID)
 	if err != nil {
 		return err
 	}
@@ -51,7 +88,6 @@ func (s *ImageService) saveImagesToStorageAndDB(offerID uint, images []*multipar
 			return nil
 		}
 		uploadedPublicIDs = append(uploadedPublicIDs, publicID)
-
 		imageModel := &models.Image{OfferID: offerID, PublicID: publicID, Url: url}
 		if err := s.repo.Create(imageModel); err != nil {
 			s.partialCleanup(uploadedPublicIDs, storedImages)
@@ -69,15 +105,4 @@ func (s *ImageService) partialCleanup(publicIDs []string, images []models.Image)
 	for _, id := range publicIDs {
 		_ = s.bucket.Delete(id)
 	}
-}
-
-func (s *ImageService) totalCleanup(offerID uint) error {
-	folder := fmt.Sprintf("sale-offer-%d/", offerID)
-	if err := s.repo.DeleteByOfferID(offerID); err != nil {
-		return err
-	}
-	if err := s.bucket.DeleteByFolderName(folder); err != nil {
-		return err
-	}
-	return nil
 }

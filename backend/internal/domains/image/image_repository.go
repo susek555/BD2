@@ -7,8 +7,10 @@ import (
 
 type ImageRepositoryInterface interface {
 	Create(image *models.Image) error
+	BatchCreate(images []models.Image) error
+	GetByURL(url string) (*models.Image, error)
+	GetByOfferID(offerID uint) ([]models.Image, error)
 	Delete(id uint) error
-	GetImagesByOfferID(offerID uint) ([]models.Image, error)
 	DeleteByOfferID(offerID uint) error
 }
 
@@ -24,16 +26,26 @@ func (r *ImageRepository) Create(image *models.Image) error {
 	return r.DB.Create(&image).Error
 }
 
+func (r *ImageRepository) BatchCreate(images []models.Image) error {
+	return r.DB.Create(&images).Error
+}
+
+func (r *ImageRepository) GetByURL(url string) (*models.Image, error) {
+	var image models.Image
+	err := r.DB.Where("url = ?", url).Find(&image).Error
+	return &image, err
+}
+
+func (r *ImageRepository) GetByOfferID(offerID uint) ([]models.Image, error) {
+	var images []models.Image
+	err := r.DB.Where("offer_id = ?", offerID).Find(&images).Error
+	return images, err
+}
+
 func (r *ImageRepository) Delete(id uint) error {
 	var image models.Image
 	err := r.DB.Delete(&image, id).Error
 	return err
-}
-
-func (r *ImageRepository) GetImagesByOfferID(offerID uint) ([]models.Image, error) {
-	var images []models.Image
-	err := r.DB.Where("offer_id = ?", offerID).Find(&images).Error
-	return images, err
 }
 
 func (r *ImageRepository) DeleteByOfferID(offerID uint) error {
