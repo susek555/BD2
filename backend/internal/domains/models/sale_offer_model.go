@@ -16,3 +16,7 @@ type SaleOffer struct {
 	Car         *Car        `gorm:"foreignKey:OfferID;references:ID"`
 	Auction     *Auction    `gorm:"foreignKey:OfferID;references:ID"`
 }
+
+func (o *SaleOffer) BelongsToUser(userID uint) bool {
+	return o.UserID == userID
+}
