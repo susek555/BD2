@@ -11,6 +11,7 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 	u "github.com/susek555/BD2/car-dealer-api/internal/test/test_utils"
+	"github.com/susek555/BD2/car-dealer-api/pkg/formats"
 	"github.com/susek555/BD2/car-dealer-api/pkg/mapping"
 	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
 )
@@ -1772,7 +1773,7 @@ func TestGetFiltered_EngineCapacityLowerBound(t *testing.T) {
 }
 
 func TestGetFiltered_CarRegistrationDateInRange(t *testing.T) {
-	date, _ := time.Parse(sale_offer.LAYOUT, "2025-05-13")
+	date, _ := time.Parse(formats.DateLayout, "2025-05-13")
 	offers := []models.SaleOffer{
 		*u.Build(createOffer(1), withCarField(u.WithField[models.Car]("RegistrationDate", date))),
 	}
@@ -1790,7 +1791,7 @@ func TestGetFiltered_CarRegistrationDateInRange(t *testing.T) {
 }
 
 func TestGetFiltered_CarRegistrationDateInRangeMinProvided(t *testing.T) {
-	date, _ := time.Parse(sale_offer.LAYOUT, "2025-05-13")
+	date, _ := time.Parse(formats.DateLayout, "2025-05-13")
 	offers := []models.SaleOffer{
 		*u.Build(createOffer(1), withCarField(u.WithField[models.Car]("RegistrationDate", date))),
 	}
@@ -1807,7 +1808,7 @@ func TestGetFiltered_CarRegistrationDateInRangeMinProvided(t *testing.T) {
 }
 
 func TestGetFiltered_CarRegistrationDateInRangeMaxProvided(t *testing.T) {
-	date, _ := time.Parse(sale_offer.LAYOUT, "2025-05-13")
+	date, _ := time.Parse(formats.DateLayout, "2025-05-13")
 	offers := []models.SaleOffer{
 		*u.Build(createOffer(1), withCarField(u.WithField[models.Car]("RegistrationDate", date))),
 	}
@@ -1824,7 +1825,7 @@ func TestGetFiltered_CarRegistrationDateInRangeMaxProvided(t *testing.T) {
 }
 
 func TestGetFiltered_CarRegistrationDateGreater(t *testing.T) {
-	date, _ := time.Parse(sale_offer.LAYOUT, "2025-05-13")
+	date, _ := time.Parse(formats.DateLayout, "2025-05-13")
 	offers := []models.SaleOffer{
 		*u.Build(createOffer(1), withCarField(u.WithField[models.Car]("RegistrationDate", date))),
 	}
@@ -1841,7 +1842,7 @@ func TestGetFiltered_CarRegistrationDateGreater(t *testing.T) {
 }
 
 func TestGetFiltered_CarRegistrationDateLower(t *testing.T) {
-	date, _ := time.Parse(sale_offer.LAYOUT, "2025-05-13")
+	date, _ := time.Parse(formats.DateLayout, "2025-05-13")
 	offers := []models.SaleOffer{
 		*u.Build(createOffer(1), withCarField(u.WithField[models.Car]("RegistrationDate", date))),
 	}
@@ -1858,7 +1859,7 @@ func TestGetFiltered_CarRegistrationDateLower(t *testing.T) {
 }
 
 func TestGetFiltered_CarRegistrationDateUpperBound(t *testing.T) {
-	date, _ := time.Parse(sale_offer.LAYOUT, "2025-05-13")
+	date, _ := time.Parse(formats.DateLayout, "2025-05-13")
 	offers := []models.SaleOffer{
 		*u.Build(createOffer(1), withCarField(u.WithField[models.Car]("RegistrationDate", date))),
 	}
@@ -1874,7 +1875,7 @@ func TestGetFiltered_CarRegistrationDateUpperBound(t *testing.T) {
 	u.CleanDB(DB)
 }
 func TestGetFiltered_CarRegistrationDateLowerBound(t *testing.T) {
-	date, _ := time.Parse(sale_offer.LAYOUT, "2025-05-13")
+	date, _ := time.Parse(formats.DateLayout, "2025-05-13")
 	offers := []models.SaleOffer{
 		*u.Build(createOffer(1), withCarField(u.WithField[models.Car]("RegistrationDate", date))),
 	}
@@ -1891,7 +1892,7 @@ func TestGetFiltered_CarRegistrationDateLowerBound(t *testing.T) {
 }
 
 func TestGetFiltered_OfferCreationDateInRange(t *testing.T) {
-	date, _ := time.Parse(sale_offer.LAYOUT, "2025-05-13")
+	date, _ := time.Parse(formats.DateLayout, "2025-05-13")
 	offers := []models.SaleOffer{
 		*u.Build(createOffer(1), u.WithField[models.SaleOffer]("DateOfIssue", date)),
 	}
@@ -1909,7 +1910,7 @@ func TestGetFiltered_OfferCreationDateInRange(t *testing.T) {
 }
 
 func TestGetFiltered_OfferCreationDateInRangeMinProvided(t *testing.T) {
-	date, _ := time.Parse(sale_offer.LAYOUT, "2025-05-13")
+	date, _ := time.Parse(formats.DateLayout, "2025-05-13")
 	offers := []models.SaleOffer{
 		*u.Build(createOffer(1), u.WithField[models.SaleOffer]("DateOfIssue", date)),
 	}
@@ -1926,7 +1927,7 @@ func TestGetFiltered_OfferCreationDateInRangeMinProvided(t *testing.T) {
 }
 
 func TestGetFiltered_OfferCreationDateInRangeMaxProvided(t *testing.T) {
-	date, _ := time.Parse(sale_offer.LAYOUT, "2025-05-13")
+	date, _ := time.Parse(formats.DateLayout, "2025-05-13")
 	offers := []models.SaleOffer{
 		*u.Build(createOffer(1), u.WithField[models.SaleOffer]("DateOfIssue", date)),
 	}
@@ -1943,7 +1944,7 @@ func TestGetFiltered_OfferCreationDateInRangeMaxProvided(t *testing.T) {
 }
 
 func TestGetFiltered_OfferCreationDateGreater(t *testing.T) {
-	date, _ := time.Parse(sale_offer.LAYOUT, "2025-05-13")
+	date, _ := time.Parse(formats.DateLayout, "2025-05-13")
 	offers := []models.SaleOffer{
 		*u.Build(createOffer(1), u.WithField[models.SaleOffer]("DateOfIssue", date)),
 	}
@@ -1960,7 +1961,7 @@ func TestGetFiltered_OfferCreationDateGreater(t *testing.T) {
 }
 
 func TestGetFiltered_OfferCreationDateLower(t *testing.T) {
-	date, _ := time.Parse(sale_offer.LAYOUT, "2025-05-13")
+	date, _ := time.Parse(formats.DateLayout, "2025-05-13")
 	offers := []models.SaleOffer{
 		*u.Build(createOffer(1), u.WithField[models.SaleOffer]("DateOfIssue", date)),
 	}
@@ -1977,7 +1978,7 @@ func TestGetFiltered_OfferCreationDateLower(t *testing.T) {
 }
 
 func TestGetFiltered_OfferCreationDateUpperBound(t *testing.T) {
-	date, _ := time.Parse(sale_offer.LAYOUT, "2025-05-13")
+	date, _ := time.Parse(formats.DateLayout, "2025-05-13")
 	offers := []models.SaleOffer{
 		*u.Build(createOffer(1), u.WithField[models.SaleOffer]("DateOfIssue", date)),
 	}
@@ -1994,7 +1995,7 @@ func TestGetFiltered_OfferCreationDateUpperBound(t *testing.T) {
 }
 
 func TestGetFiltered_OfferCreationDateLowerBound(t *testing.T) {
-	date, _ := time.Parse(sale_offer.LAYOUT, "2025-05-13")
+	date, _ := time.Parse(formats.DateLayout, "2025-05-13")
 	offers := []models.SaleOffer{
 		*u.Build(createOffer(1), u.WithField[models.SaleOffer]("DateOfIssue", date)),
 	}
