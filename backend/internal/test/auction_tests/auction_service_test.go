@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
+	"github.com/susek555/BD2/car-dealer-api/pkg/formats"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -63,7 +64,7 @@ func makeValidCreateDTO() *auction.CreateAuctionDTO {
 			EnginePower:        150,
 			EngineCapacity:     2000,
 			RegistrationNumber: "ABC123",
-			RegistrationDate:   time.Now().Format("2006-01-02"),
+			RegistrationDate:   time.Now().Format(formats.DateLayout),
 			Color:              car_params.RED,
 			FuelType:           car_params.DIESEL,
 			Transmission:       car_params.MANUAL,
@@ -72,7 +73,7 @@ func makeValidCreateDTO() *auction.CreateAuctionDTO {
 			ManufacturerName:   "Tesla",
 			ModelName:          "ModelS",
 		},
-		DateEnd:     future.Format("15:04 02/01/2006"),
+		DateEnd:     future.Format(formats.DateTimeLayout),
 		BuyNowPrice: 5000,
 	}
 }
@@ -90,7 +91,7 @@ func makeValidUpdateDTO() *auction.UpdateAuctionDTO {
 	var enginePower uint = 160
 	var engineCapacity uint = 2200
 	registrationNumber := "XYZ789"
-	registrationDate := time.Now().Format("2006-01-02")
+	registrationDate := time.Now().Format(formats.DateLayout)
 	color := car_params.BLUE
 	fuelType := car_params.PETROL
 	transmission := car_params.AUTOMATIC
@@ -98,7 +99,7 @@ func makeValidUpdateDTO() *auction.UpdateAuctionDTO {
 	drive := car_params.RWD
 	manufacturerName := "Tesla"
 	modelName := "ModelX"
-	dateEnd := future.Format("15:04 02/01/2006")
+	dateEnd := future.Format(formats.DateTimeLayout)
 	buyNowPrice := uint(6000)
 	return &auction.UpdateAuctionDTO{
 		Id: 42,
@@ -248,7 +249,7 @@ func TestAuctionService_Update_OK(t *testing.T) {
 
 	// Mock GetById which is called before Update
 	repo.On("GetById", uint(42)).Return(makeFullAuctionEntity(42, time.Now().Add(time.Hour), 300), nil)
-	
+
 	// Mock DetermineNewModelID which is called during Update
 	saleOfferSvc.On("DetermineNewModelID", mock.Anything, mock.Anything).Return(uint(1), nil)
 
@@ -257,7 +258,7 @@ func TestAuctionService_Update_OK(t *testing.T) {
 		full := makeFullAuctionEntity(5, a.DateEnd, a.BuyNowPrice)
 		*a = *full
 	}).Return(nil)
-	
+
 	// Mock the GetById call that happens after Update
 	repo.On("GetById", uint(5)).Return(makeFullAuctionEntity(5, time.Now().Add(time.Hour), 6000), nil)
 
@@ -278,12 +279,12 @@ func TestAuctionService_Update_Error(t *testing.T) {
 
 	// Mock GetById which is called before Update
 	repo.On("GetById", uint(42)).Return(makeFullAuctionEntity(42, time.Now().Add(time.Hour), 300), nil)
-	
+
 	// Mock DetermineNewModelID which might be called during Update
 	saleOfferSvc.On("DetermineNewModelID", mock.Anything, mock.Anything).Return(uint(1), nil)
 
 	repo.On("Update", mock.Anything).Return(expected)
-	
+
 	_, err := svc.Update(update, uint(99))
 	assert.ErrorIs(t, err, expected)
 	repo.AssertExpectations(t)
