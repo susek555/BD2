@@ -62,7 +62,7 @@ func (dto *UpdateAuctionDTO) UpdatedAuctionFromDTO(auction *models.Auction) (*mo
 
 func MapToDTO(auction *models.Auction) *RetrieveAuctionDTO {
 	offerDTO := sale_offer.MapToDTO(auction.Offer)
-	dateEnd := auction.DateEnd.UTC().Format("15:04 02/01/2006")
+	dateEnd := auction.DateEnd.UTC().Format(formats.DateTimeLayout)
 	return &RetrieveAuctionDTO{
 		offerDTO,
 		dateEnd,
