@@ -25,17 +25,17 @@ func NewHandler(service AuctionServiceInterface, sched scheduler.SchedulerInterf
 	}
 }
 
-// @Summary Create Auction
-// @Description Creates a new auction with the provided details
-// @Tags auction
-// @Accept json
-// @Produce json
-// @Param body body CreateAuctionDTO true "Auction details"
-// @Success 201 {object} RetrieveAuctionDTO "Created auction"
-// @Failure 400 {object} custom_errors.HTTPError "Bad request"
-// @Failure 401 {object} custom_errors.HTTPError "Unauthorized"
-// @Router /auction [post]
-// @Security BearerAuth
+//	@Summary		Create Auction
+//	@Description	Creates a new auction with the provided details
+//	@Tags			auction
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body		CreateAuctionDTO		true	"Auction details"
+//	@Success		201		{object}	RetrieveAuctionDTO		"Created auction"
+//	@Failure		400		{object}	custom_errors.HTTPError	"Bad request"
+//	@Failure		401		{object}	custom_errors.HTTPError	"Unauthorized"
+//	@Router			/auction [post]
+//	@Security		BearerAuth
 func (h *Handler) CreateAuction(c *gin.Context) {
 	userId, err := auth.GetUserId(c)
 	if err != nil {
@@ -73,14 +73,14 @@ func (h *Handler) CreateAuction(c *gin.Context) {
 }
 
 // GetAllAuctions godoc
-// @Summary     Get all auctions
-// @Description Retrieves all available auctions from the system
-// @Tags        auction
-// @Accept      json
-// @Produce     json
-// @Success     200 {array}  RetrieveAuctionDTO
-// @Failure     400 {object} custom_errors.HTTPError
-// @Router      /auction [get]
+//	@Summary		Get all auctions
+//	@Description	Retrieves all available auctions from the system
+//	@Tags			auction
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{array}		RetrieveAuctionDTO
+//	@Failure		400	{object}	custom_errors.HTTPError
+//	@Router			/auction [get]
 func (h *Handler) GetAllAuctions(c *gin.Context) {
 	auctions, err := h.service.GetAll()
 	if err != nil {
@@ -91,15 +91,15 @@ func (h *Handler) GetAllAuctions(c *gin.Context) {
 }
 
 // GetAuctionById godoc
-// @Summary     Get auction by ID
-// @Description Retrieves a specific auction by its ID
-// @Tags        auction
-// @Accept      json
-// @Produce     json
-// @Param       id path int true "Auction ID"
-// @Success     200 {object} RetrieveAuctionDTO
-// @Failure     400 {object} custom_errors.HTTPError
-// @Router      /auction/{id} [get]
+//	@Summary		Get auction by ID
+//	@Description	Retrieves a specific auction by its ID
+//	@Tags			auction
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		int	true	"Auction ID"
+//	@Success		200	{object}	RetrieveAuctionDTO
+//	@Failure		400	{object}	custom_errors.HTTPError
+//	@Router			/auction/{id} [get]
 func (h *Handler) GetAuctionById(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
@@ -115,17 +115,17 @@ func (h *Handler) GetAuctionById(c *gin.Context) {
 }
 
 // DeleteAuctionById godoc
-// @Summary     Delete auction by ID
-// @Description Deletes a specific auction by its ID
-// @Tags        auction
-// @Accept      json
-// @Produce     json
-// @Param       id path int true "Auction ID"
-// @Success     204 "No Content"
-// @Failure     400 {object} custom_errors.HTTPError
-// @Failure     401 {object} custom_errors.HTTPError
-// @Router      /auction/{id} [delete]
-// @Security BearerAuth
+//	@Summary		Delete auction by ID
+//	@Description	Deletes a specific auction by its ID
+//	@Tags			auction
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path	int	true	"Auction ID"
+//	@Success		204	"No Content"
+//	@Failure		400	{object}	custom_errors.HTTPError
+//	@Failure		401	{object}	custom_errors.HTTPError
+//	@Router			/auction/{id} [delete]
+//	@Security		BearerAuth
 func (h *Handler) DeleteAuctionById(c *gin.Context) {
 	userId, err := auth.GetUserId(c)
 	if err != nil {
@@ -146,17 +146,17 @@ func (h *Handler) DeleteAuctionById(c *gin.Context) {
 }
 
 // UpdateAuction godoc
-// @Summary     Update auction
-// @Description Updates an existing auction with the provided details
-// @Tags        auction
-// @Accept      json
-// @Produce     json
-// @Param       body body UpdateAuctionDTO true "Auction details"
-// @Success     200 {object} RetrieveAuctionDTO "Updated auction"
-// @Failure     400 {object} custom_errors.HTTPError "Bad request"
-// @Failure     401 {object} custom_errors.HTTPError "Unauthorized"
-// @Router      /auction [put]
-// @Security BearerAuth
+//	@Summary		Update auction
+//	@Description	Updates an existing auction with the provided details
+//	@Tags			auction
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body		UpdateAuctionDTO		true	"Auction details"
+//	@Success		200		{object}	RetrieveAuctionDTO		"Updated auction"
+//	@Failure		400		{object}	custom_errors.HTTPError	"Bad request"
+//	@Failure		401		{object}	custom_errors.HTTPError	"Unauthorized"
+//	@Router			/auction [put]
+//	@Security		BearerAuth
 func (h *Handler) UpdateAuction(c *gin.Context) {
 	userId, err := auth.GetUserId(c)
 	if err != nil {

@@ -57,6 +57,22 @@ func (h *Handler) CreateSaleOffer(c *gin.Context) {
 	c.JSON(http.StatusCreated, retrieveDTO)
 }
 
+// UpdateSaleOffer godoc
+//
+//	@Summary		Update a sale offer
+//	@Description	Updates an existing sale offer in the database. To update a sale offer, the user must be logged in and must be the owner of the offer. Constraints are the same as when creating a sale offer.
+//	@Tags			sale-offer
+//	@Accept			json
+//	@Produce		json
+//	@Param			offer	body		UpdateSaleOfferDTO				true	"Sale offer form"
+//	@Success		200		{object}	RetrieveDetailedSaleOfferDTO	"Updated - returns the updated sale offer"
+//	@Failure		400		{object}	custom_errors.HTTPError			"Invalid input data"
+//	@Failure		401		{object}	custom_errors.HTTPError			"Unauthorized - user must be logged in to update his offer"
+//	@Failure		403		{object}	custom_errors.HTTPError			"Forbidden - user can only update his own offer"
+//	@Failure		404		{object}	custom_errors.HTTPError			"Sale offer not found"
+//	@Failure		500		{object}	custom_errors.HTTPError			"Internal server error"
+//	@Router			/sale-offer [put]
+//	@Security		Bearer
 func (h *Handler) UpdateSaleOffer(c *gin.Context) {
 	var offerDTO UpdateSaleOfferDTO
 	if err := c.ShouldBindJSON(&offerDTO); err != nil {
@@ -144,7 +160,7 @@ func (h *Handler) GetSaleOfferByID(c *gin.Context) {
 //	@Produce		json
 //	@Param			filter	body		pagination.PaginationRequest	true	"Pagination request"
 //	@Success		200		{object}	RetrieveOffersWithPagination	"List of sale offers"
-//	@Failure		401		{object}	custom_errors.HTTPError			"Unauthorized - user not logged in"
+//	@Failure		401		{object}	custom_errors.HTTPError			"Unauthorized - user must be logged in to retrieve his offers"
 //	@Failure		500		{object}	custom_errors.HTTPError			"Internal server error"
 //	@Router			/sale-offer/my-offers [post]
 //	@Security		Bearer
