@@ -1,6 +1,8 @@
 services:
   postgres:
-    image: aeffix/pg_ivm:postgres16.4-pg_ivm1.9
+    build:
+      context: ./database
+      dockerfile: Dockerfile
     container_name: bd2-postgres
     environment:
       POSTGRES_USER: bd2_user
@@ -12,6 +14,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
       - ./database/init-test-db.sql:/docker-entrypoint-initdb.d/02-init-test-db.sql
+      - ./database/init-pg-ivm.sql:/docker-entrypoint-initdb.d/03-init-pg-ivm.sql
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U bd2_user -d bd2_database" ]
       interval: 10s
