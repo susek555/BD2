@@ -6,6 +6,7 @@ import (
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
+	"github.com/susek555/BD2/car-dealer-api/pkg/formats"
 )
 
 func (dto *CreateAuctionDTO) MapToAuction() (*models.Auction, error) {
@@ -70,8 +71,7 @@ func MapToDTO(auction *models.Auction) *RetrieveAuctionDTO {
 }
 
 func parseDate(date string) (time.Time, error) {
-	layout := "15:04 02/01/2006"
-	t, err := time.Parse(layout, date)
+	t, err := time.Parse(formats.DateTimeLayout, date)
 	if err != nil {
 		return time.Time{}, err
 	}
