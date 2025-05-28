@@ -2,7 +2,7 @@ package models
 
 type Status string
 
-const (
+var (
 	PENDING   Status = "pending"
 	READY     Status = "ready"
 	PUBLISHED Status = "published"
