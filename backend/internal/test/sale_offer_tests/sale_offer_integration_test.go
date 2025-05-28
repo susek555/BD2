@@ -105,7 +105,7 @@ func TestCreateOffer_NonExistentManufacturer(t *testing.T) {
 	var seedOffers []models.SaleOffer
 	db, _ := setupDB()
 	server, _, _ := newTestServer(db, seedOffers)
-	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("Manufacturer", "invalid")))
+	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("ManufacturerName", "invalid")))
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
@@ -122,7 +122,7 @@ func TestCreateOffer_NonExistentModel(t *testing.T) {
 	var seedOffers []models.SaleOffer
 
 	server, _, _ := newTestServer(db, seedOffers)
-	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("Model", "invalid")))
+	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("ModelName", "invalid")))
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
@@ -706,7 +706,7 @@ func TestGetFiltered_EmptyDatabase(t *testing.T) {
 func TestGetFiltered_OneRegularOffer(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedOffers := []models.SaleOffer{*createOffer(1)}
-	server, _, _ := newTestServer(db, seedOffers)
+	server, _, a := newTestServer(db, seedOffers)
 	filter := sale_offer.NewOfferFilter()
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	body, err := json.Marshal(filter)
@@ -717,7 +717,7 @@ func TestGetFiltered_OneRegularOffer(t *testing.T) {
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
 	assert.Equal(t, len(seedOffers), len(got.Offers))
-	assert.Equal(t, *sale_offer.MapToDTO(&seedOffers[0]), got.Offers[0])
+	assert.True(t, doSaleOfferAndRetrieveSaleOfferDTOsMatch(seedOffers[0], got.Offers[0], a, nil))
 	u.CleanDB(DB)
 }
 

@@ -21,14 +21,14 @@ func makeFullAuctionEntity(id uint, end time.Time, buyNow uint) *models.Auction 
 		mockUserID = 99
 	)
 	man := models.Manufacturer{ID: 2, Name: "Tesla"}
-	mod := models.Model{ID: 1, Name: "ModelS", Manufacturer: man}
+	mod := models.Model{ID: 1, Name: "ModelS", Manufacturer: &man}
 	car := &models.Car{
 		OfferID:        id,
 		Mileage:        1000,
 		ProductionYear: 2021,
 		Color:          car_params.RED,
 		ModelID:        mod.ID,
-		Model:          mod,
+		Model:          &mod,
 	}
 	so := &models.SaleOffer{
 		ID:     id,
@@ -69,8 +69,8 @@ func makeValidCreateDTO() *auction.CreateAuctionDTO {
 			Transmission:       car_params.MANUAL,
 			NumberOfGears:      6,
 			Drive:              car_params.FWD,
-			Manufacturer:       "Tesla",
-			Model:              "ModelS",
+			ManufacturerName:   "Tesla",
+			ModelName:          "ModelS",
 		},
 		DateEnd:     future.Format("15:04 02/01/2006"),
 		BuyNowPrice: 5000,

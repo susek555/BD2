@@ -28,8 +28,8 @@ type CreateSaleOfferDTO struct {
 	Transmission       car_params.Transmission `json:"transmission" validate:"required"`
 	NumberOfGears      uint                    `json:"number_of_gears" validate:"required"`
 	Drive              car_params.Drive        `json:"drive" validate:"required"`
-	Manufacturer       string                  `json:"manufacturer" validate:"required"`
-	Model              string                  `json:"model" validate:"required"`
+	ManufacturerName   string                  `json:"manufacturer" validate:"required"`
+	ModelName          string                  `json:"model" validate:"required"`
 }
 
 type UpdateSaleOfferDTO struct {

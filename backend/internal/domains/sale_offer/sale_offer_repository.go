@@ -23,11 +23,11 @@ func NewSaleOfferRepository(db *gorm.DB) SaleOfferRepositoryInterface {
 }
 
 func (r *SaleOfferRepository) Create(offer *models.SaleOffer) error {
-	return r.DB.Session(&gorm.Session{FullSaveAssociations: true}).Create(offer).Error
+	return r.DB.Create(offer).Error
 }
 
 func (r *SaleOfferRepository) Update(offer *models.SaleOffer) error {
-	return r.DB.Session(&gorm.Session{FullSaveAssociations: true}).Save(offer).Error
+	return r.DB.Save(offer).Error
 }
 
 func (r *SaleOfferRepository) GetFiltered(filter *OfferFilter) ([]models.SaleOffer, *pagination.PaginationResponse, error) {
