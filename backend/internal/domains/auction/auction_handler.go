@@ -10,6 +10,7 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auth"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/scheduler"
 	"github.com/susek555/BD2/car-dealer-api/pkg/custom_errors"
+	"github.com/susek555/BD2/car-dealer-api/pkg/formats"
 )
 
 type Handler struct {
@@ -58,7 +59,7 @@ func (h *Handler) CreateAuction(c *gin.Context) {
 		return
 	}
 	dateEndLocal, err := time.ParseInLocation(
-		"15:04 02/01/2006",
+		formats.DateTimeLayout,
 		in.DateEnd,
 		loc,
 	)
