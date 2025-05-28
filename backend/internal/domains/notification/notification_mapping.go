@@ -16,3 +16,11 @@ func MapToNotification(clientNotification *models.ClientNotification) *models.No
 	}
 	return clientNotification.Notification
 }
+
+func MapToNotifications(clientNotifications []models.ClientNotification) []models.Notification {
+	notifications := make([]models.Notification, len(clientNotifications))
+	for i, cn := range clientNotifications {
+		notifications[i] = *MapToNotification(&cn)
+	}
+	return notifications
+}
