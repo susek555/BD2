@@ -7,6 +7,7 @@ import (
 
 type ImageRepositoryInterface interface {
 	Create(image *models.Image) error
+	Delete(id uint) error
 	GetImagesByOfferID(offerID uint) ([]models.Image, error)
 	DeleteByOfferID(offerID uint) error
 }
@@ -21,6 +22,12 @@ func NewImageRepository(db *gorm.DB) ImageRepositoryInterface {
 
 func (r *ImageRepository) Create(image *models.Image) error {
 	return r.DB.Create(&image).Error
+}
+
+func (r *ImageRepository) Delete(id uint) error {
+	var image models.Image
+	err := r.DB.Delete(&image, id).Error
+	return err
 }
 
 func (r *ImageRepository) GetImagesByOfferID(offerID uint) ([]models.Image, error) {
