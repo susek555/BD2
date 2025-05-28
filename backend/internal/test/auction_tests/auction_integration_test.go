@@ -221,7 +221,7 @@ func TestCreateAuctionSuccess(t *testing.T) {
 			ManufacturerName:   "Toyota",
 			ModelName:          "Corolla",
 		},
-		DateEnd:     "15:04 02/01/2026",
+		DateEnd:     "15:04 2026-02-01",
 		BuyNowPrice: 12000,
 	}
 	auctionInputJSON, err := json.Marshal(auctionInput)
@@ -303,7 +303,7 @@ func TestCreateAuctionInvalidDate(t *testing.T) {
 			ManufacturerName:   "Corolla",
 			ModelName:          "Toyota",
 		},
-		DateEnd:     "15:04 02/01/2025",
+		DateEnd:     "15:04 2023-01-01",
 		BuyNowPrice: 12000,
 	}
 	auctionInputJSON, err := json.Marshal(auctionInput)
