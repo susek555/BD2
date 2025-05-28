@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:15-alpine
+    image: aeffix/pg_ivm:postgres16.4-pg_ivm1.9
     container_name: bd2-postgres
     environment:
       POSTGRES_USER: bd2_user
