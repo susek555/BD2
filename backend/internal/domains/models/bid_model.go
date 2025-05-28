@@ -5,11 +5,11 @@ import (
 )
 
 type Bid struct {
-	ID        uint      `json:"id" gorm:"primary_key"`
-	Amount    uint      `json:"amount" gorm:"not null;index"`
-	CreatedAt time.Time `json:"created_at" gorm:"not null;index"`
-	AuctionID uint      `json:"auction_id" gorm:"not null;index"`
-	BidderID  uint      `json:"bidder_id" gorm:"not null;index"`
+	ID        uint      `json:"id"`
+	Amount    uint      `json:"amount"`
+	CreatedAt time.Time `json:"created_at"`
+	AuctionID uint      `json:"auction_id"`
+	BidderID  uint      `json:"bidder_id"`
 	Bidder    *User     `gorm:"foreignKey:BidderID;references:ID"`
-	Auction   *Auction  `gorm:"foreignKey:AuctionID;references:OfferID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Auction   *Auction  `gorm:"foreignKey:AuctionID;references:OfferID;"`
 }
