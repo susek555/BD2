@@ -42,7 +42,7 @@ func (h *Handler) UploadImages(c *gin.Context) {
 		return
 	}
 	files := form.File["images"]
-	if err = h.imageService.StoreImages(uint(offerID), files); err != nil {
+	if err = h.imageService.Store(uint(offerID), files); err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}

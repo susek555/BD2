@@ -8,7 +8,7 @@ import (
 )
 
 type ImageRetrieverInterface interface {
-	GetImagesByOfferID(offerID uint) ([]models.Image, error)
+	GetByOfferID(offerID uint) ([]models.Image, error)
 }
 
 type ManufacturerRetrieverInterface interface {
@@ -167,7 +167,7 @@ func (s *SaleOfferService) DetermineNewModelID(offer *models.SaleOffer, dto *Upd
 }
 
 func (s *SaleOfferService) getOfferImagesURLs(offer *models.SaleOffer) ([]string, error) {
-	images, err := s.imageRetriever.GetImagesByOfferID(offer.ID)
+	images, err := s.imageRetriever.GetByOfferID(offer.ID)
 	if err != nil {
 		return nil, err
 	}
