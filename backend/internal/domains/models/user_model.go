@@ -5,7 +5,7 @@ type User struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 	Email    string `json:"email"`
-	Selector string `json:"selector" gorm:"check:selector IN ('P', 'C')"`
+	Selector string `json:"selector"`
 	Person   *Person
 	Company  *Company
 }
