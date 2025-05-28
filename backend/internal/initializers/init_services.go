@@ -35,7 +35,6 @@ var AccessEvaluator sale_offer.OfferAccessEvaluatorInterface
 var UserService user.UserServiceInterface
 
 func InitializeServices() {
-	AuctionService = auction.NewAuctionService(AuctionRepo)
 	RefreshTokenService = refresh_token.NewRefreshTokenService(RefreshTokenRepo)
 	secret := os.Getenv("JWT_SECRET")
 	if secret == "" {
@@ -51,6 +50,7 @@ func InitializeServices() {
 	ReviewService = review.NewReviewService(ReviewRepo)
 	AccessEvaluator = sale_offer.NewAccessEvaluator(BidRepo, LikedOfferRepo)
 	SaleOfferService = sale_offer.NewSaleOfferService(SaleOfferRepo, ManufacturerRepo, ModelRepo, ImageRepo, AccessEvaluator)
+	AuctionService = auction.NewAuctionService(AuctionRepo, SaleOfferService.(*sale_offer.SaleOfferService))
 	LikedOfferService = liked_offer.NewLikedOfferService(LikedOfferRepo, SaleOfferRepo)
 	UserService = user.NewUserService(UserRepo)
 }
