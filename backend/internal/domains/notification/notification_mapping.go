@@ -16,4 +16,3 @@ func MapToNotification(clientNotification *models.ClientNotification) *models.No
 	}
 	return clientNotification.Notification
 }
-
