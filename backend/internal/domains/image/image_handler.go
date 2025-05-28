@@ -29,7 +29,7 @@ func (h *Handler) UploadImages(c *gin.Context) {
 	id := userID.(uint)
 	offer, err := h.saleOfferService.GetByID(uint(offerID), &id)
 	if err != nil {
-		custom_errors.HandleError(c, err, ErrorMap)
+		custom_errors.HandleError(c, err, sale_offer.ErrorMap)
 		return
 	}
 	if offer.UserID != userID {
@@ -42,12 +42,14 @@ func (h *Handler) UploadImages(c *gin.Context) {
 		return
 	}
 	files := form.File["images"]
-	urls, err := h.imageService.StoreImages(uint(offerID), files)
-	if err != nil {
+	if err = h.imageService.StoreImages(uint(offerID), files); err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
-	offer.ImagesUrls = urls
-	offer.Status = models.READY
+	offer, err = h.saleOfferService.Update(&sale_offer.UpdateSaleOfferDTO{ID: uint(offerID), Status: &models.READY}, id)
+	if err != nil {
+		custom_errors.HandleError(c, err, sale_offer.ErrorMap)
+		return
+	}
 	c.JSON(http.StatusOK, offer)
 }
