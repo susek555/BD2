@@ -172,7 +172,7 @@ func TestMapToUser_ValidCompany(t *testing.T) {
 	assert.Equal(t, "john@example.com", user.Email)
 	assert.Equal(t, "C", user.Selector)
 	assert.Equal(t, "john company", user.Company.Name)
-	assert.Equal(t, "1234567890", user.Company.NIP)
+	assert.Equal(t, "1234567890", user.Company.Nip)
 }
 
 func TestMapToUser_PersonWithAllFields(t *testing.T) {
@@ -223,7 +223,7 @@ func TestMapToUser_CompanyWithAllFields(t *testing.T) {
 	assert.Equal(t, "john@example.com", user.Email)
 	assert.Equal(t, "C", user.Selector)
 	assert.Equal(t, "john company", user.Company.Name)
-	assert.Equal(t, "1234567890", user.Company.NIP)
+	assert.Equal(t, "1234567890", user.Company.Nip)
 	assert.Nil(t, user.Person)
 }
 
@@ -247,7 +247,7 @@ func TestMapToDTO_Company(t *testing.T) {
 	assert.Equal(t, user_.Username, dto.Username)
 	assert.Equal(t, user_.Email, dto.Email)
 	assert.Equal(t, user_.Company.Name, *dto.CompanyName)
-	assert.Equal(t, user_.Company.NIP, *dto.CompanyNIP)
+	assert.Equal(t, user_.Company.Nip, *dto.CompanyNIP)
 }
 
 // --------------------------------
@@ -332,7 +332,7 @@ func TestUpdateUserFromDTO_CompanyNIPAsCompany(t *testing.T) {
 	assert.Equal(t, user.Email, newUser.Email)
 	assert.Equal(t, user.Password, newUser.Password)
 	assert.Equal(t, user.Username, newUser.Username)
-	assert.Equal(t, companyNIP, newUser.Company.NIP)
+	assert.Equal(t, companyNIP, newUser.Company.Nip)
 }
 
 func TestUpdateUserFromDTO_CompanyNIPAsPerson(t *testing.T) {

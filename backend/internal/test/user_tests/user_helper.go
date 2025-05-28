@@ -85,7 +85,7 @@ func createCompany(id uint) *models.User {
 		Email:    fmt.Sprintf("john%d@gmail.com", id),
 		Password: "hashed_password",
 		Selector: "C",
-		Company:  &models.Company{Name: "john company", NIP: fmt.Sprintf("1234567890-%d", id)},
+		Company:  &models.Company{Name: "john company", Nip: fmt.Sprintf("1234567890-%d", id)},
 	}
 	return &user
 }

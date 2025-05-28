@@ -421,7 +421,7 @@ func TestUpdateUser_UpdateNIPAsCompany(t *testing.T) {
 	_, companyRepo, _ := getRepositories(db)
 	got, err := companyRepo.GetById(1)
 	assert.NoError(t, err)
-	assert.Equal(t, got.NIP, newNIP)
+	assert.Equal(t, got.Nip, newNIP)
 }
 
 func TestUpdateUser_UpdateNIPAsCompanyNotUnique(t *testing.T) {
@@ -429,7 +429,7 @@ func TestUpdateUser_UpdateNIPAsCompanyNotUnique(t *testing.T) {
 	newNIP := "1234567890"
 	seedUsers := []models.User{
 		*createCompany(1),
-		*u.Build(createCompany(2), withCompanyField(u.WithField[models.Company]("NIP", newNIP))),
+		*u.Build(createCompany(2), withCompanyField(u.WithField[models.Company]("Nip", newNIP))),
 	}
 	body, err := json.Marshal(user.UpdateUserDTO{ID: seedUsers[0].ID, CompanyNIP: &newNIP})
 	assert.NoError(t, err)
