@@ -9,6 +9,6 @@ import (
 var Sched scheduler.SchedulerInterface
 
 func InitializeScheduler() {
-	Sched = scheduler.NewScheduler(BidRepo, RedisClient, NotificationService, SaleOfferRepo)
+	Sched = scheduler.NewScheduler(BidRepo, RedisClient, NotificationService, SaleOfferRepo, Hub)
 	go Sched.Run(context.Background())
 }
