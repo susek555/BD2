@@ -20,17 +20,7 @@ func NewAuctionRepository(db *gorm.DB) AuctionRepositoryInterface {
 }
 
 func (a *AuctionRepository) Create(auction *models.Auction) error {
-	return a.DB.
-		Transaction(func(tx *gorm.DB) error {
-			err := tx.Create(auction).Error
-			if err != nil {
-				return err
-			}
-			return tx.
-				Preload("Offer.Car.Model.Manufacturer").
-				Preload("Offer.User").
-				First(auction, "offer_id = ?", auction.OfferID).Error
-		})
+	return a.DB.Create(auction).Error
 }
 
 func (a *AuctionRepository) GetAll() ([]models.Auction, error) {
