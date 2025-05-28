@@ -76,14 +76,14 @@ func TestService_Register_Company(t *testing.T) {
 		ctx := context.Background()
 		uRepo := mocks.NewUserRepositoryInterface(t)
 		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
-		company := models.Company{Name: "Awesome Name", NIP: "123233234234"}
+		company := models.Company{Name: "Awesome Name", Nip: "123233234234"}
 
 		in := user.CreateUserDTO{
 			Email:       "john@example.com",
 			Password:    "secret",
 			Username:    "john",
 			CompanyName: &company.Name,
-			CompanyNIP:  &company.NIP,
+			CompanyNIP:  &company.Nip,
 			Selector:    "C",
 		}
 
@@ -199,9 +199,9 @@ func TestService_Refresh(t *testing.T) {
 	baseRT := models.RefreshToken{
 		ID:         101,
 		Token:      oldToken,
-		UserId:     1,
+		UserID:     1,
 		ExpiryDate: time.Now().Add(24 * time.Hour),
-		User:       models.User{ID: 1, Email: "john@example.com"},
+		User:       &models.User{ID: 1, Email: "john@example.com"},
 	}
 
 	t.Run("happy‑path – returns new access", func(t *testing.T) {

@@ -99,7 +99,7 @@ func prepareLoginResponse(access, refresh string, user models.User) *LoginRespon
 	}
 	if user.Selector == "C" {
 		loginResponse.CompanyName = user.Company.Name
-		loginResponse.CompanyNip = user.Company.NIP
+		loginResponse.CompanyNip = user.Company.Nip
 	} else if user.Selector == "P" {
 		loginResponse.PersonName = user.Person.Name
 		loginResponse.PersonSurname = user.Person.Surname
@@ -169,6 +169,7 @@ func (h *Handler) Logout(c *gin.Context) {
 }
 
 // ChangePassword godoc
+//
 //	@Summary		Change user password
 //	@Description	Changes the password of the authenticated user
 //	@Tags			auth

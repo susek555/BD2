@@ -6,7 +6,7 @@ import (
 
 type Company struct {
 	UserID uint   `json:"id" gorm:"primaryKey"`
-	NIP    string `json:"nip"`
+	Nip    string `json:"nip"`
 	Name   string `json:"name"`
 	User   User   `gorm:"foreignKey:UserID;references:ID"`
 }

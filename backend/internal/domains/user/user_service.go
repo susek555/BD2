@@ -97,7 +97,7 @@ func (s *UserService) Update(in *UpdateUserDTO) map[string][]string {
 		errs["email"] = []string{ErrEmailTaken.Error()}
 	}
 	if updatedUser.Selector == "C" {
-		u, noNip := s.repo.GetByCompanyNip(updatedUser.Company.NIP)
+		u, noNip := s.repo.GetByCompanyNip(updatedUser.Company.Nip)
 		if noNip == nil && u.ID != updatedUser.ID {
 			errs["company_nip"] = []string{ErrNipAlreadyTaken.Error()}
 		}

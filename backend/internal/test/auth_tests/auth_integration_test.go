@@ -238,7 +238,7 @@ func TestRegisterCompanyEmailAlreadyExists(t *testing.T) {
 			Selector: "C",
 			Company: &models.Company{
 				Name: "Herakles",
-				NIP:  "1234567890",
+				Nip:  "1234567890",
 			},
 		},
 	}
@@ -277,7 +277,7 @@ func TestRegisterCompanyUsernameAlreadyExists(t *testing.T) {
 			Selector: "C",
 			Company: &models.Company{
 				Name: "Herakles",
-				NIP:  "1234567890",
+				Nip:  "1234567890",
 			},
 		},
 	}
@@ -316,7 +316,7 @@ func TestRegisterCompanyNipAlreadyExists(t *testing.T) {
 			Selector: "C",
 			Company: &models.Company{
 				Name: "Herakles",
-				NIP:  "1234567890",
+				Nip:  "1234567890",
 			},
 		},
 	}
@@ -526,7 +526,6 @@ func TestRefreshSuccess(t *testing.T) {
 	err = json.Unmarshal(w.Body.Bytes(), &response)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, response["access_token"])
-
 }
 
 func TestRefreshInvalidToken(t *testing.T) {

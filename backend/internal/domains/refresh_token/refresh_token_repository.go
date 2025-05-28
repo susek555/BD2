@@ -65,6 +65,7 @@ func (repo *RefreshTokenRepository) FindByToken(token string) (*models.RefreshTo
 	var t models.RefreshToken
 	err := repo.repository.
 		DB.
+		Preload("User").
 		Where("token = ?", token).
 		First(&t).Error
 	return &t, err
