@@ -19,12 +19,14 @@ type ModelRetrieverInterface interface {
 	GetByManufacturerAndModelName(manufacturerName, modelName string) (*models.Model, error)
 }
 
+//go:generate mockery --name=SaleOfferServiceInterface --output=../../test/mocks --case=snake --with-expecter
 type SaleOfferServiceInterface interface {
 	Create(in *CreateSaleOfferDTO) (*RetrieveDetailedSaleOfferDTO, error)
 	Update(in *UpdateSaleOfferDTO, userID uint) (*RetrieveDetailedSaleOfferDTO, error)
 	GetByID(id uint, userID *uint) (*RetrieveDetailedSaleOfferDTO, error)
 	GetByUserID(id uint, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error)
 	GetFiltered(filter *OfferFilter) (*RetrieveOffersWithPagination, error)
+	GetModelID(manufacturerName, modelName string) (uint, error)
 }
 
 type SaleOfferService struct {
@@ -56,7 +58,7 @@ func (s *SaleOfferService) Create(in *CreateSaleOfferDTO) (*RetrieveDetailedSale
 	if err != nil {
 		return nil, err
 	}
-	modelID, err := s.getModelID(in.ManufacturerName, in.ModelName)
+	modelID, err := s.GetModelID(in.ManufacturerName, in.ModelName)
 	if err != nil {
 		return nil, err
 	}
@@ -140,7 +142,7 @@ func (s *SaleOfferService) GetFiltered(filter *OfferFilter) (*RetrieveOffersWith
 	return &RetrieveOffersWithPagination{Offers: offerDTOs, PaginationResponse: pagResponse}, nil
 }
 
-func (s *SaleOfferService) getModelID(manufacturerName, modelName string) (uint, error) {
+func (s *SaleOfferService) GetModelID(manufacturerName, modelName string) (uint, error) {
 	model, err := s.modelRetriever.GetByManufacturerAndModelName(manufacturerName, modelName)
 	if err != nil {
 		return 0, ErrInvalidManufacturerModelPair
@@ -156,7 +158,7 @@ func (s *SaleOfferService) determineNewModelID(offer *models.SaleOffer, dto *Upd
 	if dto.Manufacturer != nil {
 		manufacturerName = *dto.Manufacturer
 	}
-	modelID, err := s.getModelID(manufacturerName, *dto.Model)
+	modelID, err := s.GetModelID(manufacturerName, *dto.Model)
 	if err != nil {
 		return 0, err
 	}
