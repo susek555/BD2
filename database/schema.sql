@@ -168,7 +168,7 @@ CREATE TABLE images (
     id SERIAL PRIMARY KEY,
     offer_id INTEGER REFERENCES sale_offers(id),
     url VARCHAR(200) NOT NULL
-)
+);
 
 INSERT INTO manufacturers (name) VALUES
 ('Toyota'),
