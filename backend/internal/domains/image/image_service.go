@@ -7,31 +7,42 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 )
 
+type OfferRetrieverInterface interface {
+	GetByID(offerID uint) (*models.SaleOffer, error)
+}
+
 type ImageServiceInterface interface {
-	Store(offerID uint, image []*multipart.FileHeader) error
-	DeleteByURL(url string) error
-	DeleteByOfferID(offerID uint) error
+	Store(offerID uint, image []*multipart.FileHeader, userID uint) error
+	DeleteByURL(url string, userID uint) error
+	DeleteByOfferID(offerID uint, userID uint) error
 }
 
 type ImageService struct {
-	repo   ImageRepositoryInterface
-	bucket ImageBucketInterface
+	repo           ImageRepositoryInterface
+	bucket         ImageBucketInterface
+	offerRetriever OfferRetrieverInterface
 }
 
-func NewImageService(r ImageRepositoryInterface, b ImageBucketInterface) ImageServiceInterface {
-	return &ImageService{repo: r, bucket: b}
+func NewImageService(r ImageRepositoryInterface, b ImageBucketInterface, offerRetriever OfferRetrieverInterface) ImageServiceInterface {
+	return &ImageService{repo: r, bucket: b, offerRetriever: offerRetriever}
 }
 
-func (s *ImageService) Store(offerID uint, images []*multipart.FileHeader) error {
+func (s *ImageService) Store(offerID uint, images []*multipart.FileHeader, userID uint) error {
 	if err := s.validateImageLimit(offerID, len(images), 10); err != nil {
-		return nil
+		return err
+	}
+	if err := s.validateIfOfferBelongsToUser(offerID, userID); err != nil {
+		return err
 	}
 	return s.saveImagesToStorageAndDB(offerID, images)
 }
 
-func (s *ImageService) DeleteByURL(url string) error {
+func (s *ImageService) DeleteByURL(url string, userID uint) error {
 	image, err := s.repo.GetByURL(url)
 	if err != nil {
+		return err
+	}
+	if err := s.validateIfOfferBelongsToUser(image.OfferID, userID); err != nil {
 		return err
 	}
 	if err := s.repo.Delete(image.ID); err != nil {
@@ -46,7 +57,10 @@ func (s *ImageService) DeleteByURL(url string) error {
 	return nil
 }
 
-func (s *ImageService) DeleteByOfferID(offerID uint) error {
+func (s *ImageService) DeleteByOfferID(offerID uint, userID uint) error {
+	if err := s.validateIfOfferBelongsToUser(offerID, userID); err != nil {
+		return err
+	}
 	folder := fmt.Sprintf("sale-offer-%d/", offerID)
 	images, err := s.repo.GetByOfferID(offerID)
 	if err != nil {
@@ -71,6 +85,17 @@ func (s *ImageService) validateImageLimit(offerID uint, nImages int, maxImages i
 	}
 	if nImages+len(storedImages) > maxImages {
 		return ErrTooManyImages
+	}
+	return nil
+}
+
+func (s *ImageService) validateIfOfferBelongsToUser(offerID, userID uint) error {
+	offer, err := s.offerRetriever.GetByID(offerID)
+	if err != nil {
+		return err
+	}
+	if !offer.BelongsToUser(userID) {
+		return ErrOfferNotOwned
 	}
 	return nil
 }
