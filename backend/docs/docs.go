@@ -1009,6 +1009,125 @@ const docTemplate = `{
                 }
             }
         },
+        "/favourites/dislike/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Dislike offer by giving it's id. You have to be logged in to perform this operation.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "favourites"
+                ],
+                "summary": "Dislike offer",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Sale offer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "400": {
+                        "description": "Invalid input data",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - user not logged in",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Sale offer not found",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/favourites/like/{id}": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Like new offer by giving it's id. You have to be logged in to perform this operation.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "favourites"
+                ],
+                "summary": "Like new offer",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Sale offer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Liked offer",
+                        "schema": {
+                            "$ref": "#/definitions/models.LikedOffer"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input data",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - user not logged in",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Sale offer not found",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/logout": {
             "post": {
                 "description": "Logout user and invalidate refresh token",
@@ -1576,125 +1695,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/sale-offer/id/dislike/{id}": {
-            "delete": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "description": "Dislike offer by giving it's id. You have to be logged in to perform this operation.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "sale-offer"
-                ],
-                "summary": "Dislike offer",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Sale offer ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No content"
-                    },
-                    "400": {
-                        "description": "Invalid input data",
-                        "schema": {
-                            "$ref": "#/definitions/custom_errors.HTTPError"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized - user not logged in",
-                        "schema": {
-                            "$ref": "#/definitions/custom_errors.HTTPError"
-                        }
-                    },
-                    "404": {
-                        "description": "Sale offer not found",
-                        "schema": {
-                            "$ref": "#/definitions/custom_errors.HTTPError"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/custom_errors.HTTPError"
-                        }
-                    }
-                }
-            }
-        },
-        "/sale-offer/id/like/{id}": {
-            "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "description": "Like new offer by giving it's id. You have to be logged in to perform this operation.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "sale-offer"
-                ],
-                "summary": "Like new offer",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Sale offer ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Liked offer",
-                        "schema": {
-                            "$ref": "#/definitions/models.LikedOffer"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid input data",
-                        "schema": {
-                            "$ref": "#/definitions/custom_errors.HTTPError"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized - user not logged in",
-                        "schema": {
-                            "$ref": "#/definitions/custom_errors.HTTPError"
-                        }
-                    },
-                    "404": {
-                        "description": "Sale offer not found",
-                        "schema": {
-                            "$ref": "#/definitions/custom_errors.HTTPError"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/custom_errors.HTTPError"
-                        }
-                    }
-                }
-            }
-        },
         "/sale-offer/id/{id}": {
             "get": {
                 "description": "Returns a sale offer by its ID. Can be used to retrieve detailed information about sale offer.",
@@ -2098,9 +2098,10 @@ const docTemplate = `{
                 "engine_capacity",
                 "engine_power",
                 "fuel_type",
+                "manufacturer",
                 "margin",
                 "mileage",
-                "model_id",
+                "model",
                 "number_of_doors",
                 "number_of_gears",
                 "number_of_seats",
@@ -2136,14 +2137,17 @@ const docTemplate = `{
                 "fuel_type": {
                     "$ref": "#/definitions/car_params.FuelType"
                 },
+                "manufacturer": {
+                    "type": "string"
+                },
                 "margin": {
                     "$ref": "#/definitions/models.MarginValue"
                 },
                 "mileage": {
                     "type": "integer"
                 },
-                "model_id": {
-                    "type": "integer"
+                "model": {
+                    "type": "string"
                 },
                 "number_of_doors": {
                     "type": "integer"
@@ -2217,26 +2221,6 @@ const docTemplate = `{
         },
         "auction.UpdateAuctionDTO": {
             "type": "object",
-            "required": [
-                "color",
-                "description",
-                "drive",
-                "engine_capacity",
-                "engine_power",
-                "fuel_type",
-                "margin",
-                "mileage",
-                "model_id",
-                "number_of_doors",
-                "number_of_gears",
-                "number_of_seats",
-                "price",
-                "production_year",
-                "registration_date",
-                "registration_number",
-                "transmission",
-                "vin"
-            ],
             "properties": {
                 "buy_now_price": {
                     "type": "integer"
@@ -2265,14 +2249,17 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
+                "manufacturer": {
+                    "type": "string"
+                },
                 "margin": {
                     "$ref": "#/definitions/models.MarginValue"
                 },
                 "mileage": {
                     "type": "integer"
                 },
-                "model_id": {
-                    "type": "integer"
+                "model": {
+                    "type": "string"
                 },
                 "number_of_doors": {
                     "type": "integer"
@@ -2609,14 +2596,121 @@ const docTemplate = `{
                 }
             }
         },
+        "models.Auction": {
+            "type": "object",
+            "properties": {
+                "buy_now_price": {
+                    "type": "integer"
+                },
+                "date_end": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "offer": {
+                    "$ref": "#/definitions/models.SaleOffer"
+                }
+            }
+        },
+        "models.Car": {
+            "type": "object",
+            "properties": {
+                "color": {
+                    "$ref": "#/definitions/car_params.Color"
+                },
+                "drive": {
+                    "$ref": "#/definitions/car_params.Drive"
+                },
+                "engine_capacity": {
+                    "type": "integer"
+                },
+                "engine_power": {
+                    "type": "integer"
+                },
+                "fuel_type": {
+                    "$ref": "#/definitions/car_params.FuelType"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "mileage": {
+                    "type": "integer"
+                },
+                "model": {
+                    "$ref": "#/definitions/models.Model"
+                },
+                "model_id": {
+                    "type": "integer"
+                },
+                "number_of_doors": {
+                    "type": "integer"
+                },
+                "number_of_gears": {
+                    "type": "integer"
+                },
+                "number_of_seats": {
+                    "type": "integer"
+                },
+                "production_year": {
+                    "type": "integer"
+                },
+                "registration_date": {
+                    "type": "string"
+                },
+                "registration_number": {
+                    "type": "string"
+                },
+                "transmission": {
+                    "$ref": "#/definitions/car_params.Transmission"
+                },
+                "vin": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Company": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "nip": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/models.User"
+                }
+            }
+        },
         "models.LikedOffer": {
             "type": "object",
             "properties": {
                 "offer_id": {
                     "type": "integer"
                 },
+                "saleOffer": {
+                    "$ref": "#/definitions/models.SaleOffer"
+                },
+                "user": {
+                    "$ref": "#/definitions/models.User"
+                },
                 "user_id": {
                     "type": "integer"
+                }
+            }
+        },
+        "models.Manufacturer": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
                 }
             }
         },
@@ -2632,6 +2726,114 @@ const docTemplate = `{
                 "MEDIUM_MARGIN",
                 "HIGH_MARGIN"
             ]
+        },
+        "models.Model": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "manufacturer": {
+                    "$ref": "#/definitions/models.Manufacturer"
+                },
+                "manufacturer_id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Person": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "surname": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/models.User"
+                }
+            }
+        },
+        "models.SaleOffer": {
+            "type": "object",
+            "properties": {
+                "auction": {
+                    "$ref": "#/definitions/models.Auction"
+                },
+                "car": {
+                    "$ref": "#/definitions/models.Car"
+                },
+                "date_of_issue": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "margin": {
+                    "$ref": "#/definitions/models.MarginValue"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "status": {
+                    "$ref": "#/definitions/models.Status"
+                },
+                "user": {
+                    "$ref": "#/definitions/models.User"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.Status": {
+            "type": "string",
+            "enum": [
+                "pending",
+                "ready",
+                "published"
+            ],
+            "x-enum-varnames": [
+                "PENDING",
+                "READY",
+                "PUBLISHED"
+            ]
+        },
+        "models.User": {
+            "type": "object",
+            "properties": {
+                "company": {
+                    "$ref": "#/definitions/models.Company"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "person": {
+                    "$ref": "#/definitions/models.Person"
+                },
+                "selector": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
         },
         "pagination.PaginationRequest": {
             "type": "object",
@@ -2766,9 +2968,10 @@ const docTemplate = `{
                 "engine_capacity",
                 "engine_power",
                 "fuel_type",
+                "manufacturer",
                 "margin",
                 "mileage",
-                "model_id",
+                "model",
                 "number_of_doors",
                 "number_of_gears",
                 "number_of_seats",
@@ -2798,14 +3001,17 @@ const docTemplate = `{
                 "fuel_type": {
                     "$ref": "#/definitions/car_params.FuelType"
                 },
+                "manufacturer": {
+                    "type": "string"
+                },
                 "margin": {
                     "$ref": "#/definitions/models.MarginValue"
                 },
                 "mileage": {
                     "type": "integer"
                 },
-                "model_id": {
-                    "type": "integer"
+                "model": {
+                    "type": "string"
                 },
                 "number_of_doors": {
                     "type": "integer"
@@ -2987,6 +3193,12 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
+                "images_urls": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "is_auction": {
                     "type": "boolean"
                 },
@@ -3023,8 +3235,14 @@ const docTemplate = `{
                 "registration_number": {
                     "type": "string"
                 },
+                "status": {
+                    "$ref": "#/definitions/models.Status"
+                },
                 "transmission": {
                     "$ref": "#/definitions/car_params.Transmission"
+                },
+                "user_id": {
+                    "type": "integer"
                 },
                 "username": {
                     "type": "string"

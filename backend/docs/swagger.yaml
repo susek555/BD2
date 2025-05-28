@@ -17,12 +17,14 @@ definitions:
         type: integer
       fuel_type:
         $ref: '#/definitions/car_params.FuelType'
+      manufacturer:
+        type: string
       margin:
         $ref: '#/definitions/models.MarginValue'
       mileage:
         type: integer
-      model_id:
-        type: integer
+      model:
+        type: string
       number_of_doors:
         type: integer
       number_of_gears:
@@ -48,9 +50,10 @@ definitions:
     - engine_capacity
     - engine_power
     - fuel_type
+    - manufacturer
     - margin
     - mileage
-    - model_id
+    - model
     - number_of_doors
     - number_of_gears
     - number_of_seats
@@ -108,12 +111,14 @@ definitions:
         $ref: '#/definitions/car_params.FuelType'
       id:
         type: integer
+      manufacturer:
+        type: string
       margin:
         $ref: '#/definitions/models.MarginValue'
       mileage:
         type: integer
-      model_id:
-        type: integer
+      model:
+        type: string
       number_of_doors:
         type: integer
       number_of_gears:
@@ -132,25 +137,6 @@ definitions:
         $ref: '#/definitions/car_params.Transmission'
       vin:
         type: string
-    required:
-    - color
-    - description
-    - drive
-    - engine_capacity
-    - engine_power
-    - fuel_type
-    - margin
-    - mileage
-    - model_id
-    - number_of_doors
-    - number_of_gears
-    - number_of_seats
-    - price
-    - production_year
-    - registration_date
-    - registration_number
-    - transmission
-    - vin
     type: object
   auth.ChangePasswordDTO:
     properties:
@@ -374,12 +360,82 @@ definitions:
       name:
         type: string
     type: object
+  models.Auction:
+    properties:
+      buy_now_price:
+        type: integer
+      date_end:
+        type: string
+      id:
+        type: integer
+      offer:
+        $ref: '#/definitions/models.SaleOffer'
+    type: object
+  models.Car:
+    properties:
+      color:
+        $ref: '#/definitions/car_params.Color'
+      drive:
+        $ref: '#/definitions/car_params.Drive'
+      engine_capacity:
+        type: integer
+      engine_power:
+        type: integer
+      fuel_type:
+        $ref: '#/definitions/car_params.FuelType'
+      id:
+        type: integer
+      mileage:
+        type: integer
+      model:
+        $ref: '#/definitions/models.Model'
+      model_id:
+        type: integer
+      number_of_doors:
+        type: integer
+      number_of_gears:
+        type: integer
+      number_of_seats:
+        type: integer
+      production_year:
+        type: integer
+      registration_date:
+        type: string
+      registration_number:
+        type: string
+      transmission:
+        $ref: '#/definitions/car_params.Transmission'
+      vin:
+        type: string
+    type: object
+  models.Company:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      nip:
+        type: string
+      user:
+        $ref: '#/definitions/models.User'
+    type: object
   models.LikedOffer:
     properties:
       offer_id:
         type: integer
+      saleOffer:
+        $ref: '#/definitions/models.SaleOffer'
+      user:
+        $ref: '#/definitions/models.User'
       user_id:
         type: integer
+    type: object
+  models.Manufacturer:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
     type: object
   models.MarginValue:
     enum:
@@ -391,6 +447,78 @@ definitions:
     - LOW_MARGIN
     - MEDIUM_MARGIN
     - HIGH_MARGIN
+  models.Model:
+    properties:
+      id:
+        type: integer
+      manufacturer:
+        $ref: '#/definitions/models.Manufacturer'
+      manufacturer_id:
+        type: integer
+      name:
+        type: string
+    type: object
+  models.Person:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      surname:
+        type: string
+      user:
+        $ref: '#/definitions/models.User'
+    type: object
+  models.SaleOffer:
+    properties:
+      auction:
+        $ref: '#/definitions/models.Auction'
+      car:
+        $ref: '#/definitions/models.Car'
+      date_of_issue:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      margin:
+        $ref: '#/definitions/models.MarginValue'
+      price:
+        type: integer
+      status:
+        $ref: '#/definitions/models.Status'
+      user:
+        $ref: '#/definitions/models.User'
+      user_id:
+        type: integer
+    type: object
+  models.Status:
+    enum:
+    - pending
+    - ready
+    - published
+    type: string
+    x-enum-varnames:
+    - PENDING
+    - READY
+    - PUBLISHED
+  models.User:
+    properties:
+      company:
+        $ref: '#/definitions/models.Company'
+      email:
+        type: string
+      id:
+        type: integer
+      password:
+        type: string
+      person:
+        $ref: '#/definitions/models.Person'
+      selector:
+        type: string
+      username:
+        type: string
+    type: object
   pagination.PaginationRequest:
     properties:
       page:
@@ -485,12 +613,14 @@ definitions:
         type: integer
       fuel_type:
         $ref: '#/definitions/car_params.FuelType'
+      manufacturer:
+        type: string
       margin:
         $ref: '#/definitions/models.MarginValue'
       mileage:
         type: integer
-      model_id:
-        type: integer
+      model:
+        type: string
       number_of_doors:
         type: integer
       number_of_gears:
@@ -516,9 +646,10 @@ definitions:
     - engine_capacity
     - engine_power
     - fuel_type
+    - manufacturer
     - margin
     - mileage
-    - model_id
+    - model
     - number_of_doors
     - number_of_gears
     - number_of_seats
@@ -630,6 +761,10 @@ definitions:
         $ref: '#/definitions/car_params.FuelType'
       id:
         type: integer
+      images_urls:
+        items:
+          type: string
+        type: array
       is_auction:
         type: boolean
       is_liked:
@@ -654,8 +789,12 @@ definitions:
         type: string
       registration_number:
         type: string
+      status:
+        $ref: '#/definitions/models.Status'
       transmission:
         $ref: '#/definitions/car_params.Transmission'
+      user_id:
+        type: integer
       username:
         type: string
       vin:
@@ -1423,6 +1562,84 @@ paths:
       summary: Get all possible transmissions
       tags:
       - car
+  /favourites/dislike/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Dislike offer by giving it's id. You have to be logged in to perform
+        this operation.
+      parameters:
+      - description: Sale offer ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No content
+        "400":
+          description: Invalid input data
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "401":
+          description: Unauthorized - user not logged in
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "404":
+          description: Sale offer not found
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      security:
+      - Bearer: []
+      summary: Dislike offer
+      tags:
+      - favourites
+  /favourites/like/{id}:
+    post:
+      consumes:
+      - application/json
+      description: Like new offer by giving it's id. You have to be logged in to perform
+        this operation.
+      parameters:
+      - description: Sale offer ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Liked offer
+          schema:
+            $ref: '#/definitions/models.LikedOffer'
+        "400":
+          description: Invalid input data
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "401":
+          description: Unauthorized - user not logged in
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "404":
+          description: Sale offer not found
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      security:
+      - Bearer: []
+      summary: Like new offer
+      tags:
+      - favourites
   /logout:
     post:
       consumes:
@@ -1854,84 +2071,6 @@ paths:
           schema:
             $ref: '#/definitions/custom_errors.HTTPError'
       summary: Get sale offer by ID
-      tags:
-      - sale-offer
-  /sale-offer/id/dislike/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Dislike offer by giving it's id. You have to be logged in to perform
-        this operation.
-      parameters:
-      - description: Sale offer ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "204":
-          description: No content
-        "400":
-          description: Invalid input data
-          schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
-        "401":
-          description: Unauthorized - user not logged in
-          schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
-        "404":
-          description: Sale offer not found
-          schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
-      security:
-      - Bearer: []
-      summary: Dislike offer
-      tags:
-      - sale-offer
-  /sale-offer/id/like/{id}:
-    post:
-      consumes:
-      - application/json
-      description: Like new offer by giving it's id. You have to be logged in to perform
-        this operation.
-      parameters:
-      - description: Sale offer ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Liked offer
-          schema:
-            $ref: '#/definitions/models.LikedOffer'
-        "400":
-          description: Invalid input data
-          schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
-        "401":
-          description: Unauthorized - user not logged in
-          schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
-        "404":
-          description: Sale offer not found
-          schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
-      security:
-      - Bearer: []
-      summary: Like new offer
       tags:
       - sale-offer
   /sale-offer/my-offers:
