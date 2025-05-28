@@ -8,6 +8,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/bid"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/image"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/liked_offer"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"github.com/susek555/BD2/car-dealer-api/internal/test/mocks"
 
@@ -72,7 +77,16 @@ func setupDB(manufacturers []models.Manufacturer, models_ []models.Model, cars [
 	}
 
 	repo := auction.NewAuctionRepository(db)
-	service := auction.NewAuctionService(repo)
+	bidRepo := bid.NewBidRepository(db)
+	likedOfferRepo := liked_offer.NewLikedOfferRepository(db)
+	saleOfferService := sale_offer.NewSaleOfferService(
+		sale_offer.NewSaleOfferRepository(db),
+		manufacturer.NewManufacturerRepository(db),
+		model.NewModelRepository(db),
+		image.NewImageRepository(db),
+		sale_offer.NewAccessEvaluator(bidRepo, likedOfferRepo),
+	)
+	service := auction.NewAuctionService(repo, saleOfferService.(*sale_offer.SaleOfferService))
 	return service, nil
 }
 
@@ -204,8 +218,8 @@ func TestCreateAuctionSuccess(t *testing.T) {
 			Transmission:       car_params.MANUAL,
 			NumberOfGears:      6,
 			Drive:              car_params.FWD,
-			ManufacturerName:   "Testla",
-			ModelName:          "ModelS",
+			ManufacturerName:   "Toyota",
+			ModelName:          "Corolla",
 		},
 		DateEnd:     "15:04 02/01/2026",
 		BuyNowPrice: 12000,
