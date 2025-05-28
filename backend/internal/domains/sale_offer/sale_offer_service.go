@@ -27,6 +27,7 @@ type SaleOfferServiceInterface interface {
 	GetByUserID(id uint, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error)
 	GetFiltered(filter *OfferFilter) (*RetrieveOffersWithPagination, error)
 	GetModelID(manufacturerName, modelName string) (uint, error)
+	DetermineNewModelID(offer *models.SaleOffer, dto *UpdateSaleOfferDTO) (uint, error)
 }
 
 type SaleOfferService struct {
@@ -78,7 +79,7 @@ func (s *SaleOfferService) Update(in *UpdateSaleOfferDTO, userID uint) (*Retriev
 	if offer.UserID != userID {
 		return nil, ErrModificationForbidden
 	}
-	modelID, err := s.determineNewModelID(offer, in)
+	modelID, err := s.DetermineNewModelID(offer, in)
 	if err != nil {
 		return nil, err
 	}
@@ -150,7 +151,7 @@ func (s *SaleOfferService) GetModelID(manufacturerName, modelName string) (uint,
 	return model.ID, nil
 }
 
-func (s *SaleOfferService) determineNewModelID(offer *models.SaleOffer, dto *UpdateSaleOfferDTO) (uint, error) {
+func (s *SaleOfferService) DetermineNewModelID(offer *models.SaleOffer, dto *UpdateSaleOfferDTO) (uint, error) {
 	if dto.Model == nil {
 		return 0, nil
 	}
