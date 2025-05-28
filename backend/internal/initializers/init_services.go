@@ -43,7 +43,7 @@ func InitializeServices() {
 	AuthService = auth.NewAuthService(UserRepo, RefreshTokenService, []byte(secret))
 	BidService = bid.NewBidService(BidRepo)
 	CarService = car.NewCarService(ManufacturerRepo, ModelRepo)
-	ImageService = image.NewImageService(ImageRepo, ImageBucket)
+	ImageService = image.NewImageService(ImageRepo, ImageBucket, SaleOfferRepo)
 	ManufacturerService = manufacturer.NewManufacturerService(ManufacturerRepo)
 	ModelService = model.NewModelService(ModelRepo)
 	NotificationService = notification.NewNotificationService(NotificationRepo)
