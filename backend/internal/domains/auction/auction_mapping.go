@@ -28,27 +28,35 @@ func (dto *CreateAuctionDTO) MapToAuction() (*models.Auction, error) {
 	return &auction, nil
 }
 
-func (dto *UpdateAuctionDTO) MapToAuction() (*models.Auction, error) {
-	var auction models.Auction
-	offer, err := dto.MapToSaleOffer()
-	if err != nil {
-		return nil, err
+func (dto *UpdateAuctionDTO) UpdatedAuctionFromDTO(auction *models.Auction) (*models.Auction, error) {
+	if dto.DateEnd != nil {
+		endDate, err := parseDate(*dto.DateEnd)
+		if err != nil {
+			return nil, err
+		}
+		err = validateDateEnd(endDate)
+		if err != nil {
+			return nil, err
+		}
+		auction.DateEnd = endDate
 	}
-	endDate, err := parseDate(dto.DateEnd)
-	if err != nil {
-		return nil, err
+	if dto.BuyNowPrice != nil {
+		if *dto.BuyNowPrice < 1 {
+			return nil, ErrBuyNowPriceLessThan1
+		}
+		if *dto.BuyNowPrice < auction.Offer.Price {
+			return nil, ErrBuyNowPriceLessThanOfferPrice
+		}
+		auction.BuyNowPrice = *dto.BuyNowPrice
 	}
-	err = validateDateEnd(endDate)
-	if err != nil {
-		return nil, err
+	if dto.UpdateSaleOfferDTO != nil {
+		var err error
+		auction.Offer, err = dto.UpdateSaleOfferDTO.UpdatedOfferFromDTO(auction.Offer)
+		if err != nil {
+			return nil, err
+		}
 	}
-	auction.Offer = offer
-	auction.DateEnd = endDate
-	auction.BuyNowPrice = dto.BuyNowPrice
-	auction.OfferID = dto.Id
-	auction.Offer.ID = dto.Id
-	auction.Offer.Car.OfferID = dto.Id
-	return &auction, nil
+	return auction, nil
 }
 
 func MapToDTO(auction *models.Auction) *RetrieveAuctionDTO {
