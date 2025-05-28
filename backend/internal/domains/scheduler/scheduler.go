@@ -25,6 +25,7 @@ type Scheduler struct {
 	redisClient         *redis.Client
 	addCh               chan *Item
 	saleOfferRepository sale_offer.SaleOfferRepositoryInterface
+	hub                 *auctionws.Hub
 }
 
 //go:generate mockery --name=SchedulerInterface --output=../../test/mocks --case=snake --with-expecter
@@ -33,7 +34,7 @@ type SchedulerInterface interface {
 	Run(ctx context.Context)
 }
 
-func NewScheduler(repo bid.BidRepositoryInterface, redisClient *redis.Client, notificationService notification.NotificationServiceInterface, saleOfferRepo sale_offer.SaleOfferRepositoryInterface) SchedulerInterface {
+func NewScheduler(repo bid.BidRepositoryInterface, redisClient *redis.Client, notificationService notification.NotificationServiceInterface, saleOfferRepo sale_offer.SaleOfferRepositoryInterface, hub *auctionws.Hub) SchedulerInterface {
 	return &Scheduler{
 		heap:                make(timerHeap, 0),
 		addCh:               make(chan *Item, 1024),
@@ -41,6 +42,7 @@ func NewScheduler(repo bid.BidRepositoryInterface, redisClient *redis.Client, no
 		repo:                repo,
 		redisClient:         redisClient,
 		saleOfferRepository: saleOfferRepo,
+		hub:                 hub,
 	}
 }
 
@@ -113,8 +115,6 @@ func (s *Scheduler) closeAuction(ctx context.Context, auctionID string) {
 		log.Println("Error creating notification:", err)
 		return
 	}
-	env := auctionws.NewNotificationEnvelope(&notification)
-	if err := auctionws.PublishAuctionEvent(ctx, s.redisClient, auctionID, env); err != nil {
-		log.Printf("failed to publish auction event: %v", err)
-	}
+	s.hub.SaveNotificationForClients(auctionID, &notification)
+	go s.hub.SendFourLatestNotificationsToClient(auctionID, "0")
 }
