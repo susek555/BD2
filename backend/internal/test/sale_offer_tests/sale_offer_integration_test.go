@@ -11,7 +11,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/liked_offer"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 	u "github.com/susek555/BD2/car-dealer-api/internal/test/test_utils"
 	"github.com/susek555/BD2/car-dealer-api/pkg/custom_errors"
@@ -681,6 +680,7 @@ func TestUpdateOffer_Description(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, *offer, got)
 	assert.Equal(t, offer.Description, description)
+	u.CleanDB(DB)
 }
 
 // ------------------------------
