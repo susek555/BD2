@@ -11,7 +11,7 @@ type AuctionServiceInterface interface {
 	Create(auction *CreateAuctionDTO) (*RetrieveAuctionDTO, error)
 	GetAll() ([]RetrieveAuctionDTO, error)
 	GetById(id uint) (*RetrieveAuctionDTO, error)
-	Update(auction *UpdateAuctionDTO) (*RetrieveAuctionDTO, error)
+	Update(auction *UpdateAuctionDTO, userID uint) (*RetrieveAuctionDTO, error)
 	Delete(id, userId uint) error
 }
 
@@ -77,17 +77,28 @@ func (s *AuctionService) GetById(id uint) (*RetrieveAuctionDTO, error) {
 	return dto, nil
 }
 
-func (s *AuctionService) Update(auction *UpdateAuctionDTO) (*RetrieveAuctionDTO, error) {
-	auctionEntity, err := auction.MapToAuction()
+func (s *AuctionService) Update(auction *UpdateAuctionDTO, userID uint) (*RetrieveAuctionDTO, error) {
+	auctionEntity, err := s.auctionRepo.GetById(auction.Id)
 	if err != nil {
 		return nil, err
 	}
-	err = s.auctionRepo.Update(auctionEntity)
+	if auctionEntity.Offer.UserID != userID {
+		return nil, ErrModificationForbidden
+	}
+	modelID, err := s.saleOfferService.DetermineNewModelID(auctionEntity.Offer, auction.UpdateSaleOfferDTO)
 	if err != nil {
 		return nil, err
 	}
-	dto := MapToDTO(auctionEntity)
-	return dto, nil
+	updatedAuction, err := auction.UpdatedAuctionFromDTO(auctionEntity)
+	if err != nil {
+		return nil, err
+	}
+	updatedAuction.Offer.Car.ModelID = modelID
+	err = s.auctionRepo.Update(updatedAuction)
+	if err != nil {
+		return nil, err
+	}
+	return s.GetById(updatedAuction.OfferID)
 }
 
 func (s *AuctionService) Delete(id, userId uint) error {
