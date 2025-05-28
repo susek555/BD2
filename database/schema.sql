@@ -94,7 +94,7 @@ CREATE TABLE cars (
     number_of_seats INTEGER NOT NULL CHECK (number_of_seats BETWEEN 2 AND 100),
     engine_power INTEGER NOT NULL CHECK (engine_power BETWEEN 1 AND 9999),
     engine_capacity INTEGER NOT NULL CHECK (engine_capacity BETWEEN 1 AND 9000),
-    registration_number VARCHAR(8) NOT NULL,
+    registration_number VARCHAR(20) NOT NULL,
     registration_date DATE NOT NULL,
     color VARCHAR(20) NOT NULL,
     fuel_type VARCHAR(20) NOT NULL,
@@ -131,12 +131,6 @@ CREATE TABLE refresh_tokens (
     user_id INTEGER REFERENCES users(id),
     token VARCHAR(500) NOT NULL,
     expiry_date TIMESTAMP NOT NULL
-);
-
-CREATE TABLE photos (
-    id SERIAL PRIMARY KEY,
-    offer_id INTEGER REFERENCES sale_offers(id),
-    url VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE payment_statuses (
