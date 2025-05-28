@@ -27,6 +27,7 @@ func RegisterRoutes(router *gin.Engine) {
 	registerBidRoutes(router)
 	registerWebsocket(router)
 	registerImageRoutes(router)
+	registerFavouriteRoutes(router)
 }
 
 func registerWebsocket(router *gin.Engine) {
