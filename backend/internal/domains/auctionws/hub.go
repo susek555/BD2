@@ -205,7 +205,7 @@ func (h *Hub) SendFourLatestNotificationsToClient(auctionID, userID string) {
 			continue
 		}
 
-		uid, err := strconv.ParseUint(userID, 10, 64)
+		uid, err := strconv.ParseUint(client.userID, 10, 64)
 		if err != nil {
 			log.Printf("hub: invalid userID %q: %v", client.userID, err)
 			continue
@@ -216,22 +216,21 @@ func (h *Hub) SendFourLatestNotificationsToClient(auctionID, userID string) {
 			log.Printf("hub: cannot fetch latest notification for userID %q: %v", client.userID, err)
 			continue
 		}
-
-		for _, not := range notifications {
-			bare := notification.MapToNotification(&not)
-
-			payload, err := json.Marshal(bare)
-			if err != nil {
-				log.Printf("cannot marshal notification %d: %v", bare.ID, err)
-				continue
-			}
-
-			select {
-			case client.send <- payload:
-			default:
-				log.Printf("dropping notification %d for user %s - channel full", bare.ID, userID)
-				go client.conn.Close()
-			}
+		if len(notifications) == 0 {
+			log.Printf("hub: no notifications for userID %q", client.userID)
+			continue
+		}
+		bare := notification.MapToNotifications(notifications)
+		payload, err := json.Marshal(bare)
+		if err != nil {
+			log.Printf("hub: cannot marshal notifications for userID %q: %v", client.userID, err)
+			continue
+		}
+		select {
+		case client.send <- payload:
+		default:
+			log.Printf("hub: dropping notifications for userID %q - channel full", client.userID)
+			go client.conn.Close()
 		}
 	}
 }
