@@ -10,9 +10,9 @@ import (
 )
 
 type ImageBucketInterface interface {
-	UploadImage(folder string, file *multipart.FileHeader) (string, error)
-	DeleteImage(publicID string) error
-	DeleteImagesByFolder(folder string) error
+	Upload(folder string, file *multipart.FileHeader) (string, string, error)
+	Delete(publicID string) error
+	DeleteByFolderName(folder string) error
 }
 
 type ImageBucket struct {
@@ -23,26 +23,26 @@ func NewImageBucket(cld *cloudinary.Cloudinary) ImageBucketInterface {
 	return &ImageBucket{CloudinaryClient: cld}
 }
 
-func (b *ImageBucket) UploadImage(folder string, file *multipart.FileHeader) (string, error) {
+func (b *ImageBucket) Upload(folder string, file *multipart.FileHeader) (string, string, error) {
 	ctx := context.Background()
 	openedFile, err := file.Open()
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 	resp, err := b.CloudinaryClient.Upload.Upload(ctx, openedFile, uploader.UploadParams{Folder: folder})
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
-	return resp.SecureURL, nil
+	return resp.PublicID, resp.SecureURL, nil
 }
 
-func (b *ImageBucket) DeleteImage(publicID string) error {
+func (b *ImageBucket) Delete(publicID string) error {
 	ctx := context.Background()
 	_, err := b.CloudinaryClient.Upload.Destroy(ctx, uploader.DestroyParams{PublicID: publicID})
 	return err
 }
 
-func (b *ImageBucket) DeleteImagesByFolder(folder string) error {
+func (b *ImageBucket) DeleteByFolderName(folder string) error {
 	ctx := context.Background()
 	_, err := b.CloudinaryClient.Admin.DeleteFolder(ctx, admin.DeleteFolderParams{Folder: folder})
 	return err
