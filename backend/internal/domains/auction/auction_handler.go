@@ -167,8 +167,7 @@ func (h *Handler) UpdateAuction(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
-	auctionInput.UserID = (uint)(userId)
-	dto, err := h.service.Update(&auctionInput)
+	dto, err := h.service.Update(&auctionInput, uint(userId))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
