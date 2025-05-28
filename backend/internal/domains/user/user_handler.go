@@ -94,6 +94,8 @@ func (h *Handler) GetUserByEmail(c *gin.Context) {
 //	@Param			body	body		UpdateUserDTO	true	"Update form"
 //	@Success		200		{object}	UpdateUserDTO	"User updated"
 //	@Failure		400		{object}	UpdateResponse	"Invalid input data - email, username or nip taken"
+//	@Failure		401		{object}	UpdateResponse	"Unauthorized - user be logged in to update his data"
+//	@Failure		403		{object}	UpdateResponse	"Forbidden - user can only update his own data"
 //	@Failure		404		{object}	UpdateResponse	"User not found"
 //	@Failure		500		{object}	UpdateResponse	"Internal server error"
 //	@Router			/users [put]
@@ -133,6 +135,8 @@ func (h *Handler) UpdateUser(c *gin.Context) {
 //	@Param			id	path	int	true	"User ID"
 //	@Success		204	"User successfully deleted"
 //	@Failure		400	{object}	custom_errors.HTTPError	"ID is not a number"
+//	@Failure		401	{object}	custom_errors.HTTPError	"Unauthorized - user must be logged in to delete his account"
+//	@Failure		403	{object}	custom_errors.HTTPError	"Forbidden - user can only delete his own account"
 //	@Failure		404	{object}	custom_errors.HTTPError	"User not found"
 //	@Failure		500	{object}	custom_errors.HTTPError	"Internal server error"
 //	@Router			/users/{id} [delete]

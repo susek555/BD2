@@ -32,17 +32,17 @@ func NewHandler(service BidServiceInterface, redisClient *redis.Client, hub *auc
 }
 
 // CreateBid godoc
-// @Summary Create a new bid
-// @Description Create a new bid for an auction
-// @Tags bid
-// @Accept json
-// @Produce json
-// @Param body body CreateBidDTO true "Bid details"
-// @Success 201 {object} RetrieveBidDTO "Created bid"
-// @Failure 400 {object} custom_errors.HTTPError "Bad request"
-// @Failure 401 {object} custom_errors.HTTPError "Unauthorized"
-// @Router /bid [post]
-// @Security BearerAuth
+//	@Summary		Create a new bid
+//	@Description	Create a new bid for an auction
+//	@Tags			bid
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body		CreateBidDTO			true	"Bid details"
+//	@Success		201		{object}	RetrieveBidDTO			"Created bid"
+//	@Failure		400		{object}	custom_errors.HTTPError	"Bad request"
+//	@Failure		401		{object}	custom_errors.HTTPError	"Unauthorized"
+//	@Router			/bid [post]
+//	@Security		BearerAuth
 func (h *Handler) CreateBid(c *gin.Context) {
 	var in CreateBidDTO
 	if err := c.ShouldBindJSON(&in); err != nil {
@@ -82,14 +82,14 @@ func (h *Handler) CreateBid(c *gin.Context) {
 }
 
 // GetAllBids godoc
-// @Summary Get all bids
-// @Description Retrieve all bids
-// @Tags bid
-// @Accept json
-// @Produce json
-// @Success 200 {array} RetrieveBidDTO "List of bids"
-// @Failure 400 {object} custom_errors.HTTPError "Bad request"
-// @Router /bid [get]
+//	@Summary		Get all bids
+//	@Description	Retrieve all bids
+//	@Tags			bid
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{array}		RetrieveBidDTO			"List of bids"
+//	@Failure		400	{object}	custom_errors.HTTPError	"Bad request"
+//	@Router			/bid [get]
 func (h *Handler) GetAllBids(c *gin.Context) {
 	bids, err := h.bidService.GetAll()
 	if err != nil {
@@ -99,15 +99,15 @@ func (h *Handler) GetAllBids(c *gin.Context) {
 }
 
 // GetBidByID godoc
-// @Summary Get bid by ID
-// @Description Retrieve a bid by its ID
-// @Tags bid
-// @Accept json
-// @Produce json
-// @Param id path int true "Bid ID"
-// @Success 200 {object} RetrieveBidDTO "Bid details"
-// @Failure 400 {object} custom_errors.HTTPError "Bad request"
-// @Router /bid/{id} [get]
+//	@Summary		Get bid by ID
+//	@Description	Retrieve a bid by its ID
+//	@Tags			bid
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		int						true	"Bid ID"
+//	@Success		200	{object}	RetrieveBidDTO			"Bid details"
+//	@Failure		400	{object}	custom_errors.HTTPError	"Bad request"
+//	@Router			/bid/{id} [get]
 func (h *Handler) GetBidByID(c *gin.Context) {
 	bidID, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
@@ -121,15 +121,15 @@ func (h *Handler) GetBidByID(c *gin.Context) {
 }
 
 // GetBidsByBidderId godoc
-// @Summary Get bids by bidder ID
-// @Description Retrieves all bids placed by a specific bidder
-// @Tags bid
-// @Accept json
-// @Produce json
-// @Param id path uint true "Bidder ID"
-// @Success 200 {array} RetrieveBidDTO "List of bids"
-// @Failure 400 {object} custom_errors.HTTPError "Invalid bidder ID or retrieval error"
-// @Router /bid/bidder/{id} [get]
+//	@Summary		Get bids by bidder ID
+//	@Description	Retrieves all bids placed by a specific bidder
+//	@Tags			bid
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		uint					true	"Bidder ID"
+//	@Success		200	{array}		RetrieveBidDTO			"List of bids"
+//	@Failure		400	{object}	custom_errors.HTTPError	"Invalid bidder ID or retrieval error"
+//	@Router			/bid/bidder/{id} [get]
 func (h *Handler) GetBidsByBidderId(c *gin.Context) {
 	bidderId, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
@@ -143,15 +143,15 @@ func (h *Handler) GetBidsByBidderId(c *gin.Context) {
 }
 
 // GetBidsByAuctionId godoc
-// @Summary Get bids by auction ID
-// @Description Retrieves all bids placed on a specific auction
-// @Tags bid
-// @Accept json
-// @Produce json
-// @Param id path uint true "Auction ID"
-// @Success 200 {array} RetrieveBidDTO "List of bids"
-// @Failure 400 {object} custom_errors.HTTPError "Invalid auction ID or retrieval error"
-// @Router /bid/auction/{id} [get]
+//	@Summary		Get bids by auction ID
+//	@Description	Retrieves all bids placed on a specific auction
+//	@Tags			bid
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		uint					true	"Auction ID"
+//	@Success		200	{array}		RetrieveBidDTO			"List of bids"
+//	@Failure		400	{object}	custom_errors.HTTPError	"Invalid auction ID or retrieval error"
+//	@Router			/bid/auction/{id} [get]
 func (h *Handler) GetBidsByAuctionId(c *gin.Context) {
 	auctionId, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
@@ -165,15 +165,15 @@ func (h *Handler) GetBidsByAuctionId(c *gin.Context) {
 }
 
 // GetHighestBid godoc
-// @Summary Get the highest bid for an auction
-// @Description Retrieves the highest bid for a specific auction
-// @Tags bid
-// @Accept json
-// @Produce json
-// @Param id path uint true "Auction ID"
-// @Success 200 {object} RetrieveBidDTO "Highest bid details"
-// @Failure 400 {object} custom_errors.HTTPError "Invalid auction ID or retrieval error"
-// @Router /bid/highest/{id} [get]
+//	@Summary		Get the highest bid for an auction
+//	@Description	Retrieves the highest bid for a specific auction
+//	@Tags			bid
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		uint					true	"Auction ID"
+//	@Success		200	{object}	RetrieveBidDTO			"Highest bid details"
+//	@Failure		400	{object}	custom_errors.HTTPError	"Invalid auction ID or retrieval error"
+//	@Router			/bid/highest/{id} [get]
 func (h *Handler) GetHighestBid(c *gin.Context) {
 	auctionId, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
@@ -187,16 +187,16 @@ func (h *Handler) GetHighestBid(c *gin.Context) {
 }
 
 // GetHighestBidByUserId godoc
-// @Summary Get the highest bid by a user for a specific auction
-// @Description Retrieves the highest bid placed by a specific user on a specific auction
-// @Tags bid
-// @Accept json
-// @Produce json
-// @Param auctionId path uint true "Auction ID"
-// @Param bidderId path uint true "Bidder ID"
-// @Success 200 {object} RetrieveBidDTO "Highest bid details"
-// @Failure 400 {object} custom_errors.HTTPError "Invalid auction ID, bidder ID, or retrieval error"
-// @Router /bid/highest/auction/{auctionId}/bidder/{bidderId} [get]
+//	@Summary		Get the highest bid by a user for a specific auction
+//	@Description	Retrieves the highest bid placed by a specific user on a specific auction
+//	@Tags			bid
+//	@Accept			json
+//	@Produce		json
+//	@Param			auctionId	path		uint					true	"Auction ID"
+//	@Param			bidderId	path		uint					true	"Bidder ID"
+//	@Success		200			{object}	RetrieveBidDTO			"Highest bid details"
+//	@Failure		400			{object}	custom_errors.HTTPError	"Invalid auction ID, bidder ID, or retrieval error"
+//	@Router			/bid/highest/auction/{auctionId}/bidder/{bidderId} [get]
 func (h *Handler) GetHighestBidByUserId(c *gin.Context) {
 	auctionId, err := strconv.ParseUint(c.Param("auctionId"), 10, 32)
 	if err != nil {
