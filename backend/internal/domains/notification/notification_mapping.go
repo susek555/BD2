@@ -34,10 +34,10 @@ func MapNotificationToDTO(notification *models.Notification) *RetrieveNotificati
 	}
 }
 
-func MapToNotifications(clientNotifications []models.ClientNotification) []models.Notification {
-	notifications := make([]models.Notification, len(clientNotifications))
+func MapToNotifications(clientNotifications []models.ClientNotification) []RetrieveNotificationDTO {
+	notifications := make([]RetrieveNotificationDTO, len(clientNotifications))
 	for i, cn := range clientNotifications {
-		notifications[i] = *MapToNotification(&cn)
+		notifications[i] = *MapNotificationToDTO(cn.Notification)
 	}
 	return notifications
 }
