@@ -504,7 +504,7 @@ func TestRefreshSuccess(t *testing.T) {
 	}
 	seedRefreshTokens := []models.RefreshToken{
 		{
-			UserId:     1,
+			UserID:     1,
 			Token:      "valid_refresh_token",
 			ExpiryDate: time.Now().Add(30 * 24 * time.Hour),
 		},
@@ -568,7 +568,7 @@ func TestRefreshExpiredToken(t *testing.T) {
 	}
 	seedRefreshTokens := []models.RefreshToken{
 		{
-			UserId:     1,
+			UserID:     1,
 			Token:      "expired_refresh_token",
 			ExpiryDate: time.Now().Add(-30 * 24 * time.Hour),
 		},
@@ -631,7 +631,7 @@ func TestLogoutSuccess(t *testing.T) {
 	}
 	seedRefreshTokens := []models.RefreshToken{
 		{
-			UserId:     1,
+			UserID:     1,
 			Token:      "valid_refresh_token",
 			ExpiryDate: time.Now().Add(30 * 24 * time.Hour),
 		},
@@ -779,17 +779,17 @@ func TestLogoutAllDevicesSuccess(t *testing.T) {
 	}
 	seedRefreshTokens := []models.RefreshToken{
 		{
-			UserId:     1,
+			UserID:     1,
 			Token:      "valid_refresh_token",
 			ExpiryDate: time.Now().Add(30 * 24 * time.Hour),
 		},
 		{
-			UserId:     1,
+			UserID:     1,
 			Token:      "valid_refresh_token_2",
 			ExpiryDate: time.Now().Add(30 * 24 * time.Hour),
 		},
 		{
-			UserId:     2,
+			UserID:     2,
 			Token:      "valid_refresh_token_3",
 			ExpiryDate: time.Now().Add(30 * 24 * time.Hour),
 		},
@@ -819,7 +819,7 @@ func TestLogoutAllDevicesSuccess(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Len(t, users2Tokens, 1)
 	assert.Equal(t, "valid_refresh_token_3", users2Tokens[0].Token)
-	assert.Equal(t, uint(2), users2Tokens[0].UserId)
+	assert.Equal(t, uint(2), users2Tokens[0].UserID)
 }
 
 func TestLogoutAllDevicesNoHeader(t *testing.T) {
@@ -862,7 +862,7 @@ func TestLogoutAllDevicesNonExistingToken(t *testing.T) {
 	}
 	seedRefreshTokens := []models.RefreshToken{
 		{
-			UserId:     1,
+			UserID:     1,
 			Token:      "valid_refresh_token",
 			ExpiryDate: time.Now().UTC().Add(30 * 24 * time.Hour),
 		},
@@ -893,7 +893,7 @@ func TestLogoutAllDevicesNonExistingToken(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Len(t, user1Tokens, 1)
 	assert.Equal(t, "valid_refresh_token", user1Tokens[0].Token)
-	assert.Equal(t, uint(1), user1Tokens[0].UserId)
+	assert.Equal(t, uint(1), user1Tokens[0].UserID)
 	assert.Equal(t, time.Now().UTC().Add(30*24*time.Hour).Format(time.RFC3339), user1Tokens[0].ExpiryDate.UTC().Format(time.RFC3339))
 }
 
@@ -913,7 +913,7 @@ func TestLogoutAllDevicesEmptyToken(t *testing.T) {
 	}
 	seedRefreshTokens := []models.RefreshToken{
 		{
-			UserId:     1,
+			UserID:     1,
 			Token:      "valid_refresh_token",
 			ExpiryDate: time.Now().UTC().Add(30 * 24 * time.Hour),
 		},
@@ -944,7 +944,7 @@ func TestLogoutAllDevicesEmptyToken(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Len(t, user1Tokens, 1)
 	assert.Equal(t, "valid_refresh_token", user1Tokens[0].Token)
-	assert.Equal(t, uint(1), user1Tokens[0].UserId)
+	assert.Equal(t, uint(1), user1Tokens[0].UserID)
 	assert.Equal(t, time.Now().UTC().Add(30*24*time.Hour).Format(time.RFC3339), user1Tokens[0].ExpiryDate.UTC().Format(time.RFC3339))
 }
 

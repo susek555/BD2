@@ -56,7 +56,7 @@ func (s *SaleOfferService) Create(in *CreateSaleOfferDTO) (*RetrieveDetailedSale
 	if err != nil {
 		return nil, err
 	}
-	modelID, err := s.getModelID(in.Manufacturer, in.Model)
+	modelID, err := s.getModelID(in.ManufacturerName, in.ModelName)
 	if err != nil {
 		return nil, err
 	}

@@ -128,11 +128,11 @@ func createOffer(id uint) *models.SaleOffer {
 		NumberOfGears:      6,
 		Drive:              car_params.FWD,
 		ModelID:            1,
-		Model: models.Model{
+		Model: &models.Model{
 			ID:             1,
 			Name:           MODELS[0].Name,
 			ManufacturerID: MODELS[0].ManufacturerID,
-			Manufacturer:   MANUFACTURERS[0],
+			Manufacturer:   &MANUFACTURERS[0],
 		},
 	}
 	offer := &models.SaleOffer{
@@ -194,8 +194,8 @@ func createSaleOfferDTO() *sale_offer.CreateSaleOfferDTO {
 		Transmission:       car_params.MANUAL,
 		NumberOfGears:      6,
 		Drive:              car_params.FWD,
-		Manufacturer:       "Audi",
-		Model:              "A3",
+		ManufacturerName:   "Audi",
+		ModelName:          "A3",
 	}
 }
 

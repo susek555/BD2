@@ -139,7 +139,7 @@ func (s *AuthService) newRefreshToken(userId uint, userEmail string) (string, er
 	token, _ := jwt.GenerateToken(userEmail, int64(userId), s.JwtKey, time.Now().Add(RefreshTokenExpirationTime))
 	refresh := models.RefreshToken{
 		Token:      token,
-		UserId:     userId,
+		UserID:     userId,
 		ExpiryDate: time.Now().UTC().Add(30 * 24 * time.Hour),
 	}
 	err := s.RefreshTokenService.Create(&refresh)
