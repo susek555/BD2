@@ -5,6 +5,7 @@ import (
 
 	"github.com/jinzhu/copier"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
+	"github.com/susek555/BD2/car-dealer-api/pkg/formats"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
@@ -78,7 +79,7 @@ func MapToDetailedDTO(offer *models.SaleOffer) *RetrieveDetailedSaleOfferDTO {
 		Description:        offer.Description,
 		Price:              offer.Price,
 		Margin:             offer.Margin,
-		DateOfIssue:        offer.DateOfIssue.Format(LAYOUT),
+		DateOfIssue:        offer.DateOfIssue.Format(formats.DateLayout),
 		Vin:                offer.Car.Vin,
 		ProductionYear:     offer.Car.ProductionYear,
 		Mileage:            offer.Car.Mileage,
@@ -87,7 +88,7 @@ func MapToDetailedDTO(offer *models.SaleOffer) *RetrieveDetailedSaleOfferDTO {
 		EnginePower:        offer.Car.EnginePower,
 		EngineCapacity:     offer.Car.EngineCapacity,
 		RegistrationNumber: offer.Car.RegistrationNumber,
-		RegistrationDate:   offer.Car.RegistrationDate.Format(LAYOUT),
+		RegistrationDate:   offer.Car.RegistrationDate.Format(formats.DateLayout),
 		Color:              offer.Car.Color,
 		FuelType:           offer.Car.FuelType,
 		Transmission:       offer.Car.Transmission,
