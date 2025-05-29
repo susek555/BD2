@@ -20,7 +20,7 @@ var (
 	ErrInvalidOrderKey              = errors.New("invalid order-key")
 	ErrInvalidManufacturer          = errors.New("invalid manufacturer")
 	ErrInvalidManufacturerModelPair = errors.New("manufcaturer and model don't match")
-	ErrModificationForbidden        = errors.New("provided offer does not belong to logged in user")
+	ErrOfferNotOwned                = errors.New("provided offer does not belong to logged in user")
 )
 
 var ErrorMap = map[error]int{
@@ -36,6 +36,6 @@ var ErrorMap = map[error]int{
 	ErrInvalidOrderKey:              http.StatusBadRequest,
 	ErrInvalidManufacturer:          http.StatusBadRequest,
 	ErrInvalidManufacturerModelPair: http.StatusBadRequest,
-	ErrModificationForbidden:        http.StatusForbidden,
+	ErrOfferNotOwned:                http.StatusForbidden,
 	gorm.ErrRecordNotFound:          http.StatusNotFound,
 }
