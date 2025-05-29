@@ -5,7 +5,6 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 	"github.com/susek555/BD2/car-dealer-api/pkg/custom_errors"
 )
@@ -54,12 +53,12 @@ func (h *Handler) UploadImages(c *gin.Context) {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
-	offer, err := h.saleOfferService.Update(&sale_offer.UpdateSaleOfferDTO{ID: uint(offerID), Status: &models.READY}, id)
+	offerDTO, err := h.saleOfferService.GetByID(uint(offerID), &id)
 	if err != nil {
 		custom_errors.HandleError(c, err, sale_offer.ErrorMap)
 		return
 	}
-	c.JSON(http.StatusOK, offer)
+	c.JSON(http.StatusOK, offerDTO)
 }
 
 // DeleteImage godoc
