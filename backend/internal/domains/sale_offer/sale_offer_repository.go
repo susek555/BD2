@@ -32,6 +32,7 @@ func (r *SaleOfferRepository) Update(offer *models.SaleOffer) error {
 
 func (r *SaleOfferRepository) GetFiltered(filter *OfferFilter) ([]models.SaleOffer, *pagination.PaginationResponse, error) {
 	query := r.buildBaseQuery().
+		Where("sale_offers.status = ?", models.PUBLISHED).
 		Joins("JOIN cars on cars.offer_id = sale_offers.id").
 		Joins("LEFT JOIN auctions on auctions.offer_id = sale_offers.id")
 	query, err := filter.ApplyOfferFilters(query)

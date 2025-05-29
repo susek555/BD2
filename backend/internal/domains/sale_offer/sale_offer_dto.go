@@ -69,7 +69,9 @@ type RetrieveSaleOfferDTO struct {
 	Mileage        uint             `json:"mileage"`
 	ProductionYear uint             `json:"production_year"`
 	Color          car_params.Color `json:"color"`
+	MainURL        string           `json:"main_url"`
 	IsAuction      bool             `json:"is_auction"`
+	Status         models.Status    `json:"status,omitempty"`
 	UserContext
 }
 
@@ -97,11 +99,11 @@ type RetrieveDetailedSaleOfferDTO struct {
 	Drive              car_params.Drive        `json:"drive"`
 	Brand              string                  `json:"brand"`
 	Model              string                  `json:"model"`
-	Status             models.Status           `json:"status"`
 	ImagesUrls         []string                `json:"images_urls"`
+	IsAuction          bool                    `json:"is_auction"`
 	DateEnd            *time.Time              `json:"date_end,omitempty"`
 	BuyNowPrice        *uint                   `json:"buy_now_price,omitempty"`
-	IsAuction          bool                    `json:"is_auction"`
+	Status             models.Status           `json:"status,omitempty"`
 	UserContext
 }
 
