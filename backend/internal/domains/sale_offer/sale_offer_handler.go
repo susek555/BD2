@@ -42,12 +42,12 @@ func NewHandler(s SaleOfferServiceInterface) *Handler {
 //	@Router			/sale-offer [post]
 //	@Security		Bearer
 func (h *Handler) CreateSaleOffer(c *gin.Context) {
+	userID, _ := c.Get("userID")
 	var offerDTO CreateSaleOfferDTO
 	if err := c.ShouldBindJSON(&offerDTO); err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
-	userID, _ := c.Get("userID")
 	offerDTO.UserID = userID.(uint)
 	retrieveDTO, err := h.service.Create(&offerDTO)
 	if err != nil {
@@ -74,14 +74,30 @@ func (h *Handler) CreateSaleOffer(c *gin.Context) {
 //	@Router			/sale-offer [put]
 //	@Security		Bearer
 func (h *Handler) UpdateSaleOffer(c *gin.Context) {
+	userID, _ := c.Get("userID")
+	id := userID.(uint)
 	var offerDTO UpdateSaleOfferDTO
 	if err := c.ShouldBindJSON(&offerDTO); err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
-	userID, _ := c.Get("userID")
-	id := userID.(uint)
+
 	retrieveDTO, err := h.service.Update(&offerDTO, id)
+	if err != nil {
+		custom_errors.HandleError(c, err, ErrorMap)
+		return
+	}
+	c.JSON(http.StatusOK, retrieveDTO)
+}
+
+func (h *Handler) PublishSaleOffer(c *gin.Context) {
+	userID, _ := c.Get("userID")
+	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		custom_errors.HandleError(c, err, ErrorMap)
+		return
+	}
+	retrieveDTO, err := h.service.Publish(uint(id), userID.(uint))
 	if err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
@@ -165,12 +181,12 @@ func (h *Handler) GetSaleOfferByID(c *gin.Context) {
 //	@Router			/sale-offer/my-offers [post]
 //	@Security		Bearer
 func (h *Handler) GetMySaleOffers(c *gin.Context) {
+	userID, _ := c.Get("userID")
 	var pagRequest pagination.PaginationRequest
 	if err := c.ShouldBindJSON(&pagRequest); err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
-	userID, _ := c.Get("userID")
 	saleOffers, err := h.service.GetByUserID(userID.(uint), &pagRequest)
 	if err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)

@@ -21,6 +21,7 @@ var (
 	ErrInvalidManufacturer          = errors.New("invalid manufacturer")
 	ErrInvalidManufacturerModelPair = errors.New("manufcaturer and model don't match")
 	ErrOfferNotOwned                = errors.New("provided offer does not belong to logged in user")
+	ErrOfferNotReadyToPublish       = errors.New("offer is not ready to be published - make sure that it have at least 3 images attached")
 )
 
 var ErrorMap = map[error]int{

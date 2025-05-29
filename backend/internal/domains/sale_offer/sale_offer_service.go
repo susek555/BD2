@@ -23,6 +23,7 @@ type ModelRetrieverInterface interface {
 type SaleOfferServiceInterface interface {
 	Create(in *CreateSaleOfferDTO) (*RetrieveDetailedSaleOfferDTO, error)
 	Update(in *UpdateSaleOfferDTO, userID uint) (*RetrieveDetailedSaleOfferDTO, error)
+	Publish(id uint, userID uint) (*RetrieveDetailedSaleOfferDTO, error)
 	GetByID(id uint, userID *uint) (*RetrieveDetailedSaleOfferDTO, error)
 	GetByUserID(id uint, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error)
 	GetFiltered(filter *OfferFilter) (*RetrieveOffersWithPagination, error)
@@ -92,6 +93,24 @@ func (s *SaleOfferService) Update(in *UpdateSaleOfferDTO, userID uint) (*Retriev
 		return nil, err
 	}
 	return s.GetByID(offer.ID, &offer.UserID)
+}
+
+func (s *SaleOfferService) Publish(id uint, userID uint) (*RetrieveDetailedSaleOfferDTO, error) {
+	offer, err := s.saleOfferRepo.GetByID(id)
+	if err != nil {
+		return nil, err
+	}
+	if !offer.BelongsToUser(userID) {
+		return nil, ErrOfferNotOwned
+	}
+	if offer.Status != models.READY {
+		return nil, ErrOfferNotReadyToPublish
+	}
+	offer.Status = models.PUBLISHED
+	if err := s.saleOfferRepo.Update(offer); err != nil {
+		return nil, err
+	}
+	return s.GetByID(id, &userID)
 }
 
 func (s *SaleOfferService) GetByID(id uint, userID *uint) (*RetrieveDetailedSaleOfferDTO, error) {
