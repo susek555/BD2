@@ -133,7 +133,7 @@ func registerImageRoutes(router *gin.Engine) {
 	imageRoutes := router.Group("/image")
 	{
 		imageRoutes.PATCH("/:id", middleware.Authenticate(initializers.Verifier), initializers.ImageHandler.UploadImages)
-		imageRoutes.DELETE("/:id", middleware.Authenticate(initializers.Verifier), initializers.ImageHandler.DeleteImages)
-		imageRoutes.DELETE("/offer/:offerID", middleware.Authenticate(initializers.Verifier), initializers.ImageHandler.DeleteImages)
+		imageRoutes.DELETE("/", middleware.Authenticate(initializers.Verifier), initializers.ImageHandler.DeleteImage)
+		imageRoutes.DELETE("/offer/:id", middleware.Authenticate(initializers.Verifier), initializers.ImageHandler.DeleteImages)
 	}
 }

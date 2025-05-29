@@ -61,7 +61,10 @@ func (s *ImageService) DeleteByOfferID(offerID uint, userID uint) error {
 	if err := s.validateIfOfferBelongsToUser(offerID, userID); err != nil {
 		return err
 	}
-	folder := fmt.Sprintf("sale-offer-%d/", offerID)
+	if err := s.validateIfHasAnyImages(offerID); err != nil {
+		return err
+	}
+	folder := fmt.Sprintf("sale-offer-%d", offerID)
 	images, err := s.repo.GetByOfferID(offerID)
 	if err != nil {
 		return err
@@ -85,6 +88,17 @@ func (s *ImageService) validateImageLimit(offerID uint, nImages int, maxImages i
 	}
 	if nImages+len(storedImages) > maxImages {
 		return ErrTooManyImages
+	}
+	return nil
+}
+
+func (s *ImageService) validateIfHasAnyImages(offerID uint) error {
+	storedImages, err := s.repo.GetByOfferID(offerID)
+	if err != nil {
+		return err
+	}
+	if len(storedImages) == 0 {
+		return ErrZeroImages
 	}
 	return nil
 }

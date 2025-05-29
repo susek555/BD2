@@ -81,7 +81,7 @@ func (h *Handler) UploadImages(c *gin.Context) {
 func (h *Handler) DeleteImage(c *gin.Context) {
 	id, _ := c.Get("userID")
 	userID := id.(uint)
-	url := c.Param("url")
+	url := c.Query("url")
 	if err := h.imageService.DeleteByURL(url, userID); err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
