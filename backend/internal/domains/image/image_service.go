@@ -31,7 +31,7 @@ func (s *ImageService) Store(offerID uint, images []*multipart.FileHeader, userI
 	if err := s.validateImageLimit(offerID, len(images), 10); err != nil {
 		return err
 	}
-	if err := s.validateIfOfferBelongsToUser(offerID, userID); err != nil {
+	if err := s.validateOfferBelongsToUser(offerID, userID); err != nil {
 		return err
 	}
 	return s.saveImagesToStorageAndDB(offerID, images)
@@ -42,7 +42,7 @@ func (s *ImageService) DeleteByURL(url string, userID uint) error {
 	if err != nil {
 		return err
 	}
-	if err := s.validateIfOfferBelongsToUser(image.OfferID, userID); err != nil {
+	if err := s.validateOfferBelongsToUser(image.OfferID, userID); err != nil {
 		return err
 	}
 	if err := s.repo.Delete(image.ID); err != nil {
@@ -58,10 +58,10 @@ func (s *ImageService) DeleteByURL(url string, userID uint) error {
 }
 
 func (s *ImageService) DeleteByOfferID(offerID uint, userID uint) error {
-	if err := s.validateIfOfferBelongsToUser(offerID, userID); err != nil {
+	if err := s.validateOfferBelongsToUser(offerID, userID); err != nil {
 		return err
 	}
-	if err := s.validateIfHasAnyImages(offerID); err != nil {
+	if err := s.validateHasAnyImages(offerID); err != nil {
 		return err
 	}
 	folder := fmt.Sprintf("sale-offer-%d", offerID)
@@ -92,7 +92,7 @@ func (s *ImageService) validateImageLimit(offerID uint, nImages int, maxImages i
 	return nil
 }
 
-func (s *ImageService) validateIfHasAnyImages(offerID uint) error {
+func (s *ImageService) validateHasAnyImages(offerID uint) error {
 	storedImages, err := s.repo.GetByOfferID(offerID)
 	if err != nil {
 		return err
@@ -103,7 +103,7 @@ func (s *ImageService) validateIfHasAnyImages(offerID uint) error {
 	return nil
 }
 
-func (s *ImageService) validateIfOfferBelongsToUser(offerID, userID uint) error {
+func (s *ImageService) validateOfferBelongsToUser(offerID, userID uint) error {
 	offer, err := s.offerRetriever.GetByID(offerID)
 	if err != nil {
 		return err
