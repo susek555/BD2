@@ -129,6 +129,9 @@ func (s *SaleOfferService) GetByID(id uint, userID *uint) (*RetrieveDetailedSale
 		return nil, err
 	}
 	offerDTO.ImagesUrls = urls
+	if userID != nil && offer.BelongsToUser(*userID) {
+		offerDTO.Status = offer.Status
+	}
 	return offerDTO, nil
 }
 
@@ -210,6 +213,16 @@ func (s *SaleOfferService) mapOfferSliceWithAdditionalFields(offers []models.Sal
 			return nil, err
 		}
 		dto.UserContext = *userContext
+		urls, err := s.getOfferImagesURLs(&offer)
+		if err != nil {
+			return nil, err
+		}
+		if len(urls) > 0 {
+			dto.MainURL = urls[0]
+		}
+		if userID != nil && offer.BelongsToUser(*userID) {
+			dto.Status = offer.Status
+		}
 		offerDTOs = append(offerDTOs, *dto)
 	}
 	return offerDTOs, nil

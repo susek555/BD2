@@ -72,6 +72,7 @@ func setupDB() (*gorm.DB, error) {
 func getRepositoryWithSaleOffers(db *gorm.DB, offers []models.SaleOffer) sale_offer.SaleOfferRepositoryInterface {
 	repo := sale_offer.NewSaleOfferRepository(db)
 	for _, offer := range offers {
+		offer.Status = models.PUBLISHED
 		repo.Create(&offer)
 	}
 	return repo
@@ -144,6 +145,7 @@ func createOffer(id uint) *models.SaleOffer {
 		Margin:      models.LOW_MARGIN,
 		DateOfIssue: time.Now(),
 		Car:         c,
+		Status:      models.PUBLISHED,
 	}
 	return offer
 }
@@ -197,6 +199,10 @@ func createSaleOfferDTO() *sale_offer.CreateSaleOfferDTO {
 		ManufacturerName:   "Audi",
 		ModelName:          "A3",
 	}
+}
+
+func setOffersStatusToPublished(db *gorm.DB) {
+	db.Model(&models.SaleOffer{}).Update("status", models.PUBLISHED)
 }
 
 func wasEntityAddedToDB[T any](db *gorm.DB, id uint) bool {
