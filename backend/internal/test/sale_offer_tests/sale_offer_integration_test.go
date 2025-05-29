@@ -28,6 +28,7 @@ func TestCreateOffer_NotAuthorized(t *testing.T) {
 	var seedOffers []models.SaleOffer
 	server, _, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*createSaleOfferDTO())
+	setOffersStatusToPublished(db)
 	assert.NoError(t, err)
 	_, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, nil)
 	assert.Equal(t, http.StatusUnauthorized, receivedStatus)
@@ -40,6 +41,7 @@ func TestCreateOffer_InvalidToken(t *testing.T) {
 
 	server, _, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*createSaleOfferDTO())
+	setOffersStatusToPublished(db)
 	assert.NoError(t, err)
 	token := "invalid_token"
 	_, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/", body, &token)
@@ -107,6 +109,7 @@ func TestCreateOffer_NonExistentManufacturer(t *testing.T) {
 	db, _ := setupDB()
 	server, _, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("ManufacturerName", "invalid")))
+	setOffersStatusToPublished(db)
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
@@ -124,6 +127,7 @@ func TestCreateOffer_NonExistentModel(t *testing.T) {
 
 	server, _, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("ModelName", "invalid")))
+	setOffersStatusToPublished(db)
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
@@ -142,6 +146,7 @@ func TestCreateOffer_InvalidNumberOfDoorsGreater(t *testing.T) {
 
 	server, _, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("NumberOfDoors", uint(10))))
+	setOffersStatusToPublished(db)
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
@@ -160,6 +165,7 @@ func TestCreateOffer_InvalidNumberOfDoorsLower(t *testing.T) {
 
 	server, _, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("NumberOfDoors", uint(0))))
+	setOffersStatusToPublished(db)
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
@@ -177,6 +183,7 @@ func TestCreateOffer_ValidNumberOfDoors(t *testing.T) {
 
 	server, svc, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("NumberOfDoors", uint(5))))
+	setOffersStatusToPublished(db)
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
@@ -199,6 +206,7 @@ func TestCreateOffer_InvalidNumberOfSeatsGreater(t *testing.T) {
 
 	server, _, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("NumberOfSeats", uint(101))))
+	setOffersStatusToPublished(db)
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
@@ -217,6 +225,7 @@ func TestCreateOffer_InvalidNumberOfSeatsLower(t *testing.T) {
 
 	server, _, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("NumberOfSeats", uint(1))))
+	setOffersStatusToPublished(db)
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
@@ -235,6 +244,7 @@ func TestCreateOffer_ValidNumberOfSeats(t *testing.T) {
 
 	server, svc, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("NumberOfSeats", uint(5))))
+	setOffersStatusToPublished(db)
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
@@ -257,6 +267,7 @@ func TestCreateOffer_InvalidEnginePowerGreater(t *testing.T) {
 
 	server, _, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("EnginePower", uint(10000))))
+	setOffersStatusToPublished(db)
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
@@ -274,6 +285,7 @@ func TestCreateOffer_InvalidEnginePowerLower(t *testing.T) {
 
 	server, _, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("EnginePower", uint(0))))
+	setOffersStatusToPublished(db)
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
@@ -292,6 +304,7 @@ func TestCreateOffer_ValidEnginePower(t *testing.T) {
 
 	server, svc, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("EnginePower", uint(100))))
+	setOffersStatusToPublished(db)
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
@@ -314,6 +327,7 @@ func TestCreateOffer_InvalidEngineCapacityGreater(t *testing.T) {
 
 	server, _, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("EngineCapacity", uint(9001))))
+	setOffersStatusToPublished(db)
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
@@ -332,6 +346,7 @@ func TestCreateOffer_InvalidEngineCapacityLower(t *testing.T) {
 
 	server, _, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("EngineCapacity", uint(0))))
+	setOffersStatusToPublished(db)
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
@@ -350,6 +365,7 @@ func TestCreateOffer_ValidEngineCapacity(t *testing.T) {
 
 	server, svc, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("EngineCapacity", uint(1000))))
+	setOffersStatusToPublished(db)
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
@@ -372,6 +388,7 @@ func TestCreateOffer_InvalidNumberOfGearsGreater(t *testing.T) {
 
 	server, _, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("NumberOfGears", uint(11))))
+	setOffersStatusToPublished(db)
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
@@ -390,6 +407,7 @@ func TestCreateOffer_InvalidNumberOfGearsLower(t *testing.T) {
 
 	server, _, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("NumberOfGears", uint(0))))
+	setOffersStatusToPublished(db)
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
@@ -408,6 +426,7 @@ func TestCreateOffer_ValidNumberOfGears(t *testing.T) {
 
 	server, svc, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("NumberOfGears", uint(5))))
+	setOffersStatusToPublished(db)
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
@@ -430,6 +449,7 @@ func TestCreateOffer_InvalidColor(t *testing.T) {
 
 	server, _, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("Color", car_params.Color("invalid_color"))))
+	setOffersStatusToPublished(db)
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
@@ -448,6 +468,7 @@ func TestCreateOffer_ValidColor(t *testing.T) {
 
 	server, svc, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("Color", car_params.BLACK)))
+	setOffersStatusToPublished(db)
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
@@ -470,6 +491,7 @@ func TestCreateOffer_InvalidFuelType(t *testing.T) {
 
 	server, _, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("FuelType", car_params.FuelType("invalid_fuel_type"))))
+	setOffersStatusToPublished(db)
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
@@ -488,6 +510,7 @@ func TestCreateOffer_ValidFuelType(t *testing.T) {
 
 	server, svc, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("FuelType", car_params.PETROL)))
+	setOffersStatusToPublished(db)
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
@@ -510,6 +533,7 @@ func TestCreateOffer_InvalidTransmission(t *testing.T) {
 
 	server, _, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("Transmission", car_params.Transmission("invalid_transmission"))))
+	setOffersStatusToPublished(db)
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
@@ -528,6 +552,7 @@ func TestCreateOffer_ValidTransmission(t *testing.T) {
 
 	server, svc, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("Transmission", car_params.MANUAL)))
+	setOffersStatusToPublished(db)
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
@@ -550,6 +575,7 @@ func TestCreateOffer_InvalidDrive(t *testing.T) {
 
 	server, _, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("Drive", car_params.Drive("invalid_drive"))))
+	setOffersStatusToPublished(db)
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
@@ -568,6 +594,7 @@ func TestCreateOffer_ValidDrive(t *testing.T) {
 
 	server, svc, _ := newTestServer(db, seedOffers)
 	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("Drive", car_params.FWD)))
+	setOffersStatusToPublished(db)
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
