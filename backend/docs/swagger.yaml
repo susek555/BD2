@@ -80,6 +80,8 @@ definitions:
         type: boolean
       is_liked:
         type: boolean
+      main_url:
+        type: string
       mileage:
         type: integer
       name:
@@ -88,6 +90,8 @@ definitions:
         type: integer
       production_year:
         type: integer
+      status:
+        type: string
       username:
         type: string
     type: object
@@ -486,22 +490,12 @@ definitions:
       price:
         type: integer
       status:
-        $ref: '#/definitions/models.Status'
+        type: string
       user:
         $ref: '#/definitions/models.User'
       user_id:
         type: integer
     type: object
-  models.Status:
-    enum:
-    - pending
-    - ready
-    - published
-    type: string
-    x-enum-varnames:
-    - PENDING
-    - READY
-    - PUBLISHED
   models.User:
     properties:
       company:
@@ -790,7 +784,7 @@ definitions:
       registration_number:
         type: string
       status:
-        $ref: '#/definitions/models.Status'
+        type: string
       transmission:
         $ref: '#/definitions/car_params.Transmission'
       user_id:
@@ -821,6 +815,8 @@ definitions:
         type: boolean
       is_liked:
         type: boolean
+      main_url:
+        type: string
       mileage:
         type: integer
       name:
@@ -829,7 +825,52 @@ definitions:
         type: integer
       production_year:
         type: integer
+      status:
+        type: string
       username:
+        type: string
+    type: object
+  sale_offer.UpdateSaleOfferDTO:
+    properties:
+      color:
+        $ref: '#/definitions/car_params.Color'
+      description:
+        type: string
+      drive:
+        $ref: '#/definitions/car_params.Drive'
+      engine_capacity:
+        type: integer
+      engine_power:
+        type: integer
+      fuel_type:
+        $ref: '#/definitions/car_params.FuelType'
+      id:
+        type: integer
+      manufacturer:
+        type: string
+      margin:
+        $ref: '#/definitions/models.MarginValue'
+      mileage:
+        type: integer
+      model:
+        type: string
+      number_of_doors:
+        type: integer
+      number_of_gears:
+        type: integer
+      number_of_seats:
+        type: integer
+      price:
+        type: integer
+      production_year:
+        type: integer
+      registration_date:
+        type: string
+      registration_number:
+        type: string
+      transmission:
+        $ref: '#/definitions/car_params.Transmission'
+      vin:
         type: string
     type: object
   user.CreateUserDTO:
@@ -1640,6 +1681,143 @@ paths:
       summary: Like new offer
       tags:
       - favourites
+  /images/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes all images for a sale offer. The user must be the owner
+        of the given offer. Removes image from database and cloud storage - both operations
+        must be successful to proceed.
+      parameters:
+      - description: Sale offer ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content - images successfully deleted
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "401":
+          description: 'Unauthorized - user must be logged in to delete images '
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "403":
+          description: Forbidden - user can only delete images for his own offers
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "404":
+          description: Sale offer not found
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      security:
+      - Bearer: []
+      summary: Delete all images for a sale offer
+      tags:
+      - images
+  /images/delete/{url}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes an image by its URL. The user must be the owner of the
+        image. Removes image from database and cloud storage - both operations must
+        be successful to proceed.
+      parameters:
+      - description: Image URL
+        in: path
+        name: url
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content - image successfully deleted
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "401":
+          description: Unauthorized - user must be logged in to delete images
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "403":
+          description: Forbidden - usercan only images that refer to his own offers
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "404":
+          description: Image not found
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      security:
+      - Bearer: []
+      summary: Delete image
+      tags:
+      - images
+  /images/upload/{id}:
+    patch:
+      consumes:
+      - multipart/form-data
+      description: Uploads images for a sale offer. You can upload multiple images
+        at once, but 10 is the limit. Only offers with photos can be published later
+        on (sale-offer/publish).
+      parameters:
+      - description: Sale offer ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Images to upload
+        in: formData
+        name: images
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated sale offer with images
+          schema:
+            $ref: '#/definitions/models.SaleOffer'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "401":
+          description: Unauthorized - user must be logged in to upload images for
+            sale offers
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "403":
+          description: Forbidden - user can only upload images for his own offers
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "404":
+          description: Sale offer not found
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      security:
+      - Bearer: []
+      summary: Upload images for sale offer
+      tags:
+      - images
   /logout:
     post:
       consumes:
@@ -2000,6 +2178,51 @@ paths:
       summary: Create a new sale offer
       tags:
       - sale-offer
+    put:
+      consumes:
+      - application/json
+      description: Updates an existing sale offer in the database. To update a sale
+        offer, the user must be logged in and must be the owner of the offer. Constraints
+        are the same as when creating a sale offer.
+      parameters:
+      - description: Sale offer form
+        in: body
+        name: offer
+        required: true
+        schema:
+          $ref: '#/definitions/sale_offer.UpdateSaleOfferDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated - returns the updated sale offer
+          schema:
+            $ref: '#/definitions/sale_offer.RetrieveDetailedSaleOfferDTO'
+        "400":
+          description: Invalid input data
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "401":
+          description: Unauthorized - user must be logged in to update his offer
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "403":
+          description: Forbidden - user can only update his own offer
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "404":
+          description: Sale offer not found
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      security:
+      - Bearer: []
+      summary: Update a sale offer
+      tags:
+      - sale-offer
   /sale-offer/filtered:
     post:
       consumes:
@@ -2093,7 +2316,7 @@ paths:
           schema:
             $ref: '#/definitions/sale_offer.RetrieveOffersWithPagination'
         "401":
-          description: Unauthorized - user not logged in
+          description: Unauthorized - user must be logged in to retrieve his offers
           schema:
             $ref: '#/definitions/custom_errors.HTTPError'
         "500":
@@ -2191,6 +2414,14 @@ paths:
           description: Invalid input data - email, username or nip taken
           schema:
             $ref: '#/definitions/user.UpdateResponse'
+        "401":
+          description: Unauthorized - user be logged in to update his data
+          schema:
+            $ref: '#/definitions/user.UpdateResponse'
+        "403":
+          description: Forbidden - user can only update his own data
+          schema:
+            $ref: '#/definitions/user.UpdateResponse'
         "404":
           description: User not found
           schema:
@@ -2222,6 +2453,14 @@ paths:
           description: User successfully deleted
         "400":
           description: ID is not a number
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "401":
+          description: Unauthorized - user must be logged in to delete his account
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "403":
+          description: Forbidden - user can only delete his own account
           schema:
             $ref: '#/definitions/custom_errors.HTTPError'
         "404":
