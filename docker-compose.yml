@@ -39,13 +39,8 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: bd2-backend
-    environment:
-      - PORT=8080
-      - DATABASE_URL=host=postgres user=bd2_user password=bd2_password dbname=bd2_database port=5432 sslmode=disable TimeZone=UTC
-      - REDIS_ADDR=redis:6379
-      - REDIS_USER=
-      - REDIS_PASS=
-      - JWT_SECRET=your-secret-key-here
+    env_file:
+      - ./backend/.env
     ports:
       - "8080:8080"
     depends_on:
