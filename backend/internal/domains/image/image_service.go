@@ -105,7 +105,7 @@ func (s *ImageService) saveImagesToStorageAndDB(offerID uint, images []*multipar
 		uploadedPublicIDs []string
 		storedImages      []models.Image
 	)
-	folder := fmt.Sprintf("sale-offer=%d/", offerID)
+	folder := fmt.Sprintf("sale-offer-%d/", offerID)
 	for _, image := range images {
 		publicID, url, err := s.bucket.Upload(folder, image)
 		if err != nil {
