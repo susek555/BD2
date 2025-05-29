@@ -28,7 +28,7 @@ func (s *LikedOfferService) LikeOffer(offerID, userID uint) error {
 	if s.likedOfferRepo.IsOfferLikedByUser(offerID, userID) {
 		return ErrLikeAlreadyLikedOffer
 	}
-	if offer.UserID == userID {
+	if offer.BelongsToUser(userID) {
 		return ErrLikeOwnOffer
 	}
 	return s.likedOfferRepo.Create(&models.LikedOffer{OfferID: offerID, UserID: userID})

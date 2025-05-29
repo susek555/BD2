@@ -76,14 +76,13 @@ func (s *SaleOfferService) Update(in *UpdateSaleOfferDTO, userID uint) (*Retriev
 	if err != nil {
 		return nil, err
 	}
-	if offer.UserID != userID {
-		return nil, ErrModificationForbidden
+	if !offer.BelongsToUser(userID) {
+		return nil, ErrOfferNotOwned
 	}
 	modelID, err := s.DetermineNewModelID(offer, in)
 	if err != nil {
 		return nil, err
 	}
-
 	updatedOffer, err := in.UpdatedOfferFromDTO(offer)
 	if err != nil {
 		return nil, err
