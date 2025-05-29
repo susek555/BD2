@@ -33,15 +33,15 @@ func (s *ImageService) Store(offerID uint, images []*multipart.FileHeader, userI
 	if err != nil {
 		return err
 	}
-	if err := s.validateOfferBelongsToUser(offer, userID); err != nil {
-		return err
+	if !offer.BelongsToUser(userID) {
+		return ErrOfferNotOwned
 	}
 	storedImages, err := s.repo.GetByOfferID(offerID)
 	if err != nil {
 		return err
 	}
-	if err := s.validateImageLimit(storedImages, len(images), 10); err != nil {
-		return err
+	if s.wouldExceedImageLimit(storedImages, len(images), 10) {
+		return ErrTooManyImages
 	}
 	if err := s.saveImagesToStorageAndDB(offerID, images); err != nil {
 		return err
@@ -58,8 +58,8 @@ func (s *ImageService) DeleteByURL(url string, userID uint) error {
 	if err != nil {
 		return err
 	}
-	if err := s.validateOfferBelongsToUser(offer, userID); err != nil {
-		return err
+	if !offer.BelongsToUser(userID) {
+		return ErrOfferNotOwned
 	}
 	if err := s.repo.Delete(image.ID); err != nil {
 		return err
@@ -78,15 +78,15 @@ func (s *ImageService) DeleteByOfferID(offerID uint, userID uint) error {
 	if err != nil {
 		return err
 	}
-	if err := s.validateOfferBelongsToUser(offer, userID); err != nil {
-		return err
+	if !offer.BelongsToUser(userID) {
+		return ErrOfferNotOwned
 	}
 	images, err := s.repo.GetByOfferID(offerID)
 	if err != nil {
 		return err
 	}
-	if err := s.validateHasAnyImages(images); err != nil {
-		return err
+	if !s.hasImages(images) {
+		return ErrZeroImages
 	}
 	if err := s.repo.DeleteByOfferID(offerID); err != nil {
 		return err
@@ -101,25 +101,12 @@ func (s *ImageService) DeleteByOfferID(offerID uint, userID uint) error {
 	return s.setOfferStatus(offer)
 }
 
-func (s *ImageService) validateImageLimit(images []models.Image, nImages int, maxImages int) error {
-	if nImages+len(images) > maxImages {
-		return ErrTooManyImages
-	}
-	return nil
+func (s *ImageService) wouldExceedImageLimit(images []models.Image, nImages int, maxImages int) bool {
+	return len(images)+nImages > maxImages
 }
 
-func (s *ImageService) validateHasAnyImages(images []models.Image) error {
-	if len(images) == 0 {
-		return ErrZeroImages
-	}
-	return nil
-}
-
-func (s *ImageService) validateOfferBelongsToUser(offer *models.SaleOffer, userID uint) error {
-	if !offer.BelongsToUser(userID) {
-		return ErrOfferNotOwned
-	}
-	return nil
+func (s *ImageService) hasImages(images []models.Image) bool {
+	return len(images) > 0
 }
 
 func (s *ImageService) saveImagesToStorageAndDB(offerID uint, images []*multipart.FileHeader) error {
