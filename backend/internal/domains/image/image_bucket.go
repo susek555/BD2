@@ -44,6 +44,17 @@ func (b *ImageBucket) Delete(publicID string) error {
 
 func (b *ImageBucket) DeleteByFolderName(folder string) error {
 	ctx := context.Background()
-	_, err := b.CloudinaryClient.Admin.DeleteFolder(ctx, admin.DeleteFolderParams{Folder: folder})
+	selectResp, err := b.CloudinaryClient.Admin.AssetsByAssetFolder(ctx, admin.AssetsByAssetFolderParams{AssetFolder: folder})
+	if err != nil {
+		return err
+	}
+	var publicIDs []string
+	for _, asset := range selectResp.Assets {
+		publicIDs = append(publicIDs, asset.PublicID)
+	}
+	if _, err = b.CloudinaryClient.Admin.DeleteAssets(ctx, admin.DeleteAssetsParams{PublicIDs: publicIDs}); err != nil {
+		return err
+	}
+	_, err = b.CloudinaryClient.Admin.DeleteFolder(ctx, admin.DeleteFolderParams{Folder: folder})
 	return err
 }
