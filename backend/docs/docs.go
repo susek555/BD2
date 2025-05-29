@@ -1128,6 +1128,208 @@ const docTemplate = `{
                 }
             }
         },
+        "/images/delete/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Deletes all images for a sale offer. The user must be the owner of the given offer. Removes image from database and cloud storage - both operations must be successful to proceed.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "images"
+                ],
+                "summary": "Delete all images for a sale offer",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Sale offer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content - images successfully deleted"
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - user must be logged in to delete images ",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - user can only delete images for his own offers",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Sale offer not found",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/images/delete/{url}": {
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Deletes an image by its URL. The user must be the owner of the image. Removes image from database and cloud storage - both operations must be successful to proceed.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "images"
+                ],
+                "summary": "Delete image",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Image URL",
+                        "name": "url",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content - image successfully deleted"
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - user must be logged in to delete images",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - usercan only images that refer to his own offers",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Image not found",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/images/upload/{id}": {
+            "patch": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Uploads images for a sale offer. You can upload multiple images at once, but 10 is the limit. Only offers with photos can be published later on (sale-offer/publish).",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "images"
+                ],
+                "summary": "Upload images for sale offer",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Sale offer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Images to upload",
+                        "name": "images",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated sale offer with images",
+                        "schema": {
+                            "$ref": "#/definitions/models.SaleOffer"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - user must be logged in to upload images for sale offers",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - user can only upload images for his own offers",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Sale offer not found",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/logout": {
             "post": {
                 "description": "Logout user and invalidate refresh token",
@@ -1593,6 +1795,73 @@ const docTemplate = `{
             }
         },
         "/sale-offer": {
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Updates an existing sale offer in the database. To update a sale offer, the user must be logged in and must be the owner of the offer. Constraints are the same as when creating a sale offer.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sale-offer"
+                ],
+                "summary": "Update a sale offer",
+                "parameters": [
+                    {
+                        "description": "Sale offer form",
+                        "name": "offer",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sale_offer.UpdateSaleOfferDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated - returns the updated sale offer",
+                        "schema": {
+                            "$ref": "#/definitions/sale_offer.RetrieveDetailedSaleOfferDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input data",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - user must be logged in to update his offer",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - user can only update his own offer",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Sale offer not found",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -1782,7 +2051,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized - user not logged in",
+                        "description": "Unauthorized - user must be logged in to retrieve his offers",
                         "schema": {
                             "$ref": "#/definitions/custom_errors.HTTPError"
                         }
@@ -1922,6 +2191,18 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Invalid input data - email, username or nip taken",
+                        "schema": {
+                            "$ref": "#/definitions/user.UpdateResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - user be logged in to update his data",
+                        "schema": {
+                            "$ref": "#/definitions/user.UpdateResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - user can only update his own data",
                         "schema": {
                             "$ref": "#/definitions/user.UpdateResponse"
                         }
@@ -2072,6 +2353,18 @@ const docTemplate = `{
                             "$ref": "#/definitions/custom_errors.HTTPError"
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized - user must be logged in to delete his account",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - user can only delete his own account",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
                     "404": {
                         "description": "User not found",
                         "schema": {
@@ -2202,6 +2495,9 @@ const docTemplate = `{
                 "is_liked": {
                     "type": "boolean"
                 },
+                "main_url": {
+                    "type": "string"
+                },
                 "mileage": {
                     "type": "integer"
                 },
@@ -2213,6 +2509,9 @@ const docTemplate = `{
                 },
                 "production_year": {
                     "type": "integer"
+                },
+                "status": {
+                    "type": "string"
                 },
                 "username": {
                     "type": "string"
@@ -2786,7 +3085,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "status": {
-                    "$ref": "#/definitions/models.Status"
+                    "type": "string"
                 },
                 "user": {
                     "$ref": "#/definitions/models.User"
@@ -2795,19 +3094,6 @@ const docTemplate = `{
                     "type": "integer"
                 }
             }
-        },
-        "models.Status": {
-            "type": "string",
-            "enum": [
-                "pending",
-                "ready",
-                "published"
-            ],
-            "x-enum-varnames": [
-                "PENDING",
-                "READY",
-                "PUBLISHED"
-            ]
         },
         "models.User": {
             "type": "object",
@@ -3236,7 +3522,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "status": {
-                    "$ref": "#/definitions/models.Status"
+                    "type": "string"
                 },
                 "transmission": {
                     "$ref": "#/definitions/car_params.Transmission"
@@ -3284,6 +3570,9 @@ const docTemplate = `{
                 "is_liked": {
                     "type": "boolean"
                 },
+                "main_url": {
+                    "type": "string"
+                },
                 "mileage": {
                     "type": "integer"
                 },
@@ -3296,7 +3585,75 @@ const docTemplate = `{
                 "production_year": {
                     "type": "integer"
                 },
+                "status": {
+                    "type": "string"
+                },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "sale_offer.UpdateSaleOfferDTO": {
+            "type": "object",
+            "properties": {
+                "color": {
+                    "$ref": "#/definitions/car_params.Color"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "drive": {
+                    "$ref": "#/definitions/car_params.Drive"
+                },
+                "engine_capacity": {
+                    "type": "integer"
+                },
+                "engine_power": {
+                    "type": "integer"
+                },
+                "fuel_type": {
+                    "$ref": "#/definitions/car_params.FuelType"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "manufacturer": {
+                    "type": "string"
+                },
+                "margin": {
+                    "$ref": "#/definitions/models.MarginValue"
+                },
+                "mileage": {
+                    "type": "integer"
+                },
+                "model": {
+                    "type": "string"
+                },
+                "number_of_doors": {
+                    "type": "integer"
+                },
+                "number_of_gears": {
+                    "type": "integer"
+                },
+                "number_of_seats": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "production_year": {
+                    "type": "integer"
+                },
+                "registration_date": {
+                    "type": "string"
+                },
+                "registration_number": {
+                    "type": "string"
+                },
+                "transmission": {
+                    "$ref": "#/definitions/car_params.Transmission"
+                },
+                "vin": {
                     "type": "string"
                 }
             }

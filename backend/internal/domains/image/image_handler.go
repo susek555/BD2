@@ -25,14 +25,14 @@ func NewHandler(imgSvc ImageServiceInterface, offerSvc sale_offer.SaleOfferServi
 //	@Tags			images
 //	@Accept			multipart/form-data
 //	@Produce		json
-//	@Param			id		path		int						true	"Sale offer ID"
-//	@Param			images	formData	file					true	"Images to upload"
-//	@Success		200		{object}	models.SaleOffer		"Updated sale offer with images"
-//	@Failure		400		{object}	custom_errors.HTTPError	"Invalid request"
-//	@Failure		401		{object}	custom_errors.HTTPError	"Unauthorized - user must be logged in to upload images for sale offers"
-//	@Failure		403		{object}	custom_errors.HTTPError	"Forbidden - user can only upload images for his own offers"
-//	@Failure		404		{object}	custom_errors.HTTPError	"Sale offer not found"
-//	@Failure		500		{object}	custom_errors.HTTPError	"Internal server error"
+//	@Param			id		path		int										true	"Sale offer ID"
+//	@Param			images	formData	file									true	"Images to upload"
+//	@Success		200		{object}	sale_offer.RetrieveDetailedSaleOfferDTO	"Updated sale offer with images"
+//	@Failure		400		{object}	custom_errors.HTTPError					"Invalid request"
+//	@Failure		401		{object}	custom_errors.HTTPError					"Unauthorized - user must be logged in to upload images for sale offers"
+//	@Failure		403		{object}	custom_errors.HTTPError					"Forbidden - user can only upload images for his own offers"
+//	@Failure		404		{object}	custom_errors.HTTPError					"Sale offer not found"
+//	@Failure		500		{object}	custom_errors.HTTPError					"Internal server error"
 //	@Router			/images/upload/{id} [patch]
 //	@Security		Bearer
 func (h *Handler) UploadImages(c *gin.Context) {
@@ -72,8 +72,8 @@ func (h *Handler) UploadImages(c *gin.Context) {
 //	@Success		204	"No Content - image successfully deleted"
 //	@Failure		400	{object}	custom_errors.HTTPError	"Invalid request"
 //	@Failure		401	{object}	custom_errors.HTTPError	"Unauthorized - user must be logged in to delete images"
-//	@Failure 		403	{object}	custom_errors.HTTPError	"Forbidden - usercan only images that refer to his own offers"
-//	@Failure 		404	{object}	custom_errors.HTTPError	"Image not found"
+//	@Failure		403	{object}	custom_errors.HTTPError	"Forbidden - usercan only images that refer to his own offers"
+//	@Failure		404	{object}	custom_errors.HTTPError	"Image not found"
 //	@Failure		500	{object}	custom_errors.HTTPError	"Internal server error"
 //	@Router			/images/delete/{url} [delete]
 //	@Security		Bearer
@@ -99,8 +99,8 @@ func (h *Handler) DeleteImage(c *gin.Context) {
 //	@Success		204	"No Content - images successfully deleted"
 //	@Failure		400	{object}	custom_errors.HTTPError	"Invalid request"
 //	@Failure		401	{object}	custom_errors.HTTPError	"Unauthorized - user must be logged in to delete images "
-//	@Failure 		403	{object}	custom_errors.HTTPError	"Forbidden - user can only delete images for his own offers"
-//	@Failure 		404	{object}	custom_errors.HTTPError	"Sale offer not found"
+//	@Failure		403	{object}	custom_errors.HTTPError	"Forbidden - user can only delete images for his own offers"
+//	@Failure		404	{object}	custom_errors.HTTPError	"Sale offer not found"
 //	@Failure		500	{object}	custom_errors.HTTPError	"Internal server error"
 //	@Router			/images/delete/{id} [delete]
 //	@Security		Bearer
