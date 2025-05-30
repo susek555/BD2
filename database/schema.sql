@@ -5,6 +5,10 @@ CREATE TYPE OFFER_STATUS AS ENUM (
     "pending", "ready", "published"
 );
 
+CREATE TYPE MARGIN_VALUE AS ENUM (
+    3, 5, 10
+);
+
 CREATE TYPE COLOR AS ENUM (
     "Red", "Blue", "Yellow", "Green", "Orange", "Purple", "Brown", "Black", "White", "Gray",
     "Cyan", "Magenta", "Lime", "Navy", "Teal", "Maroon", "Olive", "Beige", "Gold", "Other"
@@ -99,9 +103,9 @@ CREATE TABLE cars (
     registration_date DATE NOT NULL,
     color COLOR NOT NULL,
     fuel_type FUEL_TYPE NOT NULL,
+    drive DRIVE NOT NULL,
     transmission TRANSMISSION NOT NULL,
     number_of_gears INTEGER NOT NULL CHECK (number_of_gears BETWEEN 1 AND 10),
-    drive DRIVE NOT NULL,
     model_id INTEGER REFERENCES models(id)
 );
 
