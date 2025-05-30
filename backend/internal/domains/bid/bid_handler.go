@@ -17,11 +17,11 @@ import (
 type Handler struct {
 	bidService          BidServiceInterface
 	redisClient         *redis.Client
-	hub                 *ws.Hub
+	hub                 ws.HubInterface
 	notificationService notification.NotificationServiceInterface
 }
 
-func NewHandler(service BidServiceInterface, redisClient *redis.Client, hub *ws.Hub, notificationService notification.NotificationServiceInterface) *Handler {
+func NewHandler(service BidServiceInterface, redisClient *redis.Client, hub ws.HubInterface, notificationService notification.NotificationServiceInterface) *Handler {
 	return &Handler{
 		bidService:          service,
 		redisClient:         redisClient,
