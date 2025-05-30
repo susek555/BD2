@@ -1,6 +1,6 @@
 package liked_offer
 
-import "github.com/susek555/BD2/car-dealer-api/internal/domains/models"
+import "github.com/susek555/BD2/car-dealer-api/internal/models"
 
 type SaleOfferRetrieverInterface interface {
 	GetByID(id uint) (*models.SaleOffer, error)

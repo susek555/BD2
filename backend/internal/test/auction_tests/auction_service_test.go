@@ -5,16 +5,14 @@ import (
 	"testing"
 	"time"
 
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
-	"github.com/susek555/BD2/car-dealer-api/pkg/formats"
-
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auction"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
+	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"github.com/susek555/BD2/car-dealer-api/internal/test/mocks"
+	"github.com/susek555/BD2/car-dealer-api/pkg/formats"
 )
 
 func makeFullAuctionEntity(id uint, end time.Time, buyNow uint) *models.Auction {

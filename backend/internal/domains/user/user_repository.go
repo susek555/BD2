@@ -2,7 +2,7 @@ package user
 
 import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/generic"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
+	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"gorm.io/gorm"
 )
 

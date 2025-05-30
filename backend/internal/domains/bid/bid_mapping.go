@@ -3,7 +3,7 @@ package bid
 import (
 	"time"
 
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
+	"github.com/susek555/BD2/car-dealer-api/internal/models"
 )
 
 func MapToProcessingDTO(b *models.Bid) *ProcessingBidDTO {

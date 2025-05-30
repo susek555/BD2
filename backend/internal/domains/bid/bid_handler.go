@@ -5,13 +5,12 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
-
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auctionws"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auth"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/notification"
+	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"github.com/susek555/BD2/car-dealer-api/pkg/custom_errors"
 )
 
@@ -32,6 +31,7 @@ func NewHandler(service BidServiceInterface, redisClient *redis.Client, hub *auc
 }
 
 // CreateBid godoc
+//
 //	@Summary		Create a new bid
 //	@Description	Create a new bid for an auction
 //	@Tags			bid
@@ -82,6 +82,7 @@ func (h *Handler) CreateBid(c *gin.Context) {
 }
 
 // GetAllBids godoc
+//
 //	@Summary		Get all bids
 //	@Description	Retrieve all bids
 //	@Tags			bid
@@ -99,6 +100,7 @@ func (h *Handler) GetAllBids(c *gin.Context) {
 }
 
 // GetBidByID godoc
+//
 //	@Summary		Get bid by ID
 //	@Description	Retrieve a bid by its ID
 //	@Tags			bid
@@ -121,6 +123,7 @@ func (h *Handler) GetBidByID(c *gin.Context) {
 }
 
 // GetBidsByBidderId godoc
+//
 //	@Summary		Get bids by bidder ID
 //	@Description	Retrieves all bids placed by a specific bidder
 //	@Tags			bid
@@ -143,6 +146,7 @@ func (h *Handler) GetBidsByBidderId(c *gin.Context) {
 }
 
 // GetBidsByAuctionId godoc
+//
 //	@Summary		Get bids by auction ID
 //	@Description	Retrieves all bids placed on a specific auction
 //	@Tags			bid
@@ -165,6 +169,7 @@ func (h *Handler) GetBidsByAuctionId(c *gin.Context) {
 }
 
 // GetHighestBid godoc
+//
 //	@Summary		Get the highest bid for an auction
 //	@Description	Retrieves the highest bid for a specific auction
 //	@Tags			bid
@@ -187,6 +192,7 @@ func (h *Handler) GetHighestBid(c *gin.Context) {
 }
 
 // GetHighestBidByUserId godoc
+//
 //	@Summary		Get the highest bid by a user for a specific auction
 //	@Description	Retrieves the highest bid placed by a specific user on a specific auction
 //	@Tags			bid

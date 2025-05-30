@@ -8,13 +8,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
-
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auth"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/refresh_token"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
+	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
 	"github.com/susek555/BD2/car-dealer-api/pkg/middleware"
 	"github.com/susek555/BD2/car-dealer-api/pkg/passwords"
@@ -894,7 +893,7 @@ func TestLogoutAllDevicesNonExistingToken(t *testing.T) {
 	assert.Equal(t, "valid_refresh_token", user1Tokens[0].Token)
 	assert.Equal(t, uint(1), user1Tokens[0].UserID)
 	warsawLocation, _ := time.LoadLocation("Europe/Warsaw")
-	assert.Equal(t, time.Now().In(warsawLocation).Add(30*24*time.Hour).Format(time.RFC3339), 
+	assert.Equal(t, time.Now().In(warsawLocation).Add(30*24*time.Hour).Format(time.RFC3339),
 		user1Tokens[0].ExpiryDate.In(warsawLocation).Format(time.RFC3339))
 }
 

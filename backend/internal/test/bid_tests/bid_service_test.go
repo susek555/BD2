@@ -7,15 +7,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
-
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"github.com/susek555/BD2/car-dealer-api/internal/test/mocks"
-
-	// ----------------------------------------------------------
-
 	bid "github.com/susek555/BD2/car-dealer-api/internal/domains/bid"
+	"github.com/susek555/BD2/car-dealer-api/internal/models"
+	"github.com/susek555/BD2/car-dealer-api/internal/test/mocks"
 )
 
 // ---------- CREATE ----------
