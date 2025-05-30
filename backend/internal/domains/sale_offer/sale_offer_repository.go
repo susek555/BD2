@@ -13,6 +13,7 @@ type SaleOfferRepositoryInterface interface {
 	GetFiltered(filter *OfferFilter) ([]models.SaleOffer, *pagination.PaginationResponse, error)
 	GetByID(id uint) (*models.SaleOffer, error)
 	GetByUserID(id uint, pagination *pagination.PaginationRequest) ([]models.SaleOffer, *pagination.PaginationResponse, error)
+	GetAllActiveAuctions() ([]models.SaleOffer, error)
 }
 
 type SaleOfferRepository struct {
@@ -59,6 +60,22 @@ func (r *SaleOfferRepository) GetByUserID(id uint, pagRequest *pagination.Pagina
 		return nil, nil, err
 	}
 	return saleOffers, paginationResponse, nil
+}
+
+func (r *SaleOfferRepository) GetAllActiveAuctions() ([]models.SaleOffer, error) {
+	var auctions []models.SaleOffer
+	err := r.DB.
+		Preload("Auction").
+		Joins("JOIN auctions ON auctions.offer_id = sale_offers.id").
+		Where("auctions.offer_id IS NOT NULL").
+		Where("sale_offers.status = ?", models.PUBLISHED).
+		Where("auctions.date_end > NOW()").
+		Find(&auctions).
+		Error
+	if err != nil {
+		return nil, err
+	}
+	return auctions, nil
 }
 
 func (r *SaleOfferRepository) buildBaseQuery() *gorm.DB {
