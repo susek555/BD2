@@ -2,6 +2,7 @@ package sale_offer
 
 import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
+	"github.com/susek555/BD2/car-dealer-api/internal/enums"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"github.com/susek555/BD2/car-dealer-api/pkg/mapping"
 	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
@@ -65,7 +66,7 @@ func (s *SaleOfferService) Create(in *CreateSaleOfferDTO) (*RetrieveDetailedSale
 		return nil, err
 	}
 	offer.Car.ModelID = modelID
-	offer.Status = models.PENDING
+	offer.Status = enums.PENDING
 	if err := s.saleOfferRepo.Create(offer); err != nil {
 		return nil, err
 	}
@@ -103,10 +104,10 @@ func (s *SaleOfferService) Publish(id uint, userID uint) (*RetrieveDetailedSaleO
 	if !offer.BelongsToUser(userID) {
 		return nil, ErrOfferNotOwned
 	}
-	if offer.Status != models.READY {
+	if offer.Status != enums.READY {
 		return nil, ErrOfferNotReadyToPublish
 	}
-	offer.Status = models.PUBLISHED
+	offer.Status = enums.PUBLISHED
 	if err := s.saleOfferRepo.Update(offer); err != nil {
 		return nil, err
 	}

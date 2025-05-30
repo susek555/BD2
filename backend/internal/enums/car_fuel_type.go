@@ -1,4 +1,4 @@
-package car_params
+package enums
 
 type FuelType string
 

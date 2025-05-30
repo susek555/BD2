@@ -7,9 +7,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/liked_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
+	"github.com/susek555/BD2/car-dealer-api/internal/enums"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	u "github.com/susek555/BD2/car-dealer-api/internal/test/test_utils"
 	"github.com/susek555/BD2/car-dealer-api/pkg/custom_errors"
@@ -447,7 +447,7 @@ func TestCreateOffer_InvalidColor(t *testing.T) {
 	var seedOffers []models.SaleOffer
 
 	server, _, _ := newTestServer(db, seedOffers)
-	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("Color", car_params.Color("invalid_color"))))
+	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("Color", enums.Color("invalid_color"))))
 	setOffersStatusToPublished(db)
 	assert.NoError(t, err)
 	user := USERS[0]
@@ -466,7 +466,7 @@ func TestCreateOffer_ValidColor(t *testing.T) {
 	var seedOffers []models.SaleOffer
 
 	server, svc, _ := newTestServer(db, seedOffers)
-	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("Color", car_params.BLACK)))
+	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("Color", enums.BLACK)))
 	setOffersStatusToPublished(db)
 	assert.NoError(t, err)
 	user := USERS[0]
@@ -489,7 +489,7 @@ func TestCreateOffer_InvalidFuelType(t *testing.T) {
 	var seedOffers []models.SaleOffer
 
 	server, _, _ := newTestServer(db, seedOffers)
-	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("FuelType", car_params.FuelType("invalid_fuel_type"))))
+	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("FuelType", enums.FuelType("invalid_fuel_type"))))
 	setOffersStatusToPublished(db)
 	assert.NoError(t, err)
 	user := USERS[0]
@@ -508,7 +508,7 @@ func TestCreateOffer_ValidFuelType(t *testing.T) {
 	var seedOffers []models.SaleOffer
 
 	server, svc, _ := newTestServer(db, seedOffers)
-	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("FuelType", car_params.PETROL)))
+	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("FuelType", enums.PETROL)))
 	setOffersStatusToPublished(db)
 	assert.NoError(t, err)
 	user := USERS[0]
@@ -531,7 +531,7 @@ func TestCreateOffer_InvalidTransmission(t *testing.T) {
 	var seedOffers []models.SaleOffer
 
 	server, _, _ := newTestServer(db, seedOffers)
-	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("Transmission", car_params.Transmission("invalid_transmission"))))
+	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("Transmission", enums.Transmission("invalid_transmission"))))
 	setOffersStatusToPublished(db)
 	assert.NoError(t, err)
 	user := USERS[0]
@@ -550,7 +550,7 @@ func TestCreateOffer_ValidTransmission(t *testing.T) {
 	var seedOffers []models.SaleOffer
 
 	server, svc, _ := newTestServer(db, seedOffers)
-	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("Transmission", car_params.MANUAL)))
+	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("Transmission", enums.MANUAL)))
 	setOffersStatusToPublished(db)
 	assert.NoError(t, err)
 	user := USERS[0]
@@ -573,7 +573,7 @@ func TestCreateOffer_InvalidDrive(t *testing.T) {
 	var seedOffers []models.SaleOffer
 
 	server, _, _ := newTestServer(db, seedOffers)
-	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("Drive", car_params.Drive("invalid_drive"))))
+	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("Drive", enums.Drive("invalid_drive"))))
 	setOffersStatusToPublished(db)
 	assert.NoError(t, err)
 	user := USERS[0]
@@ -592,7 +592,7 @@ func TestCreateOffer_ValidDrive(t *testing.T) {
 	var seedOffers []models.SaleOffer
 
 	server, svc, _ := newTestServer(db, seedOffers)
-	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("Drive", car_params.FWD)))
+	body, err := json.Marshal(*u.Build(createSaleOfferDTO(), u.WithField[sale_offer.CreateSaleOfferDTO]("Drive", enums.FWD)))
 	setOffersStatusToPublished(db)
 	assert.NoError(t, err)
 	user := USERS[0]

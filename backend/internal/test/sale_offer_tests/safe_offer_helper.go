@@ -5,13 +5,13 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/bid"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/generic"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/image"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/liked_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
+	"github.com/susek555/BD2/car-dealer-api/internal/enums"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	u "github.com/susek555/BD2/car-dealer-api/internal/test/test_utils"
 	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
@@ -71,7 +71,7 @@ func setupDB() (*gorm.DB, error) {
 func getRepositoryWithSaleOffers(db *gorm.DB, offers []models.SaleOffer) sale_offer.SaleOfferRepositoryInterface {
 	repo := sale_offer.NewSaleOfferRepository(db)
 	for _, offer := range offers {
-		offer.Status = models.PUBLISHED
+		offer.Status = enums.PUBLISHED
 		repo.Create(&offer)
 	}
 	return repo
@@ -122,11 +122,11 @@ func createOffer(id uint) *models.SaleOffer {
 		EngineCapacity:     2000,
 		RegistrationNumber: "default",
 		RegistrationDate:   time.Now(),
-		Color:              car_params.BLACK,
-		FuelType:           car_params.PETROL,
-		Transmission:       car_params.MANUAL,
+		Color:              enums.BLACK,
+		FuelType:           enums.PETROL,
+		Transmission:       enums.MANUAL,
 		NumberOfGears:      6,
-		Drive:              car_params.FWD,
+		Drive:              enums.FWD,
 		ModelID:            1,
 		Model: &models.Model{
 			ID:             1,
@@ -141,10 +141,10 @@ func createOffer(id uint) *models.SaleOffer {
 		User:        &USERS[0],
 		Description: "offer",
 		Price:       1000,
-		Margin:      models.LOW_MARGIN,
+		Margin:      enums.LOW_MARGIN,
 		DateOfIssue: time.Now(),
 		Car:         c,
-		Status:      models.PUBLISHED,
+		Status:      enums.PUBLISHED,
 	}
 	return offer
 }
@@ -180,7 +180,7 @@ func createSaleOfferDTO() *sale_offer.CreateSaleOfferDTO {
 		UserID:             1,
 		Description:        "offer",
 		Price:              1000,
-		Margin:             models.LOW_MARGIN,
+		Margin:             enums.LOW_MARGIN,
 		Vin:                "vin",
 		ProductionYear:     2025,
 		Mileage:            1000,
@@ -190,18 +190,18 @@ func createSaleOfferDTO() *sale_offer.CreateSaleOfferDTO {
 		EngineCapacity:     2000,
 		RegistrationNumber: "default",
 		RegistrationDate:   time.Now().Format("2006-01-02"),
-		Color:              car_params.BLACK,
-		FuelType:           car_params.PETROL,
-		Transmission:       car_params.MANUAL,
+		Color:              enums.BLACK,
+		FuelType:           enums.PETROL,
+		Transmission:       enums.MANUAL,
 		NumberOfGears:      6,
-		Drive:              car_params.FWD,
+		Drive:              enums.FWD,
 		ManufacturerName:   "Audi",
 		ModelName:          "A3",
 	}
 }
 
 func setOffersStatusToPublished(db *gorm.DB) {
-	db.Model(&models.SaleOffer{}).Update("status", models.PUBLISHED)
+	db.Model(&models.SaleOffer{}).Update("status", enums.PUBLISHED)
 }
 
 func wasEntityAddedToDB[T any](db *gorm.DB, id uint) bool {

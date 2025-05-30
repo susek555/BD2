@@ -8,8 +8,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auction"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
+	"github.com/susek555/BD2/car-dealer-api/internal/enums"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"github.com/susek555/BD2/car-dealer-api/internal/test/mocks"
 	"github.com/susek555/BD2/car-dealer-api/pkg/formats"
@@ -25,7 +25,7 @@ func makeFullAuctionEntity(id uint, end time.Time, buyNow uint) *models.Auction 
 		OfferID:        id,
 		Mileage:        1000,
 		ProductionYear: 2021,
-		Color:          car_params.RED,
+		Color:          enums.RED,
 		ModelID:        mod.ID,
 		Model:          &mod,
 	}
@@ -63,11 +63,11 @@ func makeValidCreateDTO() *auction.CreateAuctionDTO {
 			EngineCapacity:     2000,
 			RegistrationNumber: "ABC123",
 			RegistrationDate:   time.Now().Format(formats.DateLayout),
-			Color:              car_params.RED,
-			FuelType:           car_params.DIESEL,
-			Transmission:       car_params.MANUAL,
+			Color:              enums.RED,
+			FuelType:           enums.DIESEL,
+			Transmission:       enums.MANUAL,
 			NumberOfGears:      6,
-			Drive:              car_params.FWD,
+			Drive:              enums.FWD,
 			ManufacturerName:   "Tesla",
 			ModelName:          "ModelS",
 		},
@@ -80,7 +80,7 @@ func makeValidUpdateDTO() *auction.UpdateAuctionDTO {
 	future := time.Date(2100, 1, 1, 12, 0, 0, 0, time.UTC)
 	description := "updated desc"
 	price := uint(1200)
-	margin := models.HIGH_MARGIN
+	margin := enums.HIGH_MARGIN
 	vin := "VIN987654321"
 	var productionYear uint = 2021
 	var mileage uint = 15000
@@ -90,11 +90,11 @@ func makeValidUpdateDTO() *auction.UpdateAuctionDTO {
 	var engineCapacity uint = 2200
 	registrationNumber := "XYZ789"
 	registrationDate := time.Now().Format(formats.DateLayout)
-	color := car_params.BLUE
-	fuelType := car_params.PETROL
-	transmission := car_params.AUTOMATIC
+	color := enums.BLUE
+	fuelType := enums.PETROL
+	transmission := enums.AUTOMATIC
 	var numberOfGears uint = 7
-	drive := car_params.RWD
+	drive := enums.RWD
 	manufacturerName := "Tesla"
 	modelName := "ModelX"
 	dateEnd := future.Format(formats.DateTimeLayout)

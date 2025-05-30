@@ -5,9 +5,9 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
+	"github.com/susek555/BD2/car-dealer-api/internal/enums"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	u "github.com/susek555/BD2/car-dealer-api/internal/test/test_utils"
 	"github.com/susek555/BD2/car-dealer-api/pkg/formats"
@@ -172,7 +172,7 @@ func TestGetFiltered_InvalidColor(t *testing.T) {
 	db := DB
 	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
-	filter.Colors = &[]car_params.Color{"invalid"}
+	filter.Colors = &[]enums.Color{"invalid"}
 	_, _, err := repo.GetFiltered(filter)
 	assert.ErrorIs(t, err, sale_offer.ErrInvalidColor)
 	u.CleanDB(DB)
@@ -183,7 +183,7 @@ func TestGetFiltered_InvalidDrive(t *testing.T) {
 	db := DB
 	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
-	filter.Drives = &[]car_params.Drive{"invalid"}
+	filter.Drives = &[]enums.Drive{"invalid"}
 	_, _, err := repo.GetFiltered(filter)
 	assert.ErrorIs(t, err, sale_offer.ErrInvalidDrive)
 	u.CleanDB(DB)
@@ -194,7 +194,7 @@ func TestGetFiltered_InvalidFuelType(t *testing.T) {
 	db := DB
 	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
-	filter.FuelTypes = &[]car_params.FuelType{"invalid"}
+	filter.FuelTypes = &[]enums.FuelType{"invalid"}
 	_, _, err := repo.GetFiltered(filter)
 	assert.ErrorIs(t, err, sale_offer.ErrInvalidFuelType)
 	u.CleanDB(DB)
@@ -205,7 +205,7 @@ func TestGetFiltered_InvalidTransmission(t *testing.T) {
 	db := DB
 	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
-	filter.Transmissions = &[]car_params.Transmission{"invalid"}
+	filter.Transmissions = &[]enums.Transmission{"invalid"}
 	_, _, err := repo.GetFiltered(filter)
 	assert.ErrorIs(t, err, sale_offer.ErrInvalidTransmission)
 	u.CleanDB(DB)
@@ -478,7 +478,7 @@ func TestGetFiltered_ValidColor(t *testing.T) {
 	db := DB
 	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
-	filter.Colors = &car_params.Colors
+	filter.Colors = &enums.Colors
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	_, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
@@ -490,7 +490,7 @@ func TestGetFiltered_ValidDrive(t *testing.T) {
 	db := DB
 	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
-	filter.Drives = &car_params.Drives
+	filter.Drives = &enums.Drives
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	_, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
@@ -502,7 +502,7 @@ func TestGetFiltered_ValidFuelType(t *testing.T) {
 	db := DB
 	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
-	filter.FuelTypes = &car_params.Types
+	filter.FuelTypes = &enums.Types
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	_, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
@@ -514,7 +514,7 @@ func TestGetFiltered_ValidTransmission(t *testing.T) {
 	db := DB
 	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
-	filter.Transmissions = &car_params.Transmissions
+	filter.Transmissions = &enums.Transmissions
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	_, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
@@ -1025,12 +1025,12 @@ func TestGetFiltered_NoMatchingManufacturer(t *testing.T) {
 
 func TestGetFiltered_SingleColor(t *testing.T) {
 	offers := []models.SaleOffer{
-		*u.Build(createOffer(1), withCarField(u.WithField[models.Car]("Color", car_params.RED))),
+		*u.Build(createOffer(1), withCarField(u.WithField[models.Car]("Color", enums.RED))),
 	}
 	db := DB
 	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
-	filter.Colors = &[]car_params.Color{car_params.RED}
+	filter.Colors = &[]enums.Color{enums.RED}
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	result, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
@@ -1040,13 +1040,13 @@ func TestGetFiltered_SingleColor(t *testing.T) {
 
 func TestGetFiltered_MultipleColors(t *testing.T) {
 	offers := []models.SaleOffer{
-		*u.Build(createOffer(1), withCarField(u.WithField[models.Car]("Color", car_params.RED))),
-		*u.Build(createOffer(2), withCarField(u.WithField[models.Car]("Color", car_params.BLUE))),
+		*u.Build(createOffer(1), withCarField(u.WithField[models.Car]("Color", enums.RED))),
+		*u.Build(createOffer(2), withCarField(u.WithField[models.Car]("Color", enums.BLUE))),
 	}
 	db := DB
 	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
-	filter.Colors = &[]car_params.Color{car_params.RED, car_params.BLUE}
+	filter.Colors = &[]enums.Color{enums.RED, enums.BLUE}
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	result, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
@@ -1056,12 +1056,12 @@ func TestGetFiltered_MultipleColors(t *testing.T) {
 
 func TestGetFiltered_NoMatchingColor(t *testing.T) {
 	offers := []models.SaleOffer{
-		*u.Build(createOffer(1), withCarField(u.WithField[models.Car]("Color", car_params.RED))),
+		*u.Build(createOffer(1), withCarField(u.WithField[models.Car]("Color", enums.RED))),
 	}
 	db := DB
 	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
-	filter.Colors = &[]car_params.Color{car_params.GREEN}
+	filter.Colors = &[]enums.Color{enums.GREEN}
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	result, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
@@ -1071,12 +1071,12 @@ func TestGetFiltered_NoMatchingColor(t *testing.T) {
 
 func TestGetFiltered_SingleDrive(t *testing.T) {
 	offers := []models.SaleOffer{
-		*u.Build(createOffer(1), withCarField(u.WithField[models.Car]("Drive", car_params.FWD))),
+		*u.Build(createOffer(1), withCarField(u.WithField[models.Car]("Drive", enums.FWD))),
 	}
 	db := DB
 	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
-	filter.Drives = &[]car_params.Drive{car_params.FWD}
+	filter.Drives = &[]enums.Drive{enums.FWD}
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	result, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
@@ -1085,13 +1085,13 @@ func TestGetFiltered_SingleDrive(t *testing.T) {
 }
 func TestGetFiltered_MultipleDrives(t *testing.T) {
 	offers := []models.SaleOffer{
-		*u.Build(createOffer(1), withCarField(u.WithField[models.Car]("Drive", car_params.FWD))),
-		*u.Build(createOffer(2), withCarField(u.WithField[models.Car]("Drive", car_params.RWD))),
+		*u.Build(createOffer(1), withCarField(u.WithField[models.Car]("Drive", enums.FWD))),
+		*u.Build(createOffer(2), withCarField(u.WithField[models.Car]("Drive", enums.RWD))),
 	}
 	db := DB
 	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
-	filter.Drives = &[]car_params.Drive{car_params.FWD, car_params.RWD}
+	filter.Drives = &[]enums.Drive{enums.FWD, enums.RWD}
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	result, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
@@ -1101,12 +1101,12 @@ func TestGetFiltered_MultipleDrives(t *testing.T) {
 
 func TestGetFiltered_OfferNoMatchingDrive(t *testing.T) {
 	offers := []models.SaleOffer{
-		*u.Build(createOffer(1), withCarField(u.WithField[models.Car]("Drive", car_params.FWD))),
+		*u.Build(createOffer(1), withCarField(u.WithField[models.Car]("Drive", enums.FWD))),
 	}
 	db := DB
 	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
-	filter.Drives = &[]car_params.Drive{car_params.AWD}
+	filter.Drives = &[]enums.Drive{enums.AWD}
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	result, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
@@ -1116,12 +1116,12 @@ func TestGetFiltered_OfferNoMatchingDrive(t *testing.T) {
 
 func TestGetFiltered_SingleFuelType(t *testing.T) {
 	offers := []models.SaleOffer{
-		*u.Build(createOffer(1), withCarField(u.WithField[models.Car]("FuelType", car_params.PETROL))),
+		*u.Build(createOffer(1), withCarField(u.WithField[models.Car]("FuelType", enums.PETROL))),
 	}
 	db := DB
 	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
-	filter.FuelTypes = &[]car_params.FuelType{car_params.PETROL}
+	filter.FuelTypes = &[]enums.FuelType{enums.PETROL}
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	result, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
@@ -1131,13 +1131,13 @@ func TestGetFiltered_SingleFuelType(t *testing.T) {
 
 func TestGetFiltered_MultipleFuelTypes(t *testing.T) {
 	offers := []models.SaleOffer{
-		*u.Build(createOffer(1), withCarField(u.WithField[models.Car]("FuelType", car_params.PETROL))),
-		*u.Build(createOffer(2), withCarField(u.WithField[models.Car]("FuelType", car_params.DIESEL))),
+		*u.Build(createOffer(1), withCarField(u.WithField[models.Car]("FuelType", enums.PETROL))),
+		*u.Build(createOffer(2), withCarField(u.WithField[models.Car]("FuelType", enums.DIESEL))),
 	}
 	db := DB
 	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
-	filter.FuelTypes = &[]car_params.FuelType{car_params.PETROL, car_params.DIESEL}
+	filter.FuelTypes = &[]enums.FuelType{enums.PETROL, enums.DIESEL}
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	result, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
@@ -1147,12 +1147,12 @@ func TestGetFiltered_MultipleFuelTypes(t *testing.T) {
 
 func TestGetFiltered_OfferNoMatchingFuelType(t *testing.T) {
 	offers := []models.SaleOffer{
-		*u.Build(createOffer(1), withCarField(u.WithField[models.Car]("FuelType", car_params.PETROL))),
+		*u.Build(createOffer(1), withCarField(u.WithField[models.Car]("FuelType", enums.PETROL))),
 	}
 	db := DB
 	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
-	filter.FuelTypes = &[]car_params.FuelType{car_params.ELECTRIC}
+	filter.FuelTypes = &[]enums.FuelType{enums.ELECTRIC}
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	result, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
@@ -1162,12 +1162,12 @@ func TestGetFiltered_OfferNoMatchingFuelType(t *testing.T) {
 
 func TestGetFiltered_SingleTransmission(t *testing.T) {
 	offers := []models.SaleOffer{
-		*u.Build(createOffer(1), withCarField(u.WithField[models.Car]("Transmission", car_params.AUTOMATIC))),
+		*u.Build(createOffer(1), withCarField(u.WithField[models.Car]("Transmission", enums.AUTOMATIC))),
 	}
 	db := DB
 	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
-	filter.Transmissions = &[]car_params.Transmission{car_params.AUTOMATIC}
+	filter.Transmissions = &[]enums.Transmission{enums.AUTOMATIC}
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	result, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
@@ -1177,13 +1177,13 @@ func TestGetFiltered_SingleTransmission(t *testing.T) {
 
 func TestGetFiltered_MultipleTransmissions(t *testing.T) {
 	offers := []models.SaleOffer{
-		*u.Build(createOffer(1), withCarField(u.WithField[models.Car]("Transmission", car_params.AUTOMATIC))),
-		*u.Build(createOffer(2), withCarField(u.WithField[models.Car]("Transmission", car_params.MANUAL))),
+		*u.Build(createOffer(1), withCarField(u.WithField[models.Car]("Transmission", enums.AUTOMATIC))),
+		*u.Build(createOffer(2), withCarField(u.WithField[models.Car]("Transmission", enums.MANUAL))),
 	}
 	db := DB
 	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
-	filter.Transmissions = &[]car_params.Transmission{car_params.AUTOMATIC, car_params.MANUAL}
+	filter.Transmissions = &[]enums.Transmission{enums.AUTOMATIC, enums.MANUAL}
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	result, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
@@ -1193,12 +1193,12 @@ func TestGetFiltered_MultipleTransmissions(t *testing.T) {
 
 func TestGetFiltered_OfferNoMatchingTransmission(t *testing.T) {
 	offers := []models.SaleOffer{
-		*u.Build(createOffer(1), withCarField(u.WithField[models.Car]("Transmission", car_params.AUTOMATIC))),
+		*u.Build(createOffer(1), withCarField(u.WithField[models.Car]("Transmission", enums.AUTOMATIC))),
 	}
 	db := DB
 	repo := getRepositoryWithSaleOffers(db, offers)
 	filter := sale_offer.NewOfferFilter()
-	filter.Transmissions = &[]car_params.Transmission{car_params.MANUAL}
+	filter.Transmissions = &[]enums.Transmission{enums.MANUAL}
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	result, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
@@ -2040,7 +2040,7 @@ func TestGetFiltered_DefaultOrderSingleRecord(t *testing.T) {
 func TestGetFiltered_DefaultOrderMultipleRecordsDesc(t *testing.T) {
 	var offers []models.SaleOffer
 	for i := 1; i <= 3; i++ {
-		offers = append(offers, *u.Build(createOffer(uint(i)), u.WithField[models.SaleOffer]("Margin", models.Margins[i-1])))
+		offers = append(offers, *u.Build(createOffer(uint(i)), u.WithField[models.SaleOffer]("Margin", enums.Margins[i-1])))
 	}
 	db := DB
 	repo := getRepositoryWithSaleOffers(db, offers)
@@ -2051,7 +2051,7 @@ func TestGetFiltered_DefaultOrderMultipleRecordsDesc(t *testing.T) {
 	result, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
 	for i := range offers {
-		assert.Equal(t, result[i].Margin, models.Margins[len(offers)-i-1])
+		assert.Equal(t, result[i].Margin, enums.Margins[len(offers)-i-1])
 	}
 	u.CleanDB(DB)
 }
@@ -2059,7 +2059,7 @@ func TestGetFiltered_DefaultOrderMultipleRecordsDesc(t *testing.T) {
 func TestGetFiltered_DefaultOrderMultipleRecordsAsc(t *testing.T) {
 	var offers []models.SaleOffer
 	for i := 1; i <= 3; i++ {
-		offers = append(offers, *u.Build(createOffer(uint(i)), u.WithField[models.SaleOffer]("Margin", models.Margins[i-1])))
+		offers = append(offers, *u.Build(createOffer(uint(i)), u.WithField[models.SaleOffer]("Margin", enums.Margins[i-1])))
 	}
 	db := DB
 	repo := getRepositoryWithSaleOffers(db, offers)
@@ -2070,7 +2070,7 @@ func TestGetFiltered_DefaultOrderMultipleRecordsAsc(t *testing.T) {
 	result, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
 	for i := range offers {
-		assert.Equal(t, result[i].Margin, models.Margins[i])
+		assert.Equal(t, result[i].Margin, enums.Margins[i])
 	}
 	u.CleanDB(DB)
 }
