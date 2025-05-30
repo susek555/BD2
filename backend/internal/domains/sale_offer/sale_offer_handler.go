@@ -5,16 +5,21 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/ws"
 	"github.com/susek555/BD2/car-dealer-api/pkg/custom_errors"
 	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
 )
 
 type Handler struct {
 	service SaleOfferServiceInterface
+	hub     *ws.Hub
 }
 
-func NewHandler(s SaleOfferServiceInterface) *Handler {
-	return &Handler{service: s}
+func NewHandler(s SaleOfferServiceInterface, hub *ws.Hub) *Handler {
+	return &Handler{
+		service: s,
+		hub:     hub,
+	}
 }
 
 // CreateSaleOffer godoc
@@ -55,6 +60,9 @@ func (h *Handler) CreateSaleOffer(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusCreated, retrieveDTO)
+	offerIDstr := strconv.FormatUint(uint64(retrieveDTO.ID), 10)
+	userIDstr := strconv.FormatUint(uint64(userID.(uint)), 10)
+	h.hub.SubscribeUser(userIDstr, offerIDstr)
 }
 
 // UpdateSaleOffer godoc
