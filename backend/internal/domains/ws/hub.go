@@ -12,6 +12,7 @@ import (
 	"github.com/redis/go-redis/v9"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/notification"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
+	"gorm.io/gorm"
 )
 
 type Hub struct {
@@ -24,6 +25,7 @@ type Hub struct {
 	broadcast              chan outbound
 	mu                     sync.RWMutex
 	clientNotificationRepo notification.ClientNotificationRepositoryInterface
+	db                     *gorm.DB
 }
 type subscription struct {
 	offerID string
@@ -35,7 +37,7 @@ type outbound struct {
 	excludeID string
 }
 
-func NewHub(clientNotificationRepo notification.ClientNotificationRepositoryInterface) *Hub {
+func NewHub(clientNotificationRepo notification.ClientNotificationRepositoryInterface, db *gorm.DB) *Hub {
 	return &Hub{
 		rooms:                  make(map[string]map[*Client]struct{}),
 		clients:                make(map[string]*Client),
@@ -45,6 +47,7 @@ func NewHub(clientNotificationRepo notification.ClientNotificationRepositoryInte
 		unsubscribe:            make(chan subscription),
 		broadcast:              make(chan outbound, 1024),
 		clientNotificationRepo: clientNotificationRepo,
+		db:                     db,
 	}
 }
 
