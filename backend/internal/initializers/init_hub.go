@@ -6,7 +6,7 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/ws"
 )
 
-var Hub *ws.Hub
+var Hub ws.HubInterface
 
 func InitializeHub() {
 	Hub = ws.NewHub(ClientNotificationRepo, DB)
