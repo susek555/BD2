@@ -893,7 +893,9 @@ func TestLogoutAllDevicesNonExistingToken(t *testing.T) {
 	assert.Len(t, user1Tokens, 1)
 	assert.Equal(t, "valid_refresh_token", user1Tokens[0].Token)
 	assert.Equal(t, uint(1), user1Tokens[0].UserID)
-	assert.Equal(t, time.Now().UTC().Add(30*24*time.Hour).Format(time.RFC3339), user1Tokens[0].ExpiryDate.UTC().Format(time.RFC3339))
+	warsawLocation, _ := time.LoadLocation("Europe/Warsaw")
+	assert.Equal(t, time.Now().In(warsawLocation).Add(30*24*time.Hour).Format(time.RFC3339), 
+		user1Tokens[0].ExpiryDate.In(warsawLocation).Format(time.RFC3339))
 }
 
 func TestLogoutAllDevicesEmptyToken(t *testing.T) {
