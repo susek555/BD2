@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/auctionws"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/ws"
 	"github.com/susek555/BD2/car-dealer-api/internal/initializers"
 	"github.com/susek555/BD2/car-dealer-api/pkg/middleware"
 )
@@ -32,7 +32,7 @@ func RegisterRoutes(router *gin.Engine) {
 
 func registerWebsocket(router *gin.Engine) {
 	// Start the WebSocket server
-	wsHandler := auctionws.ServeWS(initializers.Hub)
+	wsHandler := ws.ServeWS(initializers.Hub)
 	router.GET("/ws", middleware.Authenticate(initializers.Verifier), wsHandler)
 }
 

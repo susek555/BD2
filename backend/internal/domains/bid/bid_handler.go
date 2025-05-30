@@ -7,9 +7,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/auctionws"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auth"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/notification"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/ws"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"github.com/susek555/BD2/car-dealer-api/pkg/custom_errors"
 )
@@ -17,11 +17,11 @@ import (
 type Handler struct {
 	bidService          BidServiceInterface
 	redisClient         *redis.Client
-	hub                 *auctionws.Hub
+	hub                 *ws.Hub
 	notificationService notification.NotificationServiceInterface
 }
 
-func NewHandler(service BidServiceInterface, redisClient *redis.Client, hub *auctionws.Hub, notificationService notification.NotificationServiceInterface) *Handler {
+func NewHandler(service BidServiceInterface, redisClient *redis.Client, hub *ws.Hub, notificationService notification.NotificationServiceInterface) *Handler {
 	return &Handler{
 		bidService:          service,
 		redisClient:         redisClient,
