@@ -73,7 +73,7 @@ func (h *Handler) CreateBid(c *gin.Context) {
 		log.Println("Error creating notification:", err)
 		return
 	}
-	h.hub.SaveNotificationForClients(auctionIDStr, notification)
+	h.hub.SaveNotificationForClients(auctionIDStr, userId, notification)
 	// TODO: think about the best way to do this
 	// auctionws.PublishAuctionEvent(c, h.redisClient, auctionIDStr, env)
 	go h.hub.SendFourLatestNotificationsToClient(auctionIDStr, userIDStr)
