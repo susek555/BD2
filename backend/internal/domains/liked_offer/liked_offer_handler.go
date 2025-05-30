@@ -6,15 +6,20 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/ws"
 	"github.com/susek555/BD2/car-dealer-api/pkg/custom_errors"
 )
 
 type Handler struct {
 	service LikedOfferServiceInterface
+	hub     *ws.Hub
 }
 
-func NewHandler(service LikedOfferServiceInterface) *Handler {
-	return &Handler{service: service}
+func NewHandler(service LikedOfferServiceInterface, hub *ws.Hub) *Handler {
+	return &Handler{
+		service: service,
+		hub:     hub,
+	}
 }
 
 // LikeNewOffer godoc
@@ -44,6 +49,9 @@ func (h *Handler) LikeOffer(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, models.LikedOffer{OfferID: uint(offerID), UserID: userID.(uint)})
+	offerIDStr := strconv.FormatUint(offerID, 10)
+	userIDStr := strconv.FormatUint(uint64(userID.(uint)), 10)
+	h.hub.SubscribeUser(userIDStr, offerIDStr)
 }
 
 // DislikeOffer godoc
