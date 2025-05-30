@@ -1,19 +1,37 @@
+CREATE TYPE SELECTOR AS ENUM (
+    'P', 'C'
+);
+CREATE TYPE OFFER_STATUS AS ENUM (
+    "pending", "ready", "published"
+);
+
+CREATE TYPE COLOR AS ENUM (
+    "Red", "Blue", "Yellow", "Green", "Orange", "Purple", "Brown", "Black", "White", "Gray",
+    "Cyan", "Magenta", "Lime", "Navy", "Teal", "Maroon", "Olive", "Beige", "Gold", "Other"
+);
+
+CREATE TYPE FUEL_TYPE AS ENUM (
+    "Diesel", "Petrol", "Electric", "Ethanol", "LPG", "Biofuel", "Hybrid", "Hydrogen"
+);
+
+CREATE TYPE TRANSMISSION AS ENUM (
+    "Manual", "Automatic", "CVT", "Dual clutch"
+);
+
+CREATE TYPE DRIVE AS ENUM (
+    "FWD", "RWD", "AWD"
+);
+
+CREATE TYPE PAYMENT_STATUS AS ENUM (
+    'pending', 'completed', 'failed', 'refunded'
+);
+
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
     email VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(100) NOT NULL,
-    selector VARCHAR(10) NOT NULL CHECK (selector IN ('P', 'C'))
-);
-
-CREATE TABLE documents (
-    id SERIAL PRIMARY KEY,
-    type VARCHAR(30) NOT NULL
-);
-
-CREATE TABLE manufacturers (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(50) NOT NULL
+    selector SELECTOR NOT NULL
 );
 
 CREATE TABLE people (
@@ -28,6 +46,22 @@ CREATE TABLE companies (
     name VARCHAR(30) NOT NULL
 );
 
+CREATE TABLE documents (
+    id SERIAL PRIMARY KEY,
+    type VARCHAR(30) NOT NULL
+);
+
+CREATE TABLE manufacturers (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE models (
+    id SERIAL PRIMARY KEY,
+    manufacturer_id INTEGER NOT NULL REFERENCES manufacturers(id),
+    name VARCHAR(64) NOT NULL
+);
+
 CREATE TABLE sale_offers (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users(id),
@@ -35,7 +69,7 @@ CREATE TABLE sale_offers (
     price INTEGER NOT NULL,
     margin FLOAT NOT NULL,
     date_of_issue TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    status VARCHAR(50) NOT NULL
+    status OFFER_STATUS NOT NULL
 );
 
 CREATE TABLE auctions (
@@ -44,45 +78,12 @@ CREATE TABLE auctions (
     buy_now_price INTEGER
 );
 
-
 CREATE TABLE bids (
     id SERIAL PRIMARY KEY,
     auction_id INTEGER NOT NULL REFERENCES auctions(offer_id),
     bidder_id INTEGER NOT NULL REFERENCES users(id),
     amount INTEGER NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE countries_of_origin (
-    id SERIAL PRIMARY KEY,
-    country_name VARCHAR(48) NOT NULL
-);
-
-CREATE TABLE transmissions (
-    id SERIAL PRIMARY KEY,
-    gear_count INTEGER NOT NULL,
-    transmission_type VARCHAR(12) NOT NULL CHECK (transmission_type IN ('manual', 'automatic'))
-);
-
-CREATE TABLE colors (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(64) NOT NULL
-);
-
-CREATE TABLE fuel_types (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(20) NOT NULL
-);
-
-CREATE TABLE drive_types (
-    id SERIAL PRIMARY KEY,
-    type VARCHAR(8) NOT NULL CHECK (type IN ('FWD', 'RWD', 'AWD'))
-);
-
-CREATE TABLE models (
-    id SERIAL PRIMARY KEY,
-    manufacturer_id INTEGER NOT NULL REFERENCES manufacturers(id),
-    name VARCHAR(64) NOT NULL
 );
 
 CREATE TABLE cars (
@@ -96,14 +97,13 @@ CREATE TABLE cars (
     engine_capacity INTEGER NOT NULL CHECK (engine_capacity BETWEEN 1 AND 9000),
     registration_number VARCHAR(20) NOT NULL,
     registration_date DATE NOT NULL,
-    color VARCHAR(20) NOT NULL,
-    fuel_type VARCHAR(20) NOT NULL,
-    transmission VARCHAR(20) NOT NULL,
+    color COLOR NOT NULL,
+    fuel_type FUEL_TYPE NOT NULL,
+    transmission TRANSMISSION NOT NULL,
     number_of_gears INTEGER NOT NULL CHECK (number_of_gears BETWEEN 1 AND 10),
-    drive VARCHAR(8) NOT NULL CHECK (drive IN ('FWD', 'RWD', 'AWD')),
+    drive DRIVE NOT NULL,
     model_id INTEGER REFERENCES models(id)
 );
-
 
 CREATE TABLE notifications (
     id SERIAL PRIMARY KEY,
@@ -135,7 +135,7 @@ CREATE TABLE refresh_tokens (
 
 CREATE TABLE payment_statuses (
     id SERIAL PRIMARY KEY,
-    status VARCHAR(16) NOT NULL CHECK (status IN ('pending', 'completed', 'failed', 'refunded'))
+    status PAYMENT_STATUS NOT NULL CHECK
 );
 
 CREATE TABLE purchases (
