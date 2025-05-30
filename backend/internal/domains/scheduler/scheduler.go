@@ -31,6 +31,7 @@ type Scheduler struct {
 type SchedulerInterface interface {
 	AddAuction(auctionID string, end time.Time)
 	Run(ctx context.Context)
+	LoadAuctions() error
 }
 
 func NewScheduler(repo bid.BidRepositoryInterface, redisClient *redis.Client, notificationService notification.NotificationServiceInterface, saleOfferRepo sale_offer.SaleOfferRepositoryInterface, hub *ws.Hub) SchedulerInterface {
@@ -45,7 +46,7 @@ func NewScheduler(repo bid.BidRepositoryInterface, redisClient *redis.Client, no
 	}
 }
 
-func (s *Scheduler) LoadAuctions(ctx context.Context) error {
+func (s *Scheduler) LoadAuctions() error {
 	offers, err := s.saleOfferRepository.GetAllActiveAuctions()
 	if err != nil {
 		log.Println("scheduler: error loading auctions:", err)
