@@ -103,7 +103,8 @@ func newTestServer(seedManufacturers []models.Manufacturer, seedModels []models.
 			mock.AnythingOfType("time.Time"), // termin zakończenia
 		).
 		Return(nil)
-	auctionHandler := auction.NewHandler(service, ms)
+	mh := new(mocks.HubInterface)
+	auctionHandler := auction.NewHandler(service, ms, mh)
 	auctionRoutes := r.Group("/auction")
 	auctionRoutes.GET("/", auctionHandler.GetAllAuctions)
 	auctionRoutes.GET("/:id", auctionHandler.GetAuctionById)
