@@ -12,10 +12,10 @@ import (
 
 type Handler struct {
 	service LikedOfferServiceInterface
-	hub     *ws.Hub
+	hub     ws.HubInterface
 }
 
-func NewHandler(service LikedOfferServiceInterface, hub *ws.Hub) *Handler {
+func NewHandler(service LikedOfferServiceInterface, hub ws.HubInterface) *Handler {
 	return &Handler{
 		service: service,
 		hub:     hub,
