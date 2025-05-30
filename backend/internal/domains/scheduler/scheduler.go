@@ -114,6 +114,6 @@ func (s *Scheduler) closeAuction(ctx context.Context, auctionID string) {
 		log.Println("Error creating notification:", err)
 		return
 	}
-	s.hub.SaveNotificationForClients(auctionID, &notification)
+	s.hub.SaveNotificationForClients(auctionID, 0, &notification)
 	go s.hub.SendFourLatestNotificationsToClient(auctionID, "0")
 }
