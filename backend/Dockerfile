@@ -23,7 +23,6 @@ WORKDIR /root/
 RUN apk --no-cache add ca-certificates libc6-compat curl
 
 COPY --from=builder /app/main .
-COPY --from=builder /app/data ./data
 
 RUN addgroup -g 1001 -S appgroup && \
     adduser -S appuser -u 1001 -G appgroup
