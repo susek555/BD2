@@ -31,6 +31,9 @@ func (s *NotificationService) CreateOutbidNotification(notification *models.Noti
 }
 
 func (s *NotificationService) CreateEndAuctionNotification(notification *models.Notification, winner string, winningBid int64, offer *models.SaleOffer) error {
+	if winningBid == 0 && winner == "" {
+		return ErrNoBids
+	}
 	notification.CreatedAt = time.Now().UTC()
 	notification.Title = fmt.Sprintf(EndAuctionTitleTemplate, offer.Car.Model.Manufacturer.Name, offer.Car.Model.Name)
 	notification.Description = fmt.Sprintf(EndAuctionDescriptionTemplate, offer.Car.Model.Manufacturer.Name, offer.Car.Model.Name, winner, winningBid)
