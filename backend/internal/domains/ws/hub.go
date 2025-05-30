@@ -15,6 +15,7 @@ import (
 	"gorm.io/gorm"
 )
 
+//go:generate mockery --name=HubInterface --output=../../test/mocks --case=snake --with-expecter
 type HubInterface interface {
 	Run()
 	StartRedisFanIn(ctx context.Context, rdb *redis.Client)
