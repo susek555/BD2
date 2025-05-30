@@ -170,7 +170,7 @@ func (h *Hub) BroadcastLocal(auctionID string, data []byte, excludeID string) {
 	}
 }
 
-func (h *Hub) SaveNotificationForClients(auctionID string, n *models.Notification) error {
+func (h *Hub) SaveNotificationForClients(auctionID string, userID uint, n *models.Notification) error {
 	h.mu.RLock()
 	clients, ok := h.rooms[auctionID]
 	h.mu.RUnlock()
@@ -181,6 +181,10 @@ func (h *Hub) SaveNotificationForClients(auctionID string, n *models.Notificatio
 		clientID, err := strconv.ParseUint(client.userID, 10, 64)
 		if err != nil {
 			log.Printf("Failed to convert userID %s to uint: %v", client.userID, err)
+			continue
+		}
+		if clientID == uint64(userID) {
+			log.Printf("Skipping saving notification for client %s as it is the same as the userID %d", client.userID, userID)
 			continue
 		}
 		clientNotification := notification.MapToClientNotification(n, uint(clientID))
