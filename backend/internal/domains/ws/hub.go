@@ -15,6 +15,16 @@ import (
 	"gorm.io/gorm"
 )
 
+type HubInterface interface {
+	Run()
+	StartRedisFanIn(ctx context.Context, rdb *redis.Client)
+	SubscribeUser(uid, offerID string)
+	BroadcastLocal(offerID string, data []byte, excludeID string)
+	SaveNotificationForClients(offerID string, userID uint, n *models.Notification) error
+	SendFourLatestNotificationsToClient(offerID, userID string)
+	LoadClientToRooms(userID string)
+}
+
 type Hub struct {
 	rooms                  map[string]map[*Client]struct{}
 	clients                map[string]*Client
@@ -37,7 +47,7 @@ type outbound struct {
 	excludeID string
 }
 
-func NewHub(clientNotificationRepo notification.ClientNotificationRepositoryInterface, db *gorm.DB) *Hub {
+func NewHub(clientNotificationRepo notification.ClientNotificationRepositoryInterface, db *gorm.DB) HubInterface {
 	return &Hub{
 		rooms:                  make(map[string]map[*Client]struct{}),
 		clients:                make(map[string]*Client),
