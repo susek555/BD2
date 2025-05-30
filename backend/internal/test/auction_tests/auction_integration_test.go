@@ -13,12 +13,12 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auction"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/bid"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/image"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/liked_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
+	"github.com/susek555/BD2/car-dealer-api/internal/enums"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"github.com/susek555/BD2/car-dealer-api/internal/test/mocks"
 	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
@@ -212,11 +212,11 @@ func TestCreateAuctionSuccess(t *testing.T) {
 			EngineCapacity:     2000,
 			RegistrationNumber: "ABC123",
 			RegistrationDate:   "2023-10-01",
-			Color:              car_params.ORANGE,
-			FuelType:           car_params.PETROL,
-			Transmission:       car_params.MANUAL,
+			Color:              enums.ORANGE,
+			FuelType:           enums.PETROL,
+			Transmission:       enums.MANUAL,
 			NumberOfGears:      6,
-			Drive:              car_params.FWD,
+			Drive:              enums.FWD,
 			ManufacturerName:   "Toyota",
 			ModelName:          "Corolla",
 		},
@@ -294,11 +294,11 @@ func TestCreateAuctionInvalidDate(t *testing.T) {
 			EngineCapacity:     2000,
 			RegistrationNumber: "ABC123",
 			RegistrationDate:   "2023-10-01",
-			Color:              car_params.ORANGE,
-			FuelType:           car_params.PETROL,
-			Transmission:       car_params.MANUAL,
+			Color:              enums.ORANGE,
+			FuelType:           enums.PETROL,
+			Transmission:       enums.MANUAL,
 			NumberOfGears:      6,
-			Drive:              car_params.FWD,
+			Drive:              enums.FWD,
 			ManufacturerName:   "Corolla",
 			ModelName:          "Toyota",
 		},
@@ -370,11 +370,11 @@ func TestCreateAuctionInvalidDateFormat(t *testing.T) {
 			EngineCapacity:     2000,
 			RegistrationNumber: "ABC123",
 			RegistrationDate:   "2023-10-01",
-			Color:              car_params.ORANGE,
-			FuelType:           car_params.PETROL,
-			Transmission:       car_params.MANUAL,
+			Color:              enums.ORANGE,
+			FuelType:           enums.PETROL,
+			Transmission:       enums.MANUAL,
 			NumberOfGears:      6,
-			Drive:              car_params.FWD,
+			Drive:              enums.FWD,
 			ManufacturerName:   "Toyota",
 			ModelName:          "Corolla",
 		},

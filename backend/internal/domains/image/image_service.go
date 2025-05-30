@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"mime/multipart"
 
+	"github.com/susek555/BD2/car-dealer-api/internal/enums"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
 )
 
@@ -139,9 +140,9 @@ func (s *ImageService) setOfferStatus(offer *models.SaleOffer) error {
 	}
 	switch {
 	case len(images) < 3:
-		offer.Status = models.PENDING
+		offer.Status = enums.PENDING
 	case len(images) >= 3:
-		offer.Status = models.READY
+		offer.Status = enums.READY
 	}
 	return s.offerRepo.Update(offer)
 }

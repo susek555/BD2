@@ -76,10 +76,10 @@ func registerReviewRoutes(router *gin.Engine) {
 func registerCarRoutes(router *gin.Engine) {
 	carRoutes := router.Group("/car")
 	{
-		carRoutes.GET("/colors", initializers.CarParamHandler.GetPossibleColors)
-		carRoutes.GET("/transmissions", initializers.CarParamHandler.GetPossibleTransmissions)
-		carRoutes.GET("/fuel-types", initializers.CarParamHandler.GetPossibleFuelTypes)
-		carRoutes.GET("/drives", initializers.CarParamHandler.GetPossibleDrives)
+		carRoutes.GET("/colors", initializers.CarHandler.GetPossibleColors)
+		carRoutes.GET("/transmissions", initializers.CarHandler.GetPossibleTransmissions)
+		carRoutes.GET("/fuel-types", initializers.CarHandler.GetPossibleFuelTypes)
+		carRoutes.GET("/drives", initializers.CarHandler.GetPossibleDrives)
 		carRoutes.GET("/manufactures", initializers.ManufacturerHandler.GetAllManufactures)
 		carRoutes.GET("/models/id/:id", initializers.ModelHandler.GetModelsByManufacturerID)
 		carRoutes.GET("/models/name/:name", initializers.ModelHandler.GetModelsByManufacturerName)

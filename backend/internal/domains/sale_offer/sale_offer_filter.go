@@ -4,7 +4,7 @@ import (
 	"slices"
 	"time"
 
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
+	"github.com/susek555/BD2/car-dealer-api/internal/enums"
 	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
 	"gorm.io/gorm"
 )
@@ -27,10 +27,10 @@ type MinMax[T uint | string | time.Time] struct {
 type FieldsConstraints struct {
 	OfferTypes    []OfferType
 	Manufacturers []string
-	Colors        []car_params.Color
-	Drives        []car_params.Drive
-	FuelTypes     []car_params.FuelType
-	Transmissions []car_params.Transmission
+	Colors        []enums.Color
+	Drives        []enums.Drive
+	FuelTypes     []enums.FuelType
+	Transmissions []enums.Transmission
 }
 
 type OfferFilter struct {
@@ -42,10 +42,10 @@ type OfferFilter struct {
 	LikedOnly                *bool                        `json:"liked_only"`
 	OfferType                *OfferType                   `json:"offer_type"`
 	Manufacturers            *[]string                    `json:"manufacturers"`
-	Colors                   *[]car_params.Color          `json:"colors"`
-	Drives                   *[]car_params.Drive          `json:"drives"`
-	FuelTypes                *[]car_params.FuelType       `json:"fuel_types"`
-	Transmissions            *[]car_params.Transmission   `json:"transmissions"`
+	Colors                   *[]enums.Color               `json:"colors"`
+	Drives                   *[]enums.Drive               `json:"drives"`
+	FuelTypes                *[]enums.FuelType            `json:"fuel_types"`
+	Transmissions            *[]enums.Transmission        `json:"transmissions"`
 	PriceRange               *MinMax[uint]                `json:"price_range"`
 	MileageRange             *MinMax[uint]                `json:"mileage_range"`
 	YearRange                *MinMax[uint]                `json:"year_range"`
@@ -59,10 +59,10 @@ type OfferFilter struct {
 func NewOfferFilter() *OfferFilter {
 	return &OfferFilter{Constraints: FieldsConstraints{
 		OfferTypes:    OfferTypes,
-		Colors:        car_params.Colors,
-		Drives:        car_params.Drives,
-		FuelTypes:     car_params.Types,
-		Transmissions: car_params.Transmissions,
+		Colors:        enums.Colors,
+		Drives:        enums.Drives,
+		FuelTypes:     enums.Types,
+		Transmissions: enums.Transmissions,
 	}}
 }
 

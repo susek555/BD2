@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
-	"github.com/susek555/BD2/car-dealer-api/internal/models"
+	"github.com/susek555/BD2/car-dealer-api/internal/enums"
 )
 
 type AuctionServiceInterface interface {
@@ -37,7 +37,7 @@ func (s *AuctionService) Create(auction *CreateAuctionDTO) (*RetrieveAuctionDTO,
 		return nil, err
 	}
 	auctionEntity.Offer.Car.ModelID = modelID
-	auctionEntity.Offer.Status = models.PENDING
+	auctionEntity.Offer.Status = enums.PENDING
 	if auctionEntity.BuyNowPrice < 1 {
 		return nil, ErrBuyNowPriceLessThan1
 	}

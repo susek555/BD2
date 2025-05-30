@@ -5,7 +5,7 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/jinzhu/copier"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
+	"github.com/susek555/BD2/car-dealer-api/internal/enums"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"github.com/susek555/BD2/car-dealer-api/pkg/formats"
 )
@@ -32,7 +32,7 @@ func (dto *CreateSaleOfferDTO) MapToSaleOffer() (*models.SaleOffer, error) {
 	}
 	offer.DateOfIssue = time.Now().UTC()
 	offer.Car.RegistrationDate = *date
-	offer.Status = models.PENDING
+	offer.Status = enums.PENDING
 	return offer, nil
 }
 
@@ -109,38 +109,38 @@ func prepareAuctionValues(offer *models.SaleOffer) (*uint, *time.Time) {
 }
 
 func (dto *CreateSaleOfferDTO) validateParams() error {
-	if !IsParamValid(dto.Color, car_params.Colors) {
+	if !IsParamValid(dto.Color, enums.Colors) {
 		return ErrInvalidColor
 	}
-	if !IsParamValid(dto.FuelType, car_params.Types) {
+	if !IsParamValid(dto.FuelType, enums.Types) {
 		return ErrInvalidFuelType
 	}
-	if !IsParamValid(dto.Transmission, car_params.Transmissions) {
+	if !IsParamValid(dto.Transmission, enums.Transmissions) {
 		return ErrInvalidTransmission
 	}
-	if !IsParamValid(dto.Drive, car_params.Drives) {
+	if !IsParamValid(dto.Drive, enums.Drives) {
 		return ErrInvalidDrive
 	}
-	if !IsParamValid(dto.Margin, models.Margins) {
+	if !IsParamValid(dto.Margin, enums.Margins) {
 		return ErrInvalidMargin
 	}
 	return nil
 }
 
 func (dto *UpdateSaleOfferDTO) validateParams() error {
-	if dto.Color != nil && !IsParamValid(*dto.Color, car_params.Colors) {
+	if dto.Color != nil && !IsParamValid(*dto.Color, enums.Colors) {
 		return ErrInvalidColor
 	}
-	if dto.FuelType != nil && !IsParamValid(*dto.FuelType, car_params.Types) {
+	if dto.FuelType != nil && !IsParamValid(*dto.FuelType, enums.Types) {
 		return ErrInvalidFuelType
 	}
-	if dto.Transmission != nil && !IsParamValid(*dto.Transmission, car_params.Transmissions) {
+	if dto.Transmission != nil && !IsParamValid(*dto.Transmission, enums.Transmissions) {
 		return ErrInvalidTransmission
 	}
-	if dto.Drive != nil && !IsParamValid(*dto.Drive, car_params.Drives) {
+	if dto.Drive != nil && !IsParamValid(*dto.Drive, enums.Drives) {
 		return ErrInvalidDrive
 	}
-	if dto.Margin != nil && !IsParamValid(*dto.Margin, models.Margins) {
+	if dto.Margin != nil && !IsParamValid(*dto.Margin, enums.Margins) {
 		return ErrInvalidMargin
 	}
 	return nil
