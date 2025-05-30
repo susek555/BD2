@@ -24,7 +24,7 @@ type Scheduler struct {
 	redisClient         *redis.Client
 	addCh               chan *Item
 	saleOfferRepository sale_offer.SaleOfferRepositoryInterface
-	hub                 *ws.Hub
+	hub                 ws.HubInterface
 }
 
 //go:generate mockery --name=SchedulerInterface --output=../../test/mocks --case=snake --with-expecter
@@ -34,7 +34,7 @@ type SchedulerInterface interface {
 	LoadAuctions() error
 }
 
-func NewScheduler(repo bid.BidRepositoryInterface, redisClient *redis.Client, notificationService notification.NotificationServiceInterface, saleOfferRepo sale_offer.SaleOfferRepositoryInterface, hub *ws.Hub) SchedulerInterface {
+func NewScheduler(repo bid.BidRepositoryInterface, redisClient *redis.Client, notificationService notification.NotificationServiceInterface, saleOfferRepo sale_offer.SaleOfferRepositoryInterface, hub ws.HubInterface) SchedulerInterface {
 	return &Scheduler{
 		heap:                make(timerHeap, 0),
 		addCh:               make(chan *Item, 1024),
