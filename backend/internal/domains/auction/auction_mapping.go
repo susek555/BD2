@@ -2,6 +2,7 @@ package auction
 
 import (
 	"errors"
+	"log"
 	"time"
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
@@ -61,8 +62,13 @@ func (dto *UpdateAuctionDTO) UpdatedAuctionFromDTO(auction *models.Auction) (*mo
 }
 
 func MapToDTO(auction *models.Auction) *RetrieveAuctionDTO {
+	loc, err := time.LoadLocation(formats.DefaultTimezone)
+	if err != nil {
+		log.Println("error loading location:", err)
+	}
+
+	dateEnd := auction.DateEnd.In(loc).Format(formats.DateTimeLayout)
 	offerDTO := sale_offer.MapToDTO(auction.Offer)
-	dateEnd := auction.DateEnd.UTC().Format(formats.DateTimeLayout)
 	return &RetrieveAuctionDTO{
 		offerDTO,
 		dateEnd,
@@ -71,11 +77,17 @@ func MapToDTO(auction *models.Auction) *RetrieveAuctionDTO {
 }
 
 func parseDate(date string) (time.Time, error) {
-	t, err := time.Parse(formats.DateTimeLayout, date)
+	loc, err := time.LoadLocation(formats.DefaultTimezone)
 	if err != nil {
 		return time.Time{}, err
 	}
-	return t, nil
+
+	t, err := time.ParseInLocation(formats.DateTimeLayout, date, loc)
+	if err != nil {
+		return time.Time{}, err
+	}
+
+	return t.UTC(), nil
 }
 
 func validateDateEnd(end time.Time) error {
