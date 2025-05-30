@@ -27,12 +27,12 @@ func NewHandler(s CarServiceInterface) *Handler {
 //	@Failure		404	{object}	custom_errors.HTTPError	"manufacturer of model not found"
 //	@Router			/car/manufacturer-model-map [get]
 func (h *Handler) GetManufacturersModelsMap(c *gin.Context) {
-	users, err := h.service.GetManufacturersModelsMap()
+	manufacturerModelMap, err := h.service.GetManufacturersModelsMap()
 	if err != nil {
 		c.JSON(http.StatusNotFound, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
-	c.JSON(http.StatusOK, users)
+	c.JSON(http.StatusOK, manufacturerModelMap)
 }
 
 // GetPossibleColors godoc
