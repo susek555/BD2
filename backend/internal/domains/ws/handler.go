@@ -1,4 +1,4 @@
-package auctionws
+package ws
 
 import (
 	"log"

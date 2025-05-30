@@ -9,9 +9,9 @@ import (
 	"time"
 
 	"github.com/redis/go-redis/v9"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/auctionws"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/bid"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/notification"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/ws"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
 )
@@ -24,7 +24,7 @@ type Scheduler struct {
 	redisClient         *redis.Client
 	addCh               chan *Item
 	saleOfferRepository sale_offer.SaleOfferRepositoryInterface
-	hub                 *auctionws.Hub
+	hub                 *ws.Hub
 }
 
 //go:generate mockery --name=SchedulerInterface --output=../../test/mocks --case=snake --with-expecter
@@ -33,7 +33,7 @@ type SchedulerInterface interface {
 	Run(ctx context.Context)
 }
 
-func NewScheduler(repo bid.BidRepositoryInterface, redisClient *redis.Client, notificationService notification.NotificationServiceInterface, saleOfferRepo sale_offer.SaleOfferRepositoryInterface, hub *auctionws.Hub) SchedulerInterface {
+func NewScheduler(repo bid.BidRepositoryInterface, redisClient *redis.Client, notificationService notification.NotificationServiceInterface, saleOfferRepo sale_offer.SaleOfferRepositoryInterface, hub *ws.Hub) SchedulerInterface {
 	return &Scheduler{
 		heap:                make(timerHeap, 0),
 		addCh:               make(chan *Item, 1024),
