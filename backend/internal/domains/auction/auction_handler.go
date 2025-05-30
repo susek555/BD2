@@ -17,10 +17,10 @@ import (
 type Handler struct {
 	service AuctionServiceInterface
 	sched   scheduler.SchedulerInterface
-	hub     *ws.Hub
+	hub     ws.HubInterface
 }
 
-func NewHandler(service AuctionServiceInterface, sched scheduler.SchedulerInterface, hub *ws.Hub) *Handler {
+func NewHandler(service AuctionServiceInterface, sched scheduler.SchedulerInterface, hub ws.HubInterface) *Handler {
 	return &Handler{
 		service: service,
 		sched:   sched,
