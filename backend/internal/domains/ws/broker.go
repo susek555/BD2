@@ -10,12 +10,12 @@ import (
 func PublishAuctionEvent(
 	ctx context.Context,
 	rdb *redis.Client,
-	auctionID string,
+	offerID string,
 	envelope *Envelope,
 ) error {
 	data, err := json.Marshal(envelope)
 	if err != nil {
 		return err
 	}
-	return rdb.Publish(ctx, "auction."+auctionID, data).Err()
+	return rdb.Publish(ctx, "offer."+offerID, data).Err()
 }
