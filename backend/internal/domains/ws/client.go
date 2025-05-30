@@ -47,13 +47,13 @@ func (c *Client) readPump() {
 		case MsgSubscribe:
 			var p SubscribePayload
 			json.Unmarshal(env.Data, &p)
-			for _, id := range p.Auctions {
+			for _, id := range p.Offers {
 				c.hub.subscribe <- subscription{id, c}
 			}
 		case MsgUnsubscribe:
 			var p SubscribePayload
 			json.Unmarshal(env.Data, &p)
-			for _, id := range p.Auctions {
+			for _, id := range p.Offers {
 				c.hub.unsubscribe <- subscription{id, c}
 			}
 		}
