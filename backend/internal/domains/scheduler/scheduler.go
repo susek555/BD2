@@ -64,7 +64,7 @@ func (s *Scheduler) LoadAuctions(ctx context.Context) error {
 		s.mu.Lock()
 		heap.Push(&s.heap, item)
 		s.mu.Unlock()
-		log.Printf("scheduler: loaded auction %s with end time %s", offer.ID, offer.Auction.DateEnd)
+		log.Printf("scheduler: loaded auction %s with end time %s", auctionID, offer.Auction.DateEnd)
 	}
 	return nil
 }
