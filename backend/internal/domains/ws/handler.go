@@ -42,3 +42,19 @@ func ServeWS(hub *Hub) gin.HandlerFunc {
 		go client.readPump()
 	}
 }
+
+func (h *Hub) LoadClientToRooms(userID string) {
+	var records []UserOfferRecord
+	err := h.db.
+		Table("user_offer_interactions").
+		Where("user_id = ?", userID).
+		Find(&records).Error
+	if err != nil {
+		log.Println("Error loading client rooms:", err)
+		return
+	}
+	for _, record := range records {
+		h.SubscribeUser(userID, record.OfferID)
+		log.Printf("User %s subscribed to offer %s\n", userID, record.OfferID)
+	}
+}
