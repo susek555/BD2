@@ -1,5 +1,7 @@
 package enums
 
+import "database/sql/driver"
+
 type Color string
 
 const (
@@ -24,6 +26,15 @@ const (
 	GOLD    Color = "Gold"
 	OTHER   Color = "Other"
 )
+
+func (c *Color) Scan(value any) error {
+	*c = Color(value.([]byte))
+	return nil
+}
+
+func (c Color) Value() (driver.Value, error) {
+	return string(c), nil
+}
 
 var Colors = []Color{
 	RED, BLUE, YELLOW, GREEN, ORANGE, PURPLE, BROWN, BLACK, WHITE, GRAY,

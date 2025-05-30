@@ -1,5 +1,7 @@
 package enums
 
+import "database/sql/driver"
+
 type Drive string
 
 const (
@@ -7,5 +9,14 @@ const (
 	RWD Drive = "RWD"
 	AWD Drive = "AWD"
 )
+
+func (d *Drive) Scan(value any) error {
+	*d = Drive(value.([]byte))
+	return nil
+}
+
+func (d Drive) Value() (driver.Value, error) {
+	return string(d), nil
+}
 
 var Drives = []Drive{FWD, RWD, AWD}
