@@ -4,6 +4,7 @@ import { postRegularOffer } from "@/app/lib/api/add-offer/add-offer";
 
 export async function addOffer(
     state: OfferFormState,
+    images: File[],
 ): Promise<OfferFormState> {
     let validatedFields = state.values!;
 
@@ -20,7 +21,8 @@ export async function addOffer(
             console.log("Adding auction offer");
         } else {
             const regularOfferData: RegularOfferData = validatedFields as RegularOfferData;
-            await postRegularOffer(regularOfferData);
+            const id = await postRegularOffer(regularOfferData);
+
         }
 
         permanentRedirect("/account/listings");

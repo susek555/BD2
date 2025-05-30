@@ -12,7 +12,8 @@ export async function postRegularOffer(data: RegularOfferData): Promise<number> 
 });
 
   if (response.status === 201) {
-    return response.status;
+    const responseData = await response.json();
+    return responseData.id;
   } else {
     const errorText = await response.text();
     throw new Error(`Failed to post offer: ${response.status} – ${errorText}`);

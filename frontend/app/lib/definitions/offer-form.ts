@@ -55,12 +55,12 @@ export const OfferDetailsFormSchema = z.object({
     .regex(/^[A-HJ-NPR-Z0-9]+$/, { message: 'VIN must contain only valid characters' }),
   description: z.string().min(1, { message: 'Description is required' }),
   images: z
-    .array(z.instanceof(File)).optional()   //TODO remove optional and uncomment code below
-    // .min(1, { message: 'At least one image is required' })
-    // .max(10, { message: 'A maximum of 10 images is allowed' })
-    // .refine((files) => files.every(file => file.size <= 5 * 1024 * 1024), {
-    //   message: 'Each image must be less than 5MB',
-    // }),
+    .array(z.instanceof(File))   //TODO remove optional and uncomment code below
+    .min(1, { message: 'At least one image is required' })
+    .max(10, { message: 'A maximum of 10 images is allowed' })
+    .refine((files) => files.every(file => file.size <= 5 * 1024 * 1024), {
+      message: 'Each image must be less than 5MB',
+    }),
 }).superRefine((data, ctx) => {
   if (data.registration_date && data.production_year) {
     const registrationDate = new Date(data.registration_date);
@@ -237,7 +237,7 @@ export type OfferFormState = {
     registration_number?: string;
     vin?: string;
     description?: string;
-    images?: File[]; // Array of image files
+    images?: File[];
     price?: number;
     margin?: number;
     is_auction?: boolean;
@@ -273,7 +273,6 @@ export type RegularOfferData = {
   vin: string;
   engine_capacity: number;
   description: string;
-  // images: File[]; // Array of image files
   price: number;
   margin: number;
 }
