@@ -104,6 +104,12 @@ func newTestServer(seedManufacturers []models.Manufacturer, seedModels []models.
 		).
 		Return(nil)
 	mh := new(mocks.HubInterface)
+	mh.
+		On("SubscribeUser",
+			mock.AnythingOfType("string"), // user ID
+			mock.AnythingOfType("string"), // auction ID
+		).
+		Return(nil)
 	auctionHandler := auction.NewHandler(service, ms, mh)
 	auctionRoutes := r.Group("/auction")
 	auctionRoutes.GET("/", auctionHandler.GetAllAuctions)
