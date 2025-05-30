@@ -1,6 +1,9 @@
 package enums
 
-import "database/sql/driver"
+import (
+	"database/sql/driver"
+	"strings"
+)
 
 type Status string
 
@@ -16,5 +19,5 @@ func (s *Status) Scan(value any) error {
 }
 
 func (c Status) Value() (driver.Value, error) {
-	return string(c), nil
+	return strings.ToLower(string(c)), nil
 }
