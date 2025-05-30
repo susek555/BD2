@@ -21,10 +21,10 @@ type Envelope struct {
 }
 
 type SubscribePayload struct {
-	Auctions []string `json:"auctions"`
+	Offers []string `json:"offers"`
 }
 type UnsubscribePayload struct {
-	Auctions []string `json:"auctions"`
+	Offers []string `json:"offers"`
 }
 
 func NewNotificationEnvelope(notification *models.Notification) *Envelope {
