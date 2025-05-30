@@ -68,7 +68,6 @@ func (r *SaleOfferRepository) GetAllActiveAuctions() ([]models.SaleOffer, error)
 		Preload("Auction").
 		Joins("JOIN auctions ON auctions.offer_id = sale_offers.id").
 		Where("auctions.offer_id IS NOT NULL").
-		Where("sale_offers.status = ?", models.PUBLISHED).
 		Where("auctions.date_end > NOW()").
 		Find(&auctions).
 		Error
