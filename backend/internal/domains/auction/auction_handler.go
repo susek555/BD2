@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auth"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/scheduler"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/ws"
 	"github.com/susek555/BD2/car-dealer-api/pkg/custom_errors"
 	"github.com/susek555/BD2/car-dealer-api/pkg/formats"
 )
@@ -16,12 +17,14 @@ import (
 type Handler struct {
 	service AuctionServiceInterface
 	sched   scheduler.SchedulerInterface
+	hub     *ws.Hub
 }
 
-func NewHandler(service AuctionServiceInterface, sched scheduler.SchedulerInterface) *Handler {
+func NewHandler(service AuctionServiceInterface, sched scheduler.SchedulerInterface, hub *ws.Hub) *Handler {
 	return &Handler{
 		service: service,
 		sched:   sched,
+		hub:     hub,
 	}
 }
 
@@ -67,6 +70,8 @@ func (h *Handler) CreateAuction(c *gin.Context) {
 		// TODO: Do sth
 	}
 	dateEnd := dateEndLocal.UTC()
+	userIdStr := strconv.FormatUint(uint64(userId), 10)
+	h.hub.SubscribeUser(userIdStr, auctionID)
 	h.sched.AddAuction(auctionID, dateEnd)
 	log.Printf("scheduler: added %s ends %s", auctionID, dateEnd)
 	c.JSON(http.StatusCreated, dto)
