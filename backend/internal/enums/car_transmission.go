@@ -1,5 +1,7 @@
 package enums
 
+import "database/sql/driver"
+
 type Transmission string
 
 const (
@@ -8,5 +10,14 @@ const (
 	CVT         Transmission = "CVT"
 	DUAL_CLUTCH Transmission = "Dual clutch"
 )
+
+func (t *Transmission) Scan(value any) error {
+	*t = Transmission(value.([]byte))
+	return nil
+}
+
+func (t Transmission) Value() (driver.Value, error) {
+	return string(t), nil
+}
 
 var Transmissions = []Transmission{MANUAL, AUTOMATIC, CVT, DUAL_CLUTCH}
