@@ -25,7 +25,6 @@ func setupDB() (*gorm.DB, error) {
 		return nil, err
 	}
 	db.Exec("TRUNCATE TABLE companies, people, users RESTART IDENTITY CASCADE")
-
 	return db, nil
 }
 

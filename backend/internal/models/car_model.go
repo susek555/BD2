@@ -17,11 +17,11 @@ type Car struct {
 	EngineCapacity     uint               `json:"engine_capacity"`
 	RegistrationNumber string             `json:"registration_number"`
 	RegistrationDate   time.Time          `json:"registration_date"`
-	Color              enums.Color        `json:"color"`
-	FuelType           enums.FuelType     `json:"fuel_type"`
-	Transmission       enums.Transmission `json:"transmission"`
-	NumberOfGears      uint               `json:"number_of_gears"`
-	Drive              enums.Drive        `json:"drive"`
+	Color              enums.Color        `json:"color" gorm:"type:COLOR"`
+	FuelType           enums.FuelType     `json:"fuel_type" gorm:"type:FUEL_TYPE"`
+	Drive              enums.Drive        `json:"drive" gorm:"type:DRIVE"`
+	Transmission       enums.Transmission `json:"transmission" gorm:"type:TRANSMISSION"`
+	NumberOfGears      uint               `json:"number_of_gears" `
 	ModelID            uint               `json:"model_id"`
 	Model              *Model             `gorm:"foreignKey:ModelID;references:ID"`
 }
