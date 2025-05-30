@@ -3,17 +3,16 @@ package sale_offer_tests
 import (
 	"time"
 
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/image"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
-
 	"github.com/gin-gonic/gin"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/bid"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/generic"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/image"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/liked_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
+	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	u "github.com/susek555/BD2/car-dealer-api/internal/test/test_utils"
 	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
 	"github.com/susek555/BD2/car-dealer-api/pkg/middleware"

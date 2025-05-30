@@ -6,18 +6,15 @@ import (
 	"testing"
 	"time"
 
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
-
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/auth"
-
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/auth"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
+	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"github.com/susek555/BD2/car-dealer-api/internal/test/mocks"
 	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
-	"gorm.io/gorm"
-
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
 	"github.com/susek555/BD2/car-dealer-api/pkg/passwords"
+	"gorm.io/gorm"
 )
 
 var jwtKey = []byte("test-secret")

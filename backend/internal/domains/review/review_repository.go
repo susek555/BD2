@@ -2,10 +2,10 @@ package review
 
 import (
 	"errors"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"math"
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/generic"
+	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
 	"gorm.io/gorm"
 )

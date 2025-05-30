@@ -2,7 +2,7 @@ package user
 
 import (
 	"github.com/go-playground/validator/v10"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
+	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"github.com/susek555/BD2/car-dealer-api/pkg/passwords"
 )
 

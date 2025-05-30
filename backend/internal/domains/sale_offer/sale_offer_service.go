@@ -2,7 +2,7 @@ package sale_offer
 
 import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
+	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"github.com/susek555/BD2/car-dealer-api/pkg/mapping"
 	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
 )

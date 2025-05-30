@@ -8,12 +8,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
-
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/review"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
+	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
 	"github.com/susek555/BD2/car-dealer-api/pkg/middleware"
 	"gorm.io/driver/postgres"

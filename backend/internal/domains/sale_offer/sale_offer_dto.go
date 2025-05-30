@@ -3,9 +3,8 @@ package sale_offer
 import (
 	"time"
 
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
-
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
+	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
 )
 

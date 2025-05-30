@@ -4,11 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
-
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/refresh_token"
-
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
+	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
 	"github.com/susek555/BD2/car-dealer-api/pkg/passwords"
 )

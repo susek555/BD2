@@ -4,8 +4,8 @@ import (
 	"errors"
 	"time"
 
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
+	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"github.com/susek555/BD2/car-dealer-api/pkg/formats"
 )
 

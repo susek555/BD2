@@ -5,13 +5,12 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
-
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/liked_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
+	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	u "github.com/susek555/BD2/car-dealer-api/internal/test/test_utils"
 	"github.com/susek555/BD2/car-dealer-api/pkg/custom_errors"
 	"gorm.io/gorm"
