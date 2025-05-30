@@ -44,6 +44,8 @@ export function OfferForm(
                 return offerFormState;
             }
 
+
+
             // Otherwise call the API action with validated data
             if (apiAction) {
                 return addOffer(offerFormState);
@@ -393,8 +395,7 @@ export function OfferForm(
                     <label htmlFor="images" className="text-lg font-semibold">
                         Images
                     </label>
-                    TODO
-                    {/* <input type="file" id="images" name="images" className="border rounded p-2" multiple required /> */}
+                    <input type="file" id="images" name="images" className="border rounded p-2" multiple required />
 
                     <button type="submit" className="bg-blue-600 text-white rounded p-2">Set Pricing</button>
                 </>

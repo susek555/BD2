@@ -1,15 +1,15 @@
 import { OfferFormState, RegularOfferData } from "@/app/lib/definitions/offer-form";
 import { permanentRedirect } from "next/navigation";
 import { postRegularOffer } from "@/app/lib/api/add-offer/add-offer";
+import { UploadImages } from "../lib/api/images/upload";
 
 export async function addOffer(
     state: OfferFormState,
-    images: File[],
 ): Promise<OfferFormState> {
     let validatedFields = state.values!;
 
     // This property exists, the error is incorrect
-    const { is_auction, ...offerData } = validatedFields;
+    const { is_auction, images, ...offerData } = validatedFields;
     validatedFields = offerData;
 
     console.log("Is auction:", is_auction);
@@ -22,8 +22,12 @@ export async function addOffer(
         } else {
             const regularOfferData: RegularOfferData = validatedFields as RegularOfferData;
             const id = await postRegularOffer(regularOfferData);
-
+            await UploadImages(images!, id);
         }
+
+
+
+
 
         permanentRedirect("/account/listings");
     } catch (error) {
