@@ -57,6 +57,51 @@ func (_c *SchedulerInterface_AddAuction_Call) RunAndReturn(run func(string, time
 	return _c
 }
 
+// LoadAuctions provides a mock function with no fields
+func (_m *SchedulerInterface) LoadAuctions() error {
+	ret := _m.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for LoadAuctions")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func() error); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// SchedulerInterface_LoadAuctions_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'LoadAuctions'
+type SchedulerInterface_LoadAuctions_Call struct {
+	*mock.Call
+}
+
+// LoadAuctions is a helper method to define mock.On call
+func (_e *SchedulerInterface_Expecter) LoadAuctions() *SchedulerInterface_LoadAuctions_Call {
+	return &SchedulerInterface_LoadAuctions_Call{Call: _e.mock.On("LoadAuctions")}
+}
+
+func (_c *SchedulerInterface_LoadAuctions_Call) Run(run func()) *SchedulerInterface_LoadAuctions_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *SchedulerInterface_LoadAuctions_Call) Return(_a0 error) *SchedulerInterface_LoadAuctions_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *SchedulerInterface_LoadAuctions_Call) RunAndReturn(run func() error) *SchedulerInterface_LoadAuctions_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // Run provides a mock function with given fields: ctx
 func (_m *SchedulerInterface) Run(ctx context.Context) {
 	_m.Called(ctx)
