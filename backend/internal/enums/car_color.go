@@ -1,6 +1,9 @@
 package enums
 
-import "database/sql/driver"
+import (
+	"database/sql/driver"
+	"strings"
+)
 
 type Color string
 
@@ -33,7 +36,7 @@ func (c *Color) Scan(value any) error {
 }
 
 func (c Color) Value() (driver.Value, error) {
-	return string(c), nil
+	return strings.ToLower(string(c)), nil
 }
 
 var Colors = []Color{

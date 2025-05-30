@@ -1,6 +1,9 @@
 package enums
 
-import "database/sql/driver"
+import (
+	"database/sql/driver"
+	"strings"
+)
 
 type Drive string
 
@@ -16,7 +19,7 @@ func (d *Drive) Scan(value any) error {
 }
 
 func (d Drive) Value() (driver.Value, error) {
-	return string(d), nil
+	return strings.ToLower(string(d)), nil
 }
 
 var Drives = []Drive{FWD, RWD, AWD}

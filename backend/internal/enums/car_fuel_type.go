@@ -1,6 +1,9 @@
 package enums
 
-import "database/sql/driver"
+import (
+	"database/sql/driver"
+	"strings"
+)
 
 type FuelType string
 
@@ -21,7 +24,7 @@ func (f *FuelType) Scan(value any) error {
 }
 
 func (f FuelType) Value() (driver.Value, error) {
-	return string(f), nil
+	return strings.ToLower(string(f)), nil
 }
 
 var Types = []FuelType{

@@ -1,29 +1,26 @@
 CREATE TYPE SELECTOR AS ENUM (
     'P', 'C'
 );
-CREATE TYPE OFFER_STATUS AS ENUM (
-    "pending", "ready", "published"
-);
 
-CREATE TYPE MARGIN_VALUE AS ENUM (
-    3, 5, 10
+CREATE TYPE OFFER_STATUS AS ENUM (
+    'pending', 'ready', 'published'
 );
 
 CREATE TYPE COLOR AS ENUM (
-    "Red", "Blue", "Yellow", "Green", "Orange", "Purple", "Brown", "Black", "White", "Gray",
-    "Cyan", "Magenta", "Lime", "Navy", "Teal", "Maroon", "Olive", "Beige", "Gold", "Other"
+    'red', 'blue', 'yellow', 'green', 'orange', 'purple', 'brown', 'black', 'white', 'gray',
+    'cyan', 'magenta', 'lime', 'navy', 'teal', 'maroon', 'olive', 'beige', 'gold', 'other'
 );
 
 CREATE TYPE FUEL_TYPE AS ENUM (
-    "Diesel", "Petrol", "Electric", "Ethanol", "LPG", "Biofuel", "Hybrid", "Hydrogen"
+    'diesel', 'petrol', 'electric', 'ethanol', 'lpg', 'biofuel', 'hybrid', 'hydrogen'
 );
 
 CREATE TYPE TRANSMISSION AS ENUM (
-    "Manual", "Automatic", "CVT", "Dual clutch"
+    'manual', 'automatic', 'cvt', 'dual_clutch'
 );
 
 CREATE TYPE DRIVE AS ENUM (
-    "FWD", "RWD", "AWD"
+    'fwd', 'rwd', 'awd'
 );
 
 CREATE TYPE PAYMENT_STATUS AS ENUM (
@@ -71,8 +68,8 @@ CREATE TABLE sale_offers (
     user_id INTEGER NOT NULL REFERENCES users(id),
     description VARCHAR(2000) NOT NULL,
     price INTEGER NOT NULL,
-    margin FLOAT NOT NULL,
     date_of_issue TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    margin INTEGER CHECK (margin in (3, 5, 10)),
     status OFFER_STATUS NOT NULL
 );
 
@@ -139,7 +136,7 @@ CREATE TABLE refresh_tokens (
 
 CREATE TABLE payment_statuses (
     id SERIAL PRIMARY KEY,
-    status PAYMENT_STATUS NOT NULL CHECK
+    status PAYMENT_STATUS NOT NULL
 );
 
 CREATE TABLE purchases (
