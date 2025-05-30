@@ -1,6 +1,8 @@
 import { RegularOfferData } from "../../definitions/offer-form";
 
 export async function postRegularOffer(data: RegularOfferData): Promise<number> {
+  console.log("Posting offer data:", data);
+
   const response = await fetch("/api/add-offer", {
   method: "POST",
   body: JSON.stringify(data),

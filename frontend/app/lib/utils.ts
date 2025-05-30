@@ -49,11 +49,12 @@ export const parseOfferForm = (formData: FormData, detailsPart: boolean) : {bool
 
     if (!detailsPart) {
       // convert model from "producer model" to "model"
-      if ('model' in validatedFields) {
+      if ('model' in validatedFields.data) {
           const firstSpaceIndex = validatedFields.data.model!.indexOf(' ');
           if (firstSpaceIndex !== -1) {
-              validatedFields.model! = validatedFields.data.model!.substring(firstSpaceIndex + 1);
+              validatedFields.data.model! = validatedFields.data.model!.substring(firstSpaceIndex + 1);
           }
+      console.log("Sanitized model:", validatedFields.data.model);
       }
     }
 
@@ -61,7 +62,7 @@ export const parseOfferForm = (formData: FormData, detailsPart: boolean) : {bool
       boolean: detailsPart ? OfferFormEnum.pricingPartLeft : OfferFormEnum.readyToApi,
       offerFormState: {
       errors: {},
-      values: normalizedData as OfferFormState['values']
+      values: validatedFields.data as OfferFormState['values']
       }
     };
 }

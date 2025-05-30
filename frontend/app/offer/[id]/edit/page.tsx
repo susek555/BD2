@@ -13,7 +13,7 @@ export default async function Page(props: { params: Promise<{id: string }> }) {
     //TODO fetch initial data from the API - probably need a wrapper
 
     const initialData: Partial<OfferFormState['values']> = {
-        producer: "Audi",
+        manufacturer: "Audi",
         model: "Audi A3",
         color: "Black",
         fuel_type: "Petrol",

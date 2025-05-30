@@ -55,9 +55,9 @@ export function OfferForm(
     const [state, action] = useActionState(offerWrapper, initialState);
 
     useEffect(() => {
-        if (state.values?.producer) {
-            setProducer(state.values.producer.toString());
-            handleProducerChange(state.values.producer.toString());
+        if (state.values?.manufacturer) {
+            setProducer(state.values.manufacturer.toString());
+            handleProducerChange(state.values.manufacturer.toString());
         }
         if (typeof state.values?.is_auction === "boolean") {
             setIsAuction(state.values.is_auction);
@@ -66,7 +66,7 @@ export function OfferForm(
         console.log("State errors:", state.errors);
         console.log("State values:", state.values);
 
-        if (Object.keys(state?.errors || {}).length === 0 && state.values?.producer) {
+        if (Object.keys(state?.errors || {}).length === 0 && state.values?.manufacturer) {
             setDetailsPart(false);
         }
     }
@@ -74,7 +74,7 @@ export function OfferForm(
     , [state]);
 
     const [detailsPart, setDetailsPart] = React.useState<boolean>(true);
-    const [producer, setProducer] = React.useState<string>(state.values?.producer?.toString() ?? "");
+    const [producer, setProducer] = React.useState<string>(state.values?.manufacturer?.toString() ?? "");
 
     const [availableModels, setAvailableModels] = React.useState<string[]>([]);
 
@@ -336,17 +336,12 @@ export function OfferForm(
         <form className=" w-full md:w-200" action={handleSubmit}>
             <div className={`rounded-lg bg-gray-50 px-6 pb-4 pt-8 flex flex-col gap-4 ${detailsPart ? "block" : "hidden"}`}>
                 <>
-                    <label htmlFor="producer" className="text-lg font-semibold">Producer</label>
+                    <label htmlFor="manufacturer" className="text-lg font-semibold">Manufacturer</label>
                     <select
-                        id="producer"
-                        name="producer"
+                        id="manufacturer"
+                        name="manufacturer"
                         className="border rounded p-2"
                         required
-                        // defaultValue={
-                        //     typeof state?.values?.producer === "string"
-                        //         ? state.values.producer
-                        //         : ""
-                        // }
                         value={producer}
                         onChange={e => {
                             handleProducerChange(e.target.value);
@@ -359,8 +354,8 @@ export function OfferForm(
                         ))}
                     </select>
                     <div id="username-error" aria-live="polite" aria-atomic="true">
-                        {state?.errors?.producer &&
-                            state.errors.producer.map((error: string) => (
+                        {state?.errors?.manufacturer &&
+                            state.errors.manufacturer.map((error: string) => (
                             <p className="mt-2 text-sm text-red-500" key={error}>
                                 {error}
                             </p>
@@ -448,7 +443,7 @@ export function OfferForm(
                         ))}
                     </div>
                     <NumberInputField id="price" name="Price" />
-                    <SelectionLabel id="margin" name="Margin ( % )" options={["8", "9", "10"]} required={!detailsPart}/>
+                    <SelectionLabel id="margin" name="Margin ( % )" options={["3", "5", "10"]} required={!detailsPart}/>
                     <div className="flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
                             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clipRule="evenodd" />

@@ -3,7 +3,7 @@ import { z } from "zod";
 // Add / Edit Offer
 
 export const OfferDetailsFormSchema = z.object({
-  producer: z.string().min(1, { message: 'Producer is required' }),
+  manufacturer: z.string().min(1, { message: 'Producer is required' }),
   model: z.string().min(1, { message: 'Model is required' }),
   color: z.string().min(1, { message: 'Color is required' }),
   fuel_type: z.string().min(1, { message: 'Fuel type is required' }),
@@ -81,7 +81,7 @@ export const OfferPricingFormSchema = z.object({
     .max(10_000_000, { message: 'Price must be less than or equal to 10,000,000' }),
   margin: z
     .number()
-    .min(8, { message: 'Margin must be greater than or equal to 8' })
+    .min(3, { message: 'Margin must be greater than or equal to 3' })
     .max(10,{ message: 'Margin must be less than or equal to 10' }),
   is_auction: z.boolean(),
   auction_end_date: z
@@ -195,7 +195,7 @@ export const CombinedOfferFormSchema = z
 export type OfferFormState = {
   errors?: {
     [key: string]: string[] | undefined;
-    producer?: string[];
+    manufacturer?: string[];
     model?: string[];
     color?: string[];
     fuel_type?: string[];
@@ -220,7 +220,7 @@ export type OfferFormState = {
   }
   values?: {
     [key: string]: string | number | boolean | File[] | undefined;
-    producer?: string;
+    manufacturer?: string;
     model?: string;
     color?: string;
     fuel_type?: string;
@@ -256,7 +256,7 @@ export type OfferFormData = {
 }
 
 export type RegularOfferData = {
-  producer: string;
+  manufacturer: string;
   model: string;
   color: string;
   fuel_type: string;
