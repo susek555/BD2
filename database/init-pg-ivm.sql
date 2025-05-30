@@ -14,13 +14,11 @@ CREATE UNIQUE INDEX ON offer_creators (user_id, offer_id);
 
 SELECT pgivm.create_immv(
   'offer_bidders',
-  $$ SELECT b.bidder_id  AS user_id,
+  $$ SELECT DISTINCT 
+           b.bidder_id  AS user_id,
            b.auction_id AS offer_id
      FROM  bids b
      JOIN  sale_offers o ON o.id = b.auction_id $$);
-
-CREATE UNIQUE INDEX ON offer_bidders (user_id, offer_id);
-
 
 SELECT pgivm.create_immv(
   'offer_likers',
