@@ -26,11 +26,11 @@ type Hub struct {
 	clientNotificationRepo notification.ClientNotificationRepositoryInterface
 }
 type subscription struct {
-	auctionID string
-	client    *Client
+	offerID string
+	client  *Client
 }
 type outbound struct {
-	auctionID string
+	offerID   string
 	data      []byte
 	excludeID string
 }
@@ -62,49 +62,49 @@ func (h *Hub) Run() {
 			h.mu.Unlock()
 			h.removeClient(client)
 		case sub := <-h.subscribe:
-			h.addToRoom(sub.auctionID, sub.client)
+			h.addToRoom(sub.offerID, sub.client)
 		case sub := <-h.unsubscribe:
-			h.removeFromRoom(sub.auctionID, sub.client)
+			h.removeFromRoom(sub.offerID, sub.client)
 		case msg := <-h.broadcast:
 			h.fanOut(msg)
 		}
 	}
 }
 
-func (h *Hub) addToRoom(auctionID string, client *Client) {
+func (h *Hub) addToRoom(offerID string, client *Client) {
 	h.mu.Lock()
 	defer h.mu.Unlock()
 
-	if h.rooms[auctionID] == nil {
-		h.rooms[auctionID] = make(map[*Client]struct{})
+	if h.rooms[offerID] == nil {
+		h.rooms[offerID] = make(map[*Client]struct{})
 	}
-	h.rooms[auctionID][client] = struct{}{}
-	client.rooms[auctionID] = true
+	h.rooms[offerID][client] = struct{}{}
+	client.rooms[offerID] = true
 }
 
-func (h *Hub) removeFromRoom(auctionID string, client *Client) {
+func (h *Hub) removeFromRoom(offerID string, client *Client) {
 	h.mu.Lock()
 	defer h.mu.Unlock()
 
-	if room, ok := h.rooms[auctionID]; ok {
+	if room, ok := h.rooms[offerID]; ok {
 		delete(room, client)
 		if len(room) == 0 {
-			delete(h.rooms, auctionID)
+			delete(h.rooms, offerID)
 		}
 	}
-	delete(client.rooms, auctionID)
+	delete(client.rooms, offerID)
 }
 
 func (h *Hub) removeClient(client *Client) {
-	for auctionID := range client.rooms {
-		h.removeFromRoom(auctionID, client)
+	for offerID := range client.rooms {
+		h.removeFromRoom(offerID, client)
 	}
 	close(client.send)
 }
 
 func (h *Hub) fanOut(msg outbound) {
 	h.mu.RLock()
-	room, ok := h.rooms[msg.auctionID]
+	room, ok := h.rooms[msg.offerID]
 	h.mu.RUnlock()
 	if !ok {
 		return
@@ -125,14 +125,14 @@ func (h *Hub) fanOut(msg outbound) {
 func (h *Hub) StartRedisFanIn(ctx context.Context, rdb *redis.Client) {
 	go func() {
 		for {
-			pubsub := rdb.PSubscribe(ctx, "auction.*")
+			pubsub := rdb.PSubscribe(ctx, "offer.*")
 			ch := pubsub.Channel()
 
 			for msg := range ch {
-				id := strings.TrimPrefix(msg.Channel, "auction.")
+				id := strings.TrimPrefix(msg.Channel, "offer.")
 				h.broadcast <- outbound{
-					auctionID: id,
-					data:      []byte(msg.Payload),
+					offerID: id,
+					data:    []byte(msg.Payload),
 				}
 			}
 
@@ -152,27 +152,27 @@ func (h *Hub) StartRedisFanIn(ctx context.Context, rdb *redis.Client) {
 	}()
 }
 
-func (h *Hub) SubscribeUser(uid, auctionID string) {
+func (h *Hub) SubscribeUser(uid, offerID string) {
 	h.mu.RLock()
 	cl, ok := h.clients[uid]
 	h.mu.RUnlock()
 	if !ok {
 		return
 	}
-	h.subscribe <- subscription{auctionID, cl}
+	h.subscribe <- subscription{offerID, cl}
 }
 
-func (h *Hub) BroadcastLocal(auctionID string, data []byte, excludeID string) {
+func (h *Hub) BroadcastLocal(offerID string, data []byte, excludeID string) {
 	h.broadcast <- outbound{
-		auctionID: auctionID,
+		offerID:   offerID,
 		data:      data,
 		excludeID: excludeID,
 	}
 }
 
-func (h *Hub) SaveNotificationForClients(auctionID string, userID uint, n *models.Notification) error {
+func (h *Hub) SaveNotificationForClients(offerID string, userID uint, n *models.Notification) error {
 	h.mu.RLock()
-	clients, ok := h.rooms[auctionID]
+	clients, ok := h.rooms[offerID]
 	h.mu.RUnlock()
 	if !ok {
 		return nil
@@ -196,9 +196,9 @@ func (h *Hub) SaveNotificationForClients(auctionID string, userID uint, n *model
 	return nil
 }
 
-func (h *Hub) SendFourLatestNotificationsToClient(auctionID, userID string) {
+func (h *Hub) SendFourLatestNotificationsToClient(offerID, userID string) {
 	h.mu.RLock()
-	room, ok := h.rooms[auctionID]
+	room, ok := h.rooms[offerID]
 	h.mu.RUnlock()
 	if !ok {
 		return
