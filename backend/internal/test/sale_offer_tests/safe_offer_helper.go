@@ -11,6 +11,7 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
+	"github.com/susek555/BD2/car-dealer-api/internal/test/mocks"
 	"github.com/susek555/BD2/car-dealer-api/internal/enums"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	u "github.com/susek555/BD2/car-dealer-api/internal/test/test_utils"
@@ -88,8 +89,9 @@ func newTestServer(db *gorm.DB, seedOffers []models.SaleOffer) (*gin.Engine, sal
 	accessEvaluator := sale_offer.NewAccessEvaluator(bidRepository, likedOfferRepository)
 	saleOfferService := sale_offer.NewSaleOfferService(saleOfferRepo, manufacturerRepo, modelRepo, imageRepo, accessEvaluator)
 	likedOfferService := liked_offer.NewLikedOfferService(likedOfferRepository, saleOfferRepo)
-	likedOfferHandler := liked_offer.NewHandler(likedOfferService)
-	saleOfferHandler := sale_offer.NewHandler(saleOfferService)
+	mh := new(mocks.HubInterface)
+	likedOfferHandler := liked_offer.NewHandler(likedOfferService, mh)
+	saleOfferHandler := sale_offer.NewHandler(saleOfferService, mh)
 	r := gin.Default()
 	saleOfferRoutes := r.Group("/sale-offer")
 	{
