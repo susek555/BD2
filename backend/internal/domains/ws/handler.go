@@ -38,6 +38,8 @@ func ServeWS(hub *Hub) gin.HandlerFunc {
 			rooms:  make(map[string]bool),
 		}
 		hub.register <- client
+		hub.LoadClientToRooms(uidStr)
+		log.Printf("Client %s connected\n", uidStr)
 		go client.writePump()
 		go client.readPump()
 	}
