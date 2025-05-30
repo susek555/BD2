@@ -45,6 +45,30 @@ func NewScheduler(repo bid.BidRepositoryInterface, redisClient *redis.Client, no
 	}
 }
 
+func (s *Scheduler) LoadAuctions(ctx context.Context) error {
+	offers, err := s.saleOfferRepository.GetAllActiveAuctions()
+	if err != nil {
+		log.Println("scheduler: error loading auctions:", err)
+		return err
+	}
+	for _, offer := range offers {
+		auctionID := strconv.FormatUint(uint64(offer.ID), 10)
+		if offer.Auction.DateEnd.Local().Before(time.Now()) {
+			log.Printf("scheduler: skipping auction %s with end time %s, already ended", auctionID, offer.Auction.DateEnd)
+			continue
+		}
+		item := &Item{
+			AuctionID: auctionID,
+			EndAt:     offer.Auction.DateEnd,
+		}
+		s.mu.Lock()
+		heap.Push(&s.heap, item)
+		s.mu.Unlock()
+		log.Printf("scheduler: loaded auction %s with end time %s", offer.ID, offer.Auction.DateEnd)
+	}
+	return nil
+}
+
 func (s *Scheduler) AddAuction(auctionID string, endAt time.Time) {
 	item := &Item{
 		AuctionID: auctionID,
