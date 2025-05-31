@@ -22,6 +22,7 @@ var (
 	ErrInvalidManufacturerModelPair = errors.New("manufcaturer and model don't match")
 	ErrOfferNotOwned                = errors.New("provided offer does not belong to logged in user")
 	ErrOfferNotReadyToPublish       = errors.New("offer is not ready to be published - make sure that it have at least 3 images attached")
+	ErrOfferOwnedByUser             = errors.New("offer is owned by user - cannot buy your own offer")
 )
 
 var ErrorMap = map[error]int{
@@ -39,4 +40,5 @@ var ErrorMap = map[error]int{
 	ErrInvalidManufacturerModelPair: http.StatusBadRequest,
 	ErrOfferNotOwned:                http.StatusForbidden,
 	gorm.ErrRecordNotFound:          http.StatusNotFound,
+	ErrOfferOwnedByUser:             http.StatusForbidden,
 }
