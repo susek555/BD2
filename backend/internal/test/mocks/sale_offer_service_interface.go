@@ -243,6 +243,65 @@ func (_c *SaleOfferServiceInterface_GetByID_Call) RunAndReturn(run func(uint, *u
 	return _c
 }
 
+// GetByIdNonDTO provides a mock function with given fields: id, userID
+func (_m *SaleOfferServiceInterface) GetByIdNonDTO(id uint, userID uint) (*models.SaleOffer, error) {
+	ret := _m.Called(id, userID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetByIdNonDTO")
+	}
+
+	var r0 *models.SaleOffer
+	var r1 error
+	if rf, ok := ret.Get(0).(func(uint, uint) (*models.SaleOffer, error)); ok {
+		return rf(id, userID)
+	}
+	if rf, ok := ret.Get(0).(func(uint, uint) *models.SaleOffer); ok {
+		r0 = rf(id, userID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*models.SaleOffer)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(uint, uint) error); ok {
+		r1 = rf(id, userID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// SaleOfferServiceInterface_GetByIdNonDTO_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetByIdNonDTO'
+type SaleOfferServiceInterface_GetByIdNonDTO_Call struct {
+	*mock.Call
+}
+
+// GetByIdNonDTO is a helper method to define mock.On call
+//   - id uint
+//   - userID uint
+func (_e *SaleOfferServiceInterface_Expecter) GetByIdNonDTO(id interface{}, userID interface{}) *SaleOfferServiceInterface_GetByIdNonDTO_Call {
+	return &SaleOfferServiceInterface_GetByIdNonDTO_Call{Call: _e.mock.On("GetByIdNonDTO", id, userID)}
+}
+
+func (_c *SaleOfferServiceInterface_GetByIdNonDTO_Call) Run(run func(id uint, userID uint)) *SaleOfferServiceInterface_GetByIdNonDTO_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(uint), args[1].(uint))
+	})
+	return _c
+}
+
+func (_c *SaleOfferServiceInterface_GetByIdNonDTO_Call) Return(_a0 *models.SaleOffer, _a1 error) *SaleOfferServiceInterface_GetByIdNonDTO_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *SaleOfferServiceInterface_GetByIdNonDTO_Call) RunAndReturn(run func(uint, uint) (*models.SaleOffer, error)) *SaleOfferServiceInterface_GetByIdNonDTO_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // GetByUserID provides a mock function with given fields: id, pagRequest
 func (_m *SaleOfferServiceInterface) GetByUserID(id uint, pagRequest *pagination.PaginationRequest) (*sale_offer.RetrieveOffersWithPagination, error) {
 	ret := _m.Called(id, pagRequest)
