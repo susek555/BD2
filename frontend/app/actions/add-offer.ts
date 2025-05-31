@@ -1,6 +1,6 @@
-import { OfferFormState, RegularOfferData } from "@/app/lib/definitions/offer-form";
-import { postRegularOffer } from "@/app/lib/api/add-offer/add-offer";
-import { UploadImages } from "../lib/api/images/upload";
+import { OfferFormState, RegularOfferData, AuctionOfferData } from "@/app/lib/definitions/offer-form";
+import { postRegularOffer, postAuction } from "@/app/lib/api/add-offer/add-offer";
+// import { UploadImages } from "../lib/api/images/upload";
 
 export async function addOffer(
     state: OfferFormState,
@@ -17,12 +17,16 @@ export async function addOffer(
 
     try {
         if (is_auction) {
-            console.log("Adding auction offer");
+            const AuctionOfferData: AuctionOfferData = validatedFields as AuctionOfferData;
+            const id = await postAuction(AuctionOfferData);
+            console.log("Posted Auction Offer ID:", id);
+            //TODO uncomment images
+            // await UploadImages(images!, id);
         } else {
             const regularOfferData: RegularOfferData = validatedFields as RegularOfferData;
             const id = await postRegularOffer(regularOfferData);
             console.log("Posted Offer ID:", id);
-            await UploadImages(images!, id);
+            // await UploadImages(images!, id);
         }
 
         return state;

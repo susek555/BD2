@@ -1,4 +1,4 @@
-// app/api/add-offer/route.ts
+// app/api/add-auction/route.ts
 import { fetchWithRefresh } from "@/app/lib/api/fetchWithRefresh";
 import { getServerSession } from "next-auth";
 import { authConfig } from "@/app/lib/authConfig";
@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
 
   const data = await req.json();
 
-  const response = await fetchWithRefresh(`${API_URL}/sale-offer`, {
+  const response = await fetchWithRefresh(`${API_URL}/auction`, {
     method: "POST",
     body: JSON.stringify(data),
     headers: {

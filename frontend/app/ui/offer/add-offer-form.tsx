@@ -39,7 +39,7 @@ export function OfferForm(
 
             const { progressState: result, offerFormState } = parseOfferForm(formData, progressState);
 
-            // If there are validation errors or pricing is to be set, return the new state without calling API
+
             setProgressState(result);
 
             if (result !== OfferFormEnum.readyToApi) {
@@ -67,10 +67,6 @@ export function OfferForm(
 
         console.log("State errors:", state.errors);
         console.log("State values:", state.values);
-
-        // if (Object.keys(state?.errors || {}).length === 0 && state.values?.manufacturer) {
-        //     setProgressState(false);
-        // }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     , [state]);
@@ -304,9 +300,6 @@ export function OfferForm(
         );
     }
 
-
-
-
     function TextInputField({ id, name } : { id: string, name: string }) {
 
         return (
@@ -492,6 +485,7 @@ export function OfferForm(
                     </>
                 </div>
             </form>
+            {/* Upload Results */}
             <div className={`rounded-lg bg-gray-50 px-6 pb-4 pt-8 flex flex-col gap-4 ${progressState === OfferFormEnum.readyToApi ? "block" : "hidden"}`}>
                     <>
                         {/* Upload failed */}
