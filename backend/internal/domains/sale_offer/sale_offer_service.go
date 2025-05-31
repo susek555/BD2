@@ -31,6 +31,7 @@ type SaleOfferServiceInterface interface {
 	GetModelID(manufacturerName, modelName string) (uint, error)
 	DetermineNewModelID(offer *models.SaleOffer, dto *UpdateSaleOfferDTO) (uint, error)
 	Buy(offerID uint, userID uint) error
+	GetByIdNonDTO(id uint, userID uint) (*models.SaleOffer, error)
 }
 type SaleOfferService struct {
 	saleOfferRepo   SaleOfferRepositoryInterface
@@ -134,6 +135,14 @@ func (s *SaleOfferService) GetByID(id uint, userID *uint) (*RetrieveDetailedSale
 		offerDTO.Status = offer.Status
 	}
 	return offerDTO, nil
+}
+
+func (s *SaleOfferService) GetByIdNonDTO(id uint, userID uint) (*models.SaleOffer, error) {
+	offer, err := s.saleOfferRepo.GetByID(id)
+	if err != nil {
+		return nil, err
+	}
+	return offer, nil
 }
 
 func (s *SaleOfferService) GetByUserID(id uint, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error) {
