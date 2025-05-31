@@ -27,7 +27,7 @@ var LikedOfferHandler *liked_offer.Handler
 var UserHandler *user.Handler
 
 func InitializeHandlers() {
-	AuctionHandler = auction.NewHandler(AuctionService, Sched, Hub)
+	AuctionHandler = auction.NewHandler(AuctionService, Sched, Hub, NotificationService)
 	AuthHandler = auth.NewHandler(AuthService)
 	BidHandler = bid.NewHandler(BidService, RedisClient, Hub, NotificationService)
 	CarHandler = car.NewHandler(CarService)
