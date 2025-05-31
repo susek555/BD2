@@ -247,6 +247,7 @@ func (h *Handler) GetOrderKeys(c *gin.Context) {
 // @Failure 500 "Internal Server Error"
 // @Failure 401 "Unauthorized - user must be logged in to buy an offer"
 // @Router /sale-offer/buy/{id} [delete]
+// @Security BearerAuth
 func (h *Handler) Buy(c *gin.Context) {
 	offerID, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
