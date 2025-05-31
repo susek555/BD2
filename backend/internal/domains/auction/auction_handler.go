@@ -8,6 +8,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auth"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/notification"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/scheduler"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/ws"
 	"github.com/susek555/BD2/car-dealer-api/pkg/custom_errors"
@@ -15,16 +17,18 @@ import (
 )
 
 type Handler struct {
-	service AuctionServiceInterface
-	sched   scheduler.SchedulerInterface
-	hub     ws.HubInterface
+	service             AuctionServiceInterface
+	sched               scheduler.SchedulerInterface
+	hub                 ws.HubInterface
+	notificationService notification.NotificationServiceInterface
 }
 
-func NewHandler(service AuctionServiceInterface, sched scheduler.SchedulerInterface, hub ws.HubInterface) *Handler {
+func NewHandler(service AuctionServiceInterface, sched scheduler.SchedulerInterface, hub ws.HubInterface, notificationService notification.NotificationServiceInterface) *Handler {
 	return &Handler{
-		service: service,
-		sched:   sched,
-		hub:     hub,
+		service:             service,
+		sched:               sched,
+		hub:                 hub,
+		notificationService: notificationService,
 	}
 }
 
@@ -214,4 +218,19 @@ func (h *Handler) BuyNow(c *gin.Context) {
 		return
 	}
 	c.Status(http.StatusOK)
+	notification := &models.Notification{
+		OfferID: uint(id),
+	}
+	auction, err := h.service.GetByIdNonDTO(uint(id))
+	if err != nil {
+		log.Printf("Error retrieving auction by ID %d: %v", id, err)
+		return
+	}
+	err = h.notificationService.CreateBuyNowNotification(notification, strconv.FormatUint(uint64(userId), 10), auction)
+	if err != nil {
+		log.Printf("Error creating buy now notification for auction ID %d: %v", id, err)
+		return
+	}
+	h.hub.SaveNotificationForClients(strconv.FormatUint(id, 10), userId, notification)
+	go h.hub.SendFourLatestNotificationsToClient(strconv.FormatUint(id, 10), strconv.FormatUint(uint64(userId), 10))
 }
