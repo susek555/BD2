@@ -110,7 +110,8 @@ func newTestServer(seedManufacturers []models.Manufacturer, seedModels []models.
 			mock.AnythingOfType("string"), // auction ID
 		).
 		Return(nil)
-	auctionHandler := auction.NewHandler(service, ms, mh)
+	mn := new(mocks.NotificationServiceInterface)
+	auctionHandler := auction.NewHandler(service, ms, mh, mn)
 	auctionRoutes := r.Group("/auction")
 	auctionRoutes.GET("/", auctionHandler.GetAllAuctions)
 	auctionRoutes.GET("/:id", auctionHandler.GetAuctionById)
