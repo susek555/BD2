@@ -4,11 +4,11 @@ export interface BaseOffer {
   id: string;
   // image: type to  be determined;
   name: string; // producer and model
-  productionYear: number;
+  production_year: number;
   mileage: number;
   color: string;
   price: number;
-  isAuction: boolean;
+  is_auction: boolean;
 }
 
 export interface SaleOffer extends BaseOffer {

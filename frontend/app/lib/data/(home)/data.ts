@@ -19,6 +19,7 @@ import { getHomePageData } from "@/app/lib/api/(home)/homePageData";
 //   return 100;
 // }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function fetchOffers(params: SearchParams): Promise<SaleOffer[]> {
 
     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -29,31 +30,31 @@ export async function fetchOffers(params: SearchParams): Promise<SaleOffer[]> {
     {
       id: '1',
       name: 'Audi A4',
-      productionYear: 2000,
+      production_year: 2000,
       mileage: 150000,
       color: 'Green',
       price: 10000,
-      isAuction: true,
+      is_auction: true,
       isFavorite: true,
     },
     {
       id: '2',
       name: 'Volkswagen Golf',
-      productionYear: 2005,
+      production_year: 2005,
       mileage: 120000,
       color: 'Blue',
       price: 15000,
-      isAuction: false,
+      is_auction: false,
       isFavorite: false,
     },
     {
       id: '3',
       name: 'Porsche 911',
-      productionYear: 2010,
+      production_year: 2010,
       mileage: 80000,
       color: 'Red',
       price: 50000,
-      isAuction: true,
+      is_auction: true,
       isFavorite: true,
     },
   ];
@@ -64,12 +65,12 @@ export async function fetchHomePageData(params: SearchParams) : Promise<{totalPa
     try{
         const data = await getHomePageData(params);
 
+        console.log("Fetched offers", data.offers);
+
         return {
             totalPages: data.pagination.total_pages,
             totalOffers: data.pagination.total_records,
-            // offers: data.offers
-            //TODO - remove mock data
-            offers: await fetchOffers(params)
+            offers: data.offers
         };
 
     } catch (error) {

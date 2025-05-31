@@ -24,9 +24,9 @@ export default function GenericOfferCard<T extends BaseOffer = BaseOffer>({
 
     switch (variant) {
       case 'history':
-        return offer.isAuction ? 'Final bid' : 'Price';
+        return offer.is_auction ? 'Final bid' : 'Price';
       default:
-        return offer.isAuction ? 'Current bid' : 'Price';
+        return offer.is_auction ? 'Current bid' : 'Price';
     }
   };
 
@@ -43,7 +43,7 @@ export default function GenericOfferCard<T extends BaseOffer = BaseOffer>({
         <div className='mb-3 flex items-center justify-between'>
           <div className='flex items-center gap-2'>
             <h3 className='text-2xl font-bold'>{offer.name}</h3>
-            {offer.isAuction && (
+            {offer.is_auction && (
               <span className='mt-[-8] rounded-full bg-blue-100 px-3 py-1 text-sm font-semibold text-blue-800'>
                 Auction
               </span>
@@ -57,7 +57,7 @@ export default function GenericOfferCard<T extends BaseOffer = BaseOffer>({
             <p className='text-bg mb-2'>
               Production year:{' '}
               <span className='font-bold'>
-                {offer.productionYear.toString()}
+                {offer.production_year.toString()}
               </span>
             </p>
             <p className='text-bg'>
