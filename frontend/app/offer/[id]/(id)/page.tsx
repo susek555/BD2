@@ -23,6 +23,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   const sellerAverageRating = await fetchAverageRating(offer.sellerId);
 
   const session = await getServerSession(authConfig);
+  const isLoggedIn = !!session;
   const username = session?.user?.username;
 
   console.log('username', username);
@@ -49,7 +50,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
           <div className='p-4'>
             <div className='flex flex-row gap-5'>
               <h1 className='text-3xl font-bold'>{offer.name}</h1>
-              {username !== offer.sellerName && (
+              {username !== offer.sellerName && isLoggedIn && (
                 <Favourite isFavourite={offer.is_favourite} id={id} />
               )}
             </div>
