@@ -7,9 +7,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auth"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/notification"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/ws"
+	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"github.com/susek555/BD2/car-dealer-api/pkg/custom_errors"
 	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
 )

@@ -6,7 +6,7 @@ import (
 	context "context"
 
 	mock "github.com/stretchr/testify/mock"
-	models "github.com/susek555/BD2/car-dealer-api/internal/domains/models"
+	models "github.com/susek555/BD2/car-dealer-api/internal/models"
 
 	redis "github.com/redis/go-redis/v9"
 )
