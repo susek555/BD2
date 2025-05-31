@@ -144,7 +144,8 @@ CREATE TABLE purchases (
     document_id INTEGER REFERENCES documents(id),
     payment_status_id INTEGER REFERENCES payment_statuses(id),
     offer_id INTEGER REFERENCES sale_offers(id),
-    user_id INTEGER REFERENCES users(id),
+    buyer_id INTEGER REFERENCES users(id),
+    final_price INTEGER NOT NULL,
     issue_date DATE NOT NULL
 );
 
