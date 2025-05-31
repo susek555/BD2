@@ -1,4 +1,4 @@
-export async function UploadImages(images: File[], id: number): Promise<number> {
+export async function uploadImages(images: File[], id: number): Promise<number> {
   console.log("Posting images:", images.length);
 
   const formData = new FormData();
@@ -6,14 +6,20 @@ export async function UploadImages(images: File[], id: number): Promise<number> 
     formData.append("images", image);
   });
 
+  // Log formData contents for debugging
+  for (const pair of formData.entries()) {
+    console.log(pair[0], pair[1]);
+  }
   console.log("Uploading images for ID:", id);
 
   const response = await fetch(`/api/images/upload/${id}`, {
-  method: "PATCH",
-  body: formData,
-});
+    method: "PATCH",
+    body: formData,
+  });
 
-  if (response.status === 201) {
+  console.log("Response status:", response.status);
+
+  if (response.status === 200 || response.status === 201) {
     const responseData = await response.json();
     return responseData.id;
   } else {

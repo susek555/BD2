@@ -24,17 +24,13 @@ export const parseOfferForm = (formData: FormData, progressState: number) : {pro
       engine_capacity: formDataObj.engine_capacity ? parseInt(formDataObj.engine_capacity as string) || undefined : undefined,
       price: formDataObj.price ? parseInt(formDataObj.price as string) || undefined : undefined,
       margin: formDataObj.margin
-        ? (parseInt((formDataObj.margin as string).replace('%', '')) || undefined)
-        : undefined,
+      ? (parseInt((formDataObj.margin as string).replace('%', '')) || undefined)
+      : undefined,
       is_auction: formDataObj.is_auction === "true" ? true : false,
       buy_now_price: formDataObj.buy_now_price
-        ? parseInt(formDataObj.buy_now_price as string) || undefined
-        : undefined,
-      images: formDataObj.images
-        ? (Array.isArray(formDataObj.images)
-          ? formDataObj.images
-          : [formDataObj.images as File])
-        : undefined
+      ? parseInt(formDataObj.buy_now_price as string) || undefined
+      : undefined,
+      images: formData.getAll('images').filter(file => file instanceof File)
     }
 
     let validatedFields;
