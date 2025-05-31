@@ -2,7 +2,6 @@ package enums
 
 import (
 	"database/sql/driver"
-	"strings"
 )
 
 type Drive string
@@ -14,12 +13,21 @@ const (
 )
 
 func (d *Drive) Scan(value any) error {
-	*d = Drive(value.([]byte))
+	var sValue string
+	switch v := value.(type) {
+	case string:
+		sValue = v
+	case []byte:
+		sValue = string(v)
+	default:
+		return ErrStringConversion
+	}
+	*d = Drive(convertDBFormatToAppFormat(sValue, true))
 	return nil
 }
 
 func (d Drive) Value() (driver.Value, error) {
-	return strings.ToLower(string(d)), nil
+	return convertAppFormatToDBFormat(string(d)), nil
 }
 
 var Drives = []Drive{FWD, RWD, AWD}

@@ -2,7 +2,6 @@ package enums
 
 import (
 	"database/sql/driver"
-	"strings"
 )
 
 type Color string
@@ -31,12 +30,21 @@ const (
 )
 
 func (c *Color) Scan(value any) error {
-	*c = Color(value.([]byte))
+	var sValue string
+	switch v := value.(type) {
+	case string:
+		sValue = v
+	case []byte:
+		sValue = string(v)
+	default:
+		return ErrStringConversion
+	}
+	*c = Color((convertDBFormatToAppFormat(sValue, false)))
 	return nil
 }
 
 func (c Color) Value() (driver.Value, error) {
-	return strings.ToLower(string(c)), nil
+	return convertAppFormatToDBFormat(string(c)), nil
 }
 
 var Colors = []Color{
