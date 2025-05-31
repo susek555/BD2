@@ -35,7 +35,7 @@ func InitializeHandlers() {
 	ManufacturerHandler = manufacturer.NewHandler(ManufacturerService)
 	ModelHandler = model.NewHandler(ModelService)
 	ReviewHandler = review.NewHandler(ReviewService)
-	SaleOfferHandler = sale_offer.NewHandler(SaleOfferService, Hub)
+	SaleOfferHandler = sale_offer.NewHandler(SaleOfferService, Hub, NotificationService)
 	LikedOfferHandler = liked_offer.NewHandler(LikedOfferService, Hub)
 	UserHandler = user.NewHandler(UserService)
 }
