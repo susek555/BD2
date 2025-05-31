@@ -5,6 +5,7 @@ import (
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/enums"
+	"github.com/susek555/BD2/car-dealer-api/internal/models"
 )
 
 type AuctionServiceInterface interface {

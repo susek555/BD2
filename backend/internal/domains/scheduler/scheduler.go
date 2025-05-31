@@ -11,8 +11,8 @@ import (
 	"github.com/redis/go-redis/v9"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/bid"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/notification"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/ws"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/ws"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
 )
 
