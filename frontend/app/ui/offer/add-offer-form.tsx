@@ -34,20 +34,22 @@ export function OfferForm(
     };
 
     const offerWrapper = (state: OfferFormState, formData: FormData) => {
-            const detailsPart = formData.get('detailsPart') === 'true';
-            formData.delete('detailsPart');
+            const progressState = formData.get('progressState') ? parseInt(formData.get('progressState') as string) : parseInt(OfferFormEnum.initialState.toString());
+            formData.delete('progressState');
 
-            const { boolean: result, offerFormState } = parseOfferForm(formData, detailsPart);
+            const { progressState: result, offerFormState } = parseOfferForm(formData, progressState);
 
             // If there are validation errors or pricing is to be set, return the new state without calling API
-            if (result === OfferFormEnum.pricingPart) {
+            setProgressState(result);
+
+            if (result !== OfferFormEnum.readyToApi) {
                 return offerFormState;
             }
 
 
 
             // Otherwise call the API action with validated data
-            if (apiAction) {
+            if (apiAction === offerActionEnum.ADD_OFFER) {
                 return addOffer(offerFormState);
             } else {
                 return editOffer(offerFormState);
@@ -68,14 +70,14 @@ export function OfferForm(
         console.log("State errors:", state.errors);
         console.log("State values:", state.values);
 
-        if (Object.keys(state?.errors || {}).length === 0 && state.values?.manufacturer) {
-            setDetailsPart(false);
-        }
+        // if (Object.keys(state?.errors || {}).length === 0 && state.values?.manufacturer) {
+        //     setProgressState(false);
+        // }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     , [state]);
 
-    const [detailsPart, setDetailsPart] = React.useState<boolean>(true);
+    const [progressState, setProgressState] = React.useState<number>(OfferFormEnum.initialState);
     const [producer, setProducer] = React.useState<string>(state.values?.manufacturer?.toString() ?? "");
 
     const [availableModels, setAvailableModels] = React.useState<string[]>([]);
@@ -95,6 +97,7 @@ export function OfferForm(
     };
 
     const handleSubmit = (formData: FormData) => {
+        console.log("Called handleSubmit");
 
         // formData.append("isAuction", liveState.values?.isAuction == null ? "false" : liveState.values.isAuction.toString());
         const registraction_day = formData.get("registration_date-day");
@@ -129,7 +132,7 @@ export function OfferForm(
             }
         }
 
-        formData.append('detailsPart', detailsPart.toString());
+        formData.append('progressState', progressState.toString());
 
         setProducer(formData.get("producer")?.toString() ?? "");
         const isAuctionValue = formData.get("is_auction") === "true";
@@ -336,7 +339,7 @@ export function OfferForm(
 
     return (
         <form className=" w-full md:w-200" action={handleSubmit}>
-            <div className={`rounded-lg bg-gray-50 px-6 pb-4 pt-8 flex flex-col gap-4 ${detailsPart ? "block" : "hidden"}`}>
+            <div className={`rounded-lg bg-gray-50 px-6 pb-4 pt-8 flex flex-col gap-4 ${progressState === OfferFormEnum.initialState ? "block" : "hidden"}`}>
                 <>
                     <label htmlFor="manufacturer" className="text-lg font-semibold">Manufacturer</label>
                     <select
@@ -395,12 +398,12 @@ export function OfferForm(
                     <label htmlFor="images" className="text-lg font-semibold">
                         Images
                     </label>
-                    <input type="file" id="images" name="images" className="border rounded p-2" multiple required />
+                    {/* <input type="file" id="images" name="images" className="border rounded p-2" multiple required /> */}
 
                     <button type="submit" className="bg-blue-600 text-white rounded p-2">Set Pricing</button>
                 </>
             </div>
-            <div className={`rounded-lg bg-gray-50 px-6 pb-4 pt-8 flex flex-col gap-4 ${detailsPart ? "hidden" : "block"}`}>
+            <div className={`rounded-lg bg-gray-50 px-6 pb-4 pt-8 flex flex-col gap-4 ${progressState === OfferFormEnum.pricingPart ? "block" : "hidden"}`}>
                 <>
                     <label htmlFor="offer type" className="text-lg font-semibold">
                         Offer Type
@@ -444,7 +447,7 @@ export function OfferForm(
                         ))}
                     </div>
                     <NumberInputField id="price" name="Price" />
-                    <SelectionLabel id="margin" name="Margin ( % )" options={["3", "5", "10"]} required={!detailsPart}/>
+                    <SelectionLabel id="margin" name="Margin ( % )" options={["3", "5", "10"]} required={progressState >= OfferFormEnum.pricingPart}/>
                     <div className="flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
                             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clipRule="evenodd" />
@@ -461,7 +464,7 @@ export function OfferForm(
                         </>
                     )}
 
-                    <button type="button" className="bg-blue-600 text-white rounded p-2" onClick={() => setDetailsPart(true)}>Back to Details</button>
+                    <button type="button" className="bg-blue-600 text-white rounded p-2" onClick={() => setProgressState(OfferFormEnum.initialState)}>Back to Details</button>
                     <button type="submit" className="bg-blue-600 text-white rounded p-2">Confirm Offer</button>
                 </>
             </div>
