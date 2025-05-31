@@ -13,6 +13,7 @@ type AuctionServiceInterface interface {
 	GetById(id uint) (*RetrieveAuctionDTO, error)
 	Update(auction *UpdateAuctionDTO, userID uint) (*RetrieveAuctionDTO, error)
 	Delete(id, userId uint) error
+	BuyNow(auctionID, userID uint) error
 }
 
 type AuctionService struct {
@@ -112,6 +113,17 @@ func (s *AuctionService) Delete(id, userId uint) error {
 	err = s.auctionRepo.Delete(id)
 	if err != nil {
 		return err
+	}
+	return nil
+}
+
+func (s *AuctionService) BuyNow(auctionID, userID uint) error {
+	auction, err := s.auctionRepo.GetById(auctionID)
+	if err != nil {
+		return err
+	}
+	if auction.Offer.UserID == userID {
+		return ErrAuctionOwnedByUser
 	}
 	return nil
 }
