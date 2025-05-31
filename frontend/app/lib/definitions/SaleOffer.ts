@@ -9,10 +9,11 @@ export interface BaseOffer {
   color: string;
   price: number;
   is_auction: boolean;
+  main_url: string;
 }
 
 export interface SaleOffer extends BaseOffer {
-  isFavorite: boolean;
+  is_liked: boolean;
 }
 
 export interface HistoryOffer extends BaseOffer {

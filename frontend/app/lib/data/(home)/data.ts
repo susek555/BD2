@@ -19,47 +19,46 @@ import { getHomePageData } from "@/app/lib/api/(home)/homePageData";
 //   return 100;
 // }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function fetchOffers(params: SearchParams): Promise<SaleOffer[]> {
+// export async function fetchOffers(params: SearchParams): Promise<SaleOffer[]> {
 
-    await new Promise(resolve => setTimeout(resolve, 1000));
+//     await new Promise(resolve => setTimeout(resolve, 1000));
 
-  // TODO connect API
+//   // TODO connect API
 
-  const data: SaleOffer[] = [
-    {
-      id: '1',
-      name: 'Audi A4',
-      production_year: 2000,
-      mileage: 150000,
-      color: 'Green',
-      price: 10000,
-      is_auction: true,
-      isFavorite: true,
-    },
-    {
-      id: '2',
-      name: 'Volkswagen Golf',
-      production_year: 2005,
-      mileage: 120000,
-      color: 'Blue',
-      price: 15000,
-      is_auction: false,
-      isFavorite: false,
-    },
-    {
-      id: '3',
-      name: 'Porsche 911',
-      production_year: 2010,
-      mileage: 80000,
-      color: 'Red',
-      price: 50000,
-      is_auction: true,
-      isFavorite: true,
-    },
-  ];
-  return data;
-}
+//   const data: SaleOffer[] = [
+//     {
+//       id: '1',
+//       name: 'Audi A4',
+//       production_year: 2000,
+//       mileage: 150000,
+//       color: 'Green',
+//       price: 10000,
+//       is_auction: true,
+//       is_liked: true,
+//     },
+//     {
+//       id: '2',
+//       name: 'Volkswagen Golf',
+//       production_year: 2005,
+//       mileage: 120000,
+//       color: 'Blue',
+//       price: 15000,
+//       is_auction: false,
+//       is_liked: false,
+//     },
+//     {
+//       id: '3',
+//       name: 'Porsche 911',
+//       production_year: 2010,
+//       mileage: 80000,
+//       color: 'Red',
+//       price: 50000,
+//       is_auction: true,
+//       is_liked: true,
+//     },
+//   ];
+//   return data;
+// }
 
 export async function fetchHomePageData(params: SearchParams) : Promise<{totalPages: number, totalOffers: number, offers: SaleOffer[]}> {
     try{

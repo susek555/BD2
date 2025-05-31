@@ -11,7 +11,7 @@ export async function GET(request: Request) {
       color: 'Green',
       price: 10000,
       is_auction: true,
-      isFavorite: true,
+      is_liked: true,
     },
     {
       id: '2',
@@ -21,7 +21,7 @@ export async function GET(request: Request) {
       color: 'Blue',
       price: 15000,
       is_auction: false,
-      isFavorite: true,
+      is_liked: true,
     },
     {
       id: '3',
@@ -31,7 +31,7 @@ export async function GET(request: Request) {
       color: 'Red',
       price: 50000,
       is_auction: true,
-      isFavorite: true,
+      is_liked: true,
     },
   ];
   const pagination = {
