@@ -6,7 +6,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/ws"
-	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"github.com/susek555/BD2/car-dealer-api/pkg/custom_errors"
 )
 
@@ -48,10 +47,11 @@ func (h *Handler) LikeOffer(c *gin.Context) {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
-	c.JSON(http.StatusOK, models.LikedOffer{OfferID: uint(offerID), UserID: userID.(uint)})
+	c.Status(http.StatusOK)
 	offerIDStr := strconv.FormatUint(offerID, 10)
 	userIDStr := strconv.FormatUint(uint64(userID.(uint)), 10)
 	h.hub.SubscribeUser(userIDStr, offerIDStr)
+
 }
 
 // DislikeOffer godoc

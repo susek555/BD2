@@ -28,6 +28,9 @@ func (e *OfferAccessEvaluator) CanBeModifiedByUser(offer *models.SaleOffer, user
 	if userID == nil {
 		return false, nil
 	}
+	if !offer.BelongsToUser(*userID) {
+		return false, nil
+	}
 	if !isAuction(offer) {
 		return true, nil
 	}
