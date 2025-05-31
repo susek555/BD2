@@ -40,7 +40,7 @@ export function OfferForm(
             const { boolean: result, offerFormState } = parseOfferForm(formData, detailsPart);
 
             // If there are validation errors or pricing is to be set, return the new state without calling API
-            if (result === OfferFormEnum.pricingPartLeft) {
+            if (result === OfferFormEnum.pricingPart) {
                 return offerFormState;
             }
 

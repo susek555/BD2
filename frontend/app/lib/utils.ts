@@ -1,13 +1,15 @@
 import { OfferFormState } from "./definitions/offer-form";
-import { OfferDetailsFormSchema, CombinedOfferFormSchema } from "./definitions/offer-form";
+import { OfferDetailsFormSchema, CombinedOfferFormSchema, CombinedImagesOfferFormSchema } from "./definitions/offer-form";
 
 
 export const OfferFormEnum = {
-  readyToApi: true,
-  pricingPartLeft: false
+  initialState: 0,
+  pricingPart: 1,
+  imagesPart: 2,
+  readyToApi: 3,
 } as const;
 
-export const parseOfferForm = (formData: FormData, detailsPart: boolean) : {boolean: boolean, offerFormState: OfferFormState} => {
+export const parseOfferForm = (formData: FormData, progressState: number) : {progressState: number, offerFormState: OfferFormState} => {
 
     const formDataObj = Object.fromEntries(formData.entries());
 
@@ -35,16 +37,26 @@ export const parseOfferForm = (formData: FormData, detailsPart: boolean) : {bool
         : undefined
     }
 
-    const validatedFields = detailsPart
-        ? OfferDetailsFormSchema.safeParse(normalizedData)
-        : CombinedOfferFormSchema.safeParse(normalizedData);;
+    let validatedFields;
+    switch (progressState) {
+      case OfferFormEnum.initialState:
+      validatedFields = OfferDetailsFormSchema.safeParse(normalizedData);
+      break;
+      case OfferFormEnum.pricingPart:
+      default:
+      validatedFields = CombinedOfferFormSchema.safeParse(normalizedData);
+      break;
+      case OfferFormEnum.imagesPart:
+      validatedFields = CombinedImagesOfferFormSchema.safeParse(normalizedData);
+      break;
+    }
 
 
 
     if (!validatedFields.success) {
       console.log("Add Offer validation errors:", validatedFields.error.flatten().fieldErrors);
       return {
-        boolean: OfferFormEnum.pricingPartLeft,
+        progressState: progressState,
         offerFormState: {
         errors: validatedFields.error.flatten().fieldErrors,
         values: normalizedData as OfferFormState['values']
@@ -52,7 +64,7 @@ export const parseOfferForm = (formData: FormData, detailsPart: boolean) : {bool
       };
     }
 
-    if (!detailsPart) {
+    if (progressState === OfferFormEnum.imagesPart) {
       // convert model from "producer model" to "model"
       if ('model' in validatedFields.data) {
           const firstSpaceIndex = validatedFields.data.model!.indexOf(' ');
@@ -64,7 +76,7 @@ export const parseOfferForm = (formData: FormData, detailsPart: boolean) : {bool
     }
 
     return {
-      boolean: detailsPart ? OfferFormEnum.pricingPartLeft : OfferFormEnum.readyToApi,
+      progressState: progressState + 1,
       offerFormState: {
       errors: {},
       values: validatedFields.data as OfferFormState['values']
