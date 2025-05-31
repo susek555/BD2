@@ -7,6 +7,8 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
 )
 
+//go:generate mockery --name=NotificationServiceInterface --output=../../test/mocks --case=snake --with-expecter
+
 type NotificationServiceInterface interface {
 	CreateOutbidNotification(notification *models.Notification, amount int64, offer *models.Auction) error
 	CreateEndAuctionNotification(notification *models.Notification, winner string, winningBid int64, offer *models.SaleOffer) error
