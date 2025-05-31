@@ -1681,7 +1681,101 @@ paths:
       summary: Like new offer
       tags:
       - favourites
-  /images/delete/{id}:
+  /image:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes an image by its URL. The user must be the owner of the
+        image. Removes image from database and cloud storage - both operations must
+        be successful to proceed.
+      parameters:
+      - description: Image URL
+        in: query
+        name: url
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content - image successfully deleted
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "401":
+          description: Unauthorized - user must be logged in to delete images
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "403":
+          description: Forbidden - usercan only images that refer to his own offers
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "404":
+          description: Image not found
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      security:
+      - Bearer: []
+      summary: Delete image
+      tags:
+      - image
+  /image/{id}:
+    patch:
+      consumes:
+      - multipart/form-data
+      description: Uploads images for a sale offer. You can upload multiple images
+        at once, but 10 is the limit. Only offers with photos can be published later
+        on (sale-offer/publish).
+      parameters:
+      - description: Sale offer ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Images to upload
+        in: formData
+        name: images
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated sale offer with images
+          schema:
+            $ref: '#/definitions/sale_offer.RetrieveDetailedSaleOfferDTO'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "401":
+          description: Unauthorized - user must be logged in to upload images for
+            sale offers
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "403":
+          description: Forbidden - user can only upload images for his own offers
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "404":
+          description: Sale offer not found
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      security:
+      - Bearer: []
+      summary: Upload images for sale offer
+      tags:
+      - image
+  /image/offer/{id}:
     delete:
       consumes:
       - application/json
@@ -1723,101 +1817,7 @@ paths:
       - Bearer: []
       summary: Delete all images for a sale offer
       tags:
-      - images
-  /images/delete/{url}:
-    delete:
-      consumes:
-      - application/json
-      description: Deletes an image by its URL. The user must be the owner of the
-        image. Removes image from database and cloud storage - both operations must
-        be successful to proceed.
-      parameters:
-      - description: Image URL
-        in: path
-        name: url
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "204":
-          description: No Content - image successfully deleted
-        "400":
-          description: Invalid request
-          schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
-        "401":
-          description: Unauthorized - user must be logged in to delete images
-          schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
-        "403":
-          description: Forbidden - usercan only images that refer to his own offers
-          schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
-        "404":
-          description: Image not found
-          schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
-      security:
-      - Bearer: []
-      summary: Delete image
-      tags:
-      - images
-  /images/upload/{id}:
-    patch:
-      consumes:
-      - multipart/form-data
-      description: Uploads images for a sale offer. You can upload multiple images
-        at once, but 10 is the limit. Only offers with photos can be published later
-        on (sale-offer/publish).
-      parameters:
-      - description: Sale offer ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: Images to upload
-        in: formData
-        name: images
-        required: true
-        type: file
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Updated sale offer with images
-          schema:
-            $ref: '#/definitions/models.SaleOffer'
-        "400":
-          description: Invalid request
-          schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
-        "401":
-          description: Unauthorized - user must be logged in to upload images for
-            sale offers
-          schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
-        "403":
-          description: Forbidden - user can only upload images for his own offers
-          schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
-        "404":
-          description: Sale offer not found
-          schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
-      security:
-      - Bearer: []
-      summary: Upload images for sale offer
-      tags:
-      - images
+      - image
   /logout:
     post:
       consumes:

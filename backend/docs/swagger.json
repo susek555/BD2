@@ -1124,7 +1124,71 @@
                 }
             }
         },
-        "/images/delete/{id}": {
+        "/image": {
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Deletes an image by its URL. The user must be the owner of the image. Removes image from database and cloud storage - both operations must be successful to proceed.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "image"
+                ],
+                "summary": "Delete image",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Image URL",
+                        "name": "url",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content - image successfully deleted"
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - user must be logged in to delete images",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - usercan only images that refer to his own offers",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Image not found",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/image/offer/{id}": {
             "delete": {
                 "security": [
                     {
@@ -1139,7 +1203,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "images"
+                    "image"
                 ],
                 "summary": "Delete all images for a sale offer",
                 "parameters": [
@@ -1188,71 +1252,7 @@
                 }
             }
         },
-        "/images/delete/{url}": {
-            "delete": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "description": "Deletes an image by its URL. The user must be the owner of the image. Removes image from database and cloud storage - both operations must be successful to proceed.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "images"
-                ],
-                "summary": "Delete image",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Image URL",
-                        "name": "url",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content - image successfully deleted"
-                    },
-                    "400": {
-                        "description": "Invalid request",
-                        "schema": {
-                            "$ref": "#/definitions/custom_errors.HTTPError"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized - user must be logged in to delete images",
-                        "schema": {
-                            "$ref": "#/definitions/custom_errors.HTTPError"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden - usercan only images that refer to his own offers",
-                        "schema": {
-                            "$ref": "#/definitions/custom_errors.HTTPError"
-                        }
-                    },
-                    "404": {
-                        "description": "Image not found",
-                        "schema": {
-                            "$ref": "#/definitions/custom_errors.HTTPError"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/custom_errors.HTTPError"
-                        }
-                    }
-                }
-            }
-        },
-        "/images/upload/{id}": {
+        "/image/{id}": {
             "patch": {
                 "security": [
                     {
@@ -1267,7 +1267,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "images"
+                    "image"
                 ],
                 "summary": "Upload images for sale offer",
                 "parameters": [
@@ -1290,7 +1290,7 @@
                     "200": {
                         "description": "Updated sale offer with images",
                         "schema": {
-                            "$ref": "#/definitions/models.SaleOffer"
+                            "$ref": "#/definitions/sale_offer.RetrieveDetailedSaleOfferDTO"
                         }
                     },
                     "400": {
