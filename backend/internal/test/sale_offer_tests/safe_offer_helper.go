@@ -91,7 +91,8 @@ func newTestServer(db *gorm.DB, seedOffers []models.SaleOffer) (*gin.Engine, sal
 	likedOfferService := liked_offer.NewLikedOfferService(likedOfferRepository, saleOfferRepo)
 	mh := new(mocks.HubInterface)
 	likedOfferHandler := liked_offer.NewHandler(likedOfferService, mh)
-	saleOfferHandler := sale_offer.NewHandler(saleOfferService, mh)
+	mn := new(mocks.NotificationServiceInterface)
+	saleOfferHandler := sale_offer.NewHandler(saleOfferService, mh, mn)
 	r := gin.Default()
 	saleOfferRoutes := r.Group("/sale-offer")
 	{
