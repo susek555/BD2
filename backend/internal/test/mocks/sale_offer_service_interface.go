@@ -22,6 +22,53 @@ func (_m *SaleOfferServiceInterface) EXPECT() *SaleOfferServiceInterface_Expecte
 	return &SaleOfferServiceInterface_Expecter{mock: &_m.Mock}
 }
 
+// Buy provides a mock function with given fields: offerID, userID
+func (_m *SaleOfferServiceInterface) Buy(offerID uint, userID uint) error {
+	ret := _m.Called(offerID, userID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Buy")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(uint, uint) error); ok {
+		r0 = rf(offerID, userID)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// SaleOfferServiceInterface_Buy_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Buy'
+type SaleOfferServiceInterface_Buy_Call struct {
+	*mock.Call
+}
+
+// Buy is a helper method to define mock.On call
+//   - offerID uint
+//   - userID uint
+func (_e *SaleOfferServiceInterface_Expecter) Buy(offerID interface{}, userID interface{}) *SaleOfferServiceInterface_Buy_Call {
+	return &SaleOfferServiceInterface_Buy_Call{Call: _e.mock.On("Buy", offerID, userID)}
+}
+
+func (_c *SaleOfferServiceInterface_Buy_Call) Run(run func(offerID uint, userID uint)) *SaleOfferServiceInterface_Buy_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(uint), args[1].(uint))
+	})
+	return _c
+}
+
+func (_c *SaleOfferServiceInterface_Buy_Call) Return(_a0 error) *SaleOfferServiceInterface_Buy_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *SaleOfferServiceInterface_Buy_Call) RunAndReturn(run func(uint, uint) error) *SaleOfferServiceInterface_Buy_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // Create provides a mock function with given fields: in
 func (_m *SaleOfferServiceInterface) Create(in *sale_offer.CreateSaleOfferDTO) (*sale_offer.RetrieveDetailedSaleOfferDTO, error) {
 	ret := _m.Called(in)
