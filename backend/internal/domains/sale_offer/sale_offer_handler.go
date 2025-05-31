@@ -1,25 +1,30 @@
 package sale_offer
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auth"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/notification"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/ws"
 	"github.com/susek555/BD2/car-dealer-api/pkg/custom_errors"
 	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
 )
 
 type Handler struct {
-	service SaleOfferServiceInterface
-	hub     ws.HubInterface
+	service             SaleOfferServiceInterface
+	hub                 ws.HubInterface
+	notificationService notification.NotificationServiceInterface
 }
 
-func NewHandler(s SaleOfferServiceInterface, hub ws.HubInterface) *Handler {
+func NewHandler(s SaleOfferServiceInterface, hub ws.HubInterface, notificationService notification.NotificationServiceInterface) *Handler {
 	return &Handler{
-		service: s,
-		hub:     hub,
+		service:             s,
+		hub:                 hub,
+		notificationService: notificationService,
 	}
 }
 
@@ -265,6 +270,21 @@ func (h *Handler) Buy(c *gin.Context) {
 		return
 	}
 	c.Status(http.StatusOK)
+	notification := &models.Notification{
+		OfferID: uint(offerID),
+	}
+	offer, err := h.service.GetByIdNonDTO(uint(offerID), userID)
+	if err != nil {
+		log.Printf("Error retrieving auction by ID %d: %v", offerID, err)
+		return
+	}
+	err = h.notificationService.CreateBuyNotication(notification, strconv.FormatUint(uint64(userID), 10), offer)
+	if err != nil {
+		log.Printf("Error creating buy notification for offer ID %d: %v", offerID, err)
+		return
+	}
+	h.hub.SaveNotificationForClients(strconv.FormatUint(offerID, 10), userID, notification)
+	go h.hub.SendFourLatestNotificationsToClient(strconv.FormatUint(offerID, 10), strconv.FormatUint(uint64(userID), 10))
 }
 
 func getOptionalUserID(c *gin.Context) *uint {
