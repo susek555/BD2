@@ -109,7 +109,7 @@ func registerAuctionRoutes(router *gin.Engine) {
 	auctionRoutes.POST("/", middleware.Authenticate(initializers.Verifier), initializers.AuctionHandler.CreateAuction)
 	auctionRoutes.PUT("/", middleware.Authenticate(initializers.Verifier), initializers.AuctionHandler.UpdateAuction)
 	auctionRoutes.DELETE("/:id", middleware.Authenticate(initializers.Verifier), initializers.AuctionHandler.DeleteAuctionById)
-
+	auctionRoutes.DELETE("/buy-now/:id", middleware.Authenticate(initializers.Verifier), initializers.AuctionHandler.BuyNow)
 }
 
 func registerBidRoutes(router *gin.Engine) {
