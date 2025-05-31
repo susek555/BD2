@@ -267,6 +267,7 @@ export type OfferFormState = {
     description?: string[];
     images?: string[];
     buy_now_auction_price?: string[];
+    upload_offer?: string[];
   }
   values?: {
     [key: string]: string | number | boolean | File[] | undefined;

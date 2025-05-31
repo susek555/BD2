@@ -1,5 +1,4 @@
 import { OfferFormState, RegularOfferData } from "@/app/lib/definitions/offer-form";
-import { permanentRedirect } from "next/navigation";
 import { postRegularOffer } from "@/app/lib/api/add-offer/add-offer";
 import { UploadImages } from "../lib/api/images/upload";
 
@@ -25,17 +24,16 @@ export async function addOffer(
             await UploadImages(images!, id);
         }
 
+        return state;
 
-
-
-
-        permanentRedirect("/account/listings");
     } catch (error) {
         if (typeof window !== 'undefined') {
             alert(`Error adding offer: ${error instanceof Error ? error.message : String(error)}`);
         }
         return {
-            errors: {},
+            errors: {
+                upload_offer: [`Failed to upload offer: ${error instanceof Error ? error.message : String(error)}`]
+            },
             values: { ...validatedFields, is_auction } as OfferFormState['values']
         }
     }

@@ -338,136 +338,210 @@ export function OfferForm(
     }
 
     return (
-        <form className=" w-full md:w-200" action={handleSubmit}>
-            <div className={`rounded-lg bg-gray-50 px-6 pb-4 pt-8 flex flex-col gap-4 ${progressState === OfferFormEnum.initialState ? "block" : "hidden"}`}>
-                <>
-                    <label htmlFor="manufacturer" className="text-lg font-semibold">Manufacturer</label>
-                    <select
-                        id="manufacturer"
-                        name="manufacturer"
-                        className="border rounded p-2"
-                        required
-                        value={producer}
-                        onChange={e => {
-                            handleProducerChange(e.target.value);
-                            setProducer(e.target.value); // Aktualizuj lokalny stan
-                        }}
-                    >
-                        <option value="" disabled>Select a producer...</option>
-                        {inputsData.producers.map((item: string) => (
-                            <option key={item} value={item}>{item}</option>
-                        ))}
-                    </select>
-                    <div id="username-error" aria-live="polite" aria-atomic="true">
-                        {state?.errors?.manufacturer &&
-                            state.errors.manufacturer.map((error: string) => (
-                            <p className="mt-2 text-sm text-red-500" key={error}>
-                                {error}
-                            </p>
-                        ))}
-                    </div>
-                    {/* <SelectionLabel id="producer" name="Producer" options={inputsData.producers} /> */}
-                    <SelectionLabel id="model" name="Model" options={availableModels} />
-                    <SelectionLabel id="color" name="Color" options={inputsData.colors} />
-                    <SelectionLabel id="fuel_type" name="Fuel Type" options={inputsData.fuelTypes} />
-                    <SelectionLabel id="drive" name="Drive Type" options={inputsData.driveTypes} />
-                    <SelectionLabel id="transmission" name="Transmission" options={inputsData.gearboxes} />
-                    <NumberInputField id="number_of_gears" name="Number of gears" />
-                    <NumberInputField id="production_year" name="Production Year" />
-                    <NumberInputField id="mileage" name="Mileage" />
-                    <NumberInputField id="number_of_doors" name="Number of doors" />
-                    <NumberInputField id="number_of_seats" name="Number of seats" />
-                    <NumberInputField id="engine_power" name="Power" />
-                    <NumberInputField id="engine_capacity" name="Engine displacement" />
-                    <DateSelectionField id="registration_date" name="Date of first registration"/>
-                    <TextInputField id="registration_number" name="Plate number" />
-                    <TextInputField id="vin" name="VIN" />
-
-                    <label htmlFor="description" className="text-lg font-semibold">
-                        Description
-                    </label>
-                    <textarea
-                        id="description"
-                        name="description"
-                        className="border rounded p-2 h-32"
-                        defaultValue={state?.values?.description?.toString() ?? ""}
-                        placeholder="Enter description..."
-                        required
-                    ></textarea>
-
-                    <label htmlFor="images" className="text-lg font-semibold">
-                        Images
-                    </label>
-                    {/* <input type="file" id="images" name="images" className="border rounded p-2" multiple required /> */}
-
-                    <button type="submit" className="bg-blue-600 text-white rounded p-2">Set Pricing</button>
-                </>
-            </div>
-            <div className={`rounded-lg bg-gray-50 px-6 pb-4 pt-8 flex flex-col gap-4 ${progressState === OfferFormEnum.pricingPart ? "block" : "hidden"}`}>
-                <>
-                    <label htmlFor="offer type" className="text-lg font-semibold">
-                        Offer Type
-                    </label>
-                    <div className="flex gap-8">
-                        <div className="flex items-center">
-                            <input
-                                id="standard offer"
-                                type="radio"
-                                name="is_auction"
-                                value="false"
-                                checked={is_auction === false}
-                                onChange={() => changeOfferType(false)}
-                                className="h-4 w-4 text-blue-500 focus:ring-blue-400"
-                            />
-                            <label htmlFor="standard offer" className="ml-2 text-sm font-medium text-gray-900">
-                                Standard offer
-                            </label>
+        <>
+            <form className=" w-full md:w-200" action={handleSubmit}>
+                <div className={`rounded-lg bg-gray-50 px-6 pb-4 pt-8 flex flex-col gap-4 ${progressState === OfferFormEnum.initialState ? "block" : "hidden"}`}>
+                    <>
+                        <label htmlFor="manufacturer" className="text-lg font-semibold">Manufacturer</label>
+                        <select
+                            id="manufacturer"
+                            name="manufacturer"
+                            className="border rounded p-2"
+                            required
+                            value={producer}
+                            onChange={e => {
+                                handleProducerChange(e.target.value);
+                                setProducer(e.target.value); // Aktualizuj lokalny stan
+                            } }
+                        >
+                            <option value="" disabled>Select a producer...</option>
+                            {inputsData.producers.map((item: string) => (
+                                <option key={item} value={item}>{item}</option>
+                            ))}
+                        </select>
+                        <div id="username-error" aria-live="polite" aria-atomic="true">
+                            {state?.errors?.manufacturer &&
+                                state.errors.manufacturer.map((error: string) => (
+                                    <p className="mt-2 text-sm text-red-500" key={error}>
+                                        {error}
+                                    </p>
+                                ))}
                         </div>
-                        <div className="flex items-center">
-                            <input
-                                id="auction"
-                                type="radio"
-                                name="is_auction"
-                                value="true"
-                                checked={is_auction === true}
-                                onChange={() => changeOfferType(true)}
-                                className="h-4 w-4 text-blue-500 focus:ring-blue-400"
-                            />
-                            <label htmlFor="auction" className="ml-2 text-sm font-medium text-gray-900">
-                                Auction
-                            </label>
+                        {/* <SelectionLabel id="producer" name="Producer" options={inputsData.producers} /> */}
+                        <SelectionLabel id="model" name="Model" options={availableModels} />
+                        <SelectionLabel id="color" name="Color" options={inputsData.colors} />
+                        <SelectionLabel id="fuel_type" name="Fuel Type" options={inputsData.fuelTypes} />
+                        <SelectionLabel id="drive" name="Drive Type" options={inputsData.driveTypes} />
+                        <SelectionLabel id="transmission" name="Transmission" options={inputsData.gearboxes} />
+                        <NumberInputField id="number_of_gears" name="Number of gears" />
+                        <NumberInputField id="production_year" name="Production Year" />
+                        <NumberInputField id="mileage" name="Mileage" />
+                        <NumberInputField id="number_of_doors" name="Number of doors" />
+                        <NumberInputField id="number_of_seats" name="Number of seats" />
+                        <NumberInputField id="engine_power" name="Power" />
+                        <NumberInputField id="engine_capacity" name="Engine displacement" />
+                        <DateSelectionField id="registration_date" name="Date of first registration" />
+                        <TextInputField id="registration_number" name="Plate number" />
+                        <TextInputField id="vin" name="VIN" />
+
+                        <label htmlFor="description" className="text-lg font-semibold">
+                            Description
+                        </label>
+                        <textarea
+                            id="description"
+                            name="description"
+                            className="border rounded p-2 h-32"
+                            defaultValue={state?.values?.description?.toString() ?? ""}
+                            placeholder="Enter description..."
+                            required
+                        ></textarea>
+
+                        <button type="submit" className="bg-blue-600 text-white rounded p-2">Set Pricing</button>
+                    </>
+                </div>
+                <div className={`rounded-lg bg-gray-50 px-6 pb-4 pt-8 flex flex-col gap-4 ${progressState === OfferFormEnum.pricingPart ? "block" : "hidden"}`}>
+                    <>
+                        <label htmlFor="offer type" className="text-lg font-semibold">
+                            Offer Type
+                        </label>
+                        <div className="flex gap-8">
+                            <div className="flex items-center">
+                                <input
+                                    id="standard offer"
+                                    type="radio"
+                                    name="is_auction"
+                                    value="false"
+                                    checked={is_auction === false}
+                                    onChange={() => changeOfferType(false)}
+                                    className="h-4 w-4 text-blue-500 focus:ring-blue-400" />
+                                <label htmlFor="standard offer" className="ml-2 text-sm font-medium text-gray-900">
+                                    Standard offer
+                                </label>
+                            </div>
+                            <div className="flex items-center">
+                                <input
+                                    id="auction"
+                                    type="radio"
+                                    name="is_auction"
+                                    value="true"
+                                    checked={is_auction === true}
+                                    onChange={() => changeOfferType(true)}
+                                    className="h-4 w-4 text-blue-500 focus:ring-blue-400" />
+                                <label htmlFor="auction" className="ml-2 text-sm font-medium text-gray-900">
+                                    Auction
+                                </label>
+                            </div>
                         </div>
-                    </div>
-                    <div id="username-error" aria-live="polite" aria-atomic="true">
-                        {state?.errors?.is_auction &&
-                            state.errors.is_auction.map((error: string) => (
-                            <p className="mt-2 text-sm text-red-500" key={error}>
-                                {error}
-                            </p>
-                        ))}
-                    </div>
-                    <NumberInputField id="price" name="Price" />
-                    <SelectionLabel id="margin" name="Margin ( % )" options={["3", "5", "10"]} required={progressState >= OfferFormEnum.pricingPart}/>
-                    <div className="flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clipRule="evenodd" />
-                        </svg>
-                        <span className="text-sm text-gray-600">
-                            This percentage will be taxed out of set price. Chosen margin will influence the priority of your offer in the search results. The higher the margin, the higher the priority.
-                        </span>
-                    </div>
+                        <div id="username-error" aria-live="polite" aria-atomic="true">
+                            {state?.errors?.is_auction &&
+                                state.errors.is_auction.map((error: string) => (
+                                    <p className="mt-2 text-sm text-red-500" key={error}>
+                                        {error}
+                                    </p>
+                                ))}
+                        </div>
+                        <NumberInputField id="price" name="Price" />
+                        <SelectionLabel id="margin" name="Margin ( % )" options={["3", "5", "10"]} required={progressState >= OfferFormEnum.pricingPart} />
+                        <div className="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clipRule="evenodd" />
+                            </svg>
+                            <span className="text-sm text-gray-600">
+                                This percentage will be taxed out of set price. Chosen margin will influence the priority of your offer in the search results. The higher the margin, the higher the priority.
+                            </span>
+                        </div>
 
-                    {is_auction && (
-                        <>
-                            <DateSelectionField id="auction_end_date" name="Auction end date" hasHour={true}/>
-                            <NumberInputField id="buy_now_auction_price" name="Buy now price [ optional ]" />
-                        </>
-                    )}
+                        {is_auction && (
+                            <>
+                                <DateSelectionField id="auction_end_date" name="Auction end date" hasHour={true} />
+                                <NumberInputField id="buy_now_auction_price" name="Buy now price [ optional ]" />
+                            </>
+                        )}
 
-                    <button type="button" className="bg-blue-600 text-white rounded p-2" onClick={() => setProgressState(OfferFormEnum.initialState)}>Back to Details</button>
-                    <button type="submit" className="bg-blue-600 text-white rounded p-2">Confirm Offer</button>
-                </>
+                        <button type="button" className="bg-blue-600 text-white rounded p-2" onClick={() => setProgressState(OfferFormEnum.initialState)}>Back to Details</button>
+                        <button type="submit" className="bg-blue-600 text-white rounded p-2">Upload images</button>
+                    </>
+                </div>
+                <div className={`rounded-lg bg-gray-50 px-6 pb-4 pt-8 flex flex-col gap-4 ${progressState === OfferFormEnum.imagesPart ? "block" : "hidden"}`}>
+                    <>
+
+                        <label htmlFor="images" className="text-lg font-semibold">
+                            Images
+                        </label>
+                        <input type="file" id="images" name="images" className="border rounded p-2" multiple required={progressState === OfferFormEnum.imagesPart} />
+                        <div id="username-error" aria-live="polite" aria-atomic="true">
+                            {state?.errors?.images &&
+                                state.errors.images.map((error: string) => (
+                                    <p className="mt-2 text-sm text-red-500" key={error}>
+                                        {error}
+                                    </p>
+                                ))}
+                        </div>
+                        <div className="flex items-center gap-2 mt-2 mb-4 p-3 bg-yellow-50 border border-yellow-300 rounded-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-yellow-600" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                            </svg>
+                            <span className="text-sm text-yellow-700">
+                                Warning: If you go back to pricing, you&apos;ll need to select your images again.
+                            </span>
+                        </div>
+
+                        <button type="button" className="bg-blue-600 text-white rounded p-2" onClick={() => setProgressState(OfferFormEnum.pricingPart)}>Back to Pricing</button>
+                        <button type="submit" className="bg-blue-600 text-white rounded p-2">Submit Offer</button>
+                    </>
+                </div>
+            </form>
+            <div className={`rounded-lg bg-gray-50 px-6 pb-4 pt-8 flex flex-col gap-4 ${progressState === OfferFormEnum.readyToApi ? "block" : "hidden"}`}>
+                    <>
+                        {state.errors?.upload_offer ? (
+                            <div className="text-center space-y-4">
+                                <div className="flex justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <h2 className="text-2xl font-semibold text-gray-800">Error Adding Offer</h2>
+                                <p className="text-gray-600 max-w-md mx-auto">
+                                    There was an issue submitting your offer. Please try again.
+                                </p>
+                                <div id="error-details" className="text-red-500 mt-2">
+                                    {state.errors.upload_offer.map((error: string) => (
+                                        <p key={error}>{error}</p>
+                                    ))}
+                                </div>
+                                <div className="mt-6">
+                                    <button
+                                        type="button"
+                                        onClick={() => setProgressState(OfferFormEnum.imagesPart)}
+                                        className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition-colors"
+                                    >
+                                        Try Again
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="text-center space-y-4">
+                                <div className="flex justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </div>
+                                <h2 className="text-2xl font-semibold text-gray-800">Offer Successfully Added</h2>
+                                <p className="text-gray-600 max-w-md mx-auto">
+                                    Your offer has been successfully submitted and is now available in your listings.
+                                </p>
+                                <div className="mt-6">
+                                    <a
+                                        href="/account/listings"
+                                        className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition-colors"
+                                    >
+                                        View My Listings
+                                    </a>
+                                </div>
+                            </div>
+                        )}
+                    </>
             </div>
-        </form>
+        </>
     )
 }
