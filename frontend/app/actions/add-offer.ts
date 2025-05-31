@@ -1,5 +1,5 @@
 import { OfferFormState, RegularOfferData, AuctionOfferData } from "@/app/lib/definitions/offer-form";
-import { postRegularOffer, postAuction } from "@/app/lib/api/add-offer/add-offer";
+import { postRegularOffer, postAuction, publishOffer } from "@/app/lib/api/add-offer/add-offer";
 import { uploadImages } from "../lib/api/images/upload";
 
 export async function addOffer(
@@ -21,11 +21,13 @@ export async function addOffer(
             const id = await postAuction(AuctionOfferData);
             console.log("Posted Auction Offer ID:", id);
             await uploadImages(images!, id);
+            await publishOffer(id);
         } else {
             const regularOfferData: RegularOfferData = validatedFields as RegularOfferData;
             const id = await postRegularOffer(regularOfferData);
             console.log("Posted Offer ID:", id);
             await uploadImages(images!, id);
+            await publishOffer(id);
         }
 
         return state;

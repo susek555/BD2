@@ -39,3 +39,16 @@ export async function postAuction(data: AuctionOfferData): Promise<number> {
     throw new Error(`Failed to post auction: ${response.status} – ${errorText}`);
   }
 }
+
+export async function publishOffer(id: number): Promise<void> {
+  console.log("Publishing offer with ID:", id);
+
+  const response = await fetch(`/api/publish-offer/${id}`, {
+    method: "PUT",
+  });
+
+  if (response.status !== 200) {
+    const errorText = await response.text();
+    throw new Error(`Failed to publish offer: ${response.status} – ${errorText}`);
+  }
+}
