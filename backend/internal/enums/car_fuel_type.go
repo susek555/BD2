@@ -2,7 +2,6 @@ package enums
 
 import (
 	"database/sql/driver"
-	"strings"
 )
 
 type FuelType string
@@ -19,12 +18,21 @@ const (
 )
 
 func (f *FuelType) Scan(value any) error {
-	*f = FuelType(value.([]byte))
+	var sValue string
+	switch v := value.(type) {
+	case string:
+		sValue = v
+	case []byte:
+		sValue = string(v)
+	default:
+		return ErrStringConversion
+	}
+	*f = FuelType(convertDBFormatToAppFormat(sValue, sValue == string(LPG)))
 	return nil
 }
 
 func (f FuelType) Value() (driver.Value, error) {
-	return strings.ToLower(string(f)), nil
+	return convertAppFormatToDBFormat(string(f)), nil
 }
 
 var Types = []FuelType{
