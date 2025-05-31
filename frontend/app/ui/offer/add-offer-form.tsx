@@ -112,21 +112,21 @@ export function OfferForm(
         // Process auction date only when is_auction is true
         const is_auction_value = formData.get("is_auction") === "true";
         if (is_auction_value) {
-            const auction_day = formData.get("auction_end_date-day");
-            const auction_month = formData.get("auction_end_date-month");
-            const auction_year = formData.get("auction_end_date-year");
-            const auction_hour = formData.get("auction_end_date-hour");
-            const auction_minute = formData.get("auction_end_date-minute");
+            const auction_day = formData.get("date_end-day");
+            const auction_month = formData.get("date_end-month");
+            const auction_year = formData.get("date_end-year");
+            const auction_hour = formData.get("date_end-hour");
+            const auction_minute = formData.get("date_end-minute");
 
             if (auction_day && auction_month && auction_year && auction_hour && auction_minute) {
                 const auctionDate = `${auction_hour.toString().padStart(2, "0")}:${auction_minute.toString().padStart(2, "0")} ${auction_year.toString().padStart(4, "0")}-${auction_month.toString().padStart(2, "0")}-${auction_day.toString().padStart(2, "0")}`;
 
-                formData.set("auction_end_date", auctionDate);
-                formData.delete("auction_end_date-day");
-                formData.delete("auction_end_date-month");
-                formData.delete("auction_end_date-year");
-                formData.delete("auction_end_date-hour");
-                formData.delete("auction_end_date-minute");
+                formData.set("date_end", auctionDate);
+                formData.delete("date_end-day");
+                formData.delete("date_end-month");
+                formData.delete("date_end-year");
+                formData.delete("date_end-hour");
+                formData.delete("date_end-minute");
             }
         }
 
@@ -338,6 +338,7 @@ export function OfferForm(
     return (
         <>
             <form className=" w-full md:w-200" action={handleSubmit}>
+                {/* Details Part */}
                 <div className={`rounded-lg bg-gray-50 px-6 pb-4 pt-8 flex flex-col gap-4 ${progressState === OfferFormEnum.initialState ? "block" : "hidden"}`}>
                     <>
                         <label htmlFor="manufacturer" className="text-lg font-semibold">Manufacturer</label>
@@ -397,6 +398,7 @@ export function OfferForm(
                         <button type="submit" className="bg-blue-600 text-white rounded p-2">Set Pricing</button>
                     </>
                 </div>
+                {/* Pricing Part */}
                 <div className={`rounded-lg bg-gray-50 px-6 pb-4 pt-8 flex flex-col gap-4 ${progressState === OfferFormEnum.pricingPart ? "block" : "hidden"}`}>
                     <>
                         <label htmlFor="offer type" className="text-lg font-semibold">
@@ -451,8 +453,8 @@ export function OfferForm(
 
                         {is_auction && (
                             <>
-                                <DateSelectionField id="auction_end_date" name="Auction end date" hasHour={true} />
-                                <NumberInputField id="buy_now_auction_price" name="Buy now price [ optional ]" />
+                                <DateSelectionField id="date_end" name="Auction end date" hasHour={true} />
+                                <NumberInputField id="buy_now_price" name="Buy now price [ optional ]" />
                             </>
                         )}
 
@@ -460,6 +462,7 @@ export function OfferForm(
                         <button type="submit" className="bg-blue-600 text-white rounded p-2">Upload images</button>
                     </>
                 </div>
+                {/* Images Part */}
                 <div className={`rounded-lg bg-gray-50 px-6 pb-4 pt-8 flex flex-col gap-4 ${progressState === OfferFormEnum.imagesPart ? "block" : "hidden"}`}>
                     <>
 
@@ -491,6 +494,7 @@ export function OfferForm(
             </form>
             <div className={`rounded-lg bg-gray-50 px-6 pb-4 pt-8 flex flex-col gap-4 ${progressState === OfferFormEnum.readyToApi ? "block" : "hidden"}`}>
                     <>
+                        {/* Upload failed */}
                         {state.errors?.upload_offer ? (
                             <div className="text-center space-y-4">
                                 <div className="flex justify-center">
@@ -518,6 +522,7 @@ export function OfferForm(
                                 </div>
                             </div>
                         ) : (
+                            // Upload successful
                             <div className="text-center space-y-4">
                                 <div className="flex justify-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">

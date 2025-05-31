@@ -77,7 +77,7 @@ export const OfferPricingFormSchema = z.object({
     .min(3, { message: 'Margin must be greater than or equal to 3' })
     .max(10,{ message: 'Margin must be less than or equal to 10' }),
   is_auction: z.boolean(),
-  auction_end_date: z
+  date_end: z
     .string()
     .optional()
     .refine((date) => {
@@ -102,7 +102,7 @@ export const OfferPricingFormSchema = z.object({
 
       return parsedDate <= oneWeekFromNow;
     }, { message: 'Date must be in the future but not more than a week from now' }),
-  buy_now_auction_price: z
+  buy_now_price: z
     .number()
     .nullish()
     .transform(val => val === 0 || val === null || val === undefined ? undefined : val)
@@ -116,22 +116,22 @@ export const OfferPricingFormSchema = z.object({
     ),
 }).superRefine((data, ctx) => {
   if (data.is_auction) {
-    if (!data.auction_end_date) {
+    if (!data.date_end) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Auction end date is required when auction is enabled',
-        path: ['auction_end_date'],
+        path: ['date_end'],
       });
     }
   }
   if (
-    data.buy_now_auction_price !== undefined &&
-    data.buy_now_auction_price <= data.price
+    data.buy_now_price !== undefined &&
+    data.buy_now_price <= data.price
   ) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       message: 'Buy now auction price must be greater than the regular price',
-      path: ['buy_now_auction_price'],
+      path: ['buy_now_price'],
     });
   }
 });
@@ -164,29 +164,29 @@ export const CombinedOfferFormSchema = z
     }
 
     if (data.is_auction) {
-      if (!data.auction_end_date) {
+      if (!data.date_end) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Auction end date is required when auction is enabled',
-          path: ['auction_end_date'],
+          path: ['date_end'],
         });
       }
     }
 
     if (
-      data.buy_now_auction_price !== undefined &&
-      data.buy_now_auction_price <= data.price
+      data.buy_now_price !== undefined &&
+      data.buy_now_price <= data.price
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Buy now auction price must be greater than the regular price',
-        path: ['buy_now_auction_price'],
+        path: ['buy_now_price'],
       });
     }
   })
   .transform((data) => {
-    if (data.buy_now_auction_price === undefined) {
-      const { buy_now_auction_price, ...rest } = data;
+    if (data.buy_now_price === undefined) {
+      const { buy_now_price: buy_now_price, ...rest } = data;
       return rest;
     }
     return data;
@@ -211,29 +211,29 @@ export const CombinedImagesOfferFormSchema = z
     }
 
     if (data.is_auction) {
-      if (!data.auction_end_date) {
+      if (!data.date_end) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Auction end date is required when auction is enabled',
-          path: ['auction_end_date'],
+          path: ['date_end'],
         });
       }
     }
 
     if (
-      data.buy_now_auction_price !== undefined &&
-      data.buy_now_auction_price <= data.price
+      data.buy_now_price !== undefined &&
+      data.buy_now_price <= data.price
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Buy now auction price must be greater than the regular price',
-        path: ['buy_now_auction_price'],
+        path: ['buy_now_price'],
       });
     }
   })
   .transform((data) => {
-    if (data.buy_now_auction_price === undefined) {
-      const { buy_now_auction_price, ...rest } = data;
+    if (data.buy_now_price === undefined) {
+      const { buy_now_price: buy_now_price, ...rest } = data;
       return rest;
     }
     return data;
@@ -263,10 +263,10 @@ export type OfferFormState = {
     engine_capacity?: string[];
     price?: string[];
     is_auction?: string[];
-    auction_end_date?: string[];
+    date_end?: string[];
     description?: string[];
     images?: string[];
-    buy_now_auction_price?: string[];
+    buy_now_price?: string[];
     upload_offer?: string[];
   }
   values?: {
@@ -292,8 +292,8 @@ export type OfferFormState = {
     price?: number;
     margin?: number;
     is_auction?: boolean;
-    auction_end_date?: string;
-    buy_now_auction_price?: number;
+    date_end?: string;
+    buy_now_price?: number;
   }
 }
 
@@ -326,4 +326,9 @@ export type RegularOfferData = {
   description: string;
   price: number;
   margin: number;
+}
+
+export type AuctionOfferData = RegularOfferData & {
+  buy_now_price?: number;
+  date_end: string;
 }

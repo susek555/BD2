@@ -27,8 +27,8 @@ export const parseOfferForm = (formData: FormData, progressState: number) : {pro
         ? (parseInt((formDataObj.margin as string).replace('%', '')) || undefined)
         : undefined,
       is_auction: formDataObj.is_auction === "true" ? true : false,
-      buy_now_auction_price: formDataObj.buy_now_auction_price
-        ? parseInt(formDataObj.buy_now_auction_price as string) || undefined
+      buy_now_price: formDataObj.buy_now_price
+        ? parseInt(formDataObj.buy_now_price as string) || undefined
         : undefined,
       images: formDataObj.images
         ? (Array.isArray(formDataObj.images)
@@ -40,15 +40,16 @@ export const parseOfferForm = (formData: FormData, progressState: number) : {pro
     let validatedFields;
     switch (progressState) {
       case OfferFormEnum.initialState:
-      validatedFields = OfferDetailsFormSchema.safeParse(normalizedData);
+        validatedFields = OfferDetailsFormSchema.safeParse(normalizedData);
       break;
       case OfferFormEnum.pricingPart:
-      default:
-      validatedFields = CombinedOfferFormSchema.safeParse(normalizedData);
+        validatedFields = CombinedOfferFormSchema.safeParse(normalizedData);
       break;
       case OfferFormEnum.imagesPart:
-      validatedFields = CombinedImagesOfferFormSchema.safeParse(normalizedData);
+        validatedFields = CombinedImagesOfferFormSchema.safeParse(normalizedData);
       break;
+      default:
+        throw new Error(`Invalid progress state: ${progressState}`);
     }
 
 
