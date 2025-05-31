@@ -7,7 +7,7 @@ export async function POST(
 ) {
   const { id } = await params;
 
-  await fetchWithRefresh(`${API_URL}/favourites/like/${id}`, {
+  await fetchWithRefresh(`${API_URL}/favourite/like/${id}`, {
     method: "POST",
   });
 
@@ -20,7 +20,7 @@ export async function DELETE(
 ) {
   const { id } = await params;
 
-  const response = await fetchWithRefresh(`${API_URL}/favourites/dislike/${id}`, {
+  const response = await fetchWithRefresh(`${API_URL}/favourite/dislike/${id}`, {
     method: "DELETE",
   });
 

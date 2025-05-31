@@ -9,6 +9,8 @@ export async function fetchOfferDetails(
 
   const fetchedData = await getOfferData(parseInt(id, 10));
 
+  console.log('fetchedData', fetchedData);
+
   if (!fetchedData) {
     return null;
   } else {
