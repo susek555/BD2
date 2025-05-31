@@ -184,3 +184,34 @@ func (h *Handler) UpdateAuction(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, dto)
 }
+
+// BuyNow godoc
+// @Summary Buy an auction at its buy now price
+// @Description Allows a user to instantly purchase an auction at its buy now price if available
+// @Tags auctions
+// @Accept json
+// @Produce json
+// @Param id path int true "Auction ID"
+// @Success 200 "Successfully purchased the auction"
+// @Failure 400 {object} custom_errors.HTTPError "Invalid auction ID or buy now operation failed"
+// @Failure 401 {object} custom_errors.HTTPError "Unauthorized - user not logged in"
+// @Router /auctions/{id}/buy-now [post]
+// @Security BearerAuth
+func (h *Handler) BuyNow(c *gin.Context) {
+	userId, err := auth.GetUserId(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, custom_errors.NewHTTPError(err.Error()))
+		return
+	}
+	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+		return
+	}
+	err = h.service.BuyNow(uint(id), uint(userId))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+		return
+	}
+	c.Status(http.StatusOK)
+}
