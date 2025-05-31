@@ -30,8 +30,8 @@ type SaleOfferServiceInterface interface {
 	GetFiltered(filter *OfferFilter) (*RetrieveOffersWithPagination, error)
 	GetModelID(manufacturerName, modelName string) (uint, error)
 	DetermineNewModelID(offer *models.SaleOffer, dto *UpdateSaleOfferDTO) (uint, error)
+	Buy(offerID uint, userID uint) error
 }
-
 type SaleOfferService struct {
 	saleOfferRepo   SaleOfferRepositoryInterface
 	manRetriever    ManufacturerRetrieverInterface
@@ -188,6 +188,17 @@ func (s *SaleOfferService) DetermineNewModelID(offer *models.SaleOffer, dto *Upd
 	return modelID, err
 }
 
+func (s *SaleOfferService) Buy(offerID uint, userID uint) error {
+	offer, err := s.saleOfferRepo.GetByID(offerID)
+	if err != nil {
+		return err
+	}
+	if offer.BelongsToUser(userID) {
+		return ErrOfferOwnedByUser
+	}
+	// TODO: Implement payment logic here
+	return nil
+}
 func (s *SaleOfferService) getOfferImagesURLs(offer *models.SaleOffer) ([]string, error) {
 	images, err := s.imageRetriever.GetByOfferID(offer.ID)
 	if err != nil {
