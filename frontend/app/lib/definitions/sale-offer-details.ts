@@ -1,4 +1,5 @@
 export type SaleOfferDetails = {
+  id: number;
   name: string; // producer and model
   price?: number;
   isAuction: boolean;

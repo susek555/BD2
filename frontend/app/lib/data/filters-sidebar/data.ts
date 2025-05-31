@@ -164,10 +164,6 @@ export function prepareRangeFields() : RangeFieldData[] {
 // Add offer
 
 export async function fetchOfferFormData() : Promise<OfferFormData> {
-
-    // TODO remove delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
     const producersAndModels = fetchProducersAndModels();
     const colors = fetchColors();
     const fuelTypes = fetchFuelTypes();
