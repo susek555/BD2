@@ -12,22 +12,27 @@ export const parseOfferForm = (formData: FormData, detailsPart: boolean) : {bool
     const formDataObj = Object.fromEntries(formData.entries());
 
     const normalizedData = {
-        ...formDataObj,
-        production_year: formDataObj.production_year ? parseInt(formDataObj.production_year as string) || undefined : undefined,
-        mileage: formDataObj.mileage ? parseInt(formDataObj.mileage as string) || undefined : undefined,
-        number_of_doors: formDataObj.number_of_doors ? parseInt(formDataObj.number_of_doors as string) || undefined : undefined,
-        number_of_seats: formDataObj.number_of_seats ? parseInt(formDataObj.number_of_seats as string) || undefined : undefined,
-        number_of_gears: formDataObj.number_of_gears ? parseInt(formDataObj.number_of_gears as string) || undefined : undefined,
-        engine_power: formDataObj.engine_power ? parseInt(formDataObj.engine_power as string) || undefined : undefined,
-        engine_capacity: formDataObj.engine_capacity ? parseInt(formDataObj.engine_capacity as string) || undefined : undefined,
-        price: formDataObj.price ? parseInt(formDataObj.price as string) || undefined : undefined,
-        margin: formDataObj.margin
-            ? (parseInt((formDataObj.margin as string).replace('%', '')) || undefined)
-            : undefined,
-        is_auction: formDataObj.is_auction === "true" ? true : false,
-        buy_now_auction_price: formDataObj.buy_now_auction_price
-            ? parseInt(formDataObj.buy_now_auction_price as string) || undefined
-            : undefined
+      ...formDataObj,
+      production_year: formDataObj.production_year ? parseInt(formDataObj.production_year as string) || undefined : undefined,
+      mileage: formDataObj.mileage ? parseInt(formDataObj.mileage as string) || undefined : undefined,
+      number_of_doors: formDataObj.number_of_doors ? parseInt(formDataObj.number_of_doors as string) || undefined : undefined,
+      number_of_seats: formDataObj.number_of_seats ? parseInt(formDataObj.number_of_seats as string) || undefined : undefined,
+      number_of_gears: formDataObj.number_of_gears ? parseInt(formDataObj.number_of_gears as string) || undefined : undefined,
+      engine_power: formDataObj.engine_power ? parseInt(formDataObj.engine_power as string) || undefined : undefined,
+      engine_capacity: formDataObj.engine_capacity ? parseInt(formDataObj.engine_capacity as string) || undefined : undefined,
+      price: formDataObj.price ? parseInt(formDataObj.price as string) || undefined : undefined,
+      margin: formDataObj.margin
+        ? (parseInt((formDataObj.margin as string).replace('%', '')) || undefined)
+        : undefined,
+      is_auction: formDataObj.is_auction === "true" ? true : false,
+      buy_now_auction_price: formDataObj.buy_now_auction_price
+        ? parseInt(formDataObj.buy_now_auction_price as string) || undefined
+        : undefined,
+      images: formDataObj.images
+        ? (Array.isArray(formDataObj.images)
+          ? formDataObj.images
+          : [formDataObj.images as File])
+        : undefined
     }
 
     const validatedFields = detailsPart

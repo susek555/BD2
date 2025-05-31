@@ -54,13 +54,6 @@ export const OfferDetailsFormSchema = z.object({
     .max(17, { message: 'VIN must be 17 characters long' })
     .regex(/^[A-HJ-NPR-Z0-9]+$/, { message: 'VIN must contain only valid characters' }),
   description: z.string().min(1, { message: 'Description is required' }),
-  images: z
-    .array(z.instanceof(File))   //TODO remove optional and uncomment code below
-    .min(1, { message: 'At least one image is required' })
-    .max(10, { message: 'A maximum of 10 images is allowed' })
-    .refine((files) => files.every(file => file.size <= 5 * 1024 * 1024), {
-      message: 'Each image must be less than 5MB',
-    }),
 }).superRefine((data, ctx) => {
   if (data.registration_date && data.production_year) {
     const registrationDate = new Date(data.registration_date);
@@ -143,10 +136,67 @@ export const OfferPricingFormSchema = z.object({
   }
 });
 
+export const OfferImagesFormSchema = z.object({
+  images: z
+    .array(z.instanceof(File))   //TODO remove optional and uncomment code below
+    .min(1, { message: 'At least one image is required' })
+    .max(10, { message: 'A maximum of 10 images is allowed' })
+    .refine((files) => files.every(file => file.size <= 5 * 1024 * 1024), {
+      message: 'Each image must be less than 5MB',
+    }),
+  });
+
 export const CombinedOfferFormSchema = z
   .object({
     ...OfferDetailsFormSchema._def.schema.shape,
     ...OfferPricingFormSchema._def.schema.shape,
+  })
+  .superRefine((data, ctx) => {
+    if (data.registration_date && data.production_year) {
+      const registrationDate = new Date(data.registration_date);
+      if (registrationDate.getFullYear() < data.production_year) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Registration date cannot be earlier than production year',
+          path: ['registration_date'],
+        });
+      }
+    }
+
+    if (data.is_auction) {
+      if (!data.auction_end_date) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Auction end date is required when auction is enabled',
+          path: ['auction_end_date'],
+        });
+      }
+    }
+
+    if (
+      data.buy_now_auction_price !== undefined &&
+      data.buy_now_auction_price <= data.price
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Buy now auction price must be greater than the regular price',
+        path: ['buy_now_auction_price'],
+      });
+    }
+  })
+  .transform((data) => {
+    if (data.buy_now_auction_price === undefined) {
+      const { buy_now_auction_price, ...rest } = data;
+      return rest;
+    }
+    return data;
+  });
+
+export const CombinedImagesOfferFormSchema = z
+  .object({
+    ...OfferDetailsFormSchema._def.schema.shape,
+    ...OfferPricingFormSchema._def.schema.shape,
+    ...OfferImagesFormSchema.shape,
   })
   .superRefine((data, ctx) => {
     if (data.registration_date && data.production_year) {
