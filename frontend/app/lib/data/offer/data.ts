@@ -15,7 +15,7 @@ export async function fetchOfferDetails(
     const data: SaleOfferDetails = {
       id: fetchedData.id,
       name: `${fetchedData.brand} ${fetchedData.model}`,
-      price: fetchedData.price,
+      price: fetchedData.is_auction ? fetchedData.buy_now_price || null : fetchedData.price,
       isAuction: fetchedData.is_auction,
       // isActive: fetchedData.is_active,
       // TODO include handling it
@@ -24,64 +24,64 @@ export async function fetchOfferDetails(
       description: fetchedData.description,
       details: [
       {
-        name: 'Color',
-        value: fetchedData.color,
+      name: 'Color',
+      value: fetchedData.color,
       },
       {
-        name: 'Production Year',
-        value: fetchedData.production_year?.toString() || ''
+      name: 'Production Year',
+      value: fetchedData.production_year?.toString() || ''
       },
       {
-        name: 'Mileage',
-        value: `${fetchedData.mileage} km`
+      name: 'Mileage',
+      value: `${fetchedData.mileage} km`
       },
       {
-        name: 'Fuel Type',
-        value: fetchedData.fuel_type
+      name: 'Fuel Type',
+      value: fetchedData.fuel_type
       },
       {
-        name: 'Transmission',
-        value: fetchedData.transmission
+      name: 'Transmission',
+      value: fetchedData.transmission
       },
       {
-        name: 'Number of gears',
-        value: fetchedData.number_of_gears?.toString() || ''
+      name: 'Number of gears',
+      value: fetchedData.number_of_gears?.toString() || ''
       },
       {
-        name: 'Number of doors',
-        value: fetchedData.number_of_doors?.toString() || ''
+      name: 'Number of doors',
+      value: fetchedData.number_of_doors?.toString() || ''
       },
       {
-        name: 'Number of seats',
-        value: fetchedData.number_of_seats?.toString() || ''
+      name: 'Number of seats',
+      value: fetchedData.number_of_seats?.toString() || ''
       },
       {
-        name: 'Engine Power',
-        value: `${fetchedData.engine_power} HP`
+      name: 'Engine Power',
+      value: `${fetchedData.engine_power} HP`
       },
       {
-        name: 'Engine Capacity',
-        value: `${fetchedData.engine_capacity} L`
+      name: 'Engine Capacity',
+      value: `${fetchedData.engine_capacity} L`
       },
       {
-        name: 'Drive',
-        value: fetchedData.drive
+      name: 'Drive',
+      value: fetchedData.drive
       },
       {
-        name: 'VIN',
-        value: fetchedData.vin
+      name: 'VIN',
+      value: fetchedData.vin
       },
       {
-        name: 'Date of first registration',
-        value: fetchedData.registration_date
+      name: 'Date of first registration',
+      value: fetchedData.registration_date
       },
       {
-        name: 'Registration number',
-        value: fetchedData.registration_number || 'N/A'
+      name: 'Registration number',
+      value: fetchedData.registration_number || 'N/A'
       },
       {
-        name: 'Date of offer issue',
-        value: fetchedData.date_of_issue
+      name: 'Date of offer issue',
+      value: fetchedData.date_of_issue
       }
       ],
       sellerName: await getSellerName(fetchedData.user_id),
@@ -90,8 +90,8 @@ export async function fetchOfferDetails(
       can_delete: fetchedData.can_modify,
       can_edit: fetchedData.can_modify,
       auctionData: fetchedData.is_auction ? {
-      endDate: new Date(fetchedData.auction_end_date),
-      currentBid: fetchedData.current_bid || 0,
+      endDate: new Date(new Date(fetchedData.date_end).getTime() - 2 * 60 * 60 * 1000),
+      currentBid: fetchedData.price || 0,
       } : undefined
     }
     return data;
