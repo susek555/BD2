@@ -46,8 +46,6 @@ export function OfferForm(
                 return offerFormState;
             }
 
-
-
             // Otherwise call the API action with validated data
             if (apiAction === offerActionEnum.ADD_OFFER) {
                 return addOffer(offerFormState);

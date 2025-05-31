@@ -21,6 +21,7 @@ export async function addOffer(
         } else {
             const regularOfferData: RegularOfferData = validatedFields as RegularOfferData;
             const id = await postRegularOffer(regularOfferData);
+            console.log("Posted Offer ID:", id);
             await UploadImages(images!, id);
         }
 

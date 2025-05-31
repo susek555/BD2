@@ -1,10 +1,12 @@
-export async function UploadImages(images: File[], id): Promise<number> {
+export async function UploadImages(images: File[], id: number): Promise<number> {
   console.log("Posting images:", images.length);
 
   const formData = new FormData();
   images.forEach((image) => {
     formData.append("images", image);
   });
+
+  console.log("Uploading images for ID:", id);
 
   const response = await fetch(`/api/images/upload/${id}`, {
   method: "PATCH",
