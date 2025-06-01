@@ -10,7 +10,7 @@ var (
 	PENDING   Status = "Pending"
 	READY     Status = "Ready"
 	PUBLISHED Status = "Published"
-	PURCHASED Status = "Purchased"
+	SOLD      Status = "Sold"
 )
 
 func (s *Status) Scan(value any) error {
