@@ -1,6 +1,8 @@
 package sale_offer
 
 import (
+	"time"
+
 	"github.com/susek555/BD2/car-dealer-api/internal/enums"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
@@ -15,6 +17,7 @@ type SaleOfferRepositoryInterface interface {
 	GetByUserID(id uint, pagination *pagination.PaginationRequest) ([]models.SaleOffer, *pagination.PaginationResponse, error)
 	GetAllActiveAuctions() ([]models.SaleOffer, error)
 	GetAllActiveOffers() ([]models.SaleOffer, error)
+	BuyOffer(offerID uint, buyerID uint) (*models.SaleOffer, error)
 }
 
 type SaleOfferRepository struct {
@@ -90,6 +93,31 @@ func (r *SaleOfferRepository) GetAllActiveOffers() ([]models.SaleOffer, error) {
 		return nil, err
 	}
 	return offers, nil
+}
+
+func (r *SaleOfferRepository) BuyOffer(offerID uint, buyerID uint) (*models.SaleOffer, error) {
+	offer, err := r.GetByID(offerID)
+	if err != nil {
+		return nil, err
+	}
+	if offer.Status == enums.SOLD {
+		return nil, ErrOfferAlreadySold
+	}
+	err = r.DB.Model(&models.SaleOffer{}).
+		Where("id = ?", offerID).
+		Update("status", enums.SOLD).
+		Error
+	if err != nil {
+		return nil, err
+	}
+	err = r.DB.Model(&models.Purchase{}).
+		Create(&models.Purchase{
+			OfferID:    offerID,
+			BuyerID:    buyerID,
+			FinalPrice: offer.Price,
+			IssueDate:  time.Now(),
+		}).Error
+	return offer, err
 }
 
 func (r *SaleOfferRepository) buildBaseQuery() *gorm.DB {
