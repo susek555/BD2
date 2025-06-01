@@ -212,7 +212,7 @@ func (h *Handler) BuyNow(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
-	err = h.service.BuyNow(uint(id), uint(userId))
+	auction, err := h.service.BuyNow(uint(id), uint(userId))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
@@ -220,11 +220,6 @@ func (h *Handler) BuyNow(c *gin.Context) {
 	c.Status(http.StatusOK)
 	notification := &models.Notification{
 		OfferID: uint(id),
-	}
-	auction, err := h.service.GetByIdNonDTO(uint(id))
-	if err != nil {
-		log.Printf("Error retrieving auction by ID %d: %v", id, err)
-		return
 	}
 	err = h.notificationService.CreateBuyNowNotification(notification, strconv.FormatUint(uint64(userId), 10), auction)
 	if err != nil {
