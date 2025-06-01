@@ -24,21 +24,33 @@ func (_m *SaleOfferServiceInterface) EXPECT() *SaleOfferServiceInterface_Expecte
 }
 
 // Buy provides a mock function with given fields: offerID, userID
-func (_m *SaleOfferServiceInterface) Buy(offerID uint, userID uint) error {
+func (_m *SaleOfferServiceInterface) Buy(offerID uint, userID uint) (*models.SaleOffer, error) {
 	ret := _m.Called(offerID, userID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Buy")
 	}
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func(uint, uint) error); ok {
+	var r0 *models.SaleOffer
+	var r1 error
+	if rf, ok := ret.Get(0).(func(uint, uint) (*models.SaleOffer, error)); ok {
+		return rf(offerID, userID)
+	}
+	if rf, ok := ret.Get(0).(func(uint, uint) *models.SaleOffer); ok {
 		r0 = rf(offerID, userID)
 	} else {
-		r0 = ret.Error(0)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*models.SaleOffer)
+		}
 	}
 
-	return r0
+	if rf, ok := ret.Get(1).(func(uint, uint) error); ok {
+		r1 = rf(offerID, userID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // SaleOfferServiceInterface_Buy_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Buy'
@@ -60,12 +72,12 @@ func (_c *SaleOfferServiceInterface_Buy_Call) Run(run func(offerID uint, userID 
 	return _c
 }
 
-func (_c *SaleOfferServiceInterface_Buy_Call) Return(_a0 error) *SaleOfferServiceInterface_Buy_Call {
-	_c.Call.Return(_a0)
+func (_c *SaleOfferServiceInterface_Buy_Call) Return(_a0 *models.SaleOffer, _a1 error) *SaleOfferServiceInterface_Buy_Call {
+	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *SaleOfferServiceInterface_Buy_Call) RunAndReturn(run func(uint, uint) error) *SaleOfferServiceInterface_Buy_Call {
+func (_c *SaleOfferServiceInterface_Buy_Call) RunAndReturn(run func(uint, uint) (*models.SaleOffer, error)) *SaleOfferServiceInterface_Buy_Call {
 	_c.Call.Return(run)
 	return _c
 }
