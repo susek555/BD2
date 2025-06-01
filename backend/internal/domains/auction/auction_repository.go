@@ -2,6 +2,7 @@ package auction
 
 import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/generic"
+	"github.com/susek555/BD2/car-dealer-api/internal/enums"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"gorm.io/gorm"
 )
@@ -9,6 +10,7 @@ import (
 //go:generate mockery --name=AuctionRepositoryInterface --output=../../test/mocks --case=snake --with-expecter
 type AuctionRepositoryInterface interface {
 	generic.CRUDRepository[models.Auction]
+	BuyNow(auctionID, userID uint) (*models.Auction, error)
 }
 
 type AuctionRepository struct {
@@ -65,4 +67,29 @@ func (a *AuctionRepository) Delete(id uint) error {
 			}
 			return nil
 		})
+}
+
+func (a *AuctionRepository) BuyNow(auctionID, userID uint) (*models.Auction, error) {
+	auction, err := a.GetById(auctionID)
+	if err != nil {
+		return nil, err
+	}
+	if auction.Offer.Status == enums.SOLD {
+		return nil, ErrAuctionAlreadySold
+	}
+	err = a.DB.Model(&models.SaleOffer{}).
+		Where("id = ?", auctionID).
+		Update("status", enums.SOLD).
+		Error
+	if err != nil {
+		return nil, err
+	}
+	err = a.DB.Model(&models.Purchase{}).
+		Create(&models.Purchase{
+			OfferID:    auction.OfferID,
+			BuyerID:    userID,
+			FinalPrice: auction.BuyNowPrice,
+			IssueDate:  auction.DateEnd,
+		}).Error
+	return auction, err
 }
