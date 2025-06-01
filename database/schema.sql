@@ -3,7 +3,7 @@ CREATE TYPE SELECTOR AS ENUM (
 );
 
 CREATE TYPE OFFER_STATUS AS ENUM (
-    'pending', 'ready', 'published'
+    'pending', 'ready', 'published', 'sold'
 );
 
 CREATE TYPE COLOR AS ENUM (
@@ -23,8 +23,8 @@ CREATE TYPE DRIVE AS ENUM (
     'fwd', 'rwd', 'awd'
 );
 
-CREATE TYPE PAYMENT_STATUS AS ENUM (
-    'pending', 'completed', 'failed', 'refunded'
+CREATE TYPE DOCUMENT_TYPE AS ENUM (
+    'invoice', 'receipt', 'other'
 );
 
 CREATE TABLE users (
@@ -47,10 +47,6 @@ CREATE TABLE companies (
     name VARCHAR(30) NOT NULL
 );
 
-CREATE TABLE documents (
-    id SERIAL PRIMARY KEY,
-    type VARCHAR(30) NOT NULL
-);
 
 CREATE TABLE manufacturers (
     id SERIAL PRIMARY KEY,
@@ -134,15 +130,8 @@ CREATE TABLE refresh_tokens (
     expiry_date TIMESTAMP NOT NULL
 );
 
-CREATE TABLE payment_statuses (
-    id SERIAL PRIMARY KEY,
-    status PAYMENT_STATUS NOT NULL
-);
-
 CREATE TABLE purchases (
     id SERIAL PRIMARY KEY,
-    document_id INTEGER REFERENCES documents(id),
-    payment_status_id INTEGER REFERENCES payment_statuses(id),
     offer_id INTEGER REFERENCES sale_offers(id),
     buyer_id INTEGER REFERENCES users(id),
     final_price INTEGER NOT NULL,
