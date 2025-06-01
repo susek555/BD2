@@ -264,7 +264,7 @@ func (h *Handler) Buy(c *gin.Context) {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
-	err = h.service.Buy(uint(offerID), userID)
+	offer, err := h.service.Buy(uint(offerID), userID)
 	if err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
@@ -272,11 +272,6 @@ func (h *Handler) Buy(c *gin.Context) {
 	c.Status(http.StatusOK)
 	notification := &models.Notification{
 		OfferID: uint(offerID),
-	}
-	offer, err := h.service.GetByIdNonDTO(uint(offerID), userID)
-	if err != nil {
-		log.Printf("Error retrieving auction by ID %d: %v", offerID, err)
-		return
 	}
 	err = h.notificationService.CreateBuyNotication(notification, strconv.FormatUint(uint64(userID), 10), offer)
 	if err != nil {
