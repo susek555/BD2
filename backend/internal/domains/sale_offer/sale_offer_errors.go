@@ -23,6 +23,7 @@ var (
 	ErrOfferNotOwned                = errors.New("provided offer does not belong to logged in user")
 	ErrOfferNotReadyToPublish       = errors.New("offer is not ready to be published - make sure that it have at least 3 images attached")
 	ErrOfferOwnedByUser             = errors.New("offer is owned by user - cannot buy your own offer")
+	ErrOfferAlreadySold             = errors.New("offer is already sold - cannot buy it again")
 )
 
 var ErrorMap = map[error]int{
@@ -41,4 +42,5 @@ var ErrorMap = map[error]int{
 	ErrOfferNotOwned:                http.StatusForbidden,
 	gorm.ErrRecordNotFound:          http.StatusNotFound,
 	ErrOfferOwnedByUser:             http.StatusForbidden,
+	ErrOfferAlreadySold:             http.StatusConflict,
 }
