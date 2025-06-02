@@ -11,6 +11,7 @@ import (
 type AuctionRepositoryInterface interface {
 	generic.CRUDRepository[models.Auction]
 	BuyNow(auctionID, userID uint) (*models.Auction, error)
+	UpdatePrice(auctionID uint, newPrice uint) error
 }
 
 type AuctionRepository struct {
@@ -92,4 +93,11 @@ func (a *AuctionRepository) BuyNow(auctionID, userID uint) (*models.Auction, err
 			IssueDate:  auction.DateEnd,
 		}).Error
 	return auction, err
+}
+
+func (a *AuctionRepository) UpdatePrice(auctionID uint, newPrice uint) error {
+	return a.DB.Model(&models.SaleOffer{}).
+		Where("id = ?", auctionID).
+		Update("price", newPrice).
+		Error
 }
