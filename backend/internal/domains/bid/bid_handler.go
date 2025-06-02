@@ -9,6 +9,7 @@ import (
 	"github.com/redis/go-redis/v9"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auth"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/notification"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/scheduler"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/ws"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"github.com/susek555/BD2/car-dealer-api/pkg/custom_errors"
@@ -19,14 +20,16 @@ type Handler struct {
 	redisClient         *redis.Client
 	hub                 ws.HubInterface
 	notificationService notification.NotificationServiceInterface
+	sched               scheduler.SchedulerInterface
 }
 
-func NewHandler(service BidServiceInterface, redisClient *redis.Client, hub ws.HubInterface, notificationService notification.NotificationServiceInterface) *Handler {
+func NewHandler(service BidServiceInterface, redisClient *redis.Client, hub ws.HubInterface, notificationService notification.NotificationServiceInterface, sched scheduler.SchedulerInterface) *Handler {
 	return &Handler{
 		bidService:          service,
 		redisClient:         redisClient,
 		hub:                 hub,
 		notificationService: notificationService,
+		sched:               sched,
 	}
 }
 
@@ -74,8 +77,9 @@ func (h *Handler) CreateBid(c *gin.Context) {
 		return
 	}
 	h.hub.SaveNotificationForClients(auctionIDStr, userID, notification)
-	// TODO: think about the best way to do this
-	// auctionws.PublishAuctionEvent(c, h.redisClient, auctionIDStr, env)
+	if in.Amount >= dto.Auction.BuyNowPrice {
+		h.sched.CloseAuction(auctionIDStr)
+	}
 	go h.hub.SendFourLatestNotificationsToClient(auctionIDStr, userIDStr)
 
 	h.hub.SubscribeUser(userIDStr, auctionIDStr)
