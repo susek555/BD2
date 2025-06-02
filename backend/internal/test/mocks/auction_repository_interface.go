@@ -20,6 +20,65 @@ func (_m *AuctionRepositoryInterface) EXPECT() *AuctionRepositoryInterface_Expec
 	return &AuctionRepositoryInterface_Expecter{mock: &_m.Mock}
 }
 
+// BuyNow provides a mock function with given fields: auctionID, userID
+func (_m *AuctionRepositoryInterface) BuyNow(auctionID uint, userID uint) (*models.Auction, error) {
+	ret := _m.Called(auctionID, userID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for BuyNow")
+	}
+
+	var r0 *models.Auction
+	var r1 error
+	if rf, ok := ret.Get(0).(func(uint, uint) (*models.Auction, error)); ok {
+		return rf(auctionID, userID)
+	}
+	if rf, ok := ret.Get(0).(func(uint, uint) *models.Auction); ok {
+		r0 = rf(auctionID, userID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*models.Auction)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(uint, uint) error); ok {
+		r1 = rf(auctionID, userID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// AuctionRepositoryInterface_BuyNow_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'BuyNow'
+type AuctionRepositoryInterface_BuyNow_Call struct {
+	*mock.Call
+}
+
+// BuyNow is a helper method to define mock.On call
+//   - auctionID uint
+//   - userID uint
+func (_e *AuctionRepositoryInterface_Expecter) BuyNow(auctionID interface{}, userID interface{}) *AuctionRepositoryInterface_BuyNow_Call {
+	return &AuctionRepositoryInterface_BuyNow_Call{Call: _e.mock.On("BuyNow", auctionID, userID)}
+}
+
+func (_c *AuctionRepositoryInterface_BuyNow_Call) Run(run func(auctionID uint, userID uint)) *AuctionRepositoryInterface_BuyNow_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(uint), args[1].(uint))
+	})
+	return _c
+}
+
+func (_c *AuctionRepositoryInterface_BuyNow_Call) Return(_a0 *models.Auction, _a1 error) *AuctionRepositoryInterface_BuyNow_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *AuctionRepositoryInterface_BuyNow_Call) RunAndReturn(run func(uint, uint) (*models.Auction, error)) *AuctionRepositoryInterface_BuyNow_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // Create provides a mock function with given fields: entity
 func (_m *AuctionRepositoryInterface) Create(entity *models.Auction) error {
 	ret := _m.Called(entity)
