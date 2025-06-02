@@ -20,6 +20,7 @@ type SaleOfferRepositoryInterface interface {
 	GetAllActiveAuctions() ([]models.SaleOffer, error)
 	BuyOffer(offerID uint, buyerID uint) (*models.SaleOffer, error)
 	UpdateStatus(offerID uint, status enums.Status) error
+	SaveToPurchases(offerID uint, buyerID uint, finalPrice uint) error
 }
 
 type SaleOfferRepository struct {
