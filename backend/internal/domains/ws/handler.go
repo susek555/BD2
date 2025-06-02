@@ -56,7 +56,7 @@ func (h *Hub) LoadClientToRooms(userID string) {
 		return
 	}
 	for _, record := range records {
-		h.SubscribeUser(userID, record.OfferID)
-		log.Printf("User %s subscribed to offer %s\n", userID, record.OfferID)
+		h.SubscribeUser(userID, strconv.FormatUint(uint64(record.OfferID), 10))
+		log.Printf("User %s subscribed to offer %d\n", userID, record.OfferID)
 	}
 }
