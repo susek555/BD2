@@ -19,6 +19,7 @@ type SaleOfferRepositoryInterface interface {
 	GetFiltered(filter *OfferFilter, pagRequest *pagination.PaginationRequest) ([]views.SaleOfferView, *pagination.PaginationResponse, error)
 	GetAllActiveAuctions() ([]models.SaleOffer, error)
 	BuyOffer(offerID uint, buyerID uint) (*models.SaleOffer, error)
+	UpdateStatus(offerID uint, status enums.Status) error
 }
 
 type SaleOfferRepository struct {
@@ -108,4 +109,21 @@ func (r *SaleOfferRepository) BuyOffer(offerID uint, buyerID uint) (*models.Sale
 			IssueDate:  time.Now(),
 		}).Error
 	return offer, err
+}
+
+func (r *SaleOfferRepository) UpdateStatus(offerID uint, status enums.Status) error {
+	return r.DB.Model(&models.SaleOffer{}).
+		Where("id = ?", offerID).
+		Update("status", status).
+		Error
+}
+
+func (r *SaleOfferRepository) buildBaseQuery() *gorm.DB {
+	query := r.DB.
+		Preload("Auction").
+		Preload("User").
+		Preload("Car").
+		Preload("Car.Model").
+		Preload("Car.Model.Manufacturer")
+	return query
 }
