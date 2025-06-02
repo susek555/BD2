@@ -8,3 +8,9 @@ type RetrieveNotificationDTO struct {
 	CreatedAt   string `json:"created_at"`
 	Seen        bool   `json:"seen"`
 }
+
+type NotificationsDTO struct {
+	Notifications     []RetrieveNotificationDTO `json:"notifications"`
+	UnseenNotifsCount uint                      `json:"unseen_notifs_count"`
+	AllNotifsCount    uint                      `json:"all_notifs_count"`
+}
