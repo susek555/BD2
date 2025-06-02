@@ -3,6 +3,7 @@ package bid
 import (
 	"sync"
 
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/auction"
 	"github.com/susek555/BD2/car-dealer-api/pkg/mapping"
 )
 
@@ -17,12 +18,14 @@ type BidServiceInterface interface {
 }
 
 type BidService struct {
-	Repo BidRepositoryInterface
+	Repo           BidRepositoryInterface
+	AuctionService auction.AuctionServiceInterface
 }
 
-func NewBidService(repo BidRepositoryInterface) BidServiceInterface {
+func NewBidService(repo BidRepositoryInterface, auctionService auction.AuctionServiceInterface) BidServiceInterface {
 	return &BidService{
-		Repo: repo,
+		Repo:           repo,
+		AuctionService: auctionService,
 	}
 }
 
