@@ -18,7 +18,8 @@ import (
 
 func TestBidService_Create_OK(t *testing.T) {
 	repo := new(mocks.BidRepositoryInterface)
-	svc := bid.NewBidService(repo)
+	auctionService := new(mocks.AuctionServiceInterface)
+	svc := bid.NewBidService(repo, auctionService)
 
 	repo.On("Create", mock.MatchedBy(func(b *models.Bid) bool {
 		return b.AuctionID == 1 && b.BidderID == 1
@@ -33,7 +34,8 @@ func TestBidService_Create_OK(t *testing.T) {
 }
 func TestBidService_Create_Error(t *testing.T) {
 	repo := new(mocks.BidRepositoryInterface)
-	svc := bid.NewBidService(repo)
+	auctionService := new(mocks.AuctionServiceInterface)
+	svc := bid.NewBidService(repo, auctionService)
 
 	expectedErr := errors.New("insert failed")
 
@@ -51,7 +53,8 @@ func TestBidService_Create_Error(t *testing.T) {
 }
 func TestBidService_Create_SerializesPerAuction(t *testing.T) {
 	repo := new(mocks.BidRepositoryInterface)
-	svc := bid.NewBidService(repo)
+	auctionService := new(mocks.AuctionServiceInterface)
+	svc := bid.NewBidService(repo, auctionService)
 
 	const calls = 2
 	const aucID = 777
@@ -83,7 +86,8 @@ func TestBidService_Create_SerializesPerAuction(t *testing.T) {
 
 func TestBidService_GetHighestBid_OK(t *testing.T) {
 	repo := new(mocks.BidRepositoryInterface)
-	svc := bid.NewBidService(repo)
+	auctionService := new(mocks.AuctionServiceInterface)
+	svc := bid.NewBidService(repo, auctionService)
 
 	expected := &bid.RetrieveBidDTO{
 		AuctionID: 10,
@@ -108,7 +112,8 @@ func TestBidService_GetHighestBid_OK(t *testing.T) {
 
 func TestBidService_GetHighestBid_Error(t *testing.T) {
 	repo := new(mocks.BidRepositoryInterface)
-	svc := bid.NewBidService(repo)
+	auctionService := new(mocks.AuctionServiceInterface)
+	svc := bid.NewBidService(repo, auctionService)
 
 	expectedErr := errors.New("db error")
 
