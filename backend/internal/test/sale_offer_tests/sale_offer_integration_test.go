@@ -1042,7 +1042,7 @@ func TestLikeOffer_NotAuthorized(t *testing.T) {
 	seedOffers := []models.SaleOffer{*createOffer(1)}
 
 	server, _, _ := newTestServer(db, seedOffers)
-	_, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/like/1", nil, nil)
+	_, receivedStatus := u.PerformRequest(server, http.MethodPost, "/favourite/like/1", nil, nil)
 	assert.Equal(t, http.StatusUnauthorized, receivedStatus)
 	u.CleanDB(DB)
 }
@@ -1054,7 +1054,7 @@ func TestLikeOffer_OfferNotFound(t *testing.T) {
 	server, _, _ := newTestServer(db, seedOffers)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
-	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/like/2", nil, &token)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/favourite/like/2", nil, &token)
 	assert.Equal(t, http.StatusNotFound, receivedStatus)
 	var got custom_errors.HTTPError
 	err := json.Unmarshal(response, &got)
@@ -1070,7 +1070,7 @@ func TestLikeOffer_OwnOffer(t *testing.T) {
 	server, _, _ := newTestServer(db, seedOffers)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
-	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/like/1", nil, &token)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/favourite/like/1", nil, &token)
 	assert.Equal(t, http.StatusBadRequest, receivedStatus)
 	var got custom_errors.HTTPError
 	err := json.Unmarshal(response, &got)
@@ -1085,7 +1085,7 @@ func TestLikeOffer_Successful(t *testing.T) {
 	server, _, _ := newTestServer(db, seedOffers)
 	user := USERS[1]
 	token, _ := u.GetValidToken(user.ID, user.Email)
-	_, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/like/1", nil, &token)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/favourite/like/1", nil, &token)
 	assert.Equal(t, http.StatusOK, receivedStatus)
 	likedOfferRepo := liked_offer.NewLikedOfferRepository(db)
 	likedOffers, err := likedOfferRepo.GetByUserID(user.ID)
@@ -1101,9 +1101,9 @@ func TestLikeOffer_AlreadyLiked(t *testing.T) {
 	server, _, _ := newTestServer(db, seedOffers)
 	user := USERS[1]
 	token, _ := u.GetValidToken(user.ID, user.Email)
-	_, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/like/1", nil, &token)
+	_, receivedStatus := u.PerformRequest(server, http.MethodPost, "/favourite/like/1", nil, &token)
 	assert.Equal(t, http.StatusOK, receivedStatus)
-	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/like/1", nil, &token)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/favourite/like/1", nil, &token)
 	assert.Equal(t, http.StatusBadRequest, receivedStatus)
 	var got custom_errors.HTTPError
 	err := json.Unmarshal(response, &got)
@@ -1120,7 +1120,7 @@ func TestDislikeOffer_NotAuthorized(t *testing.T) {
 	seedOffers := []models.SaleOffer{*createOffer(1)}
 
 	server, _, _ := newTestServer(db, seedOffers)
-	_, receivedStatus := u.PerformRequest(server, http.MethodDelete, "/sale-offer/dislike/1", nil, nil)
+	_, receivedStatus := u.PerformRequest(server, http.MethodDelete, "/favourite/dislike/1", nil, nil)
 	assert.Equal(t, http.StatusUnauthorized, receivedStatus)
 	u.CleanDB(DB)
 }
@@ -1132,7 +1132,7 @@ func TestDislikeOffer_OfferNotFound(t *testing.T) {
 	server, _, _ := newTestServer(db, seedOffers)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
-	response, receivedStatus := u.PerformRequest(server, http.MethodDelete, "/sale-offer/dislike/2", nil, &token)
+	response, receivedStatus := u.PerformRequest(server, http.MethodDelete, "/favourite/dislike/2", nil, &token)
 	assert.Equal(t, http.StatusNotFound, receivedStatus)
 	var got custom_errors.HTTPError
 	err := json.Unmarshal(response, &got)
@@ -1148,7 +1148,7 @@ func TestDislikeOffer_NotLikedOffer(t *testing.T) {
 	server, _, _ := newTestServer(db, seedOffers)
 	user := USERS[1]
 	token, _ := u.GetValidToken(user.ID, user.Email)
-	response, receivedStatus := u.PerformRequest(server, http.MethodDelete, "/sale-offer/dislike/1", nil, &token)
+	response, receivedStatus := u.PerformRequest(server, http.MethodDelete, "/favourite/dislike/1", nil, &token)
 	assert.Equal(t, http.StatusBadRequest, receivedStatus)
 	var got custom_errors.HTTPError
 	err := json.Unmarshal(response, &got)
@@ -1163,9 +1163,9 @@ func TestDislikeOffer_Successful(t *testing.T) {
 	server, _, _ := newTestServer(db, seedOffers)
 	user := USERS[1]
 	token, _ := u.GetValidToken(user.ID, user.Email)
-	_, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/like/1", nil, &token)
+	_, receivedStatus := u.PerformRequest(server, http.MethodPost, "/favourite/like/1", nil, &token)
 	assert.Equal(t, http.StatusOK, receivedStatus)
-	_, receivedStatus = u.PerformRequest(server, http.MethodDelete, "/sale-offer/dislike/1", nil, &token)
+	_, receivedStatus = u.PerformRequest(server, http.MethodDelete, "/favourite/dislike/1", nil, &token)
 	assert.Equal(t, http.StatusNoContent, receivedStatus)
 	likedOfferRepo := liked_offer.NewLikedOfferRepository(db)
 	likedOffers, err := likedOfferRepo.GetByUserID(user.ID)

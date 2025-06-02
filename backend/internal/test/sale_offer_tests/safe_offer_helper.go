@@ -103,10 +103,13 @@ func newTestServer(db *gorm.DB, seedOffers []models.SaleOffer) (*gin.Engine, sal
 		saleOfferRoutes.POST("/filtered", middleware.OptionalAuthenticate(verifier), saleOfferHandler.GetFilteredSaleOffers)
 		saleOfferRoutes.POST("/my-offers", middleware.Authenticate(verifier), saleOfferHandler.GetMySaleOffers)
 		saleOfferRoutes.GET("/id/:id", middleware.OptionalAuthenticate(verifier), saleOfferHandler.GetSaleOfferByID)
-		saleOfferRoutes.POST("/like/:id", middleware.Authenticate(verifier), likedOfferHandler.LikeOffer)
-		saleOfferRoutes.DELETE("/dislike/:id", middleware.Authenticate(verifier), likedOfferHandler.DislikeOffer)
 		saleOfferRoutes.GET("/offer-types", saleOfferHandler.GetSaleOfferTypes)
 		saleOfferRoutes.GET("/order-keys", saleOfferHandler.GetOrderKeys)
+	}
+	favourtieRoutes := r.Group("/favourite")
+	{
+		favourtieRoutes.POST("/like/:id", middleware.Authenticate(verifier), likedOfferHandler.LikeOffer)
+		favourtieRoutes.DELETE("/dislike/:id", middleware.Authenticate(verifier), likedOfferHandler.DislikeOffer)
 	}
 	return r, saleOfferService, accessEvaluator
 }
