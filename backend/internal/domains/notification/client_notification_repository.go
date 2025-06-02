@@ -11,6 +11,8 @@ type ClientNotificationRepositoryInterface interface {
 	GetAll() ([]models.ClientNotification, error)
 	GetByUserID(userID uint) ([]models.ClientNotification, error)
 	GetLatestByUserID(userID uint, count int) ([]models.ClientNotification, error)
+	GetUnseenCountByUserId(userId uint) (uint, error)
+	GetAllCountByUserId(userId uint) (uint, error)
 }
 
 type ClientNotificationRepository struct {
@@ -73,4 +75,28 @@ func (r *ClientNotificationRepository) GetLatestByUserID(userID uint, count int)
 		return nil, err
 	}
 	return clientNotifications, nil
+}
+
+func (r *ClientNotificationRepository) GetUnseenCountByUserId(userId uint) (uint, error) {
+	db := r.DB
+	var count int64
+	err := db.Model(&models.ClientNotification{}).
+		Where("user_id = ? AND seen = ?", userId, false).
+		Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+	return uint(count), nil
+}
+
+func (r *ClientNotificationRepository) GetAllCountByUserId(userId uint) (uint, error) {
+	db := r.DB
+	var count int64
+	err := db.Model(&models.ClientNotification{}).
+		Where("user_id = ?", userId).
+		Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+	return uint(count), nil
 }
