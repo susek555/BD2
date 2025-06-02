@@ -38,8 +38,11 @@ func (service *BidService) Create(bidDTO *CreateBidDTO, bidderID uint) (*Process
 
 	m.Lock()
 	defer m.Unlock()
-
 	err := service.Repo.Create(bid)
+	if err != nil {
+		return nil, err
+	}
+	err = service.AuctionService.UpdatePrice(bid.AuctionID, bid.Amount)
 	if err != nil {
 		return nil, err
 	}
