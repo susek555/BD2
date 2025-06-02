@@ -194,7 +194,6 @@ func (s *Scheduler) closeAuctionByID(auctionID string) {
 		log.Printf("scheduler: invalid auctionID %q: %v", auctionID, err)
 		return
 	}
-
 	highest, _ := s.repo.GetHighestBid(uint(auctionIDInt))
 	winnerID := strconv.FormatUint(uint64(highest.BidderID), 10)
 	amount := int64(highest.Amount)
