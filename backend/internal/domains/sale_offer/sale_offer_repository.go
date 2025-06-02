@@ -16,7 +16,6 @@ type SaleOfferRepositoryInterface interface {
 	GetByID(id uint) (*SaleOfferView, error)
 	GetByUserID(id uint, pagination *pagination.PaginationRequest) ([]SaleOfferView, *pagination.PaginationResponse, error)
 	GetAllActiveAuctions() ([]models.SaleOffer, error)
-	GetAllActiveOffers() ([]models.SaleOffer, error)
 	BuyOffer(offerID uint, buyerID uint) (*SaleOfferView, error)
 }
 
@@ -76,20 +75,6 @@ func (r *SaleOfferRepository) GetAllActiveAuctions() ([]models.SaleOffer, error)
 		return nil, err
 	}
 	return auctions, nil
-}
-
-func (r *SaleOfferRepository) GetAllActiveOffers() ([]models.SaleOffer, error) {
-	var offers []models.SaleOffer
-	err := r.DB.
-		Preload("Auction").
-		Joins("LEFT JOIN auctions ON auctions.offer_id = sale_offers.id").
-		Where("auctions.date_end > NOW() OR auctions.offer_id IS NULL").
-		Find(&offers).
-		Error
-	if err != nil {
-		return nil, err
-	}
-	return offers, nil
 }
 
 func (r *SaleOfferRepository) BuyOffer(offerID uint, buyerID uint) (*SaleOfferView, error) {
