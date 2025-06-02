@@ -90,6 +90,39 @@ func (_c *SchedulerInterface_CloseAuction_Call) RunAndReturn(run func(string)) *
 	return _c
 }
 
+// ForceCloseAuction provides a mock function with given fields: auctionID
+func (_m *SchedulerInterface) ForceCloseAuction(auctionID string) {
+	_m.Called(auctionID)
+}
+
+// SchedulerInterface_ForceCloseAuction_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ForceCloseAuction'
+type SchedulerInterface_ForceCloseAuction_Call struct {
+	*mock.Call
+}
+
+// ForceCloseAuction is a helper method to define mock.On call
+//   - auctionID string
+func (_e *SchedulerInterface_Expecter) ForceCloseAuction(auctionID interface{}) *SchedulerInterface_ForceCloseAuction_Call {
+	return &SchedulerInterface_ForceCloseAuction_Call{Call: _e.mock.On("ForceCloseAuction", auctionID)}
+}
+
+func (_c *SchedulerInterface_ForceCloseAuction_Call) Run(run func(auctionID string)) *SchedulerInterface_ForceCloseAuction_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(string))
+	})
+	return _c
+}
+
+func (_c *SchedulerInterface_ForceCloseAuction_Call) Return() *SchedulerInterface_ForceCloseAuction_Call {
+	_c.Call.Return()
+	return _c
+}
+
+func (_c *SchedulerInterface_ForceCloseAuction_Call) RunAndReturn(run func(string)) *SchedulerInterface_ForceCloseAuction_Call {
+	_c.Run(run)
+	return _c
+}
+
 // LoadAuctions provides a mock function with no fields
 func (_m *SchedulerInterface) LoadAuctions() error {
 	ret := _m.Called()
