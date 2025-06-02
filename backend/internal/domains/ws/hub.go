@@ -187,27 +187,42 @@ func (h *Hub) BroadcastLocal(offerID string, data []byte, excludeID string) {
 }
 
 func (h *Hub) SaveNotificationForClients(offerID string, userID uint, n *models.Notification) error {
-	h.mu.RLock()
-	clients, ok := h.rooms[offerID]
-	h.mu.RUnlock()
-	if !ok {
-		return nil
+	var interactions []UserOfferRecord
+	err := h.db.
+		Table("user_offer_interactions").
+		Select("user_id, offer_id").
+		Where("offer_id = ?", offerID).
+		Find(&interactions).Error
+	if err != nil {
+		log.Printf("Failed to fetch user offer interactions for offerID %s: %v", offerID, err)
+		return err
 	}
-	for client := range clients {
-		clientID, err := strconv.ParseUint(client.userID, 10, 64)
-		if err != nil {
-			log.Printf("Failed to convert userID %s to uint: %v", client.userID, err)
+	unique := make(map[uint]struct{})
+	for _, interaction := range interactions {
+		unique[interaction.UserID] = struct{}{}
+	}
+	h.mu.RLock()
+	if room, ok := h.rooms[offerID]; ok {
+		for client := range room {
+			uid, err := strconv.ParseUint(client.userID, 10, 64)
+			if err != nil {
+				log.Printf("Failed to convert client.userID %s to uint: %v", client.userID, err)
+				continue
+			}
+			unique[uint(uid)] = struct{}{}
+		}
+	}
+	h.mu.RUnlock()
+	for uid := range unique {
+		if uid == userID {
 			continue
 		}
-		if clientID == uint64(userID) {
-			log.Printf("Skipping saving notification for client %s as it is the same as the userID %d", client.userID, userID)
-			continue
+
+		cn := notification.MapToClientNotification(n, uid)
+		if err := h.clientNotificationRepo.Create(cn); err != nil {
+			log.Printf("hub: cannot save notif for user %d: %v", uid, err)
 		}
-		clientNotification := notification.MapToClientNotification(n, uint(clientID))
-		if err := h.clientNotificationRepo.Create(clientNotification); err != nil {
-			log.Printf("Failed to save notification for client %s: %v", client.userID, err)
-			continue
-		}
+		log.Printf("Saved notification for user %d", uid)
 	}
 	return nil
 }
