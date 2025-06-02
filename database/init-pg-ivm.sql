@@ -5,27 +5,30 @@ GRANT CREATE ON SCHEMA public TO bd2_user;
 
 
 SELECT pgivm.create_immv(
-  'offer_creators',          
+  'offer_creators',
   $$ SELECT o.user_id  AS user_id,
            o.id       AS offer_id
-     FROM  sale_offers o $$);
+     FROM  sale_offers o $$
+);
 
 CREATE UNIQUE INDEX ON offer_creators (user_id, offer_id);
 
 SELECT pgivm.create_immv(
   'offer_bidders',
-  $$ SELECT DISTINCT 
+  $$ SELECT DISTINCT
            b.bidder_id  AS user_id,
            b.auction_id AS offer_id
      FROM  bids b
-     JOIN  sale_offers o ON o.id = b.auction_id WHERE o.status = 'published' $$);
+     JOIN  sale_offers o ON o.id = b.auction_id WHERE o.status = 'published' $$
+);
 
 SELECT pgivm.create_immv(
   'offer_likers',
   $$ SELECT l.user_id  AS user_id,
            l.offer_id AS offer_id
      FROM  liked_offers l
-     JOIN  sale_offers o ON o.id = l.offer_id WHERE o.status = 'published' $$);
+     JOIN  sale_offers o ON o.id = l.offer_id WHERE o.status = 'published' $$
+);
 
 CREATE UNIQUE INDEX ON offer_likers (user_id, offer_id);
 
@@ -37,3 +40,34 @@ SELECT user_id, offer_id FROM offer_bidders
 UNION
 SELECT user_id, offer_id FROM offer_likers;
 
+SELECT pgivm.create_immv(
+  'car_offer_view',
+  $$ SELECT
+    s.id,
+    s.user_id,
+    s.description,
+    s.price,
+    s.date_of_issue,
+    s.margin,
+    s.status,
+    c.vin,
+    c.production_year,
+    c.mileage,
+    c.number_of_doors,
+    c.number_of_seats,
+    c.engine_power,
+    c.engine_capacity,
+    c.registration_number,
+    c.registration_date,
+    c.color,
+    c.fuel_type,
+    c.drive,
+    c.transmission,
+    c.number_of_gears,
+    man.name as manufacturer_name,
+    mod.name as model_name
+    FROM sale_offers s
+    JOIN cars c ON c.offer_id = s.id
+    JOIN models mod ON c.model_id = mod.id
+    JOIN manufacturers man ON mod.manufacturer_id = man.id $$
+);
