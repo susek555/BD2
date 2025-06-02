@@ -3,7 +3,7 @@ CREATE TYPE SELECTOR AS ENUM (
 );
 
 CREATE TYPE OFFER_STATUS AS ENUM (
-    'pending', 'ready', 'published', 'sold'
+    'pending', 'ready', 'published', 'sold', 'expired'
 );
 
 CREATE TYPE COLOR AS ENUM (
