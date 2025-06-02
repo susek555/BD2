@@ -22,6 +22,7 @@ func (dto *CreateAuctionDTO) MapToAuction() (*models.Auction, error) {
 	}
 	auction.DateEnd = endDate
 	auction.BuyNowPrice = dto.BuyNowPrice
+	auction.InitialPrice = dto.Price
 	return &auction, nil
 }
 
