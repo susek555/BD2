@@ -25,6 +25,8 @@ func TestBidService_Create_OK(t *testing.T) {
 		return b.AuctionID == 1 && b.BidderID == 1
 	})).Return(nil)
 
+	auctionService.On("UpdatePrice", uint(1), uint(0)).Return(nil)
+
 	dto := &bid.CreateBidDTO{
 		AuctionID: 1,
 		Amount:    0,
@@ -42,6 +44,8 @@ func TestBidService_Create_Error(t *testing.T) {
 	repo.On("Create", mock.MatchedBy(func(b *models.Bid) bool {
 		return b.AuctionID == 1
 	})).Return(expectedErr)
+
+	auctionService.On("UpdatePrice", uint(1), uint(0)).Return(nil)
 
 	dto := &bid.CreateBidDTO{
 		AuctionID: 1,
@@ -63,6 +67,14 @@ func TestBidService_Create_SerializesPerAuction(t *testing.T) {
 	repo.On("Create", mock.Anything).Run(func(args mock.Arguments) {
 		if atomic.AddInt32(&running, 1) > 1 {
 			t.Errorf("mutex did not work – Repo.Create")
+		}
+		time.Sleep(10 * time.Millisecond)
+		atomic.AddInt32(&running, -1)
+	}).Return(nil).Times(calls)
+
+	auctionService.On("UpdatePrice", uint(aucID), mock.Anything).Run(func(args mock.Arguments) {
+		if atomic.AddInt32(&running, 1) > 1 {
+			t.Errorf("mutex did not work – AuctionService.UpdatePrice")
 		}
 		time.Sleep(10 * time.Millisecond)
 		atomic.AddInt32(&running, -1)
@@ -102,6 +114,7 @@ func TestBidService_GetHighestBid_OK(t *testing.T) {
 		Amount:    100,
 	}
 	repo.On("GetHighestBid", uint(10)).Return(modelsBid, nil)
+	auctionService.On("UpdatePrice", uint(1), uint(0)).Return(nil)
 
 	got, err := svc.GetHighestBid(10)
 
@@ -118,6 +131,7 @@ func TestBidService_GetHighestBid_Error(t *testing.T) {
 	expectedErr := errors.New("db error")
 
 	repo.On("GetHighestBid", uint(10)).Return(nil, expectedErr)
+	auctionService.On("UpdatePrice", uint(1), uint(0)).Return(nil)
 
 	got, err := svc.GetHighestBid(10)
 
