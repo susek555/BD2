@@ -241,7 +241,7 @@ func (h *Handler) GetOrderKeys(c *gin.Context) {
 
 // @Summary		Buy a sale offer
 // @Description	Allows a user to buy an item from a sale offer
-// @Tags			SaleOffers
+// @Tags			sale-offer
 // @Accept			json
 // @Produce		json
 // @Param			id	path	uint	true	"Sale Offer ID"
@@ -251,7 +251,7 @@ func (h *Handler) GetOrderKeys(c *gin.Context) {
 // @Failure		404	"Not Found - sale offer not found"
 // @Failure		500	"Internal Server Error"
 // @Failure		401	"Unauthorized - user must be logged in to buy an offer"
-// @Router			/sale-offer/buy/{id} [delete]
+// @Router			/sale-offer/buy/{id} [post]
 // @Security		BearerAuth
 func (h *Handler) Buy(c *gin.Context) {
 	offerID, err := strconv.ParseUint(c.Param("id"), 10, 32)
