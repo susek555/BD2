@@ -332,6 +332,53 @@ func (_c *AuctionRepositoryInterface_Update_Call) RunAndReturn(run func(*models.
 	return _c
 }
 
+// UpdatePrice provides a mock function with given fields: auctionID, newPrice
+func (_m *AuctionRepositoryInterface) UpdatePrice(auctionID uint, newPrice uint) error {
+	ret := _m.Called(auctionID, newPrice)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdatePrice")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(uint, uint) error); ok {
+		r0 = rf(auctionID, newPrice)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// AuctionRepositoryInterface_UpdatePrice_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdatePrice'
+type AuctionRepositoryInterface_UpdatePrice_Call struct {
+	*mock.Call
+}
+
+// UpdatePrice is a helper method to define mock.On call
+//   - auctionID uint
+//   - newPrice uint
+func (_e *AuctionRepositoryInterface_Expecter) UpdatePrice(auctionID interface{}, newPrice interface{}) *AuctionRepositoryInterface_UpdatePrice_Call {
+	return &AuctionRepositoryInterface_UpdatePrice_Call{Call: _e.mock.On("UpdatePrice", auctionID, newPrice)}
+}
+
+func (_c *AuctionRepositoryInterface_UpdatePrice_Call) Run(run func(auctionID uint, newPrice uint)) *AuctionRepositoryInterface_UpdatePrice_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(uint), args[1].(uint))
+	})
+	return _c
+}
+
+func (_c *AuctionRepositoryInterface_UpdatePrice_Call) Return(_a0 error) *AuctionRepositoryInterface_UpdatePrice_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *AuctionRepositoryInterface_UpdatePrice_Call) RunAndReturn(run func(uint, uint) error) *AuctionRepositoryInterface_UpdatePrice_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // NewAuctionRepositoryInterface creates a new instance of AuctionRepositoryInterface. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewAuctionRepositoryInterface(t interface {
