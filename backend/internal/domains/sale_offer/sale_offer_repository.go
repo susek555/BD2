@@ -94,21 +94,11 @@ func (r *SaleOfferRepository) BuyOffer(offerID uint, buyerID uint) (*models.Sale
 	if offer.Status == enums.SOLD {
 		return nil, ErrOfferAlreadySold
 	}
-	err = r.DB.Model(&models.SaleOffer{}).
-		Where("id = ?", offerID).
-		Update("status", enums.SOLD).
-		Error
+	err = r.UpdateStatus(offerID, enums.SOLD)
 	if err != nil {
 		return nil, err
 	}
-	err = r.DB.Model(&models.Purchase{}).
-		Create(&models.Purchase{
-			OfferID:    offerID,
-			BuyerID:    buyerID,
-			FinalPrice: offer.Price,
-			IssueDate:  time.Now(),
-		}).Error
-	return offer, err
+	return offer, r.SaveToPurchases(offerID, buyerID, offer.Price)
 }
 
 func (r *SaleOfferRepository) UpdateStatus(offerID uint, status enums.Status) error {
@@ -116,6 +106,16 @@ func (r *SaleOfferRepository) UpdateStatus(offerID uint, status enums.Status) er
 		Where("id = ?", offerID).
 		Update("status", status).
 		Error
+}
+
+func (r *SaleOfferRepository) SaveToPurchases(offerID uint, buyerID uint, finalPrice uint) error {
+	purchase := models.Purchase{
+		OfferID:    offerID,
+		BuyerID:    buyerID,
+		FinalPrice: finalPrice,
+		IssueDate:  time.Now(),
+	}
+	return r.DB.Create(&purchase).Error
 }
 
 func (r *SaleOfferRepository) buildBaseQuery() *gorm.DB {
