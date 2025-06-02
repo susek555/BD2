@@ -15,6 +15,7 @@ type AuctionServiceInterface interface {
 	Update(auction *UpdateAuctionDTO, userID uint) (*RetrieveAuctionDTO, error)
 	Delete(id, userID uint) error
 	BuyNow(auctionID, userID uint) (*models.Auction, error)
+	UpdatePrice(auctionID uint, newPrice uint) error
 }
 
 type AuctionService struct {
@@ -118,4 +119,19 @@ func (s *AuctionService) BuyNow(auctionID, userID uint) (*models.Auction, error)
 	}
 	auction, err = s.auctionRepo.BuyNow(auctionID, userID)
 	return auction, err
+}
+
+func (s *AuctionService) UpdatePrice(auctionID uint, newPrice uint) error {
+	auction, err := s.auctionRepo.GetById(auctionID)
+	if err != nil {
+		return err
+	}
+	if newPrice < auction.Offer.Price || newPrice < auction.InitialPrice {
+		return ErrNewPriceLessThanOfferPrice
+	}
+	err = s.auctionRepo.UpdatePrice(auctionID, newPrice)
+	if err != nil {
+		return err
+	}
+	return nil
 }
