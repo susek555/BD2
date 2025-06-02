@@ -92,6 +92,40 @@ func (_c *HubInterface_LoadClientToRooms_Call) RunAndReturn(run func(string)) *H
 	return _c
 }
 
+// RemoveClientFromRoom provides a mock function with given fields: userID, offerID
+func (_m *HubInterface) RemoveClientFromRoom(userID string, offerID string) {
+	_m.Called(userID, offerID)
+}
+
+// HubInterface_RemoveClientFromRoom_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'RemoveClientFromRoom'
+type HubInterface_RemoveClientFromRoom_Call struct {
+	*mock.Call
+}
+
+// RemoveClientFromRoom is a helper method to define mock.On call
+//   - userID string
+//   - offerID string
+func (_e *HubInterface_Expecter) RemoveClientFromRoom(userID interface{}, offerID interface{}) *HubInterface_RemoveClientFromRoom_Call {
+	return &HubInterface_RemoveClientFromRoom_Call{Call: _e.mock.On("RemoveClientFromRoom", userID, offerID)}
+}
+
+func (_c *HubInterface_RemoveClientFromRoom_Call) Run(run func(userID string, offerID string)) *HubInterface_RemoveClientFromRoom_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(string), args[1].(string))
+	})
+	return _c
+}
+
+func (_c *HubInterface_RemoveClientFromRoom_Call) Return() *HubInterface_RemoveClientFromRoom_Call {
+	_c.Call.Return()
+	return _c
+}
+
+func (_c *HubInterface_RemoveClientFromRoom_Call) RunAndReturn(run func(string, string)) *HubInterface_RemoveClientFromRoom_Call {
+	_c.Run(run)
+	return _c
+}
+
 // Run provides a mock function with no fields
 func (_m *HubInterface) Run() {
 	_m.Called()
