@@ -418,6 +418,53 @@ func (_c *AuctionServiceInterface_Update_Call) RunAndReturn(run func(*auction.Up
 	return _c
 }
 
+// UpdatePrice provides a mock function with given fields: auctionID, newPrice
+func (_m *AuctionServiceInterface) UpdatePrice(auctionID uint, newPrice uint) error {
+	ret := _m.Called(auctionID, newPrice)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdatePrice")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(uint, uint) error); ok {
+		r0 = rf(auctionID, newPrice)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// AuctionServiceInterface_UpdatePrice_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdatePrice'
+type AuctionServiceInterface_UpdatePrice_Call struct {
+	*mock.Call
+}
+
+// UpdatePrice is a helper method to define mock.On call
+//   - auctionID uint
+//   - newPrice uint
+func (_e *AuctionServiceInterface_Expecter) UpdatePrice(auctionID interface{}, newPrice interface{}) *AuctionServiceInterface_UpdatePrice_Call {
+	return &AuctionServiceInterface_UpdatePrice_Call{Call: _e.mock.On("UpdatePrice", auctionID, newPrice)}
+}
+
+func (_c *AuctionServiceInterface_UpdatePrice_Call) Run(run func(auctionID uint, newPrice uint)) *AuctionServiceInterface_UpdatePrice_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(uint), args[1].(uint))
+	})
+	return _c
+}
+
+func (_c *AuctionServiceInterface_UpdatePrice_Call) Return(_a0 error) *AuctionServiceInterface_UpdatePrice_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *AuctionServiceInterface_UpdatePrice_Call) RunAndReturn(run func(uint, uint) error) *AuctionServiceInterface_UpdatePrice_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // NewAuctionServiceInterface creates a new instance of AuctionServiceInterface. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewAuctionServiceInterface(t interface {
