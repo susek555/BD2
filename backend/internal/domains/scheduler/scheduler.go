@@ -126,7 +126,16 @@ func (s *Scheduler) CloseAuction(auctionID string) {
 		auctionID = item.AuctionID
 		log.Printf("scheduler: (heap) closing auction %s", auctionID)
 	} else {
+		s.mu.Lock()
+		for i, item := range s.heap {
+			if item.AuctionID == auctionID {
+				heap.Remove(&s.heap, i)
+				break
+			}
+		}
+		s.mu.Unlock()
 		log.Printf("scheduler: (manual) closing auction %s", auctionID)
+
 	}
 
 	s.closeAuctionByID(auctionID)
