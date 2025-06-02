@@ -79,8 +79,9 @@ type RetrieveDetailedSaleOfferDTO struct {
 	Username           string             `json:"username"`
 	Description        string             `json:"description"`
 	Price              uint               `json:"price"`
-	Margin             enums.MarginValue  `json:"margin"`
 	DateOfIssue        string             `json:"date_of_issue"`
+	Margin             enums.MarginValue  `json:"margin"`
+	Status             enums.Status       `json:"status,omitempty"`
 	Vin                string             `json:"vin"`
 	ProductionYear     uint               `json:"production_year"`
 	Mileage            uint               `json:"mileage"`
@@ -101,7 +102,7 @@ type RetrieveDetailedSaleOfferDTO struct {
 	IsAuction          bool               `json:"is_auction"`
 	DateEnd            *time.Time         `json:"date_end,omitempty"`
 	BuyNowPrice        *uint              `json:"buy_now_price,omitempty"`
-	Status             enums.Status       `json:"status,omitempty"`
+
 	UserContext
 }
 

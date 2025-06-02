@@ -12,12 +12,12 @@ import (
 type SaleOfferRepositoryInterface interface {
 	Create(offer *models.SaleOffer) error
 	Update(offer *models.SaleOffer) error
-	GetFiltered(filter *OfferFilter) ([]models.SaleOffer, *pagination.PaginationResponse, error)
-	GetByID(id uint) (*models.SaleOffer, error)
-	GetByUserID(id uint, pagination *pagination.PaginationRequest) ([]models.SaleOffer, *pagination.PaginationResponse, error)
+	GetFiltered(filter *OfferFilter) ([]SaleOfferView, *pagination.PaginationResponse, error)
+	GetByID(id uint) (*SaleOfferView, error)
+	GetByUserID(id uint, pagination *pagination.PaginationRequest) ([]SaleOfferView, *pagination.PaginationResponse, error)
 	GetAllActiveAuctions() ([]models.SaleOffer, error)
 	GetAllActiveOffers() ([]models.SaleOffer, error)
-	BuyOffer(offerID uint, buyerID uint) (*models.SaleOffer, error)
+	BuyOffer(offerID uint, buyerID uint) (*SaleOfferView, error)
 }
 
 type SaleOfferRepository struct {
@@ -36,30 +36,27 @@ func (r *SaleOfferRepository) Update(offer *models.SaleOffer) error {
 	return r.DB.Save(offer).Error
 }
 
-func (r *SaleOfferRepository) GetFiltered(filter *OfferFilter) ([]models.SaleOffer, *pagination.PaginationResponse, error) {
-	query := r.buildBaseQuery().
-		Where("sale_offers.status = ?", enums.PUBLISHED).
-		Joins("JOIN cars on cars.offer_id = sale_offers.id").
-		Joins("LEFT JOIN auctions on auctions.offer_id = sale_offers.id")
+func (r *SaleOfferRepository) GetFiltered(filter *OfferFilter) ([]SaleOfferView, *pagination.PaginationResponse, error) {
+	query := r.DB.Table("car_offer_view").Where("status = ?", enums.PUBLISHED)
 	query, err := filter.ApplyOfferFilters(query)
 	if err != nil {
 		return nil, nil, err
 	}
-	saleOffers, paginationResponse, err := pagination.PaginateResults[models.SaleOffer](&filter.Pagination, query)
+	saleOffers, paginationResponse, err := pagination.PaginateResults[SaleOfferView](&filter.Pagination, query)
 	if err != nil {
 		return nil, nil, err
 	}
 	return saleOffers, paginationResponse, nil
 }
 
-func (r *SaleOfferRepository) GetByID(id uint) (*models.SaleOffer, error) {
-	var offer models.SaleOffer
-	err := r.buildBaseQuery().First(&offer, id).Error
+func (r *SaleOfferRepository) GetByID(id uint) (*SaleOfferView, error) {
+	var offer SaleOfferView
+	err := r.DB.Table("car_offer_view").Find(&offer, id).Error
 	return &offer, err
 }
 
-func (r *SaleOfferRepository) GetByUserID(id uint, pagRequest *pagination.PaginationRequest) ([]models.SaleOffer, *pagination.PaginationResponse, error) {
-	saleOffers, paginationResponse, err := pagination.PaginateResults[models.SaleOffer](pagRequest, r.buildBaseQuery().Where("user_id = ?", id))
+func (r *SaleOfferRepository) GetByUserID(id uint, pagRequest *pagination.PaginationRequest) ([]SaleOfferView, *pagination.PaginationResponse, error) {
+	saleOffers, paginationResponse, err := pagination.PaginateResults[SaleOfferView](pagRequest, r.DB.Table("car_offer_view").Where("user_id = ?", id))
 	if err != nil {
 		return nil, nil, err
 	}
@@ -95,7 +92,7 @@ func (r *SaleOfferRepository) GetAllActiveOffers() ([]models.SaleOffer, error) {
 	return offers, nil
 }
 
-func (r *SaleOfferRepository) BuyOffer(offerID uint, buyerID uint) (*models.SaleOffer, error) {
+func (r *SaleOfferRepository) BuyOffer(offerID uint, buyerID uint) (*SaleOfferView, error) {
 	offer, err := r.GetByID(offerID)
 	if err != nil {
 		return nil, err
@@ -118,14 +115,4 @@ func (r *SaleOfferRepository) BuyOffer(offerID uint, buyerID uint) (*models.Sale
 			IssueDate:  time.Now(),
 		}).Error
 	return offer, err
-}
-
-func (r *SaleOfferRepository) buildBaseQuery() *gorm.DB {
-	query := r.DB.
-		Preload("Auction").
-		Preload("User").
-		Preload("Car").
-		Preload("Car.Model").
-		Preload("Car.Model.Manufacturer")
-	return query
 }
