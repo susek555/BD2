@@ -228,5 +228,6 @@ func (h *Handler) BuyNow(c *gin.Context) {
 		return
 	}
 	h.hub.SaveNotificationForClients(strconv.FormatUint(id, 10), userID, notification)
-	go h.hub.SendFourLatestNotificationsToClient(strconv.FormatUint(id, 10), strconv.FormatUint(uint64(userID), 10))
+	h.hub.SendFourLatestNotificationsToClient(strconv.FormatUint(id, 10), strconv.FormatUint(uint64(userID), 10))
+	h.hub.RemoveRoom(strconv.FormatUint(id, 10))
 }
