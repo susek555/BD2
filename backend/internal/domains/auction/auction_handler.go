@@ -193,14 +193,14 @@ func (h *Handler) UpdateAuction(c *gin.Context) {
 //
 //	@Summary		Buy an auction at its buy now price
 //	@Description	Allows a user to instantly purchase an auction at its buy now price if available
-//	@Tags			auctions
+//	@Tags			auction
 //	@Accept			json
 //	@Produce		json
 //	@Param			id	path	int	true	"Auction ID"
 //	@Success		200	"Successfully purchased the auction"
 //	@Failure		400	{object}	custom_errors.HTTPError	"Invalid auction ID or buy now operation failed"
 //	@Failure		401	{object}	custom_errors.HTTPError	"Unauthorized - user not logged in"
-//	@Router			/auctions/buy-now/{id} [delete]
+//	@Router			/auction/buy-now/{id} [post]
 //	@Security		BearerAuth
 func (h *Handler) BuyNow(c *gin.Context) {
 	userID, err := auth.GetUserID(c)
