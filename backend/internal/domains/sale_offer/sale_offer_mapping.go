@@ -7,6 +7,7 @@ import (
 	"github.com/jinzhu/copier"
 	"github.com/susek555/BD2/car-dealer-api/internal/enums"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
+	"github.com/susek555/BD2/car-dealer-api/internal/views"
 	"github.com/susek555/BD2/car-dealer-api/pkg/formats"
 )
 
@@ -69,6 +70,13 @@ func MapToDTO(offer *models.SaleOffer) *RetrieveSaleOfferDTO {
 	}
 }
 
+func MapViewToDTO(offerView *views.SaleOfferView) *RetrieveSaleOfferDTO {
+	dto := &RetrieveSaleOfferDTO{}
+	_ = copier.Copy(dto, offerView)
+	dto.Name = offerView.Brand + " " + offerView.Model
+	return dto
+}
+
 func MapToDetailedDTO(offer *models.SaleOffer) *RetrieveDetailedSaleOfferDTO {
 	buyNow, endDate := prepareAuctionValues(offer)
 	return &RetrieveDetailedSaleOfferDTO{
@@ -99,6 +107,14 @@ func MapToDetailedDTO(offer *models.SaleOffer) *RetrieveDetailedSaleOfferDTO {
 		BuyNowPrice:        buyNow,
 		IsAuction:          offer.Auction != nil,
 	}
+}
+
+func MapViewToDetailedDTO(offerView *views.SaleOfferView) *RetrieveDetailedSaleOfferDTO {
+	dto := &RetrieveDetailedSaleOfferDTO{}
+	_ = copier.Copy(dto, offerView)
+	dto.DateOfIssue = offerView.DateOfIssue.Format(formats.DateLayout)
+	dto.RegistrationDate = offerView.RegistrationDate.Format(formats.DateLayout)
+	return dto
 }
 
 func prepareAuctionValues(offer *models.SaleOffer) (*uint, *time.Time) {

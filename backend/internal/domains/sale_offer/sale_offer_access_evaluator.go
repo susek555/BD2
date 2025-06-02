@@ -1,6 +1,9 @@
 package sale_offer
 
-import "github.com/susek555/BD2/car-dealer-api/internal/models"
+import (
+	"github.com/susek555/BD2/car-dealer-api/internal/models"
+	"github.com/susek555/BD2/car-dealer-api/internal/views"
+)
 
 type LikedOfferCheckerInterface interface {
 	IsOfferLikedByUser(offerID, userID uint) bool
@@ -11,8 +14,8 @@ type BidRetrieverInterface interface {
 }
 
 type OfferAccessEvaluatorInterface interface {
-	CanBeModifiedByUser(*models.SaleOffer, *uint) (bool, error)
-	IsOfferLikedByUser(*models.SaleOffer, *uint) bool
+	CanBeModifiedByUser(*views.SaleOfferView, *uint) (bool, error)
+	IsOfferLikedByUser(*views.SaleOfferView, *uint) bool
 }
 
 type OfferAccessEvaluator struct {
@@ -24,31 +27,31 @@ func NewAccessEvaluator(bidRetriever BidRetrieverInterface, likedChecker LikedOf
 	return &OfferAccessEvaluator{bidRetriever: bidRetriever, likedChecker: likedChecker}
 }
 
-func (e *OfferAccessEvaluator) CanBeModifiedByUser(offer *models.SaleOffer, userID *uint) (bool, error) {
+func (e *OfferAccessEvaluator) CanBeModifiedByUser(offerView *views.SaleOfferView, userID *uint) (bool, error) {
 	if userID == nil {
 		return false, nil
 	}
-	if !offer.BelongsToUser(*userID) {
+	if !offerView.BelongsToUser(*userID) {
 		return false, nil
 	}
-	if !isAuction(offer) {
-		return true, nil
-	}
-	hasBids, err := e.hasBids(offer)
+	// if !offerView.IsAcution {
+	// 	return true, nil
+	// }
+	hasBids, err := e.hasBids(offerView)
 	if err != nil {
 		return false, err
 	}
 	return !hasBids, nil
 }
 
-func (e *OfferAccessEvaluator) IsOfferLikedByUser(offer *models.SaleOffer, userID *uint) bool {
+func (e *OfferAccessEvaluator) IsOfferLikedByUser(offer *views.SaleOfferView, userID *uint) bool {
 	if userID == nil {
 		return false
 	}
 	return e.likedChecker.IsOfferLikedByUser(offer.ID, *userID)
 }
 
-func (e *OfferAccessEvaluator) hasBids(offer *models.SaleOffer) (bool, error) {
+func (e *OfferAccessEvaluator) hasBids(offer *views.SaleOfferView) (bool, error) {
 	bids, err := e.bidRetriever.GetByAuctionId(offer.ID)
 	if err != nil {
 		return false, err

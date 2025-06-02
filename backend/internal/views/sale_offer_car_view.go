@@ -1,4 +1,4 @@
-package sale_offer
+package views
 
 import (
 	"time"
@@ -13,7 +13,7 @@ type SaleOfferView struct {
 	Description        string
 	Price              uint
 	DateOfIssue        time.Time
-	Margin             uint
+	Margin             enums.MarginValue
 	Status             enums.Status
 	Vin                string
 	ProductionYear     uint
@@ -31,6 +31,8 @@ type SaleOfferView struct {
 	Drive              enums.Drive
 	Brand              string
 	Model              string
-	DateEnd            *time.Time
-	BuyNowPrice        *uint
+}
+
+func (v *SaleOfferView) BelongsToUser(userID uint) bool {
+	return v.UserID == userID
 }

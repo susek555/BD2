@@ -67,10 +67,7 @@ SELECT pgivm.create_immv(
     c.drive,
     man.name as brand,
     mod.name as model
-    a.date_end
-    a.buy_now_price
     FROM sale_offers s
-    LEFT JOIN auctions a ON a.offer_id = s.id
     JOIN users u ON u.id = s.user_id
     JOIN cars c ON c.offer_id = s.id
     JOIN models mod ON c.model_id = mod.id

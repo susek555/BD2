@@ -4,6 +4,7 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
 	"github.com/susek555/BD2/car-dealer-api/internal/enums"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
+	"github.com/susek555/BD2/car-dealer-api/internal/views"
 	"github.com/susek555/BD2/car-dealer-api/pkg/mapping"
 	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
 )
@@ -116,23 +117,23 @@ func (s *SaleOfferService) Publish(id uint, userID uint) (*RetrieveDetailedSaleO
 }
 
 func (s *SaleOfferService) GetByID(id uint, userID *uint) (*RetrieveDetailedSaleOfferDTO, error) {
-	offer, err := s.saleOfferRepo.GetByID(id)
+	offerView, err := s.saleOfferRepo.GetViewByID(id)
 	if err != nil {
 		return nil, err
 	}
-	offerDTO := MapToDetailedDTO(offer)
-	userContext, err := s.getUserContextFields(offer, userID)
+	offerDTO := MapViewToDetailedDTO(offerView)
+	userContext, err := s.getUserContextFields(offerView, userID)
 	if err != nil {
 		return nil, err
 	}
 	offerDTO.UserContext = *userContext
-	urls, err := s.getOfferImagesURLs(offer)
+	urls, err := s.getOfferImagesURLs(offerView)
 	if err != nil {
 		return nil, err
 	}
 	offerDTO.ImagesUrls = urls
-	if userID != nil && offer.BelongsToUser(*userID) {
-		offerDTO.Status = offer.Status
+	if userID != nil && offerView.BelongsToUser(*userID) {
+		offerDTO.Status = offerView.Status
 	}
 	return offerDTO, nil
 }
@@ -208,7 +209,7 @@ func (s *SaleOfferService) Buy(offerID uint, userID uint) (*models.SaleOffer, er
 	offer, err = s.saleOfferRepo.BuyOffer(offerID, userID)
 	return offer, err
 }
-func (s *SaleOfferService) getOfferImagesURLs(offer *models.SaleOffer) ([]string, error) {
+func (s *SaleOfferService) getOfferImagesURLs(offer *views.SaleOfferView) ([]string, error) {
 	images, err := s.imageRetriever.GetByOfferID(offer.ID)
 	if err != nil {
 		return nil, err
@@ -216,7 +217,7 @@ func (s *SaleOfferService) getOfferImagesURLs(offer *models.SaleOffer) ([]string
 	return mapping.MapSliceToDTOs(images, func(m *models.Image) *string { return &m.Url }), nil
 }
 
-func (s *SaleOfferService) getUserContextFields(offer *models.SaleOffer, userID *uint) (*UserContext, error) {
+func (s *SaleOfferService) getUserContextFields(offer *views.SaleOfferView, userID *uint) (*UserContext, error) {
 	isLiked := s.accessEvaluator.IsOfferLikedByUser(offer, userID)
 	canModify, err := s.accessEvaluator.CanBeModifiedByUser(offer, userID)
 	if err != nil {
@@ -225,30 +226,26 @@ func (s *SaleOfferService) getUserContextFields(offer *models.SaleOffer, userID 
 	return &UserContext{IsLiked: isLiked, CanModify: canModify}, nil
 }
 
-func (s *SaleOfferService) mapOfferSliceWithAdditionalFields(offers []models.SaleOffer, userID *uint) ([]RetrieveSaleOfferDTO, error) {
+func (s *SaleOfferService) mapOfferSliceWithAdditionalFields(offers []views.SaleOfferView, userID *uint) ([]RetrieveSaleOfferDTO, error) {
 	offerDTOs := make([]RetrieveSaleOfferDTO, 0, len(offers))
-	for _, offer := range offers {
-		dto := MapToDTO(&offer)
-		userContext, err := s.getUserContextFields(&offer, userID)
+	for _, offerView := range offers {
+		dto := MapViewToDTO(&offerView)
+		userContext, err := s.getUserContextFields(&offerView, userID)
 		if err != nil {
 			return nil, err
 		}
 		dto.UserContext = *userContext
-		urls, err := s.getOfferImagesURLs(&offer)
+		urls, err := s.getOfferImagesURLs(&offerView)
 		if err != nil {
 			return nil, err
 		}
 		if len(urls) > 0 {
 			dto.MainURL = urls[0]
 		}
-		if userID != nil && offer.BelongsToUser(*userID) {
-			dto.Status = offer.Status
+		if userID != nil && offerView.BelongsToUser(*userID) {
+			dto.Status = offerView.Status
 		}
 		offerDTOs = append(offerDTOs, *dto)
 	}
 	return offerDTOs, nil
-}
-
-func isAuction(offer *models.SaleOffer) bool {
-	return offer.Auction != nil
 }

@@ -13,10 +13,10 @@ import (
 
 var OrderKeysMap = map[string]string{
 	"Price":           "price",
-	"Mileage":         "cars.mileage",
-	"Production year": "cars.production_year",
-	"Engine power":    "cars.engine_power",
-	"Engine capacity": "cars.engine_capacity",
+	"Mileage":         "mileage",
+	"Production year": "production_year",
+	"Engine power":    "engine_power",
+	"Engine capacity": "engine_capacity",
 	"Date of issue":   "date_of_issue"}
 
 type MinMax[T uint | string | time.Time] struct {
@@ -73,17 +73,17 @@ func (of *OfferFilter) ApplyOfferFilters(query *gorm.DB) (*gorm.DB, error) {
 	query = applyUserFilter(query, of.UserID)
 	query = applyOfferTypeFilter(query, of.OfferType)
 	query = applyLikedOnlyFilter(query, of.LikedOnly, of.UserID)
-	query = applyManufacturersFilter(query, of.Manufacturers)
-	query = applyInSliceFilter(query, "cars.color", of.Colors)
-	query = applyInSliceFilter(query, "cars.drive", of.Drives)
-	query = applyInSliceFilter(query, "cars.fuel_type", of.FuelTypes)
-	query = applyInSliceFilter(query, "cars.transmission", of.Transmissions)
+	query = applyInSliceFilter(query, "brand", of.Manufacturers)
+	query = applyInSliceFilter(query, "color", of.Colors)
+	query = applyInSliceFilter(query, "drive", of.Drives)
+	query = applyInSliceFilter(query, "fuel_type", of.FuelTypes)
+	query = applyInSliceFilter(query, "transmission", of.Transmissions)
 	query = applyInRangeFilter(query, "price", of.PriceRange)
-	query = applyInRangeFilter(query, "cars.mileage", of.MileageRange)
-	query = applyInRangeFilter(query, "cars.production_year", of.YearRange)
-	query = applyInRangeFilter(query, "cars.engine_power", of.EnginePowerRange)
-	query = applyInRangeFilter(query, "cars.engine_capacity", of.EngineCapacityRange)
-	query = applyDateInRangeFilter(query, "cars.registration_date", of.CarRegistrationDateRange)
+	query = applyInRangeFilter(query, "mileage", of.MileageRange)
+	query = applyInRangeFilter(query, "production_year", of.YearRange)
+	query = applyInRangeFilter(query, "engine_power", of.EnginePowerRange)
+	query = applyInRangeFilter(query, "engine_capacity", of.EngineCapacityRange)
+	query = applyDateInRangeFilter(query, "registration_date", of.CarRegistrationDateRange)
 	query = applyDateInRangeFilter(query, "date_of_issue", of.OfferCreationDateRange)
 	query = applyOrderFilter(query, of.OrderKey, of.IsOrderDesc)
 	return query, nil
@@ -100,6 +100,7 @@ func applyOfferTypeFilter(query *gorm.DB, offerType *OfferType) *gorm.DB {
 	if offerType == nil {
 		return query
 	}
+	query = query.Joins("LEFT JOIN auctions on auctions.offer_id = sale_offer_view.id")
 	switch *offerType {
 	case AUCTION:
 		return query.Where("auctions.offer_id IS NOT NULL")
@@ -110,20 +111,11 @@ func applyOfferTypeFilter(query *gorm.DB, offerType *OfferType) *gorm.DB {
 	}
 }
 
-func applyManufacturersFilter(query *gorm.DB, values *[]string) *gorm.DB {
-	if values != nil && len(*values) > 0 {
-		query = query.
-			Joins("JOIN models ON models.id = cars.model_id").
-			Joins("JOIN manufacturers ON manufacturers.id = models.manufacturer_id").
-			Where("manufacturers.name IN ?", *values)
-	}
-	return query
-}
-
+// TODO write tests
 func applyLikedOnlyFilter(query *gorm.DB, likedOnly *bool, userID *uint) *gorm.DB {
 	if likedOnly != nil && userID != nil {
 		query = query.
-			Joins("JOIN liked_offers ON liked_offers.offer_id = sale_offers.id").
+			Joins("JOIN liked_offers ON liked_offers.offer_id = sale_offer_view.id").
 			Where("liked_offers.user_id = ?", *userID)
 	}
 	return query
