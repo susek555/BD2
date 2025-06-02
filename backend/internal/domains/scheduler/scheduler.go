@@ -109,12 +109,12 @@ func (s *Scheduler) Run(ctx context.Context) {
 			log.Printf("scheduler: closing auction %s", s.heap[0].AuctionID)
 			next := heap.Pop(&s.heap).(*Item)
 			s.mu.Unlock()
-			s.closeAuction(ctx, next.AuctionID)
+			s.closeAuction(next.AuctionID)
 		}
 	}
 }
 
-func (s *Scheduler) closeAuction(ctx context.Context, auctionID string) {
+func (s *Scheduler) closeAuction(auctionID string) {
 	auctionIDInt, err := strconv.Atoi(auctionID)
 	if err != nil {
 		return
