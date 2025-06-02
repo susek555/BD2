@@ -81,4 +81,7 @@ func (h *Handler) DislikeOffer(c *gin.Context) {
 		return
 	}
 	c.Status(http.StatusNoContent)
+	offerIDStr := strconv.FormatUint(offerID, 10)
+	userIDStr := strconv.FormatUint(uint64(userID.(uint)), 10)
+	h.hub.UnsubscribeUser(userIDStr, offerIDStr)
 }
