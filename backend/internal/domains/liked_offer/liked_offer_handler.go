@@ -29,7 +29,7 @@ func NewHandler(service LikedOfferServiceInterface, hub ws.HubInterface) *Handle
 //	@Accept			json
 //	@Produce		json
 //	@Param			id	path		uint					true	"Sale offer ID"
-//	@Success		200	{object}	models.LikedOffer		"Liked offer"
+//	@Success		200	{object}	nil						"Liked offer"
 //	@Failure		400	{object}	custom_errors.HTTPError	"Invalid input data"
 //	@Failure		401	{object}	custom_errors.HTTPError	"Unauthorized - user not logged in"
 //	@Failure		404	{object}	custom_errors.HTTPError	"Sale offer not found"

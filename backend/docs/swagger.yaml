@@ -4,23 +4,23 @@ definitions:
       buy_now_price:
         type: integer
       color:
-        $ref: '#/definitions/car_params.Color'
+        $ref: '#/definitions/enums.Color'
       date_end:
         type: string
       description:
         type: string
       drive:
-        $ref: '#/definitions/car_params.Drive'
+        $ref: '#/definitions/enums.Drive'
       engine_capacity:
         type: integer
       engine_power:
         type: integer
       fuel_type:
-        $ref: '#/definitions/car_params.FuelType'
+        $ref: '#/definitions/enums.FuelType'
       manufacturer:
         type: string
       margin:
-        $ref: '#/definitions/models.MarginValue'
+        $ref: '#/definitions/enums.MarginValue'
       mileage:
         type: integer
       model:
@@ -40,7 +40,7 @@ definitions:
       registration_number:
         type: string
       transmission:
-        $ref: '#/definitions/car_params.Transmission'
+        $ref: '#/definitions/enums.Transmission'
       vin:
         type: string
     required:
@@ -71,7 +71,7 @@ definitions:
       can_modify:
         type: boolean
       color:
-        $ref: '#/definitions/car_params.Color'
+        $ref: '#/definitions/enums.Color'
       date_end:
         type: string
       id:
@@ -100,25 +100,25 @@ definitions:
       buy_now_price:
         type: integer
       color:
-        $ref: '#/definitions/car_params.Color'
+        $ref: '#/definitions/enums.Color'
       date_end:
         type: string
       description:
         type: string
       drive:
-        $ref: '#/definitions/car_params.Drive'
+        $ref: '#/definitions/enums.Drive'
       engine_capacity:
         type: integer
       engine_power:
         type: integer
       fuel_type:
-        $ref: '#/definitions/car_params.FuelType'
+        $ref: '#/definitions/enums.FuelType'
       id:
         type: integer
       manufacturer:
         type: string
       margin:
-        $ref: '#/definitions/models.MarginValue'
+        $ref: '#/definitions/enums.MarginValue'
       mileage:
         type: integer
       model:
@@ -138,7 +138,7 @@ definitions:
       registration_number:
         type: string
       transmission:
-        $ref: '#/definitions/car_params.Transmission'
+        $ref: '#/definitions/enums.Transmission'
       vin:
         type: string
     type: object
@@ -259,7 +259,12 @@ definitions:
           type: array
         type: array
     type: object
-  car_params.Color:
+  custom_errors.HTTPError:
+    properties:
+      error_description:
+        type: string
+    type: object
+  enums.Color:
     enum:
     - Red
     - Blue
@@ -303,7 +308,7 @@ definitions:
     - BEIGE
     - GOLD
     - OTHER
-  car_params.Drive:
+  enums.Drive:
     enum:
     - FWD
     - RWD
@@ -313,7 +318,7 @@ definitions:
     - FWD
     - RWD
     - AWD
-  car_params.FuelType:
+  enums.FuelType:
     enum:
     - Diesel
     - Petrol
@@ -333,11 +338,21 @@ definitions:
     - BIOFUEL
     - HYBRID
     - HYDROGEN
-  car_params.Transmission:
+  enums.MarginValue:
+    enum:
+    - 3
+    - 5
+    - 10
+    type: integer
+    x-enum-varnames:
+    - LOW_MARGIN
+    - MEDIUM_MARGIN
+    - HIGH_MARGIN
+  enums.Transmission:
     enum:
     - Manual
     - Automatic
-    - CVT
+    - Cvt
     - Dual clutch
     type: string
     x-enum-varnames:
@@ -345,11 +360,6 @@ definitions:
     - AUTOMATIC
     - CVT
     - DUAL_CLUTCH
-  custom_errors.HTTPError:
-    properties:
-      error_description:
-        type: string
-    type: object
   manufacturer.RetrieveManufacturerDTO:
     properties:
       id:
@@ -362,155 +372,6 @@ definitions:
       id:
         type: integer
       name:
-        type: string
-    type: object
-  models.Auction:
-    properties:
-      buy_now_price:
-        type: integer
-      date_end:
-        type: string
-      id:
-        type: integer
-      offer:
-        $ref: '#/definitions/models.SaleOffer'
-    type: object
-  models.Car:
-    properties:
-      color:
-        $ref: '#/definitions/car_params.Color'
-      drive:
-        $ref: '#/definitions/car_params.Drive'
-      engine_capacity:
-        type: integer
-      engine_power:
-        type: integer
-      fuel_type:
-        $ref: '#/definitions/car_params.FuelType'
-      id:
-        type: integer
-      mileage:
-        type: integer
-      model:
-        $ref: '#/definitions/models.Model'
-      model_id:
-        type: integer
-      number_of_doors:
-        type: integer
-      number_of_gears:
-        type: integer
-      number_of_seats:
-        type: integer
-      production_year:
-        type: integer
-      registration_date:
-        type: string
-      registration_number:
-        type: string
-      transmission:
-        $ref: '#/definitions/car_params.Transmission'
-      vin:
-        type: string
-    type: object
-  models.Company:
-    properties:
-      id:
-        type: integer
-      name:
-        type: string
-      nip:
-        type: string
-      user:
-        $ref: '#/definitions/models.User'
-    type: object
-  models.LikedOffer:
-    properties:
-      offer_id:
-        type: integer
-      saleOffer:
-        $ref: '#/definitions/models.SaleOffer'
-      user:
-        $ref: '#/definitions/models.User'
-      user_id:
-        type: integer
-    type: object
-  models.Manufacturer:
-    properties:
-      id:
-        type: integer
-      name:
-        type: string
-    type: object
-  models.MarginValue:
-    enum:
-    - 3
-    - 5
-    - 10
-    type: integer
-    x-enum-varnames:
-    - LOW_MARGIN
-    - MEDIUM_MARGIN
-    - HIGH_MARGIN
-  models.Model:
-    properties:
-      id:
-        type: integer
-      manufacturer:
-        $ref: '#/definitions/models.Manufacturer'
-      manufacturer_id:
-        type: integer
-      name:
-        type: string
-    type: object
-  models.Person:
-    properties:
-      id:
-        type: integer
-      name:
-        type: string
-      surname:
-        type: string
-      user:
-        $ref: '#/definitions/models.User'
-    type: object
-  models.SaleOffer:
-    properties:
-      auction:
-        $ref: '#/definitions/models.Auction'
-      car:
-        $ref: '#/definitions/models.Car'
-      date_of_issue:
-        type: string
-      description:
-        type: string
-      id:
-        type: integer
-      margin:
-        $ref: '#/definitions/models.MarginValue'
-      price:
-        type: integer
-      status:
-        type: string
-      user:
-        $ref: '#/definitions/models.User'
-      user_id:
-        type: integer
-    type: object
-  models.User:
-    properties:
-      company:
-        $ref: '#/definitions/models.Company'
-      email:
-        type: string
-      id:
-        type: integer
-      password:
-        type: string
-      person:
-        $ref: '#/definitions/models.Person'
-      selector:
-        type: string
-      username:
         type: string
     type: object
   pagination.PaginationRequest:
@@ -596,21 +457,21 @@ definitions:
   sale_offer.CreateSaleOfferDTO:
     properties:
       color:
-        $ref: '#/definitions/car_params.Color'
+        $ref: '#/definitions/enums.Color'
       description:
         type: string
       drive:
-        $ref: '#/definitions/car_params.Drive'
+        $ref: '#/definitions/enums.Drive'
       engine_capacity:
         type: integer
       engine_power:
         type: integer
       fuel_type:
-        $ref: '#/definitions/car_params.FuelType'
+        $ref: '#/definitions/enums.FuelType'
       manufacturer:
         type: string
       margin:
-        $ref: '#/definitions/models.MarginValue'
+        $ref: '#/definitions/enums.MarginValue'
       mileage:
         type: integer
       model:
@@ -630,7 +491,7 @@ definitions:
       registration_number:
         type: string
       transmission:
-        $ref: '#/definitions/car_params.Transmission'
+        $ref: '#/definitions/enums.Transmission'
       vin:
         type: string
     required:
@@ -674,11 +535,11 @@ definitions:
         $ref: '#/definitions/sale_offer.MinMax-string'
       colors:
         items:
-          $ref: '#/definitions/car_params.Color'
+          $ref: '#/definitions/enums.Color'
         type: array
       drives:
         items:
-          $ref: '#/definitions/car_params.Drive'
+          $ref: '#/definitions/enums.Drive'
         type: array
       engine_capacity_range:
         $ref: '#/definitions/sale_offer.MinMax-uint'
@@ -686,7 +547,7 @@ definitions:
         $ref: '#/definitions/sale_offer.MinMax-uint'
       fuel_types:
         items:
-          $ref: '#/definitions/car_params.FuelType'
+          $ref: '#/definitions/enums.FuelType'
         type: array
       is_order_desc:
         type: boolean
@@ -712,7 +573,7 @@ definitions:
         type: string
       transmissions:
         items:
-          $ref: '#/definitions/car_params.Transmission'
+          $ref: '#/definitions/enums.Transmission'
         type: array
       user_id:
         type: integer
@@ -738,7 +599,7 @@ definitions:
       can_modify:
         type: boolean
       color:
-        $ref: '#/definitions/car_params.Color'
+        $ref: '#/definitions/enums.Color'
       date_end:
         type: string
       date_of_issue:
@@ -746,13 +607,13 @@ definitions:
       description:
         type: string
       drive:
-        $ref: '#/definitions/car_params.Drive'
+        $ref: '#/definitions/enums.Drive'
       engine_capacity:
         type: integer
       engine_power:
         type: integer
       fuel_type:
-        $ref: '#/definitions/car_params.FuelType'
+        $ref: '#/definitions/enums.FuelType'
       id:
         type: integer
       images_urls:
@@ -764,7 +625,7 @@ definitions:
       is_liked:
         type: boolean
       margin:
-        $ref: '#/definitions/models.MarginValue'
+        $ref: '#/definitions/enums.MarginValue'
       mileage:
         type: integer
       model:
@@ -786,7 +647,7 @@ definitions:
       status:
         type: string
       transmission:
-        $ref: '#/definitions/car_params.Transmission'
+        $ref: '#/definitions/enums.Transmission'
       user_id:
         type: integer
       username:
@@ -808,7 +669,7 @@ definitions:
       can_modify:
         type: boolean
       color:
-        $ref: '#/definitions/car_params.Color'
+        $ref: '#/definitions/enums.Color'
       id:
         type: integer
       is_auction:
@@ -833,23 +694,23 @@ definitions:
   sale_offer.UpdateSaleOfferDTO:
     properties:
       color:
-        $ref: '#/definitions/car_params.Color'
+        $ref: '#/definitions/enums.Color'
       description:
         type: string
       drive:
-        $ref: '#/definitions/car_params.Drive'
+        $ref: '#/definitions/enums.Drive'
       engine_capacity:
         type: integer
       engine_power:
         type: integer
       fuel_type:
-        $ref: '#/definitions/car_params.FuelType'
+        $ref: '#/definitions/enums.FuelType'
       id:
         type: integer
       manufacturer:
         type: string
       margin:
-        $ref: '#/definitions/models.MarginValue'
+        $ref: '#/definitions/enums.MarginValue'
       mileage:
         type: integer
       model:
@@ -869,7 +730,7 @@ definitions:
       registration_number:
         type: string
       transmission:
-        $ref: '#/definitions/car_params.Transmission'
+        $ref: '#/definitions/enums.Transmission'
       vin:
         type: string
     type: object
@@ -1088,6 +949,36 @@ paths:
       summary: Get auction by ID
       tags:
       - auction
+  /auctions/buy-now/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Allows a user to instantly purchase an auction at its buy now price
+        if available
+      parameters:
+      - description: Auction ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully purchased the auction
+        "400":
+          description: Invalid auction ID or buy now operation failed
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "401":
+          description: Unauthorized - user not logged in
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      security:
+      - BearerAuth: []
+      summary: Buy an auction at its buy now price
+      tags:
+      - auctions
   /auth/change-password:
     put:
       consumes:
@@ -1658,8 +1549,6 @@ paths:
       responses:
         "200":
           description: Liked offer
-          schema:
-            $ref: '#/definitions/models.LikedOffer'
         "400":
           description: Invalid input data
           schema:
@@ -2223,6 +2112,36 @@ paths:
       summary: Update a sale offer
       tags:
       - sale-offer
+  /sale-offer/buy/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Allows a user to buy an item from a sale offer
+      parameters:
+      - description: Sale Offer ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully purchased offer
+        "401":
+          description: Unauthorized - user must be logged in to buy an offer
+        "403":
+          description: Forbidden - user cannot buy his own offer
+        "404":
+          description: Not Found - sale offer not found
+        "500":
+          description: Internal Server Error
+      security:
+      - ApiKeyAuth: []
+      - BearerAuth: []
+      summary: Buy a sale offer
+      tags:
+      - SaleOffers
   /sale-offer/filtered:
     post:
       consumes:
