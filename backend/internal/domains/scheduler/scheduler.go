@@ -26,7 +26,10 @@ type Scheduler struct {
 	repo                BidRepo
 	notificationService notification.NotificationServiceInterface
 	redisClient         *redis.Client
-	addCh               chan *Item
+
+	addCh        chan *Item
+	forceCloseCh chan string
+
 	saleOfferRepository sale_offer.SaleOfferRepositoryInterface
 	hub                 ws.HubInterface
 }
@@ -37,12 +40,15 @@ type SchedulerInterface interface {
 	Run(ctx context.Context)
 	LoadAuctions() error
 	CloseAuction(auctionID string)
+	ForceCloseAuction(auctionID string)
 }
 
 func NewScheduler(repo BidRepo, redisClient *redis.Client, notificationService notification.NotificationServiceInterface, saleOfferRepo sale_offer.SaleOfferRepositoryInterface, hub ws.HubInterface) SchedulerInterface {
 	return &Scheduler{
-		heap:                make(timerHeap, 0),
-		addCh:               make(chan *Item, 1024),
+		heap:         make(timerHeap, 0),
+		addCh:        make(chan *Item, 1024),
+		forceCloseCh: make(chan string, 64),
+
 		notificationService: notificationService,
 		repo:                repo,
 		redisClient:         redisClient,
@@ -86,35 +92,63 @@ func (s *Scheduler) AddAuction(auctionID string, endAt time.Time) {
 func (s *Scheduler) Run(ctx context.Context) {
 	var timer *time.Timer
 	for ctx.Err() == nil {
-		var timerC <-chan time.Time
-
 		s.mu.Lock()
+		var delay time.Duration
 		if len(s.heap) > 0 {
-			delay := max(time.Until(s.heap[0].EndAt), 0)
-			if timer == nil {
-				timer = time.NewTimer(delay)
-			} else {
-				timer.Stop()
-				timer.Reset(delay)
-			}
-			timerC = timer.C
+			delay = max(time.Until(s.heap[0].EndAt), 0)
+		} else {
+			delay = time.Hour * 24 * 365
 		}
+		s.mu.Unlock()
+
+		if timer == nil {
+			timer = time.NewTimer(delay)
+		} else {
+			timer.Stop()
+			timer.Reset(delay)
+		}
+
 		select {
 		case <-ctx.Done():
-			log.Println("scheduler: shutting down")
-			if timer != nil {
-				timer.Stop()
-			}
+			timer.Stop()
 			return
+
 		case item := <-s.addCh:
-			log.Printf("scheduler: adding auction %s", item.AuctionID)
+			s.mu.Lock()
 			heap.Push(&s.heap, item)
 			s.mu.Unlock()
-		case <-timerC:
+			continue
+
+		case auctionID := <-s.forceCloseCh:
+			s.removeFromHeap(auctionID)
+			s.closeAuctionByID(auctionID)
+
+		case <-timer.C:
+			s.mu.Lock()
+			if len(s.heap) == 0 {
+				s.mu.Unlock()
+				continue
+			}
+			next := heap.Pop(&s.heap).(*Item)
 			s.mu.Unlock()
-			s.CloseAuction("")
+
+			s.closeAuctionByID(next.AuctionID)
 		}
 	}
+}
+
+func (s *Scheduler) removeFromHeap(auctionID string) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	for i, item := range s.heap {
+		if item.AuctionID == auctionID {
+			heap.Remove(&s.heap, i)
+			log.Printf("scheduler: removed auction %s from heap", auctionID)
+			return
+		}
+	}
+	log.Printf("scheduler: auction %s not found in heap", auctionID)
 }
 
 func (s *Scheduler) CloseAuction(auctionID string) {
@@ -143,6 +177,15 @@ func (s *Scheduler) CloseAuction(auctionID string) {
 	}
 
 	s.closeAuctionByID(auctionID)
+}
+
+func (s *Scheduler) ForceCloseAuction(auctionID string) {
+	select {
+	case s.forceCloseCh <- auctionID:
+	default:
+		log.Printf("scheduler: force close channel is full, skipping auction %s", auctionID)
+		return
+	}
 }
 
 func (s *Scheduler) closeAuctionByID(auctionID string) {
