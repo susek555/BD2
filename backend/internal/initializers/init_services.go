@@ -41,7 +41,6 @@ func InitializeServices() {
 		log.Fatal("JWT_SECRET environment variable not set")
 	}
 	AuthService = auth.NewAuthService(UserRepo, RefreshTokenService, []byte(secret))
-	BidService = bid.NewBidService(BidRepo, AuctionService)
 	CarService = car.NewCarService(ManufacturerRepo, ModelRepo)
 	ImageService = image.NewImageService(ImageRepo, ImageBucket, SaleOfferRepo)
 	ManufacturerService = manufacturer.NewManufacturerService(ManufacturerRepo)
@@ -51,6 +50,7 @@ func InitializeServices() {
 	AccessEvaluator = sale_offer.NewAccessEvaluator(BidRepo, LikedOfferRepo)
 	SaleOfferService = sale_offer.NewSaleOfferService(SaleOfferRepo, ManufacturerRepo, ModelRepo, ImageRepo, AccessEvaluator)
 	AuctionService = auction.NewAuctionService(AuctionRepo, SaleOfferService.(*sale_offer.SaleOfferService))
+	BidService = bid.NewBidService(BidRepo, AuctionService)
 	LikedOfferService = liked_offer.NewLikedOfferService(LikedOfferRepo, SaleOfferRepo)
 	UserService = user.NewUserService(UserRepo)
 }
