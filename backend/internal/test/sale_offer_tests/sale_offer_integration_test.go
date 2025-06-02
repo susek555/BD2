@@ -1081,11 +1081,10 @@ func TestLikeOffer_OwnOffer(t *testing.T) {
 func TestLikeOffer_Successful(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedOffers := []models.SaleOffer{*createOffer(1)}
-
 	server, _, _ := newTestServer(db, seedOffers)
 	user := USERS[1]
 	token, _ := u.GetValidToken(user.ID, user.Email)
-	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/favourite/like/1", nil, &token)
+	_, receivedStatus := u.PerformRequest(server, http.MethodPost, "/favourite/like/1", nil, &token)
 	assert.Equal(t, http.StatusOK, receivedStatus)
 	likedOfferRepo := liked_offer.NewLikedOfferRepository(db)
 	likedOffers, err := likedOfferRepo.GetByUserID(user.ID)
