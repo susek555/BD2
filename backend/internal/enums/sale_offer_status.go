@@ -11,6 +11,7 @@ var (
 	READY     Status = "Ready"
 	PUBLISHED Status = "Published"
 	SOLD      Status = "Sold"
+	EXPIRED   Status = "Expired"
 )
 
 func (s *Status) Scan(value any) error {
