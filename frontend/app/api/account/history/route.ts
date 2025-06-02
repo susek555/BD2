@@ -13,6 +13,9 @@ export async function GET(request: Request) {
       price: 10000,
       is_auction: true,
       dateEnd: '2025-05-24',
+      sellerId: 1,
+      sellerName: 'Herkules1',
+      sellerRating: 3,
     },
     {
       main_url: '/images/offers/1.jpg',
@@ -24,6 +27,9 @@ export async function GET(request: Request) {
       price: 15000,
       is_auction: false,
       dateEnd: '2025-04-11',
+      sellerId: 2,
+      sellerName: 'Herkules2',
+      sellerRating: 4,
     },
     {
       main_url: '/images/offers/1.jpg',
@@ -35,6 +41,8 @@ export async function GET(request: Request) {
       price: 50000,
       is_auction: true,
       dateEnd: '2024-11-11',
+      sellerId: 3,
+      sellerName: 'Herkules3',
     },
     {
       main_url: '/images/offers/1.jpg',
@@ -46,6 +54,8 @@ export async function GET(request: Request) {
       price: 50000,
       is_auction: true,
       dateEnd: '2024-11-11',
+      sellerId: 4,
+      sellerName: 'Herkules4',
     },
     {
       main_url: '/images/offers/1.jpg',
@@ -57,6 +67,9 @@ export async function GET(request: Request) {
       price: 50000,
       is_auction: true,
       dateEnd: '2024-11-11',
+      sellerId: 5,
+      sellerName: 'Herkules5',
+      sellerRating: 1,
     },
     {
       main_url: '/images/offers/1.jpg',
@@ -68,6 +81,9 @@ export async function GET(request: Request) {
       price: 50000,
       is_auction: true,
       dateEnd: '2024-11-11',
+      sellerId: 1,
+      sellerName: 'Herkules1',
+      sellerRating: 3,
     },
   ];
   const pagination = {
@@ -77,6 +93,6 @@ export async function GET(request: Request) {
 
   return NextResponse.json({
     offers,
-    pagination
+    pagination,
   });
 }
