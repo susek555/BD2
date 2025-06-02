@@ -78,7 +78,7 @@ func (h *Handler) CreateBid(c *gin.Context) {
 	}
 	h.hub.SaveNotificationForClients(auctionIDStr, userID, notification)
 	if in.Amount >= dto.Auction.BuyNowPrice {
-		h.sched.CloseAuction(auctionIDStr)
+		h.sched.ForceCloseAuction(auctionIDStr)
 	}
 	go h.hub.SendFourLatestNotificationsToClient(auctionIDStr, userIDStr)
 
