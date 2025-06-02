@@ -16,14 +16,14 @@ type PriceData = {
     price: number;
     isAuction: boolean;
     auction?: AuctionData;
+    myCurrentBid?: number;
     isActive: boolean;
     priceOnly: boolean;
 }
 
 export default function Price({ data, loggedIn }: { data: PriceData, loggedIn: boolean }) {
     const router = useRouter();
-
-    const { id, price, isAuction, auction, isActive, priceOnly } = data;
+    const { id, price, isAuction, auction, myCurrentBid, isActive, priceOnly } = data;
 
     const [isConfirmationOpen, setConfirmationOpen] = useState(false);
 
@@ -59,11 +59,19 @@ export default function Price({ data, loggedIn }: { data: PriceData, loggedIn: b
                             </div>
                         </div>
                         {loggedIn ? (
-                            !priceOnly ? (
-                                <BidForm currentBid={auction!.currentBid} />
-                            ) : (
-                                <></>
-                            )
+                            <div className="flex flex-col gap-2 justify-center items-center">
+                                <p className="text-2xl">Your bid</p>
+                                { myCurrentBid ? (
+                                    <p className="font-bold text-2xl">{myCurrentBid.toString()} PLN</p>
+                                ) : (
+                                    <p className="font-bold text-2xl">0 PLN</p>
+                                )}
+                                {!priceOnly ? (
+                                    <BidForm currentBid={auction!.currentBid} />
+                                ) : (
+                                    <></>
+                                )}
+                            </div>
                         ) : (
                             <Link href="/login">
                                 <BasePriceButton>
