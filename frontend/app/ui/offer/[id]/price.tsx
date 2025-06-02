@@ -6,7 +6,10 @@ import { CurrencyDollarIcon, ArrowRightIcon } from "@heroicons/react/20/solid";
 import TimeLeft from "./time-left";
 import Link from "next/link";
 import BidForm from "./bid-form";
-import { buyNow } from "@/app/lib/api/offer/buyNow";
+import { buyNowAuction } from "@/app/lib/api/offer/buyNow";
+import { useState } from "react";
+import ConfirmationModal from "../../(common)/confirm-modal";
+import { useRouter } from "next/navigation";
 
 type PriceData = {
     id: string;
@@ -18,14 +21,27 @@ type PriceData = {
 }
 
 export default function Price({ data, loggedIn }: { data: PriceData, loggedIn: boolean }) {
+    const router = useRouter();
+
     const { id, price, isAuction, auction, isActive, priceOnly } = data;
 
-    const handleAuctionBuyNow = async () => {
-        await buyNow(id)
-    }
+    const [isConfirmationOpen, setConfirmationOpen] = useState(false);
 
-    const handleBuyNow = () => {
-        //TODO
+    const handleBuyNow = async () => {
+        try {
+            if (isAuction) {
+                await buyNowAuction(id);
+            } else {
+                // Temporary mock for non-auction buy now
+                console.log('Buy now for regular offer', id);
+                // TODO: Replace with actual implementation
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+            setConfirmationOpen(false);
+            router.replace('/account/activity');
+        } catch (error) {
+            console.error('Error during buy now process:', error);
+        }
     };
 
     return (
@@ -65,7 +81,7 @@ export default function Price({ data, loggedIn }: { data: PriceData, loggedIn: b
                         <p className="font-bold text-3xl">{price.toString()} PLN</p>
                         {loggedIn ? (
                             !priceOnly ? (
-                                <BasePriceButton onClick={() => handleBuyNow()}>
+                                <BasePriceButton onClick={() => setConfirmationOpen(true)}>
                                     <p className="text-bold text-xl">Buy Now</p>
                                     <CurrencyDollarIcon className="ml-auto w-5 text-gray-50" />
                                 </BasePriceButton>
@@ -97,7 +113,7 @@ export default function Price({ data, loggedIn }: { data: PriceData, loggedIn: b
                             <p className="font-bold text-3xl">{price.toString()} PLN</p>
                             {loggedIn ? (
                                 !priceOnly ? (
-                                    <BasePriceButton onClick={() => handleAuctionBuyNow()}>
+                                    <BasePriceButton onClick={() => setConfirmationOpen(true)}>
                                         <p className="text-bold text-xl">Buy Now</p>
                                         <CurrencyDollarIcon className="ml-auto w-5 text-gray-50" />
                                     </BasePriceButton>
@@ -117,6 +133,16 @@ export default function Price({ data, loggedIn }: { data: PriceData, loggedIn: b
                 </>
             ) : ( <></>
             ) }
+            <ConfirmationModal
+                title='Confirm Buy Now'
+                message='Are you sure you want to buy now this offer? This action cannot be undone.'
+                confirmText='Buy Now'
+                onConfirm={handleBuyNow}
+                onCancel={() => setConfirmationOpen(false)}
+                isOpen={isConfirmationOpen}
+                bg_color='bg-blue-500'
+                bg_color_hover='bg-blue-600'
+            />
         </>
     );
 }

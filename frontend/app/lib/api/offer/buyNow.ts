@@ -1,4 +1,4 @@
-export async function buyNow(id: string) {
+export async function buyNowAuction(id: string) {
 
   const response = await fetch(`/api/auctions/buy-now/${id}`, {
     method: "DELETE",
