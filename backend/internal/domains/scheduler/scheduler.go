@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/redis/go-redis/v9"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/bid"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/notification"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/ws"
@@ -17,10 +16,14 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
 )
 
+type BidRepo interface {
+	GetHighestBid(auctionID uint) (*models.Bid, error)
+}
+
 type Scheduler struct {
 	mu                  sync.Mutex
 	heap                timerHeap
-	repo                bid.BidRepositoryInterface
+	repo                BidRepo
 	notificationService notification.NotificationServiceInterface
 	redisClient         *redis.Client
 	addCh               chan *Item
@@ -33,9 +36,10 @@ type SchedulerInterface interface {
 	AddAuction(auctionID string, end time.Time)
 	Run(ctx context.Context)
 	LoadAuctions() error
+	CloseAuction(auctionID string)
 }
 
-func NewScheduler(repo bid.BidRepositoryInterface, redisClient *redis.Client, notificationService notification.NotificationServiceInterface, saleOfferRepo sale_offer.SaleOfferRepositoryInterface, hub ws.HubInterface) SchedulerInterface {
+func NewScheduler(repo BidRepo, redisClient *redis.Client, notificationService notification.NotificationServiceInterface, saleOfferRepo sale_offer.SaleOfferRepositoryInterface, hub ws.HubInterface) SchedulerInterface {
 	return &Scheduler{
 		heap:                make(timerHeap, 0),
 		addCh:               make(chan *Item, 1024),
