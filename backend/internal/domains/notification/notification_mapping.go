@@ -20,7 +20,7 @@ func MapToNotification(clientNotification *models.ClientNotification) *models.No
 	return clientNotification.Notification
 }
 
-func MapNotificationToDTO(notification *models.Notification) *RetrieveNotificationDTO {
+func MapNotificationToDTO(notification *models.Notification, seen bool) *RetrieveNotificationDTO {
 	if notification == nil {
 		return nil
 	}
@@ -31,13 +31,14 @@ func MapNotificationToDTO(notification *models.Notification) *RetrieveNotificati
 		Description: notification.Description,
 		CreatedAt:   createdAt,
 		OfferID:     notification.OfferID,
+		Seen:        seen,
 	}
 }
 
 func MapToNotifications(clientNotifications []models.ClientNotification) []RetrieveNotificationDTO {
 	notifications := make([]RetrieveNotificationDTO, len(clientNotifications))
 	for i, cn := range clientNotifications {
-		notifications[i] = *MapNotificationToDTO(cn.Notification)
+		notifications[i] = *MapNotificationToDTO(cn.Notification, cn.Seen)
 	}
 	return notifications
 }
