@@ -1,11 +1,12 @@
+'use client'
+
 import { AuctionData } from "@/app/lib/definitions/sale-offer-details";
 import { BasePriceButton } from "./price-buttons/base-price-button";
 import { CurrencyDollarIcon, ArrowRightIcon } from "@heroicons/react/20/solid";
 import TimeLeft from "./time-left";
 import Link from "next/link";
 import BidForm from "./bid-form";
-import { authConfig } from "@/app/lib/authConfig";
-import { getServerSession } from "next-auth/next";
+import { buyNow } from "@/app/lib/api/offer/buyNow";
 
 type PriceData = {
     id: string;
@@ -16,10 +17,16 @@ type PriceData = {
     priceOnly: boolean;
 }
 
-export default async function Price( data : { data : PriceData}) {
-    const session = await getServerSession(authConfig);
-    const loggedIn = !!session;
-    const { id, price, isAuction, auction, isActive, priceOnly } = data.data;
+export default function Price({ data, loggedIn }: { data: PriceData, loggedIn: boolean }) {
+    const { id, price, isAuction, auction, isActive, priceOnly } = data;
+
+    const handleAuctionBuyNow = async () => {
+        await buyNow(id)
+    }
+
+    const handleBuyNow = () => {
+        //TODO
+    };
 
     return (
         <>
@@ -58,12 +65,10 @@ export default async function Price( data : { data : PriceData}) {
                         <p className="font-bold text-3xl">{price.toString()} PLN</p>
                         {loggedIn ? (
                             !priceOnly ? (
-                                <Link href={`/offer/${id}/buynow`}>
-                                    <BasePriceButton>
-                                        <p className="text-bold text-xl">Buy Now</p>
-                                        <CurrencyDollarIcon className="ml-auto w-5 text-gray-50" />
-                                    </BasePriceButton>
-                                </Link>
+                                <BasePriceButton onClick={() => handleBuyNow()}>
+                                    <p className="text-bold text-xl">Buy Now</p>
+                                    <CurrencyDollarIcon className="ml-auto w-5 text-gray-50" />
+                                </BasePriceButton>
                             ) : (
                                 <></>
                             )
@@ -92,12 +97,10 @@ export default async function Price( data : { data : PriceData}) {
                             <p className="font-bold text-3xl">{price.toString()} PLN</p>
                             {loggedIn ? (
                                 !priceOnly ? (
-                                    <Link href={`/offer/${id}/buynow`}>
-                                        <BasePriceButton>
-                                            <p className="text-bold text-xl">Buy Now</p>
-                                            <CurrencyDollarIcon className="ml-auto w-5 text-gray-50" />
-                                        </BasePriceButton>
-                                    </Link>
+                                    <BasePriceButton onClick={() => handleAuctionBuyNow()}>
+                                        <p className="text-bold text-xl">Buy Now</p>
+                                        <CurrencyDollarIcon className="ml-auto w-5 text-gray-50" />
+                                    </BasePriceButton>
                                 ) : (
                                     <></>
                                 )

@@ -1,27 +1,25 @@
-// app/api/add-auction/route.ts
+// app/api/auctions/buy-now/[id]/route.ts
 import { fetchWithRefresh } from "@/app/lib/api/fetchWithRefresh";
 import { getServerSession } from "next-auth";
 import { authConfig } from "@/app/lib/authConfig";
 import { NextRequest, NextResponse } from "next/server";
 import { API_URL } from "@/app/lib/constants";
 
-export async function POST(req: NextRequest) {
+export async function DELETE(
+    req: NextRequest,
+    { params }: { params: Promise<{ id: string }> }
+) {
   const session = await getServerSession(authConfig);
   if (!session) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-  const data = await req.json();
+const { id } = await params;
 
-  const response = await fetchWithRefresh(`${API_URL}/auction`, {
-    method: "POST",
-    body: JSON.stringify(data),
-    headers: {
-      "Content-Type": "application/json",
-    },
+  const response = await fetchWithRefresh(`${API_URL}/auction/buy-now/${id}`, {
+    method: "DELETE",
   });
 
-  const result = await response.json();
-  return NextResponse.json(result, { status: response.status });
+  return NextResponse.json(response.status);
 }
 

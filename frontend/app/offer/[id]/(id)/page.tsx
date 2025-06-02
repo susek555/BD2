@@ -84,6 +84,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
                   offer.can_delete ||
                   username === offer.sellerName,
               }}
+              loggedIn={isLoggedIn}
             />
           </>
 
