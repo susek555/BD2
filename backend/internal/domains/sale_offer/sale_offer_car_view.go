@@ -1,29 +1,36 @@
 package sale_offer
 
-import "time"
+import (
+	"time"
 
-type CarSaleOfferView struct {
+	"github.com/susek555/BD2/car-dealer-api/internal/enums"
+)
+
+type SaleOfferView struct {
 	ID                 uint
 	UserID             uint
+	Username           string
 	Description        string
-	Price              int
+	Price              uint
 	DateOfIssue        time.Time
-	Margin             int
-	Status             string
+	Margin             uint
+	Status             enums.Status
 	Vin                string
-	ProductionYear     int
-	Mileage            int
-	NumberOfDoors      int
-	NumberOfSeats      int
-	EnginePower        int
-	EngineCapacity     int
+	ProductionYear     uint
+	Mileage            uint
+	NumberOfDoors      uint
+	NumberOfSeats      uint
+	EnginePower        uint
+	EngineCapacity     uint
 	RegistrationNumber string
 	RegistrationDate   time.Time
-	Color              string
-	FuelType           string
-	Drive              string
-	Transmission       string
-	NumberOfGears      int
+	Color              enums.Color
+	FuelType           enums.FuelType
+	Transmission       enums.Transmission
+	NumberOfGears      uint
+	Drive              enums.Drive
 	Brand              string
 	Model              string
+	DateEnd            *time.Time
+	BuyNowPrice        *uint
 }

@@ -41,10 +41,11 @@ UNION
 SELECT user_id, offer_id FROM offer_likers;
 
 SELECT pgivm.create_immv(
-  'car_offer_view',
+  'sale_offer_view',
   $$ SELECT
     s.id,
     s.user_id,
+    u.username,
     s.description,
     s.price,
     s.date_of_issue,
@@ -61,12 +62,16 @@ SELECT pgivm.create_immv(
     c.registration_date,
     c.color,
     c.fuel_type,
-    c.drive,
     c.transmission,
     c.number_of_gears,
+    c.drive,
     man.name as brand,
     mod.name as model
+    a.date_end
+    a.buy_now_price
     FROM sale_offers s
+    LEFT JOIN auctions a ON a.offer_id = s.id
+    JOIN users u ON u.id = s.user_id
     JOIN cars c ON c.offer_id = s.id
     JOIN models mod ON c.model_id = mod.id
     JOIN manufacturers man ON mod.manufacturer_id = man.id $$
