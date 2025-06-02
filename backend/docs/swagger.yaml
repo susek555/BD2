@@ -954,8 +954,8 @@ paths:
       summary: Get auction by ID
       tags:
       - auction
-  /auctions/buy-now/{id}:
-    delete:
+  /auction/buy-now/{id}:
+    post:
       consumes:
       - application/json
       description: Allows a user to instantly purchase an auction at its buy now price
@@ -983,7 +983,7 @@ paths:
       - BearerAuth: []
       summary: Buy an auction at its buy now price
       tags:
-      - auctions
+      - auction
   /auth/change-password:
     put:
       consumes:
@@ -2118,7 +2118,7 @@ paths:
       tags:
       - sale-offer
   /sale-offer/buy/{id}:
-    delete:
+    post:
       consumes:
       - application/json
       description: Allows a user to buy an item from a sale offer
@@ -2146,7 +2146,7 @@ paths:
       - BearerAuth: []
       summary: Buy a sale offer
       tags:
-      - SaleOffers
+      - sale-offer
   /sale-offer/filtered:
     post:
       consumes:

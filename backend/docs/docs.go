@@ -150,6 +150,52 @@ const docTemplate = `{
                 }
             }
         },
+        "/auction/buy-now/{id}": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Allows a user to instantly purchase an auction at its buy now price if available",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auction"
+                ],
+                "summary": "Buy an auction at its buy now price",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Auction ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully purchased the auction"
+                    },
+                    "400": {
+                        "description": "Invalid auction ID or buy now operation failed",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - user not logged in",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/auction/{id}": {
             "get": {
                 "description": "Retrieves a specific auction by its ID",
@@ -225,52 +271,6 @@ const docTemplate = `{
                     },
                     "401": {
                         "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/custom_errors.HTTPError"
-                        }
-                    }
-                }
-            }
-        },
-        "/auctions/buy-now/{id}": {
-            "delete": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Allows a user to instantly purchase an auction at its buy now price if available",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "auctions"
-                ],
-                "summary": "Buy an auction at its buy now price",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Auction ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully purchased the auction"
-                    },
-                    "400": {
-                        "description": "Invalid auction ID or buy now operation failed",
-                        "schema": {
-                            "$ref": "#/definitions/custom_errors.HTTPError"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized - user not logged in",
                         "schema": {
                             "$ref": "#/definitions/custom_errors.HTTPError"
                         }
@@ -1962,7 +1962,7 @@ const docTemplate = `{
             }
         },
         "/sale-offer/buy/{id}": {
-            "delete": {
+            "post": {
                 "security": [
                     {
                         "ApiKeyAuth": []
@@ -1979,7 +1979,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "SaleOffers"
+                    "sale-offer"
                 ],
                 "summary": "Buy a sale offer",
                 "parameters": [
