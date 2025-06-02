@@ -144,4 +144,5 @@ func (s *Scheduler) closeAuction(auctionID string) {
 	s.hub.SaveNotificationForClients(auctionID, 0, &notification)
 	s.hub.SendFourLatestNotificationsToClient(auctionID, "0")
 	s.saleOfferRepository.UpdateStatus(uint(auctionIDInt), enums.SOLD)
+	s.saleOfferRepository.SaveToPurchases(uint(auctionIDInt), highest.BidderID, highest.Amount)
 }
