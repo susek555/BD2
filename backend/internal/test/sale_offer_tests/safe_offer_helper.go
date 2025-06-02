@@ -217,24 +217,3 @@ func wasEntityAddedToDB[T any](db *gorm.DB, id uint) bool {
 	_, err := repo.GetById(id)
 	return err == nil
 }
-
-func doSaleOfferAndRetrieveSaleOfferDTOsMatch(offer models.SaleOffer, dto sale_offer.RetrieveSaleOfferDTO, a sale_offer.OfferAccessEvaluatorInterface, userID *uint) bool {
-	var likedCondition bool
-	var bidCondition bool
-	condition := offer.ID == dto.ID &&
-		offer.User.Username == dto.Username &&
-		offer.Car.Model.Manufacturer.Name+" "+offer.Car.Model.Name == dto.Name &&
-		offer.Price == dto.Price &&
-		offer.Car.Mileage == dto.Mileage &&
-		offer.Car.ProductionYear == dto.ProductionYear &&
-		offer.Car.Color == dto.Color &&
-		(offer.Auction != nil) == dto.IsAuction
-	if userID == nil {
-		likedCondition = false
-		bidCondition = false
-	} else {
-		likedCondition = a.IsOfferLikedByUser(&offer, userID)
-		bidCondition, _ = a.CanBeModifiedByUser(&offer, userID)
-	}
-	return condition && bidCondition == dto.CanModify && likedCondition == dto.IsLiked
-}

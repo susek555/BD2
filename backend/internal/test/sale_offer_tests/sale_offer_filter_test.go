@@ -2189,7 +2189,7 @@ func TestGetFiltered_OrderByMileageMultipleRecordsDesc(t *testing.T) {
 	result, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
 	for i := range offers {
-		assert.Equal(t, result[i].Car.Mileage, uint(len(offers)-i))
+		assert.Equal(t, result[i].Mileage, uint(len(offers)-i))
 	}
 	u.CleanDB(DB)
 }
@@ -2210,7 +2210,7 @@ func TestGetFiltered_OrderByMileageMultipleRecordsAsc(t *testing.T) {
 	result, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
 	for i := range offers {
-		assert.Equal(t, result[i].Car.Mileage, uint(i+1))
+		assert.Equal(t, result[i].Mileage, uint(i+1))
 	}
 	u.CleanDB(DB)
 }
@@ -2259,7 +2259,7 @@ func TestGetFiltered_OrderByYearMultipleRecordsDesc(t *testing.T) {
 	result, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
 	for i := range offers {
-		assert.Equal(t, result[i].Car.ProductionYear, uint(2000+len(offers)-i))
+		assert.Equal(t, result[i].ProductionYear, uint(2000+len(offers)-i))
 	}
 	u.CleanDB(DB)
 }
@@ -2280,7 +2280,7 @@ func TestGetFiltered_OrderByYearMultipleRecordsAsc(t *testing.T) {
 	result, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
 	for i := range offers {
-		assert.Equal(t, result[i].Car.ProductionYear, uint(2000+i+1))
+		assert.Equal(t, result[i].ProductionYear, uint(2000+i+1))
 	}
 	u.CleanDB(DB)
 }
@@ -2329,7 +2329,7 @@ func TestGetFiltered_OrderByEnginePowerMultipleRecordsDesc(t *testing.T) {
 	result, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
 	for i := range offers {
-		assert.Equal(t, result[i].Car.EnginePower, uint(100+len(offers)-i))
+		assert.Equal(t, result[i].EnginePower, uint(100+len(offers)-i))
 	}
 	u.CleanDB(DB)
 }
@@ -2350,7 +2350,7 @@ func TestGetFiltered_OrderByEnginePowerMultipleRecordsAsc(t *testing.T) {
 	result, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
 	for i := range offers {
-		assert.Equal(t, result[i].Car.EnginePower, uint(100+i+1))
+		assert.Equal(t, result[i].EnginePower, uint(100+i+1))
 	}
 	u.CleanDB(DB)
 }
@@ -2399,7 +2399,7 @@ func TestGetFiltered_OrderByEngineCapacityMultipleRecordsDesc(t *testing.T) {
 	result, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
 	for i := range offers {
-		assert.Equal(t, result[i].Car.EngineCapacity, uint(1000+len(offers)-i))
+		assert.Equal(t, result[i].EngineCapacity, uint(1000+len(offers)-i))
 	}
 	u.CleanDB(DB)
 }
@@ -2419,7 +2419,7 @@ func TestGetFiltered_OrderByEngineCapacityMultipleRecordsAsc(t *testing.T) {
 	result, _, err := repo.GetFiltered(filter)
 	assert.NoError(t, err)
 	for i := range offers {
-		assert.Equal(t, result[i].Car.EngineCapacity, uint(1000+i+1))
+		assert.Equal(t, result[i].EngineCapacity, uint(1000+i+1))
 	}
 	u.CleanDB(DB)
 }

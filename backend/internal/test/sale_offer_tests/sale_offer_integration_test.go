@@ -734,7 +734,7 @@ func TestGetFiltered_EmptyDatabase(t *testing.T) {
 func TestGetFiltered_OneRegularOffer(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedOffers := []models.SaleOffer{*createOffer(1)}
-	server, _, a := newTestServer(db, seedOffers)
+	server, s, _ := newTestServer(db, seedOffers)
 	filter := sale_offer.NewOfferFilter()
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	body, err := json.Marshal(filter)
@@ -745,7 +745,8 @@ func TestGetFiltered_OneRegularOffer(t *testing.T) {
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
 	assert.Equal(t, len(seedOffers), len(got.Offers))
-	assert.True(t, doSaleOfferAndRetrieveSaleOfferDTOsMatch(seedOffers[0], got.Offers[0], a, nil))
+	offerDTO, _ := s.GetByID(1, nil)
+	assert.Equal(t, offerDTO, got.Offers[0])
 	u.CleanDB(DB)
 }
 
@@ -801,7 +802,7 @@ func TestGetFiltered_AuthorizedOtherUserOffers(t *testing.T) {
 		*createAuctionSaleOffer(3),
 		*createOffer(4),
 	}
-	server, _, a := newTestServer(db, seedOffers)
+	server, s, _ := newTestServer(db, seedOffers)
 	filter := sale_offer.NewOfferFilter()
 	filter.Pagination = *u.GetDefaultPaginationRequest()
 	body, err := json.Marshal(filter)
@@ -815,7 +816,8 @@ func TestGetFiltered_AuthorizedOtherUserOffers(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, len(seedOffers), len(got.Offers))
 	for i := range len(seedOffers) {
-		assert.True(t, doSaleOfferAndRetrieveSaleOfferDTOsMatch(seedOffers[i], got.Offers[i], a, &user.ID))
+		offerDTO, _ := s.GetByID(uint(i), nil)
+		assert.Equal(t, offerDTO, got.Offers[0])
 	}
 	u.CleanDB(DB)
 }
@@ -970,7 +972,7 @@ func TestGetMyOffers_NoOffers(t *testing.T) {
 func TestGetMyOffers_OneRegularOffer(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedOffers := []models.SaleOffer{*createOffer(1)}
-	server, _, a := newTestServer(db, seedOffers)
+	server, s, _ := newTestServer(db, seedOffers)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
 	pagRequest := *u.GetDefaultPaginationRequest()
@@ -982,7 +984,8 @@ func TestGetMyOffers_OneRegularOffer(t *testing.T) {
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
 	assert.Equal(t, len(seedOffers), len(got.Offers))
-	assert.True(t, doSaleOfferAndRetrieveSaleOfferDTOsMatch(seedOffers[0], got.Offers[0], a, &user.ID))
+	offerDTO, _ := s.GetByID(uint(1), nil)
+	assert.Equal(t, offerDTO, got.Offers[0])
 	u.CleanDB(DB)
 }
 
@@ -990,7 +993,7 @@ func TestGetMyOffers_OneAuctionOffer(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedOffers := []models.SaleOffer{*createAuctionSaleOffer(1)}
 
-	server, _, a := newTestServer(db, seedOffers)
+	server, s, _ := newTestServer(db, seedOffers)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
 	pagRequest := *u.GetDefaultPaginationRequest()
@@ -1002,7 +1005,8 @@ func TestGetMyOffers_OneAuctionOffer(t *testing.T) {
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
 	assert.Equal(t, len(seedOffers), len(got.Offers))
-	assert.True(t, doSaleOfferAndRetrieveSaleOfferDTOsMatch(seedOffers[0], got.Offers[0], a, &user.ID))
+	offerDTO, _ := s.GetByID(uint(1), nil)
+	assert.Equal(t, offerDTO, got.Offers[0])
 	u.CleanDB(DB)
 }
 
@@ -1015,7 +1019,7 @@ func TestGetMyOffers_AuctionsAndOffersCombined(t *testing.T) {
 		*createOffer(4),
 	}
 
-	server, _, a := newTestServer(db, seedOffers)
+	server, s, _ := newTestServer(db, seedOffers)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
 	pagRequest := *u.GetDefaultPaginationRequest()
@@ -1028,7 +1032,8 @@ func TestGetMyOffers_AuctionsAndOffersCombined(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, len(seedOffers), len(got.Offers))
 	for i := range len(seedOffers) {
-		assert.True(t, doSaleOfferAndRetrieveSaleOfferDTOsMatch(seedOffers[i], got.Offers[i], a, &user.ID))
+		offerDTO, _ := s.GetByID(uint(i), nil)
+		assert.Equal(t, offerDTO, got.Offers[0])
 	}
 	u.CleanDB(DB)
 }
