@@ -24,7 +24,7 @@ type HubInterface interface {
 	SaveNotificationForClients(offerID string, userID uint, n *models.Notification) error
 	SendFourLatestNotificationsToClient(offerID, userID string)
 	LoadClientToRooms(userID string)
-	RemoveClientFromRoom(userID, offerID string)
+	UnsubscribeUser(userID, offerID string)
 }
 
 type Hub struct {
@@ -254,7 +254,7 @@ func (h *Hub) SendFourLatestNotificationsToClient(offerID, userID string) {
 	}
 }
 
-func (h *Hub) RemoveClientFromRoom(userID, offerID string) {
+func (h *Hub) UnsubscribeUser(userID, offerID string) {
 	h.mu.RLock()
 	client, ok := h.clients[userID]
 	h.mu.RUnlock()
