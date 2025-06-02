@@ -36,8 +36,10 @@ export default function Price({ data, loggedIn }: { data: PriceData, loggedIn: b
             }
             setConfirmationOpen(false);
             router.replace('/account/activity');
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {
-            console.error('Error during buy now process:', error);
+            alert('An error occurred while processing your purchase. Please try again.');
+            router.refresh();
         }
     };
 
