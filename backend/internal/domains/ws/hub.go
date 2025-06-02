@@ -25,6 +25,7 @@ type HubInterface interface {
 	SendFourLatestNotificationsToClient(offerID, userID string)
 	LoadClientToRooms(userID string)
 	UnsubscribeUser(userID, offerID string)
+	RemoveRoom(offerID string)
 }
 
 type Hub struct {
@@ -264,4 +265,16 @@ func (h *Hub) UnsubscribeUser(userID, offerID string) {
 
 	h.unsubscribe <- subscription{offerID, client}
 	log.Printf("hub: removed client %s from room %s", userID, offerID)
+}
+
+func (h *Hub) RemoveRoom(offerID string) {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+
+	if _, ok := h.rooms[offerID]; ok {
+		delete(h.rooms, offerID)
+		log.Printf("hub: removed room %s", offerID)
+	} else {
+		log.Printf("hub: room %s does not exist", offerID)
+	}
 }
