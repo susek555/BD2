@@ -55,7 +55,6 @@ func GetStatusCode(err error, errorMap map[error]int) int {
 			return http.StatusInternalServerError
 		}
 	}
-
 	if statusCode, ok := errorMap[err]; ok {
 		return statusCode
 	}
