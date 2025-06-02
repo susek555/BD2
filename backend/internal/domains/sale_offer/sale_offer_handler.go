@@ -279,7 +279,8 @@ func (h *Handler) Buy(c *gin.Context) {
 		return
 	}
 	h.hub.SaveNotificationForClients(strconv.FormatUint(offerID, 10), userID, notification)
-	go h.hub.SendFourLatestNotificationsToClient(strconv.FormatUint(offerID, 10), strconv.FormatUint(uint64(userID), 10))
+	h.hub.SendFourLatestNotificationsToClient(strconv.FormatUint(offerID, 10), strconv.FormatUint(uint64(userID), 10))
+	h.hub.RemoveRoom(strconv.FormatUint(offerID, 10))
 }
 
 func getOptionalUserID(c *gin.Context) *uint {
