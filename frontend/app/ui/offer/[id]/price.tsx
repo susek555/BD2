@@ -6,7 +6,7 @@ import { CurrencyDollarIcon, ArrowRightIcon } from "@heroicons/react/20/solid";
 import TimeLeft from "./time-left";
 import Link from "next/link";
 import BidForm from "./bid-form";
-import { buyNowAuction } from "@/app/lib/api/offer/buyNow";
+import { buyNowAuction, buyRegular } from "@/app/lib/api/offer/buyNow";
 import { useState } from "react";
 import ConfirmationModal from "../../(common)/confirm-modal";
 import { useRouter } from "next/navigation";
@@ -32,10 +32,7 @@ export default function Price({ data, loggedIn }: { data: PriceData, loggedIn: b
             if (isAuction) {
                 await buyNowAuction(id);
             } else {
-                // Temporary mock for non-auction buy now
-                console.log('Buy now for regular offer', id);
-                // TODO: Replace with actual implementation
-                await new Promise(resolve => setTimeout(resolve, 500));
+                await buyRegular(id);
             }
             setConfirmationOpen(false);
             router.replace('/account/activity');
