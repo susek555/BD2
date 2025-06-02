@@ -29,7 +29,7 @@ var UserHandler *user.Handler
 func InitializeHandlers() {
 	AuctionHandler = auction.NewHandler(AuctionService, Sched, Hub, NotificationService)
 	AuthHandler = auth.NewHandler(AuthService)
-	BidHandler = bid.NewHandler(BidService, RedisClient, Hub, NotificationService)
+	BidHandler = bid.NewHandler(BidService, RedisClient, Hub, NotificationService, Sched)
 	CarHandler = car.NewHandler(CarService)
 	ImageHandler = image.NewHandler(ImageService, SaleOfferService)
 	ManufacturerHandler = manufacturer.NewHandler(ManufacturerService)
