@@ -7,6 +7,7 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
 )
 
+//go:generate mockery --name=AuctionServiceInterface --output=../../test/mocks --case=snake --with-expecter
 type AuctionServiceInterface interface {
 	Create(auction *CreateAuctionDTO) (*RetrieveAuctionDTO, error)
 	GetAll() ([]RetrieveAuctionDTO, error)
