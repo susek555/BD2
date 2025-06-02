@@ -374,6 +374,148 @@ definitions:
       name:
         type: string
     type: object
+<<<<<<< HEAD
+=======
+  models.Auction:
+    properties:
+      buy_now_price:
+        type: integer
+      date_end:
+        type: string
+      id:
+        type: integer
+      offer:
+        $ref: '#/definitions/models.SaleOffer'
+    type: object
+  models.Car:
+    properties:
+      color:
+        $ref: '#/definitions/enums.Color'
+      drive:
+        $ref: '#/definitions/enums.Drive'
+      engine_capacity:
+        type: integer
+      engine_power:
+        type: integer
+      fuel_type:
+        $ref: '#/definitions/enums.FuelType'
+      id:
+        type: integer
+      mileage:
+        type: integer
+      model:
+        $ref: '#/definitions/models.Model'
+      model_id:
+        type: integer
+      number_of_doors:
+        type: integer
+      number_of_gears:
+        type: integer
+      number_of_seats:
+        type: integer
+      production_year:
+        type: integer
+      registration_date:
+        type: string
+      registration_number:
+        type: string
+      transmission:
+        $ref: '#/definitions/enums.Transmission'
+      vin:
+        type: string
+    type: object
+  models.Company:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      nip:
+        type: string
+      user:
+        $ref: '#/definitions/models.User'
+    type: object
+  models.LikedOffer:
+    properties:
+      offer_id:
+        type: integer
+      saleOffer:
+        $ref: '#/definitions/models.SaleOffer'
+      user:
+        $ref: '#/definitions/models.User'
+      user_id:
+        type: integer
+    type: object
+  models.Manufacturer:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  models.Model:
+    properties:
+      id:
+        type: integer
+      manufacturer:
+        $ref: '#/definitions/models.Manufacturer'
+      manufacturer_id:
+        type: integer
+      name:
+        type: string
+    type: object
+  models.Person:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      surname:
+        type: string
+      user:
+        $ref: '#/definitions/models.User'
+    type: object
+  models.SaleOffer:
+    properties:
+      auction:
+        $ref: '#/definitions/models.Auction'
+      car:
+        $ref: '#/definitions/models.Car'
+      date_of_issue:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      margin:
+        $ref: '#/definitions/enums.MarginValue'
+      price:
+        type: integer
+      status:
+        type: string
+      user:
+        $ref: '#/definitions/models.User'
+      user_id:
+        type: integer
+    type: object
+  models.User:
+    properties:
+      company:
+        $ref: '#/definitions/models.Company'
+      email:
+        type: string
+      id:
+        type: integer
+      password:
+        type: string
+      person:
+        $ref: '#/definitions/models.Person'
+      selector:
+        type: string
+      username:
+        type: string
+    type: object
+>>>>>>> 3706ff2 (Formatted docs and fixed wrong endpoint's paths.)
   pagination.PaginationRequest:
     properties:
       page:
@@ -1494,7 +1636,7 @@ paths:
       summary: Get all possible transmissions
       tags:
       - car
-  /favourites/dislike/{id}:
+  /favourite/dislike/{id}:
     delete:
       consumes:
       - application/json
@@ -1531,8 +1673,8 @@ paths:
       - Bearer: []
       summary: Dislike offer
       tags:
-      - favourites
-  /favourites/like/{id}:
+      - favourite
+  /favourite/like/{id}:
     post:
       consumes:
       - application/json
@@ -1569,7 +1711,7 @@ paths:
       - Bearer: []
       summary: Like new offer
       tags:
-      - favourites
+      - favourite
   /image:
     delete:
       consumes:

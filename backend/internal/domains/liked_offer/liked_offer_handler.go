@@ -25,7 +25,7 @@ func NewHandler(service LikedOfferServiceInterface, hub ws.HubInterface) *Handle
 //
 //	@Summary		Like new offer
 //	@Description	Like new offer by giving it's id. You have to be logged in to perform this operation.
-//	@Tags			favourites
+//	@Tags			favourite
 //	@Accept			json
 //	@Produce		json
 //	@Param			id	path		uint					true	"Sale offer ID"
@@ -34,7 +34,7 @@ func NewHandler(service LikedOfferServiceInterface, hub ws.HubInterface) *Handle
 //	@Failure		401	{object}	custom_errors.HTTPError	"Unauthorized - user not logged in"
 //	@Failure		404	{object}	custom_errors.HTTPError	"Sale offer not found"
 //	@Failure		500	{object}	custom_errors.HTTPError	"Internal server error"
-//	@Router			/favourites/like/{id} [post]
+//	@Router			/favourite/like/{id} [post]
 //	@Security		Bearer
 func (h *Handler) LikeOffer(c *gin.Context) {
 	offerID, err := strconv.ParseUint(c.Param("id"), 10, 32)
@@ -58,7 +58,7 @@ func (h *Handler) LikeOffer(c *gin.Context) {
 //
 //	@Summary		Dislike offer
 //	@Description	Dislike offer by giving it's id. You have to be logged in to perform this operation.
-//	@Tags			favourites
+//	@Tags			favourite
 //	@Accept			json
 //	@Produce		json
 //	@Param			id	path		uint					true	"Sale offer ID"
@@ -67,7 +67,7 @@ func (h *Handler) LikeOffer(c *gin.Context) {
 //	@Failure		401	{object}	custom_errors.HTTPError	"Unauthorized - user not logged in"
 //	@Failure		404	{object}	custom_errors.HTTPError	"Sale offer not found"
 //	@Failure		500	{object}	custom_errors.HTTPError	"Internal server error"
-//	@Router			/favourites/dislike/{id} [delete]
+//	@Router			/favourite/dislike/{id} [delete]
 //	@Security		Bearer
 func (h *Handler) DislikeOffer(c *gin.Context) {
 	offerID, err := strconv.ParseUint(c.Param("id"), 10, 32)
