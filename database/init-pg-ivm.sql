@@ -18,14 +18,14 @@ SELECT pgivm.create_immv(
            b.bidder_id  AS user_id,
            b.auction_id AS offer_id
      FROM  bids b
-     JOIN  sale_offers o ON o.id = b.auction_id WHERE o.status IS "published" $$);
+     JOIN  sale_offers o ON o.id = b.auction_id WHERE o.status = 'published' $$);
 
 SELECT pgivm.create_immv(
   'offer_likers',
   $$ SELECT l.user_id  AS user_id,
            l.offer_id AS offer_id
-     FROM  liked_offers l $$)
-     JOIN  sale_offers o ON o.id = l.offer_id WHERE o.status IS "published" $$);
+     FROM  liked_offers l
+     JOIN  sale_offers o ON o.id = l.offer_id WHERE o.status = 'published' $$);
 
 CREATE UNIQUE INDEX ON offer_likers (user_id, offer_id);
 
