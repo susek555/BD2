@@ -13,6 +13,7 @@ export const PUBLIC_ROUTES = [
   "/sale-offer/order-keys",
   "/sale-offer/filtered",
   "/sale-offer",
+  "/api/images/upload/[id]",
 ];
 
 export const PROTECTED_ROUTES = [

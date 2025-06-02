@@ -3,12 +3,11 @@ import { fetchWithRefresh } from "@/app/lib/api/fetchWithRefresh";
 import { getServerSession } from "next-auth";
 import { authConfig } from "@/app/lib/authConfig";
 import { NextRequest, NextResponse } from "next/server";
-
-const API_URL = process.env.API_URL;
+import { API_URL } from "@/app/lib/constants";
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authConfig);
   if (!session) {
@@ -16,7 +15,7 @@ export async function PATCH(
   }
 
   const formData = await req.formData();
-  const id = params.id;
+  const { id } = await params;
 
   if (!id) {
     return NextResponse.json({ error: "Missing ID in URL" }, { status: 400 });

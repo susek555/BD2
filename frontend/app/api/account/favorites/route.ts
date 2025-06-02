@@ -5,6 +5,7 @@ export async function GET(request: Request) {
   const offers: SaleOffer[] = [
     {
       id: '1',
+      main_url: '/images/offers/1.jpg',
       name: 'Audi A4',
       production_year: 2000,
       mileage: 150000,
@@ -14,6 +15,7 @@ export async function GET(request: Request) {
       is_liked: true,
     },
     {
+      main_url: '/images/offers/2.jpg',
       id: '2',
       name: 'Volkswagen Golf',
       production_year: 2005,
@@ -24,6 +26,7 @@ export async function GET(request: Request) {
       is_liked: true,
     },
     {
+      main_url: '/images/offers/3.jpg',
       id: '3',
       name: 'Porsche 911',
       production_year: 2010,

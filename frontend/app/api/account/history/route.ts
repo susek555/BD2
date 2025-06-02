@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server';
 export async function GET(request: Request) {
   const offers: HistoryOffer[] = [
     {
+      main_url: '/images/offers/1.jpg',
       id: '1',
       name: 'Audi A4',
       production_year: 2000,
@@ -14,6 +15,7 @@ export async function GET(request: Request) {
       dateEnd: '2025-05-24',
     },
     {
+      main_url: '/images/offers/1.jpg',
       id: '2',
       name: 'Volkswagen Golf',
       production_year: 2005,
@@ -24,6 +26,7 @@ export async function GET(request: Request) {
       dateEnd: '2025-04-11',
     },
     {
+      main_url: '/images/offers/1.jpg',
       id: '3',
       name: 'Porsche 911',
       production_year: 2010,
@@ -34,6 +37,7 @@ export async function GET(request: Request) {
       dateEnd: '2024-11-11',
     },
     {
+      main_url: '/images/offers/1.jpg',
       id: '4',
       name: 'Porsche 911',
       production_year: 2010,
@@ -44,6 +48,7 @@ export async function GET(request: Request) {
       dateEnd: '2024-11-11',
     },
     {
+      main_url: '/images/offers/1.jpg',
       id: '5',
       name: 'Porsche 911',
       production_year: 2010,
@@ -54,6 +59,7 @@ export async function GET(request: Request) {
       dateEnd: '2024-11-11',
     },
     {
+      main_url: '/images/offers/1.jpg',
       id: '6',
       name: 'Porsche 911',
       production_year: 2010,
