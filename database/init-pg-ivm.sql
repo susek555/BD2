@@ -64,8 +64,8 @@ SELECT pgivm.create_immv(
     c.drive,
     c.transmission,
     c.number_of_gears,
-    man.name as manufacturer_name,
-    mod.name as model_name
+    man.name as brand,
+    mod.name as model
     FROM sale_offers s
     JOIN cars c ON c.offer_id = s.id
     JOIN models mod ON c.model_id = mod.id
