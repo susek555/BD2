@@ -98,7 +98,7 @@ func registerSaleOfferRoutes(router *gin.Engine) {
 		saleOfferRoutes.GET("/id/:id", middleware.OptionalAuthenticate(initializers.Verifier), initializers.SaleOfferHandler.GetDetailedSaleOfferByID)
 		saleOfferRoutes.GET("/offer-types", initializers.SaleOfferHandler.GetSaleOfferTypes)
 		saleOfferRoutes.GET("/order-keys", initializers.SaleOfferHandler.GetOrderKeys)
-		saleOfferRoutes.DELETE("/buy/:id", middleware.Authenticate(initializers.Verifier), initializers.SaleOfferHandler.Buy)
+		saleOfferRoutes.POST("/buy/:id", middleware.Authenticate(initializers.Verifier), initializers.SaleOfferHandler.Buy)
 	}
 }
 
@@ -109,7 +109,7 @@ func registerAuctionRoutes(router *gin.Engine) {
 	auctionRoutes.POST("/", middleware.Authenticate(initializers.Verifier), initializers.AuctionHandler.CreateAuction)
 	auctionRoutes.PUT("/", middleware.Authenticate(initializers.Verifier), initializers.AuctionHandler.UpdateAuction)
 	auctionRoutes.DELETE("/:id", middleware.Authenticate(initializers.Verifier), initializers.AuctionHandler.DeleteAuctionByID)
-	auctionRoutes.DELETE("/buy-now/:id", middleware.Authenticate(initializers.Verifier), initializers.AuctionHandler.BuyNow)
+	auctionRoutes.POST("/buy-now/:id", middleware.Authenticate(initializers.Verifier), initializers.AuctionHandler.BuyNow)
 }
 
 func registerBidRoutes(router *gin.Engine) {
