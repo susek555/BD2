@@ -14,12 +14,12 @@ export async function DELETE(
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-const { id } = await params;
+  const { id } = await params;
 
   const response = await fetchWithRefresh(`${API_URL}/auction/buy-now/${id}`, {
     method: "DELETE",
   });
 
-  return NextResponse.json(response.status);
+  return response;
 }
 

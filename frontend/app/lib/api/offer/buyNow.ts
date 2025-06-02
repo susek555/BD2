@@ -1,4 +1,4 @@
-export async function buyNow(id: string): Promise<number> {
+export async function buyNow(id: string) {
 
   const response = await fetch(`/api/auctions/buy-now/${id}`, {
     method: "DELETE",
@@ -6,11 +6,8 @@ export async function buyNow(id: string): Promise<number> {
 
   console.log("Response status:", response.status);
 
-  if (response.status === 200 || response.status === 201) {
-    const responseData = await response.json();
-    return responseData.id;
-  } else {
+  if (response.status !== 200 && response.status !== 201) {
     const errorText = await response.text();
-    throw new Error(`Failed to upload images: ${response.status} – ${errorText}`);
+    throw new Error(`Failed to buy now auction: ${response.status} – ${errorText}`);
   }
 }
