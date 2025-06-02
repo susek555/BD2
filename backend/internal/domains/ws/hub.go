@@ -255,7 +255,17 @@ func (h *Hub) SendFourLatestNotificationsToClient(offerID, userID string) {
 			log.Printf("hub: no notifications for userID %q", client.userID)
 			continue
 		}
-		bare := notification.MapToNotifications(notifications)
+		unseenCount, err := h.clientNotificationRepo.GetUnseenCountByUserId(uint(uid))
+		if err != nil {
+			log.Printf("hub: cannot fetch unseen count for userID %q: %v", client.userID, err)
+			continue
+		}
+		allCount, err := h.clientNotificationRepo.GetAllCountByUserId(uint(uid))
+		if err != nil {
+			log.Printf("hub: cannot fetch all count for userID %q: %v", client.userID, err)
+			continue
+		}
+		bare := notification.MapToNotificationsDTO(notifications, unseenCount, allCount)
 		payload, err := json.Marshal(bare)
 		if err != nil {
 			log.Printf("hub: cannot marshal notifications for userID %q: %v", client.userID, err)
