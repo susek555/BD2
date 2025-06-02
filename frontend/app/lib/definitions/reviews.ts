@@ -5,13 +5,24 @@ interface ReviewUser {
   username: string;
 }
 
-export interface Review {
-  id: number;
+interface BaseReview {
   description: string;
   rating: number;
+}
+
+export interface Review extends BaseReview {
+  id: number;
   date: string;
   reviewer: ReviewUser;
   reviewee: ReviewUser;
+}
+
+export interface NewReview extends BaseReview {
+  revieweeId: number;
+}
+
+export interface UpdatedReview extends BaseReview {
+  id: number
 }
 
 export interface ReviewSearchParams {
