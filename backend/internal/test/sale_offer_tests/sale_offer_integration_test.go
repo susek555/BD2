@@ -1085,11 +1085,8 @@ func TestLikeOffer_Successful(t *testing.T) {
 	server, _, _ := newTestServer(db, seedOffers)
 	user := USERS[1]
 	token, _ := u.GetValidToken(user.ID, user.Email)
-	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/like/1", nil, &token)
+	_, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/like/1", nil, &token)
 	assert.Equal(t, http.StatusOK, receivedStatus)
-	var got models.LikedOffer
-	err := json.Unmarshal(response, &got)
-	assert.NoError(t, err)
 	likedOfferRepo := liked_offer.NewLikedOfferRepository(db)
 	likedOffers, err := likedOfferRepo.GetByUserID(user.ID)
 	assert.NoError(t, err)

@@ -232,6 +232,52 @@ const docTemplate = `{
                 }
             }
         },
+        "/auctions/buy-now/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Allows a user to instantly purchase an auction at its buy now price if available",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auctions"
+                ],
+                "summary": "Buy an auction at its buy now price",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Auction ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully purchased the auction"
+                    },
+                    "400": {
+                        "description": "Invalid auction ID or buy now operation failed",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - user not logged in",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/change-password": {
             "put": {
                 "security": [
@@ -1096,10 +1142,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Liked offer",
-                        "schema": {
-                            "$ref": "#/definitions/models.LikedOffer"
-                        }
+                        "description": "Liked offer"
                     },
                     "400": {
                         "description": "Invalid input data",
@@ -1918,6 +1961,55 @@ const docTemplate = `{
                 }
             }
         },
+        "/sale-offer/buy/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Allows a user to buy an item from a sale offer",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleOffers"
+                ],
+                "summary": "Buy a sale offer",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Sale Offer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully purchased offer"
+                    },
+                    "401": {
+                        "description": "Unauthorized - user must be logged in to buy an offer"
+                    },
+                    "403": {
+                        "description": "Forbidden - user cannot buy his own offer"
+                    },
+                    "404": {
+                        "description": "Not Found - sale offer not found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
         "/sale-offer/filtered": {
             "post": {
                 "description": "Returns a list of sale offers in paginated form. If the user is logged in, the results contain he offers created by the user. The results are filtered based on request's body. There are several constraints on the filter fields, such as:\n- Auction type must be one of the predefined offer types (endpoint: /sale-offer/offer-types)\n- Order key must be one of the predefined order keys (endpoint: /sale-offer/order-keys)\n- List of manufacturers must contain only predefined manufacturers (endpoint: /car/manufacturers)\n- List of colors must contain only predefined colors (endpoint: /car/colors)\n- List of drives must contain only predefined drives (endpoint: /car/drives)\n- List of fuel types must contain only predefined fuel types (endpoint: /car/fuel_types)\n- List of transmissions must contain only predefined transmission types (endpoint: /car/transmissions)\n- Whenever you use a range, the min value must be less than or equal to the max value, you can provide only one of them, and the other will be ignored.",
@@ -2410,7 +2502,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "color": {
-                    "$ref": "#/definitions/car_params.Color"
+                    "$ref": "#/definitions/enums.Color"
                 },
                 "date_end": {
                     "type": "string"
@@ -2419,7 +2511,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "drive": {
-                    "$ref": "#/definitions/car_params.Drive"
+                    "$ref": "#/definitions/enums.Drive"
                 },
                 "engine_capacity": {
                     "type": "integer"
@@ -2428,13 +2520,13 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "fuel_type": {
-                    "$ref": "#/definitions/car_params.FuelType"
+                    "$ref": "#/definitions/enums.FuelType"
                 },
                 "manufacturer": {
                     "type": "string"
                 },
                 "margin": {
-                    "$ref": "#/definitions/models.MarginValue"
+                    "$ref": "#/definitions/enums.MarginValue"
                 },
                 "mileage": {
                     "type": "integer"
@@ -2464,7 +2556,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "transmission": {
-                    "$ref": "#/definitions/car_params.Transmission"
+                    "$ref": "#/definitions/enums.Transmission"
                 },
                 "vin": {
                     "type": "string"
@@ -2481,7 +2573,7 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "color": {
-                    "$ref": "#/definitions/car_params.Color"
+                    "$ref": "#/definitions/enums.Color"
                 },
                 "date_end": {
                     "type": "string"
@@ -2525,7 +2617,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "color": {
-                    "$ref": "#/definitions/car_params.Color"
+                    "$ref": "#/definitions/enums.Color"
                 },
                 "date_end": {
                     "type": "string"
@@ -2534,7 +2626,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "drive": {
-                    "$ref": "#/definitions/car_params.Drive"
+                    "$ref": "#/definitions/enums.Drive"
                 },
                 "engine_capacity": {
                     "type": "integer"
@@ -2543,7 +2635,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "fuel_type": {
-                    "$ref": "#/definitions/car_params.FuelType"
+                    "$ref": "#/definitions/enums.FuelType"
                 },
                 "id": {
                     "type": "integer"
@@ -2552,7 +2644,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "margin": {
-                    "$ref": "#/definitions/models.MarginValue"
+                    "$ref": "#/definitions/enums.MarginValue"
                 },
                 "mileage": {
                     "type": "integer"
@@ -2582,7 +2674,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "transmission": {
-                    "$ref": "#/definitions/car_params.Transmission"
+                    "$ref": "#/definitions/enums.Transmission"
                 },
                 "vin": {
                     "type": "string"
@@ -2767,7 +2859,15 @@ const docTemplate = `{
                 }
             }
         },
-        "car_params.Color": {
+        "custom_errors.HTTPError": {
+            "type": "object",
+            "properties": {
+                "error_description": {
+                    "type": "string"
+                }
+            }
+        },
+        "enums.Color": {
             "type": "string",
             "enum": [
                 "Red",
@@ -2814,7 +2914,7 @@ const docTemplate = `{
                 "OTHER"
             ]
         },
-        "car_params.Drive": {
+        "enums.Drive": {
             "type": "string",
             "enum": [
                 "FWD",
@@ -2827,7 +2927,7 @@ const docTemplate = `{
                 "AWD"
             ]
         },
-        "car_params.FuelType": {
+        "enums.FuelType": {
             "type": "string",
             "enum": [
                 "Diesel",
@@ -2850,12 +2950,25 @@ const docTemplate = `{
                 "HYDROGEN"
             ]
         },
-        "car_params.Transmission": {
+        "enums.MarginValue": {
+            "type": "integer",
+            "enum": [
+                3,
+                5,
+                10
+            ],
+            "x-enum-varnames": [
+                "LOW_MARGIN",
+                "MEDIUM_MARGIN",
+                "HIGH_MARGIN"
+            ]
+        },
+        "enums.Transmission": {
             "type": "string",
             "enum": [
                 "Manual",
                 "Automatic",
-                "CVT",
+                "Cvt",
                 "Dual clutch"
             ],
             "x-enum-varnames": [
@@ -2864,14 +2977,6 @@ const docTemplate = `{
                 "CVT",
                 "DUAL_CLUTCH"
             ]
-        },
-        "custom_errors.HTTPError": {
-            "type": "object",
-            "properties": {
-                "error_description": {
-                    "type": "string"
-                }
-            }
         },
         "manufacturer.RetrieveManufacturerDTO": {
             "type": "object",
@@ -2891,232 +2996,6 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.Auction": {
-            "type": "object",
-            "properties": {
-                "buy_now_price": {
-                    "type": "integer"
-                },
-                "date_end": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "offer": {
-                    "$ref": "#/definitions/models.SaleOffer"
-                }
-            }
-        },
-        "models.Car": {
-            "type": "object",
-            "properties": {
-                "color": {
-                    "$ref": "#/definitions/car_params.Color"
-                },
-                "drive": {
-                    "$ref": "#/definitions/car_params.Drive"
-                },
-                "engine_capacity": {
-                    "type": "integer"
-                },
-                "engine_power": {
-                    "type": "integer"
-                },
-                "fuel_type": {
-                    "$ref": "#/definitions/car_params.FuelType"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "mileage": {
-                    "type": "integer"
-                },
-                "model": {
-                    "$ref": "#/definitions/models.Model"
-                },
-                "model_id": {
-                    "type": "integer"
-                },
-                "number_of_doors": {
-                    "type": "integer"
-                },
-                "number_of_gears": {
-                    "type": "integer"
-                },
-                "number_of_seats": {
-                    "type": "integer"
-                },
-                "production_year": {
-                    "type": "integer"
-                },
-                "registration_date": {
-                    "type": "string"
-                },
-                "registration_number": {
-                    "type": "string"
-                },
-                "transmission": {
-                    "$ref": "#/definitions/car_params.Transmission"
-                },
-                "vin": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.Company": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "nip": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/models.User"
-                }
-            }
-        },
-        "models.LikedOffer": {
-            "type": "object",
-            "properties": {
-                "offer_id": {
-                    "type": "integer"
-                },
-                "saleOffer": {
-                    "$ref": "#/definitions/models.SaleOffer"
-                },
-                "user": {
-                    "$ref": "#/definitions/models.User"
-                },
-                "user_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "models.Manufacturer": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.MarginValue": {
-            "type": "integer",
-            "enum": [
-                3,
-                5,
-                10
-            ],
-            "x-enum-varnames": [
-                "LOW_MARGIN",
-                "MEDIUM_MARGIN",
-                "HIGH_MARGIN"
-            ]
-        },
-        "models.Model": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "manufacturer": {
-                    "$ref": "#/definitions/models.Manufacturer"
-                },
-                "manufacturer_id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.Person": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "surname": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/models.User"
-                }
-            }
-        },
-        "models.SaleOffer": {
-            "type": "object",
-            "properties": {
-                "auction": {
-                    "$ref": "#/definitions/models.Auction"
-                },
-                "car": {
-                    "$ref": "#/definitions/models.Car"
-                },
-                "date_of_issue": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "margin": {
-                    "$ref": "#/definitions/models.MarginValue"
-                },
-                "price": {
-                    "type": "integer"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/models.User"
-                },
-                "user_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "models.User": {
-            "type": "object",
-            "properties": {
-                "company": {
-                    "$ref": "#/definitions/models.Company"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "password": {
-                    "type": "string"
-                },
-                "person": {
-                    "$ref": "#/definitions/models.Person"
-                },
-                "selector": {
-                    "type": "string"
-                },
-                "username": {
                     "type": "string"
                 }
             }
@@ -3270,13 +3149,13 @@ const docTemplate = `{
             ],
             "properties": {
                 "color": {
-                    "$ref": "#/definitions/car_params.Color"
+                    "$ref": "#/definitions/enums.Color"
                 },
                 "description": {
                     "type": "string"
                 },
                 "drive": {
-                    "$ref": "#/definitions/car_params.Drive"
+                    "$ref": "#/definitions/enums.Drive"
                 },
                 "engine_capacity": {
                     "type": "integer"
@@ -3285,13 +3164,13 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "fuel_type": {
-                    "$ref": "#/definitions/car_params.FuelType"
+                    "$ref": "#/definitions/enums.FuelType"
                 },
                 "manufacturer": {
                     "type": "string"
                 },
                 "margin": {
-                    "$ref": "#/definitions/models.MarginValue"
+                    "$ref": "#/definitions/enums.MarginValue"
                 },
                 "mileage": {
                     "type": "integer"
@@ -3321,7 +3200,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "transmission": {
-                    "$ref": "#/definitions/car_params.Transmission"
+                    "$ref": "#/definitions/enums.Transmission"
                 },
                 "vin": {
                     "type": "string"
@@ -3359,13 +3238,13 @@ const docTemplate = `{
                 "colors": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/car_params.Color"
+                        "$ref": "#/definitions/enums.Color"
                     }
                 },
                 "drives": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/car_params.Drive"
+                        "$ref": "#/definitions/enums.Drive"
                     }
                 },
                 "engine_capacity_range": {
@@ -3377,7 +3256,7 @@ const docTemplate = `{
                 "fuel_types": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/car_params.FuelType"
+                        "$ref": "#/definitions/enums.FuelType"
                     }
                 },
                 "is_order_desc": {
@@ -3416,7 +3295,7 @@ const docTemplate = `{
                 "transmissions": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/car_params.Transmission"
+                        "$ref": "#/definitions/enums.Transmission"
                     }
                 },
                 "user_id": {
@@ -3453,7 +3332,7 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "color": {
-                    "$ref": "#/definitions/car_params.Color"
+                    "$ref": "#/definitions/enums.Color"
                 },
                 "date_end": {
                     "type": "string"
@@ -3465,7 +3344,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "drive": {
-                    "$ref": "#/definitions/car_params.Drive"
+                    "$ref": "#/definitions/enums.Drive"
                 },
                 "engine_capacity": {
                     "type": "integer"
@@ -3474,7 +3353,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "fuel_type": {
-                    "$ref": "#/definitions/car_params.FuelType"
+                    "$ref": "#/definitions/enums.FuelType"
                 },
                 "id": {
                     "type": "integer"
@@ -3492,7 +3371,7 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "margin": {
-                    "$ref": "#/definitions/models.MarginValue"
+                    "$ref": "#/definitions/enums.MarginValue"
                 },
                 "mileage": {
                     "type": "integer"
@@ -3525,7 +3404,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "transmission": {
-                    "$ref": "#/definitions/car_params.Transmission"
+                    "$ref": "#/definitions/enums.Transmission"
                 },
                 "user_id": {
                     "type": "integer"
@@ -3559,7 +3438,7 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "color": {
-                    "$ref": "#/definitions/car_params.Color"
+                    "$ref": "#/definitions/enums.Color"
                 },
                 "id": {
                     "type": "integer"
@@ -3597,13 +3476,13 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "color": {
-                    "$ref": "#/definitions/car_params.Color"
+                    "$ref": "#/definitions/enums.Color"
                 },
                 "description": {
                     "type": "string"
                 },
                 "drive": {
-                    "$ref": "#/definitions/car_params.Drive"
+                    "$ref": "#/definitions/enums.Drive"
                 },
                 "engine_capacity": {
                     "type": "integer"
@@ -3612,7 +3491,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "fuel_type": {
-                    "$ref": "#/definitions/car_params.FuelType"
+                    "$ref": "#/definitions/enums.FuelType"
                 },
                 "id": {
                     "type": "integer"
@@ -3621,7 +3500,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "margin": {
-                    "$ref": "#/definitions/models.MarginValue"
+                    "$ref": "#/definitions/enums.MarginValue"
                 },
                 "mileage": {
                     "type": "integer"
@@ -3651,7 +3530,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "transmission": {
-                    "$ref": "#/definitions/car_params.Transmission"
+                    "$ref": "#/definitions/enums.Transmission"
                 },
                 "vin": {
                     "type": "string"

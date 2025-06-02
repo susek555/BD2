@@ -32,17 +32,17 @@ func NewHandler(service AuctionServiceInterface, sched scheduler.SchedulerInterf
 	}
 }
 
-// @Summary		Create Auction
-// @Description	Creates a new auction with the provided details
-// @Tags			auction
-// @Accept			json
-// @Produce		json
-// @Param			body	body		CreateAuctionDTO		true	"Auction details"
-// @Success		201		{object}	RetrieveAuctionDTO		"Created auction"
-// @Failure		400		{object}	custom_errors.HTTPError	"Bad request"
-// @Failure		401		{object}	custom_errors.HTTPError	"Unauthorized"
-// @Router			/auction [post]
-// @Security		BearerAuth
+//	@Summary		Create Auction
+//	@Description	Creates a new auction with the provided details
+//	@Tags			auction
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body		CreateAuctionDTO		true	"Auction details"
+//	@Success		201		{object}	RetrieveAuctionDTO		"Created auction"
+//	@Failure		400		{object}	custom_errors.HTTPError	"Bad request"
+//	@Failure		401		{object}	custom_errors.HTTPError	"Unauthorized"
+//	@Router			/auction [post]
+//	@Security		BearerAuth
 func (h *Handler) CreateAuction(c *gin.Context) {
 	userId, err := auth.GetUserId(c)
 	if err != nil {
@@ -190,17 +190,17 @@ func (h *Handler) UpdateAuction(c *gin.Context) {
 }
 
 // BuyNow godoc
-// @Summary Buy an auction at its buy now price
-// @Description Allows a user to instantly purchase an auction at its buy now price if available
-// @Tags auctions
-// @Accept json
-// @Produce json
-// @Param id path int true "Auction ID"
-// @Success 200 "Successfully purchased the auction"
-// @Failure 400 {object} custom_errors.HTTPError "Invalid auction ID or buy now operation failed"
-// @Failure 401 {object} custom_errors.HTTPError "Unauthorized - user not logged in"
-// @Router /auctions/buy-now/{id} [delete]
-// @Security BearerAuth
+//	@Summary		Buy an auction at its buy now price
+//	@Description	Allows a user to instantly purchase an auction at its buy now price if available
+//	@Tags			auctions
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path	int	true	"Auction ID"
+//	@Success		200	"Successfully purchased the auction"
+//	@Failure		400	{object}	custom_errors.HTTPError	"Invalid auction ID or buy now operation failed"
+//	@Failure		401	{object}	custom_errors.HTTPError	"Unauthorized - user not logged in"
+//	@Router			/auctions/buy-now/{id} [delete]
+//	@Security		BearerAuth
 func (h *Handler) BuyNow(c *gin.Context) {
 	userId, err := auth.GetUserId(c)
 	if err != nil {
