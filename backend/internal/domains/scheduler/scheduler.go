@@ -107,42 +107,58 @@ func (s *Scheduler) Run(ctx context.Context) {
 			heap.Push(&s.heap, item)
 			s.mu.Unlock()
 		case <-timerC:
-			log.Printf("scheduler: closing auction %s", s.heap[0].AuctionID)
-			next := heap.Pop(&s.heap).(*Item)
 			s.mu.Unlock()
-			s.closeAuction(next.AuctionID)
+			s.CloseAuction("")
 		}
 	}
 }
 
-func (s *Scheduler) closeAuction(auctionID string) {
+func (s *Scheduler) CloseAuction(auctionID string) {
+	if auctionID == "" {
+		s.mu.Lock()
+		if len(s.heap) == 0 {
+			s.mu.Unlock()
+			return
+		}
+		item := heap.Pop(&s.heap).(*Item)
+		s.mu.Unlock()
+
+		auctionID = item.AuctionID
+		log.Printf("scheduler: (heap) closing auction %s", auctionID)
+	} else {
+		log.Printf("scheduler: (manual) closing auction %s", auctionID)
+	}
+
+	s.closeAuctionByID(auctionID)
+}
+
+func (s *Scheduler) closeAuctionByID(auctionID string) {
 	auctionIDInt, err := strconv.Atoi(auctionID)
 	if err != nil {
-		return
-	}
-	highest, err := s.repo.GetHighestBid(uint(auctionIDInt))
-	var winnerID string
-	var amount int64
-	if err == nil {
-		winnerID = strconv.FormatUint(uint64(highest.BidderID), 10)
-		amount = int64(highest.Amount)
-	}
-	notification := models.Notification{
-		OfferID: uint(auctionIDInt),
-	}
-	offer, err := s.saleOfferRepository.GetByID(uint(auctionIDInt))
-	if err != nil {
+		log.Printf("scheduler: invalid auctionID %q: %v", auctionID, err)
 		return
 	}
 
-	err = s.notificationService.CreateEndAuctionNotification(&notification, winnerID, amount, offer)
+	highest, _ := s.repo.GetHighestBid(uint(auctionIDInt))
+	winnerID := strconv.FormatUint(uint64(highest.BidderID), 10)
+	amount := int64(highest.Amount)
+
+	notif := models.Notification{OfferID: uint(auctionIDInt)}
+	offer, err := s.saleOfferRepository.GetByID(uint(auctionIDInt))
 	if err != nil {
-		log.Println("Error creating notification:", err)
-		s.saleOfferRepository.UpdateStatus(uint(auctionIDInt), enums.EXPIRED)
+		log.Printf("scheduler: cannot load offer %d: %v", auctionIDInt, err)
 		return
 	}
-	s.hub.SaveNotificationForClients(auctionID, 0, &notification)
+
+	if err := s.notificationService.CreateEndAuctionNotification(&notif, winnerID, amount, offer); err != nil {
+		log.Printf("scheduler: notif create failed: %v", err)
+		_ = s.saleOfferRepository.UpdateStatus(uint(auctionIDInt), enums.EXPIRED)
+		return
+	}
+
+	s.hub.SaveNotificationForClients(auctionID, 0, &notif)
 	s.hub.SendFourLatestNotificationsToClient(auctionID, "0")
-	s.saleOfferRepository.UpdateStatus(uint(auctionIDInt), enums.SOLD)
-	s.saleOfferRepository.SaveToPurchases(uint(auctionIDInt), highest.BidderID, highest.Amount)
+
+	_ = s.saleOfferRepository.UpdateStatus(uint(auctionIDInt), enums.SOLD)
+	_ = s.saleOfferRepository.SaveToPurchases(uint(auctionIDInt), highest.BidderID, highest.Amount)
 }
