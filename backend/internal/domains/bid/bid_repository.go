@@ -36,17 +36,30 @@ func NewBidRepository(db *gorm.DB) BidRepositoryInterface {
 func (b *BidRepository) Create(bid *models.Bid) error {
 	return b.DB.Transaction(func(tx *gorm.DB) error {
 		var highest models.Bid
-
+		var auction models.Auction
 		err := tx.
 			Clauses(clause.Locking{Strength: "UPDATE"}).
 			Where("auction_id = ?", bid.AuctionID).
 			Order("amount DESC").
+			Preload("Auction").
+			Preload("Auction.Offer").
 			Limit(1).
 			Take(&highest).Error
 		if err != nil && err.Error() != gorm.ErrRecordNotFound.Error() {
 			return err
 		}
 		if highest.Amount >= bid.Amount {
+			return ErrBidTooLow
+		}
+		err = tx.
+			Model(&auction).
+			Where("offer_id = ?", bid.AuctionID).
+			Preload("Offer").
+			First(&auction).Error
+		if err != nil {
+			return err
+		}
+		if auction.Offer.Price > bid.Amount {
 			return ErrBidTooLow
 		}
 
