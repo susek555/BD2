@@ -1,6 +1,6 @@
 import { HistoryOffer } from '@/app/lib/definitions/SaleOffer';
 import GenericOfferCard from '@/app/ui/(offers-table)/generic-offer-card';
-import { AverageRatingCard } from '../../review/average-rating-card';
+import ReviewButton from './review-button';
 
 export default function SingleHistoryOffer({ offer }: { offer: HistoryOffer }) {
   const formatDate = (dateString: string) => {
@@ -27,7 +27,10 @@ export default function SingleHistoryOffer({ offer }: { offer: HistoryOffer }) {
         </div>
 
         <div className='right pr-4'>
-          <AverageRatingCard rating={offer.sellerRating || 0} />
+          <ReviewButton
+            sellerId={offer.sellerId}
+            sellerRating={offer.sellerRating}
+          />
         </div>
       </div>
       <GenericOfferCard<HistoryOffer> offer={offer} variant='history' />
