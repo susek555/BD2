@@ -92,6 +92,7 @@ func newTestServer(db *gorm.DB, seedOffers []models.SaleOffer) (*gin.Engine, sal
 	likedOfferService := liked_offer.NewLikedOfferService(likedOfferRepository, saleOfferRepo)
 	mh := new(mocks.HubInterface)
 	mh.On("SubscribeUser", mock.Anything, mock.Anything).Return()
+	mh.On("UnsubscribeUser", mock.Anything, mock.Anything).Return()
 	likedOfferHandler := liked_offer.NewHandler(likedOfferService, mh)
 	mn := new(mocks.NotificationServiceInterface)
 	saleOfferHandler := sale_offer.NewHandler(saleOfferService, mh, mn)
