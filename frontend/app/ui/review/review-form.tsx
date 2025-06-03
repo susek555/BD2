@@ -1,5 +1,6 @@
 'use client';
 
+import { addReview, deleteReview, updateReview } from '@/app/lib/api/reviews';
 import {
   NewReview,
   Review,
@@ -21,7 +22,7 @@ export default function ReviewForm({
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [description, setDescription] = useState('');
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [error, setError] = useState(false);
 
   const maxCharacters = 200;
   const isEditMode = review !== null;
@@ -44,7 +45,8 @@ export default function ReviewForm({
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    let response: Response | undefined;
     if (rating > 0) {
       if (isEditMode && review) {
         const updatedReview: UpdatedReview = {
@@ -52,6 +54,8 @@ export default function ReviewForm({
           rating,
           description: description.trim(),
         };
+
+        response = await updateReview(updatedReview);
       } else {
         if (!revieweeId) {
           console.error('revieweeId is required for creating new reviews');
@@ -63,37 +67,31 @@ export default function ReviewForm({
           rating,
           description: description.trim(),
         };
+
+        response = await addReview(newReview);
       }
     }
-  };
 
-  const handleDelete = () => {
-    if (!review) return;
+    console.log(response);
 
-    if (window.confirm('Are you sure you want to delete this review?')) {
-      console.log('Review deleted, id:', review.id);
+    if (!response?.ok) {
+      setError(true);
+    } else if (response?.ok) {
+      onSubmitSuccess?.();
     }
   };
 
-  if (isSubmitted) {
-    return (
-      <div className='mx-auto max-w-md rounded-lg bg-white p-6 shadow-md'>
-        <div className='text-center'>
-          <div className='mb-4 text-4xl text-green-500'>✓</div>
-          <h3 className='mb-2 text-lg font-semibold text-gray-900'>
-            {isEditMode
-              ? 'Review updated successfully!'
-              : 'Thank you for your review!'}
-          </h3>
-          <p className='text-gray-600'>
-            {isEditMode
-              ? 'Your changes have been saved.'
-              : 'Your feedback has been submitted successfully.'}
-          </p>
-        </div>
-      </div>
-    );
-  }
+  const handleDelete = async () => {
+    if (!review) return;
+    const response: Response = await deleteReview(review.id);
+    console.log(response);
+
+    if (response.ok) {
+      onSubmitSuccess?.();
+    } else {
+      setError(true);
+    }
+  };
 
   return (
     <div className='mx-auto max-w-md rounded-lg bg-white p-6 shadow-md'>
@@ -188,9 +186,9 @@ export default function ReviewForm({
           </button>
         )}
 
-        {!isEditMode && !revieweeId && (
+        {error && (
           <p className='text-center text-sm text-red-500'>
-            revieweeId is required to create a new review
+            Something went wrong. Please try again later
           </p>
         )}
       </div>
