@@ -36,7 +36,7 @@ declare module 'next-auth' {
 interface ExtendedJWT extends JWT {
   accessToken: string;
   refreshToken: string;
-  userID: number;
+  userId: number;
   username: string;
   email: string;
   selector: 'P' | 'C';
