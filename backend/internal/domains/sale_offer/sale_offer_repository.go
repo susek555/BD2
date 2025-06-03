@@ -45,7 +45,7 @@ func (r *SaleOfferRepository) GetByID(id uint) (*models.SaleOffer, error) {
 
 func (r *SaleOfferRepository) GetViewByID(id uint) (*views.SaleOfferView, error) {
 	var offerView views.SaleOfferView
-	err := r.DB.Table("sale_offer_view").Find(&offerView, id).Error
+	err := r.DB.Table("sale_offer_view").First(&offerView, id).Error
 	return &offerView, err
 }
 
