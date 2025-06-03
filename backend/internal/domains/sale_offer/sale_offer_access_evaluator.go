@@ -34,9 +34,9 @@ func (e *OfferAccessEvaluator) CanBeModifiedByUser(offerView *views.SaleOfferVie
 	if !offerView.BelongsToUser(*userID) {
 		return false, nil
 	}
-	// if !offerView.IsAcution {
-	// 	return true, nil
-	// }
+	if !offerView.IsAuction {
+		return true, nil
+	}
 	hasBids, err := e.hasBids(offerView)
 	if err != nil {
 		return false, err
