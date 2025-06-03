@@ -718,9 +718,9 @@ func TestGetFiltered_EmptyDatabase(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	var seedOffers []models.SaleOffer
 	server, _, _ := newTestServer(db, seedOffers)
-	filter := sale_offer.NewOfferFilter()
-	filter.Pagination = *u.GetDefaultPaginationRequest()
-	body, err := json.Marshal(filter)
+	filterRequest := sale_offer.NewOfferFilterRequest()
+	filterRequest.PagRequest = *u.GetDefaultPaginationRequest()
+	body, err := json.Marshal(filterRequest)
 	assert.NoError(t, err)
 	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/filtered", body, nil)
 	assert.Equal(t, http.StatusOK, receivedStatus)
@@ -735,9 +735,9 @@ func TestGetFiltered_OneRegularOffer(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedOffers := []models.SaleOffer{*createOffer(1)}
 	server, s, _ := newTestServer(db, seedOffers)
-	filter := sale_offer.NewOfferFilter()
-	filter.Pagination = *u.GetDefaultPaginationRequest()
-	body, err := json.Marshal(filter)
+	filterRequest := sale_offer.NewOfferFilterRequest()
+	filterRequest.PagRequest = *u.GetDefaultPaginationRequest()
+	body, err := json.Marshal(filterRequest)
 	assert.NoError(t, err)
 	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/filtered", body, nil)
 	assert.Equal(t, http.StatusOK, receivedStatus)
@@ -754,9 +754,9 @@ func TestGetFiltered_OneAuction(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedOffers := []models.SaleOffer{*createAuctionSaleOffer(1)}
 	server, _, _ := newTestServer(db, seedOffers)
-	filter := sale_offer.NewOfferFilter()
-	filter.Pagination = *u.GetDefaultPaginationRequest()
-	body, err := json.Marshal(filter)
+	filterRequest := sale_offer.NewOfferFilterRequest()
+	filterRequest.PagRequest = *u.GetDefaultPaginationRequest()
+	body, err := json.Marshal(filterRequest)
 	assert.NoError(t, err)
 	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/filtered", body, nil)
 	assert.Equal(t, http.StatusOK, receivedStatus)
@@ -778,9 +778,9 @@ func TestGetFiltered_AuctionsAndOffersCombined(t *testing.T) {
 	}
 
 	server, _, _ := newTestServer(db, seedOffers)
-	filter := sale_offer.NewOfferFilter()
-	filter.Pagination = *u.GetDefaultPaginationRequest()
-	body, err := json.Marshal(filter)
+	filterRequest := sale_offer.NewOfferFilterRequest()
+	filterRequest.PagRequest = *u.GetDefaultPaginationRequest()
+	body, err := json.Marshal(filterRequest)
 	assert.NoError(t, err)
 	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/filtered", body, nil)
 	assert.Equal(t, http.StatusOK, receivedStatus)
@@ -803,9 +803,9 @@ func TestGetFiltered_AuthorizedOtherUserOffers(t *testing.T) {
 		*createOffer(4),
 	}
 	server, s, _ := newTestServer(db, seedOffers)
-	filter := sale_offer.NewOfferFilter()
-	filter.Pagination = *u.GetDefaultPaginationRequest()
-	body, err := json.Marshal(filter)
+	filterRequest := sale_offer.NewOfferFilterRequest()
+	filterRequest.PagRequest = *u.GetDefaultPaginationRequest()
+	body, err := json.Marshal(filterRequest)
 	assert.NoError(t, err)
 	user := USERS[1]
 	token, _ := u.GetValidToken(user.ID, user.Email)
@@ -832,9 +832,9 @@ func TestGetFiltered_AuthorizedMyOffers(t *testing.T) {
 	}
 
 	server, _, _ := newTestServer(db, seedOffers)
-	filter := sale_offer.NewOfferFilter()
-	filter.Pagination = *u.GetDefaultPaginationRequest()
-	body, err := json.Marshal(filter)
+	filterRequest := sale_offer.NewOfferFilterRequest()
+	filterRequest.PagRequest = *u.GetDefaultPaginationRequest()
+	body, err := json.Marshal(filterRequest)
 	assert.NoError(t, err)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
