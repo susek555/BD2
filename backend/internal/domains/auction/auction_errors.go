@@ -8,3 +8,4 @@ var ErrModificationForbidden = errors.New("provided offer does not belong to log
 var ErrAuctionOwnedByUser = errors.New("you cannot buy your own auction")
 var ErrAuctionAlreadySold = errors.New("auction is already sold - cannot buy it again")
 var ErrNewPriceLessThanOfferPrice = errors.New("new price must be greater than offer price")
+var ErrAuctionNotPublished = errors.New("auction is not published")
