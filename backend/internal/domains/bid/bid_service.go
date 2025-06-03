@@ -4,6 +4,7 @@ import (
 	"sync"
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auction"
+	"github.com/susek555/BD2/car-dealer-api/internal/enums"
 	"github.com/susek555/BD2/car-dealer-api/pkg/mapping"
 	"gorm.io/gorm"
 )
@@ -36,10 +37,16 @@ func (service *BidService) Create(bidDTO *CreateBidDTO, bidderID uint) (*Process
 	bid := bidDTO.MapToBid(bidderID)
 	l, _ := auctionLocks.LoadOrStore(bid.AuctionID, &sync.Mutex{})
 	m := l.(*sync.Mutex)
-
+	auction, err := service.AuctionService.GetByIdNonDTO(bid.AuctionID)
+	if err != nil {
+		return nil, err
+	}
+	if auction.Offer.Status != enums.PUBLISHED {
+		return nil, ErrAuctionNotPublished
+	}
 	m.Lock()
 	defer m.Unlock()
-	err := service.Repo.Create(bid)
+	err = service.Repo.Create(bid)
 	if err != nil {
 		return nil, err
 	}
