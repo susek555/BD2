@@ -1,4 +1,4 @@
-const API_URL = process.env.API_URL;
+import { API_URL } from "@/app/lib/constants";
 
 export async function getColors() : Promise<string[]> {
   const response = await fetch(`${API_URL}/car/colors`, {

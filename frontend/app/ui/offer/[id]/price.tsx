@@ -35,6 +35,7 @@ export default function Price({ data, loggedIn }: { data: PriceData, loggedIn: b
                 await buyRegular(id);
             }
             setConfirmationOpen(false);
+            alert('Your purchase was successful! Now you will be redirected to your activity page.');
             router.replace('/account/activity');
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {

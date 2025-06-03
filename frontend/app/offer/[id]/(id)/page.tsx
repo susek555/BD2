@@ -1,3 +1,4 @@
+import { getMyCurrentBid } from '@/app/lib/api/offer/bid';
 import { authConfig } from '@/app/lib/authConfig';
 import { fetchOfferDetails } from '@/app/lib/data/offer/data';
 import { fetchAverageRating } from '@/app/lib/data/reviews/data';
@@ -20,15 +21,24 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     throw new Error('Offer not found');
   }
 
-  const sellerAverageRating = await fetchAverageRating(offer.sellerId);
-
   const session = await getServerSession(authConfig);
   const isLoggedIn = !!session;
+  const user_id = session?.user?.userId;
   const username = session?.user?.username;
 
-  console.log('username', username);
-  console.log('sellerName', offer.sellerName);
-  console.log('condition', username === offer.sellerName);
+  console.log('user_id', user_id);
+  console.log("is Auction", offer.isAuction);
+  console.log("condition", offer.isAuction && user_id);
+
+  const [sellerAverageRating, myCurrentBid] = await Promise.all([
+    fetchAverageRating(offer.sellerId),
+    // TODO: Uncomment when getMyCurrentBid is implemented
+    // (offer.isAuction && user_id) ? getMyCurrentBid(offer.id, user_id!) : Promise.resolve(undefined)
+    Promise.resolve(undefined)
+  ]);
+
+  console.log('My current bid:', myCurrentBid);
+
 
   return (
     <>
@@ -79,6 +89,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
                 isAuction: offer.isAuction,
                 auction: offer.auctionData,
                 isActive: offer.isActive,
+                myCurrentBid: myCurrentBid,
                 priceOnly:
                   offer.can_edit ||
                   offer.can_delete ||
