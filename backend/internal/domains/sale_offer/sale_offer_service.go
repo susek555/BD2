@@ -217,6 +217,12 @@ func (s *SaleOfferService) mapOfferWithAdditionalFields(offer *views.SaleOfferVi
 	if err != nil {
 		return nil, err
 	}
+	if offer.Status != enums.PUBLISHED {
+		return nil, ErrOfferNotPublished
+	}
+	if isAuction(offer) {
+		return nil, ErrOfferIsAuction
+	}
 	if len(urls) > 0 {
 		offerDTO.MainURL = urls[0]
 	}
