@@ -3,6 +3,7 @@ CREATE DATABASE bd2_test;
 \c bd2_test;
 
 \i /docker-entrypoint-initdb.d/01-schema.sql
+\i /docker-entrypoint-initdb.d/02-triggers.sql
 \i /docker-entrypoint-initdb.d/04-init-pg-ivm.sql
 
 INSERT INTO manufacturers (name) VALUES ('BMW'), ('Audi'), ('Toyota'), ('Honda'), ('Aston Martin');

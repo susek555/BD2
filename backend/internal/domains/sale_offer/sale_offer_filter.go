@@ -91,7 +91,7 @@ func (of *OfferFilter) ApplyOfferFilters(query *gorm.DB) (*gorm.DB, error) {
 
 func applyUserFilter(query *gorm.DB, userID *uint) *gorm.DB {
 	if userID != nil {
-		query = query.Where("sale_offers.user_id != ?", *userID)
+		query = query.Where("user_id != ?", *userID)
 	}
 	return query
 }
@@ -100,12 +100,11 @@ func applyOfferTypeFilter(query *gorm.DB, offerType *OfferType) *gorm.DB {
 	if offerType == nil {
 		return query
 	}
-	query = query.Joins("LEFT JOIN auctions on auctions.offer_id = sale_offer_view.id")
 	switch *offerType {
-	case AUCTION:
-		return query.Where("auctions.offer_id IS NOT NULL")
 	case REGULAR_OFFER:
-		return query.Where("auctions.offer_id IS NULL")
+		return query.Where("is_auction IS FALSE")
+	case AUCTION:
+		return query.Where("is_auction IS TRUE")
 	default:
 		return query
 	}
