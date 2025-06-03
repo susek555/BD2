@@ -15,6 +15,7 @@ type SaleOfferView struct {
 	DateOfIssue        time.Time
 	Margin             enums.MarginValue
 	Status             enums.Status
+	IsAuction          bool
 	Vin                string
 	ProductionYear     uint
 	Mileage            uint
