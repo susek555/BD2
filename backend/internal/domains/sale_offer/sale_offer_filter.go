@@ -34,26 +34,30 @@ type FieldsConstraints struct {
 }
 
 type OfferFilter struct {
-	Pagination               pagination.PaginationRequest `json:"pagination"`
-	UserID                   *uint                        `json:"user_id"`
-	Query                    *string                      `json:"query"`
-	OrderKey                 *string                      `json:"order_key"`
-	IsOrderDesc              *bool                        `json:"is_order_desc"`
-	LikedOnly                *bool                        `json:"liked_only"`
-	OfferType                *OfferType                   `json:"offer_type"`
-	Manufacturers            *[]string                    `json:"manufacturers"`
-	Colors                   *[]enums.Color               `json:"colors"`
-	Drives                   *[]enums.Drive               `json:"drives"`
-	FuelTypes                *[]enums.FuelType            `json:"fuel_types"`
-	Transmissions            *[]enums.Transmission        `json:"transmissions"`
-	PriceRange               *MinMax[uint]                `json:"price_range"`
-	MileageRange             *MinMax[uint]                `json:"mileage_range"`
-	YearRange                *MinMax[uint]                `json:"year_range"`
-	EnginePowerRange         *MinMax[uint]                `json:"engine_power_range"`
-	EngineCapacityRange      *MinMax[uint]                `json:"engine_capacity_range"`
-	CarRegistrationDateRange *MinMax[string]              `json:"car_registration_date_range"`
-	OfferCreationDateRange   *MinMax[string]              `json:"offer_creation_date_range"`
-	Constraints              FieldsConstraints            `json:"-"`
+	UserID                   *uint                 `json:"user_id"`
+	Query                    *string               `json:"query"`
+	OrderKey                 *string               `json:"order_key"`
+	IsOrderDesc              *bool                 `json:"is_order_desc"`
+	LikedOnly                *bool                 `json:"liked_only"`
+	OfferType                *OfferType            `json:"offer_type"`
+	Manufacturers            *[]string             `json:"manufacturers"`
+	Colors                   *[]enums.Color        `json:"colors"`
+	Drives                   *[]enums.Drive        `json:"drives"`
+	FuelTypes                *[]enums.FuelType     `json:"fuel_types"`
+	Transmissions            *[]enums.Transmission `json:"transmissions"`
+	PriceRange               *MinMax[uint]         `json:"price_range"`
+	MileageRange             *MinMax[uint]         `json:"mileage_range"`
+	YearRange                *MinMax[uint]         `json:"year_range"`
+	EnginePowerRange         *MinMax[uint]         `json:"engine_power_range"`
+	EngineCapacityRange      *MinMax[uint]         `json:"engine_capacity_range"`
+	CarRegistrationDateRange *MinMax[string]       `json:"car_registration_date_range"`
+	OfferCreationDateRange   *MinMax[string]       `json:"offer_creation_date_range"`
+	Constraints              FieldsConstraints     `json:"-"`
+}
+
+type OfferFilterRequest struct {
+	Filter     OfferFilter
+	PagRequest pagination.PaginationRequest
 }
 
 func NewOfferFilter() *OfferFilter {
@@ -64,6 +68,10 @@ func NewOfferFilter() *OfferFilter {
 		FuelTypes:     enums.Types,
 		Transmissions: enums.Transmissions,
 	}}
+}
+
+func NewOfferFilterRequest() *OfferFilterRequest {
+	return &OfferFilterRequest{Filter: *NewOfferFilter()}
 }
 
 func (of *OfferFilter) ApplyOfferFilters(query *gorm.DB) (*gorm.DB, error) {

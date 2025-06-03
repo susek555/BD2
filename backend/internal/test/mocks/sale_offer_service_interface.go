@@ -374,9 +374,9 @@ func (_c *SaleOfferServiceInterface_GetByUserID_Call) RunAndReturn(run func(uint
 	return _c
 }
 
-// GetFiltered provides a mock function with given fields: filter
-func (_m *SaleOfferServiceInterface) GetFiltered(filter *sale_offer.OfferFilter) (*sale_offer.RetrieveOffersWithPagination, error) {
-	ret := _m.Called(filter)
+// GetFiltered provides a mock function with given fields: filter, pagRequest
+func (_m *SaleOfferServiceInterface) GetFiltered(filter *sale_offer.OfferFilter, pagRequest *pagination.PaginationRequest) (*sale_offer.RetrieveOffersWithPagination, error) {
+	ret := _m.Called(filter, pagRequest)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetFiltered")
@@ -384,19 +384,19 @@ func (_m *SaleOfferServiceInterface) GetFiltered(filter *sale_offer.OfferFilter)
 
 	var r0 *sale_offer.RetrieveOffersWithPagination
 	var r1 error
-	if rf, ok := ret.Get(0).(func(*sale_offer.OfferFilter) (*sale_offer.RetrieveOffersWithPagination, error)); ok {
-		return rf(filter)
+	if rf, ok := ret.Get(0).(func(*sale_offer.OfferFilter, *pagination.PaginationRequest) (*sale_offer.RetrieveOffersWithPagination, error)); ok {
+		return rf(filter, pagRequest)
 	}
-	if rf, ok := ret.Get(0).(func(*sale_offer.OfferFilter) *sale_offer.RetrieveOffersWithPagination); ok {
-		r0 = rf(filter)
+	if rf, ok := ret.Get(0).(func(*sale_offer.OfferFilter, *pagination.PaginationRequest) *sale_offer.RetrieveOffersWithPagination); ok {
+		r0 = rf(filter, pagRequest)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*sale_offer.RetrieveOffersWithPagination)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(*sale_offer.OfferFilter) error); ok {
-		r1 = rf(filter)
+	if rf, ok := ret.Get(1).(func(*sale_offer.OfferFilter, *pagination.PaginationRequest) error); ok {
+		r1 = rf(filter, pagRequest)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -411,13 +411,14 @@ type SaleOfferServiceInterface_GetFiltered_Call struct {
 
 // GetFiltered is a helper method to define mock.On call
 //   - filter *sale_offer.OfferFilter
-func (_e *SaleOfferServiceInterface_Expecter) GetFiltered(filter interface{}) *SaleOfferServiceInterface_GetFiltered_Call {
-	return &SaleOfferServiceInterface_GetFiltered_Call{Call: _e.mock.On("GetFiltered", filter)}
+//   - pagRequest *pagination.PaginationRequest
+func (_e *SaleOfferServiceInterface_Expecter) GetFiltered(filter interface{}, pagRequest interface{}) *SaleOfferServiceInterface_GetFiltered_Call {
+	return &SaleOfferServiceInterface_GetFiltered_Call{Call: _e.mock.On("GetFiltered", filter, pagRequest)}
 }
 
-func (_c *SaleOfferServiceInterface_GetFiltered_Call) Run(run func(filter *sale_offer.OfferFilter)) *SaleOfferServiceInterface_GetFiltered_Call {
+func (_c *SaleOfferServiceInterface_GetFiltered_Call) Run(run func(filter *sale_offer.OfferFilter, pagRequest *pagination.PaginationRequest)) *SaleOfferServiceInterface_GetFiltered_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(*sale_offer.OfferFilter))
+		run(args[0].(*sale_offer.OfferFilter), args[1].(*pagination.PaginationRequest))
 	})
 	return _c
 }
@@ -427,7 +428,7 @@ func (_c *SaleOfferServiceInterface_GetFiltered_Call) Return(_a0 *sale_offer.Ret
 	return _c
 }
 
-func (_c *SaleOfferServiceInterface_GetFiltered_Call) RunAndReturn(run func(*sale_offer.OfferFilter) (*sale_offer.RetrieveOffersWithPagination, error)) *SaleOfferServiceInterface_GetFiltered_Call {
+func (_c *SaleOfferServiceInterface_GetFiltered_Call) RunAndReturn(run func(*sale_offer.OfferFilter, *pagination.PaginationRequest) (*sale_offer.RetrieveOffersWithPagination, error)) *SaleOfferServiceInterface_GetFiltered_Call {
 	_c.Call.Return(run)
 	return _c
 }

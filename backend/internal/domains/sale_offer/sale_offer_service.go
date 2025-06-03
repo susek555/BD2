@@ -28,7 +28,7 @@ type SaleOfferServiceInterface interface {
 	Publish(id uint, userID uint) (*RetrieveDetailedSaleOfferDTO, error)
 	GetByID(id uint, userID *uint) (*RetrieveDetailedSaleOfferDTO, error)
 	GetByUserID(id uint, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error)
-	GetFiltered(filter *OfferFilter) (*RetrieveOffersWithPagination, error)
+	GetFiltered(filter *OfferFilter, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error)
 	GetModelID(manufacturerName, modelName string) (uint, error)
 	DetermineNewModelID(offer *models.SaleOffer, dto *UpdateSaleOfferDTO) (uint, error)
 	Buy(offerID uint, userID uint) (*models.SaleOffer, error)
@@ -158,13 +158,13 @@ func (s *SaleOfferService) GetByUserID(id uint, pagRequest *pagination.Paginatio
 	return &RetrieveOffersWithPagination{Offers: offerDTOs, PaginationResponse: pagResponse}, nil
 }
 
-func (s *SaleOfferService) GetFiltered(filter *OfferFilter) (*RetrieveOffersWithPagination, error) {
+func (s *SaleOfferService) GetFiltered(filter *OfferFilter, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error) {
 	manufacturers, err := s.manRetriever.GetAll()
 	if err != nil {
 		return nil, err
 	}
 	filter.Constraints.Manufacturers = mapping.MapSliceToDTOs(manufacturers, manufacturer.MapToName)
-	offers, pagResponse, err := s.saleOfferRepo.GetFiltered(filter)
+	offers, pagResponse, err := s.saleOfferRepo.GetFiltered(filter, pagRequest)
 	if err != nil {
 		return nil, err
 	}
