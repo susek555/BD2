@@ -118,6 +118,9 @@ func (s *AuctionService) BuyNow(auctionID, userID uint) (*models.Auction, error)
 		return nil, ErrAuctionOwnedByUser
 	}
 	auction, err = s.auctionRepo.BuyNow(auctionID, userID)
+	if err != nil {
+		return nil, err
+	}
 	s.UpdatePrice(auctionID, auction.BuyNowPrice)
 	return auction, err
 }
