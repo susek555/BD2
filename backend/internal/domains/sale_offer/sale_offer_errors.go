@@ -24,6 +24,8 @@ var (
 	ErrOfferNotReadyToPublish       = errors.New("offer is not ready to be published - make sure that it have at least 3 images attached")
 	ErrOfferOwnedByUser             = errors.New("offer is owned by user - cannot buy your own offer")
 	ErrOfferAlreadySold             = errors.New("offer is already sold - cannot buy it again")
+	ErrOfferNotPublished            = errors.New("offer is not published - cannot buy it")
+	ErrOfferIsAuction               = errors.New("offer is an auction - cannot buy it directly, use bids instead")
 )
 
 var ErrorMap = map[error]int{
@@ -43,4 +45,6 @@ var ErrorMap = map[error]int{
 	gorm.ErrRecordNotFound:          http.StatusNotFound,
 	ErrOfferOwnedByUser:             http.StatusForbidden,
 	ErrOfferAlreadySold:             http.StatusConflict,
+	ErrOfferNotPublished:            http.StatusBadRequest,
+	ErrOfferIsAuction:               http.StatusBadRequest,
 }
