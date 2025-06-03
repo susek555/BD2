@@ -6,9 +6,9 @@ import { NextResponse } from 'next/server';
  */
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ revieweeId: string }> },
 ) {
-  const { id } = await params;
+  const { revieweeId } = await params;
   const data: Review[] = [
     {
       id: 1,
@@ -21,7 +21,7 @@ export async function GET(
         username: 'john_dev',
       },
       reviewee: {
-        id: parseInt(id),
+        id: parseInt(revieweeId),
         username: 'techmaster',
       },
     },
@@ -36,7 +36,7 @@ export async function GET(
         username: 'sara_coder',
       },
       reviewee: {
-        id: parseInt(id),
+        id: parseInt(revieweeId),
         username: 'techmaster',
       },
     },
@@ -50,7 +50,7 @@ export async function GET(
         username: 'dev_mike',
       },
       reviewee: {
-        id: parseInt(id),
+        id: parseInt(revieweeId),
         username: 'techmaster',
       },
     },
@@ -65,7 +65,7 @@ export async function GET(
         username: 'emma_tech',
       },
       reviewee: {
-        id: parseInt(id),
+        id: parseInt(revieweeId),
         username: 'techmaster',
       },
     },
