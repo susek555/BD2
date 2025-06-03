@@ -73,3 +73,5 @@ SELECT pgivm.create_immv(
     JOIN models mod ON c.model_id = mod.id
     JOIN manufacturers man ON mod.manufacturer_id = man.id $$
 );
+
+CREATE UNIQUE INDEX ON sale_offer_view (id);
