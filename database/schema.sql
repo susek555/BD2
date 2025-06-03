@@ -65,8 +65,9 @@ CREATE TABLE sale_offers (
     description VARCHAR(2000) NOT NULL,
     price INTEGER NOT NULL,
     date_of_issue TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    margin INTEGER CHECK (margin in (3, 5, 10)),
-    status OFFER_STATUS NOT NULL
+    margin INTEGER NOT NULL CHECK (margin in (3, 5, 10)) ,
+    status OFFER_STATUS NOT NULL,
+    is_auction BOOLEAN
 );
 
 CREATE TABLE auctions (
