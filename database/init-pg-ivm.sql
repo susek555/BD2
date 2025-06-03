@@ -51,6 +51,7 @@ SELECT pgivm.create_immv(
     s.date_of_issue,
     s.margin,
     s.status,
+    s.is_auction,
     c.vin,
     c.production_year,
     c.mileage,
