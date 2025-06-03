@@ -66,7 +66,8 @@ func MapToDTO(offer *models.SaleOffer) *RetrieveSaleOfferDTO {
 		Mileage:        offer.Car.Mileage,
 		ProductionYear: offer.Car.ProductionYear,
 		Color:          offer.Car.Color,
-		IsAuction:      offer.Auction != nil,
+		Status:         offer.Status,
+		IsAuction:      offer.IsAuction,
 	}
 }
 
