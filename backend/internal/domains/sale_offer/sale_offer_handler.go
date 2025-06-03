@@ -167,13 +167,13 @@ func (h *Handler) GetFilteredSaleOffers(c *gin.Context) {
 //	@Failure		404	{object}	custom_errors.HTTPError			"Sale offer not found"
 //	@Failure		500	{object}	custom_errors.HTTPError			"Internal server error"
 //	@Router			/sale-offer/id/{id} [get]
-func (h *Handler) GetSaleOfferByID(c *gin.Context) {
+func (h *Handler) GetSaleOfferByIDDetailed(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
-	offerDTO, err := h.service.GetByID(uint(id), getOptionalUserID(c))
+	offerDTO, err := h.service.GetByIDDetailed(uint(id), getOptionalUserID(c))
 	if err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
