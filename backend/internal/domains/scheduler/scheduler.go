@@ -14,6 +14,7 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/ws"
 	"github.com/susek555/BD2/car-dealer-api/internal/enums"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
+	"gorm.io/gorm"
 )
 
 type BidRepo interface {
@@ -28,7 +29,7 @@ type Scheduler struct {
 	redisClient         *redis.Client
 
 	addCh        chan *Item
-	forceCloseCh chan string
+	forceCloseCh chan BuyNowRecord
 
 	saleOfferRepository sale_offer.SaleOfferRepositoryInterface
 	hub                 ws.HubInterface
@@ -39,15 +40,14 @@ type SchedulerInterface interface {
 	AddAuction(auctionID string, end time.Time)
 	Run(ctx context.Context)
 	LoadAuctions() error
-	CloseAuction(auctionID string)
-	ForceCloseAuction(auctionID string)
+	ForceCloseAuction(auctionID string, buyerID uint, amount uint)
 }
 
 func NewScheduler(repo BidRepo, redisClient *redis.Client, notificationService notification.NotificationServiceInterface, saleOfferRepo sale_offer.SaleOfferRepositoryInterface, hub ws.HubInterface) SchedulerInterface {
 	return &Scheduler{
 		heap:         make(timerHeap, 0),
 		addCh:        make(chan *Item, 1024),
-		forceCloseCh: make(chan string, 64),
+		forceCloseCh: make(chan BuyNowRecord, 1024),
 
 		notificationService: notificationService,
 		repo:                repo,
@@ -119,9 +119,9 @@ func (s *Scheduler) Run(ctx context.Context) {
 			s.mu.Unlock()
 			continue
 
-		case auctionID := <-s.forceCloseCh:
-			s.removeFromHeap(auctionID)
-			s.closeAuctionByID(auctionID)
+		case buyNowRecord := <-s.forceCloseCh:
+			s.removeFromHeap(buyNowRecord.AuctionID)
+			s.closeAuctionByID(buyNowRecord.AuctionID, &buyNowRecord.BuyerID, &buyNowRecord.Price)
 
 		case <-timer.C:
 			s.mu.Lock()
@@ -132,7 +132,7 @@ func (s *Scheduler) Run(ctx context.Context) {
 			next := heap.Pop(&s.heap).(*Item)
 			s.mu.Unlock()
 
-			s.closeAuctionByID(next.AuctionID)
+			s.closeAuctionByID(next.AuctionID, nil, nil)
 		}
 	}
 }
@@ -151,52 +151,64 @@ func (s *Scheduler) removeFromHeap(auctionID string) {
 	log.Printf("scheduler: auction %s not found in heap", auctionID)
 }
 
-func (s *Scheduler) CloseAuction(auctionID string) {
-	if auctionID == "" {
-		s.mu.Lock()
-		if len(s.heap) == 0 {
-			s.mu.Unlock()
-			return
-		}
-		item := heap.Pop(&s.heap).(*Item)
-		s.mu.Unlock()
-
-		auctionID = item.AuctionID
-		log.Printf("scheduler: (heap) closing auction %s", auctionID)
-	} else {
-		s.mu.Lock()
-		for i, item := range s.heap {
-			if item.AuctionID == auctionID {
-				heap.Remove(&s.heap, i)
-				break
-			}
-		}
-		s.mu.Unlock()
-		log.Printf("scheduler: (manual) closing auction %s", auctionID)
-
+func (s *Scheduler) ForceCloseAuction(auctionID string, buyerID uint, amount uint) {
+	buyNowRecord := BuyNowRecord{
+		AuctionID: auctionID,
+		Price:     amount,
+		BuyerID:   buyerID,
 	}
-
-	s.closeAuctionByID(auctionID)
-}
-
-func (s *Scheduler) ForceCloseAuction(auctionID string) {
 	select {
-	case s.forceCloseCh <- auctionID:
+	case s.forceCloseCh <- buyNowRecord:
 	default:
 		log.Printf("scheduler: force close channel is full, skipping auction %s", auctionID)
 		return
 	}
 }
 
-func (s *Scheduler) closeAuctionByID(auctionID string) {
+func (s *Scheduler) closeAuctionByID(auctionID string, buyerID *uint, amount *uint) {
 	auctionIDInt, err := strconv.Atoi(auctionID)
 	if err != nil {
 		log.Printf("scheduler: invalid auctionID %q: %v", auctionID, err)
 		return
 	}
-	highest, _ := s.repo.GetHighestBid(uint(auctionIDInt))
+	if buyerID != nil && amount != nil {
+		log.Printf("scheduler: force closing auction %d by buyer %d with amount %d", auctionIDInt, *buyerID, *amount)
+		if err := s.saleOfferRepository.UpdateStatus(uint(auctionIDInt), enums.SOLD); err != nil {
+			log.Printf("scheduler: error updating status for auction %d: %v", auctionIDInt, err)
+			return
+		}
+		if err := s.saleOfferRepository.SaveToPurchases(uint(auctionIDInt), *buyerID, *amount); err != nil {
+			log.Printf("scheduler: error saving purchase for auction %d: %v", auctionIDInt, err)
+			return
+		}
+		notif := models.Notification{OfferID: uint(auctionIDInt)}
+		offer, err := s.saleOfferRepository.GetByID(uint(auctionIDInt))
+		if err != nil {
+			log.Printf("scheduler: cannot load offer %d: %v", auctionIDInt, err)
+			return
+		}
+		winnerID := strconv.FormatUint(uint64(*buyerID), 10)
+		if err := s.notificationService.CreateEndAuctionNotification(&notif, winnerID, int64(*amount), offer); err != nil {
+			log.Printf("scheduler: notif create failed: %v", err)
+			_ = s.saleOfferRepository.UpdateStatus(uint(auctionIDInt), enums.EXPIRED)
+			return
+		}
+		s.hub.SaveNotificationForClients(auctionID, 0, &notif)
+		s.hub.SendFourLatestNotificationsToClient(auctionID, "0")
+		return
+	}
+	highest, err := s.repo.GetHighestBid(uint(auctionIDInt))
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			log.Printf("scheduler: no bids found for auction %d, marking as expired", auctionIDInt)
+			_ = s.saleOfferRepository.UpdateStatus(uint(auctionIDInt), enums.EXPIRED)
+			return
+		}
+		log.Printf("scheduler: error fetching highest bid for auction %d: %v", auctionIDInt, err)
+		return
+	}
 	winnerID := strconv.FormatUint(uint64(highest.BidderID), 10)
-	amount := int64(highest.Amount)
+	amount = &highest.Amount
 
 	notif := models.Notification{OfferID: uint(auctionIDInt)}
 	offer, err := s.saleOfferRepository.GetByID(uint(auctionIDInt))
@@ -205,7 +217,7 @@ func (s *Scheduler) closeAuctionByID(auctionID string) {
 		return
 	}
 
-	if err := s.notificationService.CreateEndAuctionNotification(&notif, winnerID, amount, offer); err != nil {
+	if err := s.notificationService.CreateEndAuctionNotification(&notif, winnerID, int64(*amount), offer); err != nil {
 		log.Printf("scheduler: notif create failed: %v", err)
 		_ = s.saleOfferRepository.UpdateStatus(uint(auctionIDInt), enums.EXPIRED)
 		return
