@@ -2,10 +2,7 @@ import SideBar from '@/app/ui/(filters-sidebar)/sidebar';
 import { Suspense } from 'react';
 import { fetchHomePageData } from "@/app/lib/data/(home)/data";
 import {
-  parseArrayOrUndefined,
-  parseIntOrUndefined,
-  trimAllAfterFirstSpace,
-  SearchParams,
+  parseFiltersParams,
 } from '../lib/definitions/SearchParams';
 import FoundInfo from '../ui/(common)/found-info';
 import OffersTable from '../ui/(offers-table)/offers-table';
@@ -42,42 +39,7 @@ export default async function Home(props: {
 }) {
   const searchParams = await props.searchParams;
 
-  const params: SearchParams = {
-    query: searchParams?.query,
-    pagination: {
-      page: searchParams?.page ? parseInt(searchParams.page, 10) : 1,
-      page_size: 6,
-    },
-    order_key: searchParams?.sortKey,
-    is_order_desc: searchParams?.isSortDesc === "true" ? true : undefined,
-    offer_type: searchParams?.offerType,
-    manufacturers: parseArrayOrUndefined(searchParams?.Producers),
-    models: trimAllAfterFirstSpace(parseArrayOrUndefined(searchParams?.Models)),
-    colors: parseArrayOrUndefined(searchParams?.Colors),
-    transmissions: parseArrayOrUndefined(searchParams?.Gearboxes),
-    fuel_types: parseArrayOrUndefined(searchParams?.Fueltypes),
-    drives: parseArrayOrUndefined(searchParams?.Drivetypes),
-    price_range: parseIntOrUndefined(searchParams?.Price_min) || parseIntOrUndefined(searchParams?.Price_max) ? {
-      min: parseIntOrUndefined(searchParams?.Price_min),
-      max: parseIntOrUndefined(searchParams?.Price_max),
-    } : undefined,
-    mileage_range: parseIntOrUndefined(searchParams?.Mileage_min) || parseIntOrUndefined(searchParams?.Mileage_max) ? {
-      min: parseIntOrUndefined(searchParams?.Mileage_min),
-      max: parseIntOrUndefined(searchParams?.Mileage_max),
-    } : undefined,
-    year_range: parseIntOrUndefined(searchParams?.Productionyear_min) || parseIntOrUndefined(searchParams?.Productionyear_max) ? {
-      min: parseIntOrUndefined(searchParams?.Productionyear_min),
-      max: parseIntOrUndefined(searchParams?.Productionyear_max),
-    } : undefined,
-    engine_capacity_range: parseIntOrUndefined(searchParams?.Enginecapacity_min) || parseIntOrUndefined(searchParams?.Enginecapacity_max) ? {
-      min: parseIntOrUndefined(searchParams?.Enginecapacity_min),
-      max: parseIntOrUndefined(searchParams?.Enginecapacity_max),
-    } : undefined,
-    engine_power_range: parseIntOrUndefined(searchParams?.Enginepower_min) || parseIntOrUndefined(searchParams?.Enginepower_max) ? {
-      min: parseIntOrUndefined(searchParams?.Enginepower_min),
-      max: parseIntOrUndefined(searchParams?.Enginepower_max),
-    } : undefined,
-  };
+  const params = parseFiltersParams(searchParams);
 
   console.log('Search Params:', params);
 
