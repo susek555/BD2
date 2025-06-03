@@ -114,6 +114,9 @@ func (s *AuctionService) BuyNow(auctionID, userID uint) (*models.Auction, error)
 	if err != nil {
 		return nil, err
 	}
+	if auction.Offer.Status != enums.PUBLISHED {
+		return nil, ErrAuctionNotPublished
+	}
 	if auction.Offer.UserID == userID {
 		return nil, ErrAuctionOwnedByUser
 	}
