@@ -69,7 +69,7 @@ export default function GenericOfferCard<T extends BaseOffer = BaseOffer>({
             <p className='text-bg'>
               Mileage:{' '}
               <span className='font-bold'>
-                {offer.mileage.toLocaleString()} km
+              {offer.mileage.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} km
               </span>
             </p>
           </div>
