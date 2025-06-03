@@ -5,6 +5,7 @@ import (
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auction"
 	"github.com/susek555/BD2/car-dealer-api/pkg/mapping"
+	"gorm.io/gorm"
 )
 
 type BidServiceInterface interface {
@@ -61,6 +62,9 @@ func (service *BidService) GetAll() ([]RetrieveBidDTO, error) {
 func (service *BidService) GetByID(id uint) (*RetrieveBidDTO, error) {
 	bid, err := service.Repo.GetByID(id)
 	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return &RetrieveBidDTO{}, nil
+		}
 		return nil, err
 	}
 	return MapToDTO(bid), nil
@@ -87,6 +91,9 @@ func (service *BidService) GetByAuctionID(auctionID uint) ([]RetrieveBidDTO, err
 func (service *BidService) GetHighestBid(auctionID uint) (*RetrieveBidDTO, error) {
 	bid, err := service.Repo.GetHighestBid(auctionID)
 	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return &RetrieveBidDTO{}, nil
+		}
 		return nil, err
 	}
 	return MapToDTO(bid), nil
@@ -95,6 +102,9 @@ func (service *BidService) GetHighestBid(auctionID uint) (*RetrieveBidDTO, error
 func (service *BidService) GetHighestBidByUserID(auctionID, userID uint) (*RetrieveBidDTO, error) {
 	bid, err := service.Repo.GetHighestBidByUserID(auctionID, userID)
 	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return &RetrieveBidDTO{}, nil
+		}
 		return nil, err
 	}
 	return MapToDTO(bid), nil
