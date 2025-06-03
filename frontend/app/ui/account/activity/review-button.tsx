@@ -1,25 +1,39 @@
 'use client';
 
+import { getReviewByRevieweeReviewer } from '@/app/lib/api/reviews';
+import { Review } from '@/app/lib/definitions/reviews';
 import { MouseEvent, useState } from 'react';
 import { AverageRatingCard } from '../../review/average-rating-card';
 import ReviewModal from '../../review/review-modal';
 
 interface ReviewButtonProps {
   sellerRating?: number;
-  sellerId?: number;
+  sellerId: number;
+  userId: number;
 }
 
 export default function ReviewButton({
   sellerRating,
   sellerId,
+  userId,
 }: ReviewButtonProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [review, setReview] = useState<Review | undefined>(undefined);
 
-  const onClick = (e: MouseEvent<HTMLButtonElement>) => {
+  const onClick = async (e: MouseEvent<HTMLButtonElement>) => {
+    console.log('Review click');
     e.stopPropagation();
     e.preventDefault();
+    try {
+      if (sellerRating) {
+        const review = await getReviewByRevieweeReviewer(sellerId, userId);
+        setReview(review);
+      }
+    } catch {
+      // TODO display error message when failed to fetch review
+      return;
+    }
     setDialogOpen(true);
-    console.log('Review click');
   };
 
   return (
@@ -40,10 +54,14 @@ export default function ReviewButton({
         </button>
       )}
       <ReviewModal
+        review={review}
         revieweeId={sellerId}
         open={dialogOpen}
         onOpenChange={setDialogOpen}
-        onSubmit={() => setDialogOpen(false)}
+        onSubmit={() => {
+          setDialogOpen(false);
+          window.location.reload();
+        }}
       />
     </>
   );

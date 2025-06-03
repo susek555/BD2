@@ -2,7 +2,13 @@ import { HistoryOffer } from '@/app/lib/definitions/SaleOffer';
 import GenericOfferCard from '@/app/ui/(offers-table)/generic-offer-card';
 import ReviewButton from './review-button';
 
-export default function SingleHistoryOffer({ offer }: { offer: HistoryOffer }) {
+export default function SingleHistoryOffer({
+  offer,
+  userId,
+}: {
+  offer: HistoryOffer;
+  userId: number;
+}) {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-EN', {
@@ -28,6 +34,7 @@ export default function SingleHistoryOffer({ offer }: { offer: HistoryOffer }) {
 
         <div className='right pr-4'>
           <ReviewButton
+            userId={userId}
             sellerId={offer.sellerId}
             sellerRating={offer.sellerRating}
           />
