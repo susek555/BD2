@@ -21,6 +21,8 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     throw new Error('Offer not found');
   }
 
+  // TODO check if price updating is working after bid or make request for highest bid
+
   const session = await getServerSession(authConfig);
   const isLoggedIn = !!session;
   const user_id = session?.user?.userId;

@@ -3,8 +3,13 @@
 import React, { useState } from 'react';
 import { BasePriceButton } from './price-buttons/base-price-button';
 import { CurrencyDollarIcon } from '@heroicons/react/20/solid';
+import ConfirmationModal from '../../(common)/confirm-modal';
+import { useRouter } from 'next/navigation';
+import { placeBid } from '@/app/lib/api/offer/bid';
 
 export default function BidForm({ currentBid }: { currentBid: number }) {
+    const router = useRouter();
+
     const [bidValue, setBidValue] = useState('');
     const [errors, setErrors] = useState<string | null>(null);
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
@@ -20,15 +25,23 @@ export default function BidForm({ currentBid }: { currentBid: number }) {
         }
     };
 
-    const confirmBid = () => {
+    const confirmBid = async () => {
         console.log('Bid is valid:', bidValue);
         //TODO: Add logic to process the valid bid
 
-        setShowConfirmDialog(false);
-    };
+        try {
+            await placeBid({
+                amount: parseInt(bidValue),
+                auction_id: parseInt(window.location.pathname.split('/').pop() || '0'),
+            });
+            setShowConfirmDialog(false);
+            alert('Your bid successful!');
 
-    const cancelBid = () => {
-        setShowConfirmDialog(false);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        } catch (error) {
+            alert('An error occurred while processing your bid. Please try again.');
+        }
+        router.refresh();
     };
 
     return (
@@ -63,27 +76,16 @@ export default function BidForm({ currentBid }: { currentBid: number }) {
                 )}
             </form>
 
-            {showConfirmDialog && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-white p-6 rounded shadow-lg">
-                        <p className="mb-4">Are you sure you want to place a bid of ${bidValue}?</p>
-                        <div className="flex justify-end gap-2">
-                            <button
-                                onClick={cancelBid}
-                                className="px-4 py-2 bg-gray-300 rounded"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={confirmBid}
-                                className="px-4 py-2 bg-blue-500 text-white rounded"
-                            >
-                                Confirm
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <ConfirmationModal
+                title='Confirm Bid'
+                message='Are you sure you want to bid this offer? This action cannot be undone.'
+                confirmText='Bid'
+                onConfirm={confirmBid}
+                onCancel={() => setShowConfirmDialog(false)}
+                isOpen={showConfirmDialog}
+                bg_color='bg-blue-500'
+                bg_color_hover='bg-blue-600'
+            />
         </>
     );
 };

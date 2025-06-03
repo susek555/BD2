@@ -63,11 +63,13 @@ export default function Price({ data, loggedIn }: { data: PriceData, loggedIn: b
                         </div>
                         {loggedIn ? (
                             <div className="flex flex-col gap-2 justify-center items-center">
-                                <p className="text-2xl">Your bid</p>
                                 { myCurrentBid ? (
-                                    <p className="font-bold text-2xl">{myCurrentBid.toString()} PLN</p>
+                                    <>
+                                        <p className="text-2xl">Your bid</p>
+                                        <p className="font-bold text-2xl">{myCurrentBid.toString()} PLN</p>
+                                    </>
                                 ) : (
-                                    <p className="font-bold text-2xl">0 PLN</p>
+                                    <p className="font-bold text-2xl">Place your bid</p>
                                 )}
                                 {!priceOnly ? (
                                     <BidForm currentBid={auction!.currentBid} />
