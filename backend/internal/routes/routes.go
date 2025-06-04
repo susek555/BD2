@@ -28,6 +28,7 @@ func RegisterRoutes(router *gin.Engine) {
 	registerWebsocket(router)
 	registerImageRoutes(router)
 	registerFavouriteRoutes(router)
+	registerNotificationRoutes(router)
 }
 
 func registerWebsocket(router *gin.Engine) {
@@ -135,5 +136,12 @@ func registerImageRoutes(router *gin.Engine) {
 		imageRoutes.PATCH("/:id", middleware.Authenticate(initializers.Verifier), initializers.ImageHandler.UploadImages)
 		imageRoutes.DELETE("/", middleware.Authenticate(initializers.Verifier), initializers.ImageHandler.DeleteImage)
 		imageRoutes.DELETE("/offer/:id", middleware.Authenticate(initializers.Verifier), initializers.ImageHandler.DeleteImages)
+	}
+}
+
+func registerNotificationRoutes(router *gin.Engine) {
+	notificationRoutes := router.Group("/notification")
+	{
+		notificationRoutes.POST("/filtered", middleware.Authenticate(initializers.Verifier), initializers.NotificationHandler.GetFilteredNotifications)
 	}
 }

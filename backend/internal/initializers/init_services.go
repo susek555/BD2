@@ -45,7 +45,7 @@ func InitializeServices() {
 	ImageService = image.NewImageService(ImageRepo, ImageBucket, SaleOfferRepo)
 	ManufacturerService = manufacturer.NewManufacturerService(ManufacturerRepo)
 	ModelService = model.NewModelService(ModelRepo)
-	NotificationService = notification.NewNotificationService(NotificationRepo)
+	NotificationService = notification.NewNotificationService(NotificationRepo, ClientNotificationRepo)
 	ReviewService = review.NewReviewService(ReviewRepo)
 	AccessEvaluator = sale_offer.NewAccessEvaluator(BidRepo, LikedOfferRepo)
 	SaleOfferService = sale_offer.NewSaleOfferService(SaleOfferRepo, ManufacturerRepo, ModelRepo, ImageRepo, AccessEvaluator, PurchaseRepo)

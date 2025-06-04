@@ -2,6 +2,7 @@ package notification
 
 import (
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
+	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
 	"gorm.io/gorm"
 )
 
@@ -13,6 +14,7 @@ type ClientNotificationRepositoryInterface interface {
 	GetLatestByUserID(userID uint, count int) ([]models.ClientNotification, error)
 	GetUnseenCountByUserId(userId uint) (uint, error)
 	GetAllCountByUserId(userId uint) (uint, error)
+	GetFiltered(filter *NotificationFilter) ([]models.ClientNotification, *pagination.PaginationResponse, error)
 }
 
 type ClientNotificationRepository struct {
@@ -99,4 +101,21 @@ func (r *ClientNotificationRepository) GetAllCountByUserId(userId uint) (uint, e
 		return 0, err
 	}
 	return uint(count), nil
+}
+
+func (r *ClientNotificationRepository) GetFiltered(filter *NotificationFilter) ([]models.ClientNotification, *pagination.PaginationResponse, error) {
+	query := r.DB.Model(&models.ClientNotification{}).
+		Joins("JOIN notifications ON notifications.id = client_notifications.notification_id").
+		Preload("Notification")
+
+	query, err := filter.ApplyNotificationFilters(query)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	clientNotifications, paginationResponse, err := pagination.PaginateResults[models.ClientNotification](&filter.Pagination, query)
+	if err != nil {
+		return nil, nil, err
+	}
+	return clientNotifications, paginationResponse, nil
 }

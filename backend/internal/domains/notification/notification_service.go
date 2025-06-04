@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
+	"github.com/susek555/BD2/car-dealer-api/pkg/mapping"
 )
 
 //go:generate mockery --name=NotificationServiceInterface --output=../../test/mocks --case=snake --with-expecter
@@ -15,15 +16,18 @@ type NotificationServiceInterface interface {
 	CreateBuyNotication(notification *models.Notification, buyerID string, offer *models.SaleOffer) error
 	CreateBuyNowNotification(notification *models.Notification, buyerID string, offer *models.Auction) error
 	GetNotificationByID(id uint) (*models.Notification, error)
+	GetFilteredNotifications(filter *NotificationFilter) (*RetrieveNotificationsWithPagination, error)
 }
 
 type NotificationService struct {
-	NotificationRepository NotificationRepositoryInterface
+	NotificationRepository       NotificationRepositoryInterface
+	ClientNotificationRepository ClientNotificationRepositoryInterface
 }
 
-func NewNotificationService(notificationRepository NotificationRepositoryInterface) NotificationServiceInterface {
+func NewNotificationService(notificationRepository NotificationRepositoryInterface, clientNotification ClientNotificationRepositoryInterface) NotificationServiceInterface {
 	return &NotificationService{
-		NotificationRepository: notificationRepository,
+		NotificationRepository:       notificationRepository,
+		ClientNotificationRepository: clientNotification,
 	}
 }
 
@@ -64,4 +68,16 @@ func (s *NotificationService) GetNotificationByID(id uint) (*models.Notification
 		return nil, err
 	}
 	return notification, nil
+}
+
+func (s *NotificationService) GetFilteredNotifications(filter *NotificationFilter) (*RetrieveNotificationsWithPagination, error) {
+	notifications, pagResponse, err := s.ClientNotificationRepository.GetFiltered(filter)
+	if err != nil {
+		return nil, err
+	}
+	notificationsDTO := mapping.MapSliceToDTOs(notifications, MapToNotificationDTO)
+	return &RetrieveNotificationsWithPagination{
+		Notifications:      notificationsDTO,
+		PaginationResponse: pagResponse,
+	}, nil
 }

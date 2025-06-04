@@ -4,6 +4,7 @@ package mocks
 
 import (
 	mock "github.com/stretchr/testify/mock"
+	notification "github.com/susek555/BD2/car-dealer-api/internal/domains/notification"
 	models "github.com/susek555/BD2/car-dealer-api/internal/models"
 )
 
@@ -209,6 +210,64 @@ func (_c *NotificationServiceInterface_CreateOutbidNotification_Call) Return(_a0
 }
 
 func (_c *NotificationServiceInterface_CreateOutbidNotification_Call) RunAndReturn(run func(*models.Notification, int64, *models.Auction) error) *NotificationServiceInterface_CreateOutbidNotification_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// GetFilteredNotifications provides a mock function with given fields: filter
+func (_m *NotificationServiceInterface) GetFilteredNotifications(filter *notification.NotificationFilter) (*notification.RetrieveNotificationsWithPagination, error) {
+	ret := _m.Called(filter)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetFilteredNotifications")
+	}
+
+	var r0 *notification.RetrieveNotificationsWithPagination
+	var r1 error
+	if rf, ok := ret.Get(0).(func(*notification.NotificationFilter) (*notification.RetrieveNotificationsWithPagination, error)); ok {
+		return rf(filter)
+	}
+	if rf, ok := ret.Get(0).(func(*notification.NotificationFilter) *notification.RetrieveNotificationsWithPagination); ok {
+		r0 = rf(filter)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*notification.RetrieveNotificationsWithPagination)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(*notification.NotificationFilter) error); ok {
+		r1 = rf(filter)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// NotificationServiceInterface_GetFilteredNotifications_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetFilteredNotifications'
+type NotificationServiceInterface_GetFilteredNotifications_Call struct {
+	*mock.Call
+}
+
+// GetFilteredNotifications is a helper method to define mock.On call
+//   - filter *notification.NotificationFilter
+func (_e *NotificationServiceInterface_Expecter) GetFilteredNotifications(filter interface{}) *NotificationServiceInterface_GetFilteredNotifications_Call {
+	return &NotificationServiceInterface_GetFilteredNotifications_Call{Call: _e.mock.On("GetFilteredNotifications", filter)}
+}
+
+func (_c *NotificationServiceInterface_GetFilteredNotifications_Call) Run(run func(filter *notification.NotificationFilter)) *NotificationServiceInterface_GetFilteredNotifications_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(*notification.NotificationFilter))
+	})
+	return _c
+}
+
+func (_c *NotificationServiceInterface_GetFilteredNotifications_Call) Return(_a0 *notification.RetrieveNotificationsWithPagination, _a1 error) *NotificationServiceInterface_GetFilteredNotifications_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *NotificationServiceInterface_GetFilteredNotifications_Call) RunAndReturn(run func(*notification.NotificationFilter) (*notification.RetrieveNotificationsWithPagination, error)) *NotificationServiceInterface_GetFilteredNotifications_Call {
 	_c.Call.Return(run)
 	return _c
 }
