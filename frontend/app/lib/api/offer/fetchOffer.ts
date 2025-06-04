@@ -1,12 +1,24 @@
 import { fetchWithRefresh } from "../fetchWithRefresh";
+import { authConfig } from "@/app/lib/authConfig";
+import { getServerSession } from "next-auth/next";
 
 const API_URL = process.env.API_URL;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function getOfferData(id : number) : Promise<any> {
-  const response = await fetchWithRefresh(`${API_URL}/sale-offer/id/${id}`, {
-    method: "GET",
-  });
+  const session = await getServerSession(authConfig);
+
+  let response;
+  if (!session) {
+    response = await fetch(`${API_URL}/sale-offer/id/${id}`, {
+      method: "GET",
+    });
+  } else {
+    response = await fetchWithRefresh(`${API_URL}/sale-offer/id/${id}`, {
+      method: "GET",
+    });
+  }
+
 
   if (!response.ok) {
     throw new Error("Failed to fetch offer data");
