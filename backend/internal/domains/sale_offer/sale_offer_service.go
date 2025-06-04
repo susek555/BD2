@@ -27,7 +27,7 @@ type SaleOfferServiceInterface interface {
 	Update(in *UpdateSaleOfferDTO, userID uint) (*RetrieveDetailedSaleOfferDTO, error)
 	Publish(id uint, userID uint) (*RetrieveDetailedSaleOfferDTO, error)
 	GetByID(id uint, userID *uint) (*RetrieveSaleOfferDTO, error)
-	GetByIDDetailed(id uint, userID *uint) (*RetrieveDetailedSaleOfferDTO, error)
+	GetDetailedByID(id uint, userID *uint) (*RetrieveDetailedSaleOfferDTO, error)
 	GetByUserID(id uint, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error)
 	GetFiltered(filter *OfferFilter, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error)
 	GetModelID(manufacturerName, modelName string) (uint, error)
@@ -73,7 +73,7 @@ func (s *SaleOfferService) Create(in *CreateSaleOfferDTO) (*RetrieveDetailedSale
 	if err := s.saleOfferRepo.Create(offer); err != nil {
 		return nil, err
 	}
-	return s.GetByIDDetailed(offer.ID, &offer.UserID)
+	return s.GetDetailedByID(offer.ID, &offer.UserID)
 }
 
 func (s *SaleOfferService) Update(in *UpdateSaleOfferDTO, userID uint) (*RetrieveDetailedSaleOfferDTO, error) {
@@ -96,7 +96,7 @@ func (s *SaleOfferService) Update(in *UpdateSaleOfferDTO, userID uint) (*Retriev
 	if err = s.saleOfferRepo.Update(updatedOffer); err != nil {
 		return nil, err
 	}
-	return s.GetByIDDetailed(offer.ID, &offer.UserID)
+	return s.GetDetailedByID(offer.ID, &offer.UserID)
 }
 
 func (s *SaleOfferService) Publish(id uint, userID uint) (*RetrieveDetailedSaleOfferDTO, error) {
@@ -114,7 +114,7 @@ func (s *SaleOfferService) Publish(id uint, userID uint) (*RetrieveDetailedSaleO
 	if err := s.saleOfferRepo.Update(offer); err != nil {
 		return nil, err
 	}
-	return s.GetByIDDetailed(id, &userID)
+	return s.GetDetailedByID(id, &userID)
 }
 
 func (s *SaleOfferService) GetByID(id uint, userID *uint) (*RetrieveSaleOfferDTO, error) {
@@ -125,7 +125,7 @@ func (s *SaleOfferService) GetByID(id uint, userID *uint) (*RetrieveSaleOfferDTO
 	return s.mapOfferWithAdditionalFields(offer, userID)
 }
 
-func (s *SaleOfferService) GetByIDDetailed(id uint, userID *uint) (*RetrieveDetailedSaleOfferDTO, error) {
+func (s *SaleOfferService) GetDetailedByID(id uint, userID *uint) (*RetrieveDetailedSaleOfferDTO, error) {
 	offer, err := s.saleOfferRepo.GetViewByID(id)
 	if err != nil {
 		return nil, err

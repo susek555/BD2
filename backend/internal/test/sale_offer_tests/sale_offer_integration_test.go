@@ -191,7 +191,7 @@ func TestCreateOffer_ValidNumberOfDoors(t *testing.T) {
 	var got sale_offer.RetrieveDetailedSaleOfferDTO
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
-	offer, err := svc.GetByIDDetailed(1, &user.ID)
+	offer, err := svc.GetDetailedByID(1, &user.ID)
 	assert.NoError(t, err)
 	assert.Equal(t, *offer, got)
 	assert.True(t, wasEntityAddedToDB[models.Car](db, uint(1)))
@@ -252,7 +252,7 @@ func TestCreateOffer_ValidNumberOfSeats(t *testing.T) {
 	var got sale_offer.RetrieveDetailedSaleOfferDTO
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
-	offer, err := svc.GetByIDDetailed(1, &user.ID)
+	offer, err := svc.GetDetailedByID(1, &user.ID)
 	assert.NoError(t, err)
 	assert.Equal(t, *offer, got)
 	assert.True(t, wasEntityAddedToDB[models.Car](db, uint(1)))
@@ -312,7 +312,7 @@ func TestCreateOffer_ValidEnginePower(t *testing.T) {
 	var got sale_offer.RetrieveDetailedSaleOfferDTO
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
-	offer, err := svc.GetByIDDetailed(1, &user.ID)
+	offer, err := svc.GetDetailedByID(1, &user.ID)
 	assert.NoError(t, err)
 	assert.Equal(t, *offer, got)
 	assert.True(t, wasEntityAddedToDB[models.Car](db, uint(1)))
@@ -373,7 +373,7 @@ func TestCreateOffer_ValidEngineCapacity(t *testing.T) {
 	var got sale_offer.RetrieveDetailedSaleOfferDTO
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
-	offer, err := svc.GetByIDDetailed(1, &user.ID)
+	offer, err := svc.GetDetailedByID(1, &user.ID)
 	assert.NoError(t, err)
 	assert.Equal(t, *offer, got)
 	assert.True(t, wasEntityAddedToDB[models.Car](db, uint(1)))
@@ -434,7 +434,7 @@ func TestCreateOffer_ValidNumberOfGears(t *testing.T) {
 	var got sale_offer.RetrieveDetailedSaleOfferDTO
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
-	offer, err := svc.GetByIDDetailed(1, &user.ID)
+	offer, err := svc.GetDetailedByID(1, &user.ID)
 	assert.NoError(t, err)
 	assert.Equal(t, *offer, got)
 	assert.True(t, wasEntityAddedToDB[models.Car](db, uint(1)))
@@ -476,7 +476,7 @@ func TestCreateOffer_ValidColor(t *testing.T) {
 	var got sale_offer.RetrieveDetailedSaleOfferDTO
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
-	offer, err := svc.GetByIDDetailed(1, &user.ID)
+	offer, err := svc.GetDetailedByID(1, &user.ID)
 	assert.NoError(t, err)
 	assert.Equal(t, *offer, got)
 	assert.True(t, wasEntityAddedToDB[models.Car](db, uint(1)))
@@ -518,7 +518,7 @@ func TestCreateOffer_ValidFuelType(t *testing.T) {
 	var got sale_offer.RetrieveDetailedSaleOfferDTO
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
-	offer, err := svc.GetByIDDetailed(1, &user.ID)
+	offer, err := svc.GetDetailedByID(1, &user.ID)
 	assert.NoError(t, err)
 	assert.Equal(t, *offer, got)
 	assert.True(t, wasEntityAddedToDB[models.Car](db, uint(1)))
@@ -560,7 +560,7 @@ func TestCreateOffer_ValidTransmission(t *testing.T) {
 	var got sale_offer.RetrieveDetailedSaleOfferDTO
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
-	offer, err := svc.GetByIDDetailed(1, &user.ID)
+	offer, err := svc.GetDetailedByID(1, &user.ID)
 	assert.NoError(t, err)
 	assert.Equal(t, *offer, got)
 	assert.True(t, wasEntityAddedToDB[models.Car](db, uint(1)))
@@ -602,7 +602,7 @@ func TestCreateOffer_ValidDrive(t *testing.T) {
 	var got sale_offer.RetrieveDetailedSaleOfferDTO
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
-	offer, err := svc.GetByIDDetailed(1, &user.ID)
+	offer, err := svc.GetDetailedByID(1, &user.ID)
 	assert.NoError(t, err)
 	assert.Equal(t, *offer, got)
 	assert.True(t, wasEntityAddedToDB[models.Car](db, uint(1)))
@@ -702,7 +702,7 @@ func TestUpdateOffer_Description(t *testing.T) {
 	var got sale_offer.RetrieveDetailedSaleOfferDTO
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
-	offer, err := svc.GetByIDDetailed(1, &user.ID)
+	offer, err := svc.GetDetailedByID(1, &user.ID)
 	assert.NoError(t, err)
 	assert.Equal(t, *offer, got)
 	assert.Equal(t, offer.Description, description)
