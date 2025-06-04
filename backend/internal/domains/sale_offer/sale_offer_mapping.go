@@ -115,14 +115,19 @@ func MapViewToDetailedDTO(offerView *views.SaleOfferView) *RetrieveDetailedSaleO
 	_ = copier.Copy(dto, offerView)
 	dto.DateOfIssue = offerView.DateOfIssue.Format(formats.DateLayout)
 	dto.RegistrationDate = offerView.RegistrationDate.Format(formats.DateLayout)
+	if dto.DateEnd != nil {
+		date := offerView.DateEnd.Format(formats.DateTimeLayout)
+		dto.DateEnd = &date
+	}
 	return dto
 }
 
-func prepareAuctionValues(offer *models.SaleOffer) (*uint, *time.Time) {
+func prepareAuctionValues(offer *models.SaleOffer) (*uint, *string) {
 	if offer.Auction == nil {
 		return nil, nil
 	}
-	return &offer.Auction.BuyNowPrice, &offer.Auction.DateEnd
+	dateEnd := offer.Auction.DateEnd.Format(formats.DateTimeLayout)
+	return &offer.Auction.BuyNowPrice, &dateEnd
 }
 
 func (dto *CreateSaleOfferDTO) validateParams() error {

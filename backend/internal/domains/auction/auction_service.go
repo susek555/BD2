@@ -8,9 +8,8 @@ import (
 
 //go:generate mockery --name=AuctionServiceInterface --output=../../test/mocks --case=snake --with-expecter
 type AuctionServiceInterface interface {
-	Create(auction *CreateAuctionDTO) (*RetrieveAuctionDTO, error)
-	Update(auction *UpdateAuctionDTO, userID uint) (*RetrieveAuctionDTO, error)
-	GetByID(id uint, userID *uint) (*RetrieveAuctionDTO, error)
+	Create(auction *CreateAuctionDTO) (*sale_offer.RetrieveDetailedSaleOfferDTO, error)
+	Update(auction *UpdateAuctionDTO, userID uint) (*sale_offer.RetrieveDetailedSaleOfferDTO, error)
 	BuyNow(auctionID, userID uint) (*models.Auction, error)
 	UpdatePrice(auctionID uint, newPrice uint) error
 	GetByIDNonDTO(id uint) (*models.Auction, error)
@@ -29,7 +28,7 @@ func NewAuctionService(repo AuctionRepositoryInterface, service sale_offer.SaleO
 	}
 }
 
-func (s *AuctionService) Create(auction *CreateAuctionDTO) (*RetrieveAuctionDTO, error) {
+func (s *AuctionService) Create(auction *CreateAuctionDTO) (*sale_offer.RetrieveDetailedSaleOfferDTO, error) {
 	offer, err := s.saleOfferService.Create(&auction.CreateSaleOfferDTO)
 	if err != nil {
 		return nil, err
@@ -48,10 +47,10 @@ func (s *AuctionService) Create(auction *CreateAuctionDTO) (*RetrieveAuctionDTO,
 	if err := s.auctionRepo.Create(auctionEntity); err != nil {
 		return nil, err
 	}
-	return s.GetByID(offer.ID, &offer.UserID)
+	return s.saleOfferService.GetDetailedByID(offer.ID, &offer.UserID)
 }
 
-func (s *AuctionService) Update(auction *UpdateAuctionDTO, userID uint) (*RetrieveAuctionDTO, error) {
+func (s *AuctionService) Update(auction *UpdateAuctionDTO, userID uint) (*sale_offer.RetrieveDetailedSaleOfferDTO, error) {
 	if auction.UpdateSaleOfferDTO != nil {
 		if _, err := s.saleOfferService.Update(auction.UpdateSaleOfferDTO, userID); err != nil {
 			return nil, err
@@ -69,21 +68,7 @@ func (s *AuctionService) Update(auction *UpdateAuctionDTO, userID uint) (*Retrie
 	if err != nil {
 		return nil, err
 	}
-	return s.GetByID(updatedAuction.OfferID, &userID)
-}
-
-func (s *AuctionService) GetByID(id uint, userID *uint) (*RetrieveAuctionDTO, error) {
-	offer, err := s.saleOfferService.GetByID(id, userID)
-	if err != nil {
-		return nil, err
-	}
-	auction, err := s.auctionRepo.GetByID(id)
-	if err != nil {
-		return nil, err
-	}
-	dto := MapToDTO(auction)
-	dto.RetrieveSaleOfferDTO = offer
-	return dto, nil
+	return s.saleOfferService.GetDetailedByID(auction.ID, &userID)
 }
 
 func (s *AuctionService) BuyNow(auctionID, userID uint) (*models.Auction, error) {
