@@ -95,7 +95,7 @@ func registerSaleOfferRoutes(router *gin.Engine) {
 		saleOfferRoutes.PUT("/publish/:id", middleware.Authenticate(initializers.Verifier), initializers.SaleOfferHandler.PublishSaleOffer)
 		saleOfferRoutes.POST("/my-offers", middleware.Authenticate(initializers.Verifier), initializers.SaleOfferHandler.GetMySaleOffers)
 		saleOfferRoutes.POST("/filtered", middleware.OptionalAuthenticate(initializers.Verifier), initializers.SaleOfferHandler.GetFilteredSaleOffers)
-		saleOfferRoutes.GET("/id/:id", middleware.OptionalAuthenticate(initializers.Verifier), initializers.SaleOfferHandler.GetSaleOfferByIDDetailed)
+		saleOfferRoutes.GET("/id/:id", middleware.OptionalAuthenticate(initializers.Verifier), initializers.SaleOfferHandler.GetDetailedSaleOfferByID)
 		saleOfferRoutes.GET("/offer-types", initializers.SaleOfferHandler.GetSaleOfferTypes)
 		saleOfferRoutes.GET("/order-keys", initializers.SaleOfferHandler.GetOrderKeys)
 		saleOfferRoutes.DELETE("/buy/:id", middleware.Authenticate(initializers.Verifier), initializers.SaleOfferHandler.Buy)

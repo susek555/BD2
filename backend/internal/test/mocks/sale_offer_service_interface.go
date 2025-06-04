@@ -256,65 +256,6 @@ func (_c *SaleOfferServiceInterface_GetByID_Call) RunAndReturn(run func(uint, *u
 	return _c
 }
 
-// GetByIDDetailed provides a mock function with given fields: id, userID
-func (_m *SaleOfferServiceInterface) GetByIDDetailed(id uint, userID *uint) (*sale_offer.RetrieveDetailedSaleOfferDTO, error) {
-	ret := _m.Called(id, userID)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetByIDDetailed")
-	}
-
-	var r0 *sale_offer.RetrieveDetailedSaleOfferDTO
-	var r1 error
-	if rf, ok := ret.Get(0).(func(uint, *uint) (*sale_offer.RetrieveDetailedSaleOfferDTO, error)); ok {
-		return rf(id, userID)
-	}
-	if rf, ok := ret.Get(0).(func(uint, *uint) *sale_offer.RetrieveDetailedSaleOfferDTO); ok {
-		r0 = rf(id, userID)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*sale_offer.RetrieveDetailedSaleOfferDTO)
-		}
-	}
-
-	if rf, ok := ret.Get(1).(func(uint, *uint) error); ok {
-		r1 = rf(id, userID)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// SaleOfferServiceInterface_GetByIDDetailed_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetByIDDetailed'
-type SaleOfferServiceInterface_GetByIDDetailed_Call struct {
-	*mock.Call
-}
-
-// GetByIDDetailed is a helper method to define mock.On call
-//   - id uint
-//   - userID *uint
-func (_e *SaleOfferServiceInterface_Expecter) GetByIDDetailed(id interface{}, userID interface{}) *SaleOfferServiceInterface_GetByIDDetailed_Call {
-	return &SaleOfferServiceInterface_GetByIDDetailed_Call{Call: _e.mock.On("GetByIDDetailed", id, userID)}
-}
-
-func (_c *SaleOfferServiceInterface_GetByIDDetailed_Call) Run(run func(id uint, userID *uint)) *SaleOfferServiceInterface_GetByIDDetailed_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(uint), args[1].(*uint))
-	})
-	return _c
-}
-
-func (_c *SaleOfferServiceInterface_GetByIDDetailed_Call) Return(_a0 *sale_offer.RetrieveDetailedSaleOfferDTO, _a1 error) *SaleOfferServiceInterface_GetByIDDetailed_Call {
-	_c.Call.Return(_a0, _a1)
-	return _c
-}
-
-func (_c *SaleOfferServiceInterface_GetByIDDetailed_Call) RunAndReturn(run func(uint, *uint) (*sale_offer.RetrieveDetailedSaleOfferDTO, error)) *SaleOfferServiceInterface_GetByIDDetailed_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
 // GetByIdNonDTO provides a mock function with given fields: id, userID
 func (_m *SaleOfferServiceInterface) GetByIdNonDTO(id uint, userID uint) (*models.SaleOffer, error) {
 	ret := _m.Called(id, userID)
@@ -429,6 +370,65 @@ func (_c *SaleOfferServiceInterface_GetByUserID_Call) Return(_a0 *sale_offer.Ret
 }
 
 func (_c *SaleOfferServiceInterface_GetByUserID_Call) RunAndReturn(run func(uint, *pagination.PaginationRequest) (*sale_offer.RetrieveOffersWithPagination, error)) *SaleOfferServiceInterface_GetByUserID_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// GetDetailedByID provides a mock function with given fields: id, userID
+func (_m *SaleOfferServiceInterface) GetDetailedByID(id uint, userID *uint) (*sale_offer.RetrieveDetailedSaleOfferDTO, error) {
+	ret := _m.Called(id, userID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetDetailedByID")
+	}
+
+	var r0 *sale_offer.RetrieveDetailedSaleOfferDTO
+	var r1 error
+	if rf, ok := ret.Get(0).(func(uint, *uint) (*sale_offer.RetrieveDetailedSaleOfferDTO, error)); ok {
+		return rf(id, userID)
+	}
+	if rf, ok := ret.Get(0).(func(uint, *uint) *sale_offer.RetrieveDetailedSaleOfferDTO); ok {
+		r0 = rf(id, userID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*sale_offer.RetrieveDetailedSaleOfferDTO)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(uint, *uint) error); ok {
+		r1 = rf(id, userID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// SaleOfferServiceInterface_GetDetailedByID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetDetailedByID'
+type SaleOfferServiceInterface_GetDetailedByID_Call struct {
+	*mock.Call
+}
+
+// GetDetailedByID is a helper method to define mock.On call
+//   - id uint
+//   - userID *uint
+func (_e *SaleOfferServiceInterface_Expecter) GetDetailedByID(id interface{}, userID interface{}) *SaleOfferServiceInterface_GetDetailedByID_Call {
+	return &SaleOfferServiceInterface_GetDetailedByID_Call{Call: _e.mock.On("GetDetailedByID", id, userID)}
+}
+
+func (_c *SaleOfferServiceInterface_GetDetailedByID_Call) Run(run func(id uint, userID *uint)) *SaleOfferServiceInterface_GetDetailedByID_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(uint), args[1].(*uint))
+	})
+	return _c
+}
+
+func (_c *SaleOfferServiceInterface_GetDetailedByID_Call) Return(_a0 *sale_offer.RetrieveDetailedSaleOfferDTO, _a1 error) *SaleOfferServiceInterface_GetDetailedByID_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *SaleOfferServiceInterface_GetDetailedByID_Call) RunAndReturn(run func(uint, *uint) (*sale_offer.RetrieveDetailedSaleOfferDTO, error)) *SaleOfferServiceInterface_GetDetailedByID_Call {
 	_c.Call.Return(run)
 	return _c
 }

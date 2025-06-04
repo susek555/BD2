@@ -56,8 +56,8 @@ type OfferFilter struct {
 }
 
 type OfferFilterRequest struct {
-	Filter     OfferFilter
-	PagRequest pagination.PaginationRequest
+	PagRequest pagination.PaginationRequest `json:"pagination"`
+	Filter     OfferFilter                  `json:"filter"`
 }
 
 func NewOfferFilter() *OfferFilter {
