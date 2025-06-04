@@ -5,7 +5,7 @@ import { authConfig } from "@/app/lib/authConfig";
 import { NextRequest, NextResponse } from "next/server";
 import { API_URL } from "@/app/lib/constants";
 
-export async function DELETE(
+export async function POST(
     req: NextRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
@@ -17,7 +17,7 @@ export async function DELETE(
   const { id } = await params;
 
   const response = await fetchWithRefresh(`${API_URL}/sale-offer/buy/${id}`, {
-    method: "DELETE",
+    method: "POST",
   });
 
   return response;

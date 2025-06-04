@@ -1,7 +1,7 @@
 export async function buyNowAuction(id: string) {
 
   const response = await fetch(`/api/auctions/buy-now/${id}`, {
-    method: "DELETE",
+    method: "POST",
   });
 
   console.log("Response status:", response.status);
@@ -15,7 +15,7 @@ export async function buyNowAuction(id: string) {
 export async function buyRegular(id: string) {
 
   const response = await fetch(`/api/sale-offer/buy/${id}`, {
-    method: "DELETE",
+    method: "POST",
   });
 
   console.log("Response status:", response.status);
