@@ -238,16 +238,17 @@ func TestCreateAuctionSuccess(t *testing.T) {
 	w := httptest.NewRecorder()
 	server.ServeHTTP(w, req)
 	assert.Equal(t, wantStatus, w.Code)
-	var got auction.RetrieveAuctionDTO
+	var got sale_offer.RetrieveDetailedSaleOfferDTO
 	err = json.Unmarshal(w.Body.Bytes(), &got)
 	assert.NoError(t, err)
-	assert.Equal(t, auctionInput.BuyNowPrice, got.BuyNowPrice)
-	assert.Equal(t, auctionInput.DateEnd, got.DateEnd)
+	assert.Equal(t, auctionInput.BuyNowPrice, *got.BuyNowPrice)
+	assert.Equal(t, auctionInput.DateEnd, *got.DateEnd)
 	assert.Equal(t, "herakles", got.Username)
 	assert.Equal(t, auctionInput.CreateSaleOfferDTO.ProductionYear, got.ProductionYear)
 	assert.Equal(t, auctionInput.CreateSaleOfferDTO.Mileage, got.Mileage)
 	assert.Equal(t, auctionInput.CreateSaleOfferDTO.Price, got.Price)
-	assert.Equal(t, "Toyota Corolla", got.Name)
+	assert.Equal(t, "Toyota", got.Brand)
+	assert.Equal(t, "Corolla", got.Model)
 }
 
 func TestCreateAuctionInvalidDate(t *testing.T) {

@@ -1,8 +1,6 @@
 package sale_offer
 
 import (
-	"time"
-
 	"github.com/susek555/BD2/car-dealer-api/internal/enums"
 	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
 )
@@ -100,9 +98,8 @@ type RetrieveDetailedSaleOfferDTO struct {
 	Model              string             `json:"model"`
 	ImagesUrls         []string           `json:"images_urls"`
 	IsAuction          bool               `json:"is_auction"`
-	DateEnd            *time.Time         `json:"date_end,omitempty"`
+	DateEnd            *string            `json:"date_end,omitempty"`
 	BuyNowPrice        *uint              `json:"buy_now_price,omitempty"`
-
 	UserContext
 }
 
