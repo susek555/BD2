@@ -11,7 +11,6 @@ type AuctionServiceInterface interface {
 	Create(auction *CreateAuctionDTO) (*RetrieveAuctionDTO, error)
 	GetAll() ([]RetrieveAuctionDTO, error)
 	GetByID(id uint) (*RetrieveAuctionDTO, error)
-	GetByIDNonDTO(id uint) (*models.Auction, error)
 	Update(auction *UpdateAuctionDTO, userID uint) (*RetrieveAuctionDTO, error)
 	Delete(id, userID uint) error
 	BuyNow(auctionID, userID uint) (*models.Auction, error)
@@ -72,15 +71,6 @@ func (s *AuctionService) GetByID(id uint) (*RetrieveAuctionDTO, error) {
 	dto := MapToDTO(auction)
 	return dto, nil
 }
-
-func (s *AuctionService) GetByIDNonDTO(id uint) (*models.Auction, error) {
-	auction, err := s.auctionRepo.GetByID(id)
-	if err != nil {
-		return nil, err
-	}
-	return auction, nil
-}
-
 func (s *AuctionService) Update(auction *UpdateAuctionDTO, userID uint) (*RetrieveAuctionDTO, error) {
 	if auction.UpdateSaleOfferDTO != nil {
 		if _, err := s.saleOfferService.Update(auction.UpdateSaleOfferDTO, userID); err != nil {
