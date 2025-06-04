@@ -71,7 +71,7 @@ CREATE TABLE sale_offers (
 );
 
 CREATE TABLE auctions (
-    offer_id INTEGER PRIMARY KEY REFERENCES sale_offers(id),
+    offer_id INTEGER PRIMARY KEY REFERENCES sale_offers(id) ON DELETE CASCADE,
     date_end TIMESTAMPTZ NOT NULL,
     buy_now_price INTEGER,
     initial_price INTEGER NOT NULL
@@ -86,7 +86,7 @@ CREATE TABLE bids (
 );
 
 CREATE TABLE cars (
-    offer_id INTEGER PRIMARY KEY REFERENCES sale_offers(id),
+    offer_id INTEGER PRIMARY KEY REFERENCES sale_offers(id) ON DELETE CASCADE,
     vin VARCHAR(17),
     production_year INTEGER NOT NULL,
     mileage INTEGER NOT NULL,
