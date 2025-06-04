@@ -139,9 +139,9 @@ func (_c *AuctionServiceInterface_Create_Call) RunAndReturn(run func(*auction.Cr
 	return _c
 }
 
-// Delete provides a mock function with given fields: id, userId
-func (_m *AuctionServiceInterface) Delete(id uint, userId uint) error {
-	ret := _m.Called(id, userId)
+// Delete provides a mock function with given fields: id, userID
+func (_m *AuctionServiceInterface) Delete(id uint, userID uint) error {
+	ret := _m.Called(id, userID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Delete")
@@ -149,7 +149,7 @@ func (_m *AuctionServiceInterface) Delete(id uint, userId uint) error {
 
 	var r0 error
 	if rf, ok := ret.Get(0).(func(uint, uint) error); ok {
-		r0 = rf(id, userId)
+		r0 = rf(id, userID)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -164,12 +164,12 @@ type AuctionServiceInterface_Delete_Call struct {
 
 // Delete is a helper method to define mock.On call
 //   - id uint
-//   - userId uint
-func (_e *AuctionServiceInterface_Expecter) Delete(id interface{}, userId interface{}) *AuctionServiceInterface_Delete_Call {
-	return &AuctionServiceInterface_Delete_Call{Call: _e.mock.On("Delete", id, userId)}
+//   - userID uint
+func (_e *AuctionServiceInterface_Expecter) Delete(id interface{}, userID interface{}) *AuctionServiceInterface_Delete_Call {
+	return &AuctionServiceInterface_Delete_Call{Call: _e.mock.On("Delete", id, userID)}
 }
 
-func (_c *AuctionServiceInterface_Delete_Call) Run(run func(id uint, userId uint)) *AuctionServiceInterface_Delete_Call {
+func (_c *AuctionServiceInterface_Delete_Call) Run(run func(id uint, userID uint)) *AuctionServiceInterface_Delete_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(uint), args[1].(uint))
 	})
@@ -243,12 +243,12 @@ func (_c *AuctionServiceInterface_GetAll_Call) RunAndReturn(run func() ([]auctio
 	return _c
 }
 
-// GetById provides a mock function with given fields: id
-func (_m *AuctionServiceInterface) GetById(id uint) (*auction.RetrieveAuctionDTO, error) {
+// GetByID provides a mock function with given fields: id
+func (_m *AuctionServiceInterface) GetByID(id uint) (*auction.RetrieveAuctionDTO, error) {
 	ret := _m.Called(id)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetById")
+		panic("no return value specified for GetByID")
 	}
 
 	var r0 *auction.RetrieveAuctionDTO
@@ -273,40 +273,40 @@ func (_m *AuctionServiceInterface) GetById(id uint) (*auction.RetrieveAuctionDTO
 	return r0, r1
 }
 
-// AuctionServiceInterface_GetById_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetById'
-type AuctionServiceInterface_GetById_Call struct {
+// AuctionServiceInterface_GetByID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetByID'
+type AuctionServiceInterface_GetByID_Call struct {
 	*mock.Call
 }
 
-// GetById is a helper method to define mock.On call
+// GetByID is a helper method to define mock.On call
 //   - id uint
-func (_e *AuctionServiceInterface_Expecter) GetById(id interface{}) *AuctionServiceInterface_GetById_Call {
-	return &AuctionServiceInterface_GetById_Call{Call: _e.mock.On("GetById", id)}
+func (_e *AuctionServiceInterface_Expecter) GetByID(id interface{}) *AuctionServiceInterface_GetByID_Call {
+	return &AuctionServiceInterface_GetByID_Call{Call: _e.mock.On("GetByID", id)}
 }
 
-func (_c *AuctionServiceInterface_GetById_Call) Run(run func(id uint)) *AuctionServiceInterface_GetById_Call {
+func (_c *AuctionServiceInterface_GetByID_Call) Run(run func(id uint)) *AuctionServiceInterface_GetByID_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(uint))
 	})
 	return _c
 }
 
-func (_c *AuctionServiceInterface_GetById_Call) Return(_a0 *auction.RetrieveAuctionDTO, _a1 error) *AuctionServiceInterface_GetById_Call {
+func (_c *AuctionServiceInterface_GetByID_Call) Return(_a0 *auction.RetrieveAuctionDTO, _a1 error) *AuctionServiceInterface_GetByID_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *AuctionServiceInterface_GetById_Call) RunAndReturn(run func(uint) (*auction.RetrieveAuctionDTO, error)) *AuctionServiceInterface_GetById_Call {
+func (_c *AuctionServiceInterface_GetByID_Call) RunAndReturn(run func(uint) (*auction.RetrieveAuctionDTO, error)) *AuctionServiceInterface_GetByID_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
-// GetByIdNonDTO provides a mock function with given fields: id
-func (_m *AuctionServiceInterface) GetByIdNonDTO(id uint) (*models.Auction, error) {
+// GetByIDNonDTO provides a mock function with given fields: id
+func (_m *AuctionServiceInterface) GetByIDNonDTO(id uint) (*models.Auction, error) {
 	ret := _m.Called(id)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetByIdNonDTO")
+		panic("no return value specified for GetByIDNonDTO")
 	}
 
 	var r0 *models.Auction
@@ -331,30 +331,30 @@ func (_m *AuctionServiceInterface) GetByIdNonDTO(id uint) (*models.Auction, erro
 	return r0, r1
 }
 
-// AuctionServiceInterface_GetByIdNonDTO_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetByIdNonDTO'
-type AuctionServiceInterface_GetByIdNonDTO_Call struct {
+// AuctionServiceInterface_GetByIDNonDTO_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetByIDNonDTO'
+type AuctionServiceInterface_GetByIDNonDTO_Call struct {
 	*mock.Call
 }
 
-// GetByIdNonDTO is a helper method to define mock.On call
+// GetByIDNonDTO is a helper method to define mock.On call
 //   - id uint
-func (_e *AuctionServiceInterface_Expecter) GetByIdNonDTO(id interface{}) *AuctionServiceInterface_GetByIdNonDTO_Call {
-	return &AuctionServiceInterface_GetByIdNonDTO_Call{Call: _e.mock.On("GetByIdNonDTO", id)}
+func (_e *AuctionServiceInterface_Expecter) GetByIDNonDTO(id interface{}) *AuctionServiceInterface_GetByIDNonDTO_Call {
+	return &AuctionServiceInterface_GetByIDNonDTO_Call{Call: _e.mock.On("GetByIDNonDTO", id)}
 }
 
-func (_c *AuctionServiceInterface_GetByIdNonDTO_Call) Run(run func(id uint)) *AuctionServiceInterface_GetByIdNonDTO_Call {
+func (_c *AuctionServiceInterface_GetByIDNonDTO_Call) Run(run func(id uint)) *AuctionServiceInterface_GetByIDNonDTO_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(uint))
 	})
 	return _c
 }
 
-func (_c *AuctionServiceInterface_GetByIdNonDTO_Call) Return(_a0 *models.Auction, _a1 error) *AuctionServiceInterface_GetByIdNonDTO_Call {
+func (_c *AuctionServiceInterface_GetByIDNonDTO_Call) Return(_a0 *models.Auction, _a1 error) *AuctionServiceInterface_GetByIDNonDTO_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *AuctionServiceInterface_GetByIdNonDTO_Call) RunAndReturn(run func(uint) (*models.Auction, error)) *AuctionServiceInterface_GetByIdNonDTO_Call {
+func (_c *AuctionServiceInterface_GetByIDNonDTO_Call) RunAndReturn(run func(uint) (*models.Auction, error)) *AuctionServiceInterface_GetByIDNonDTO_Call {
 	_c.Call.Return(run)
 	return _c
 }

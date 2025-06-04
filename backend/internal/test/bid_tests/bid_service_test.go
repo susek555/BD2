@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	bid "github.com/susek555/BD2/car-dealer-api/internal/domains/bid"
+	"github.com/susek555/BD2/car-dealer-api/internal/enums"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"github.com/susek555/BD2/car-dealer-api/internal/test/mocks"
 )
@@ -25,6 +26,15 @@ func TestBidService_Create_OK(t *testing.T) {
 		return b.AuctionID == 1 && b.BidderID == 1
 	})).Return(nil)
 
+	auctionService.On("GetByIDNonDTO", uint(1)).Return(&models.Auction{
+		OfferID:      1,
+		DateEnd:      time.Now().Add(24 * time.Hour),
+		BuyNowPrice:  100,
+		InitialPrice: 50,
+		Offer: &models.SaleOffer{
+			Status: enums.PUBLISHED,
+		},
+	}, nil)
 	auctionService.On("UpdatePrice", uint(1), uint(0)).Return(nil)
 
 	dto := &bid.CreateBidDTO{
@@ -45,6 +55,15 @@ func TestBidService_Create_Error(t *testing.T) {
 		return b.AuctionID == 1
 	})).Return(expectedErr)
 
+	auctionService.On("GetByIDNonDTO", uint(1)).Return(&models.Auction{
+		OfferID:      1,
+		DateEnd:      time.Now().Add(24 * time.Hour),
+		BuyNowPrice:  100,
+		InitialPrice: 50,
+		Offer: &models.SaleOffer{
+			Status: enums.PUBLISHED,
+		},
+	}, nil)
 	auctionService.On("UpdatePrice", uint(1), uint(0)).Return(nil)
 
 	dto := &bid.CreateBidDTO{
@@ -71,6 +90,16 @@ func TestBidService_Create_SerializesPerAuction(t *testing.T) {
 		time.Sleep(10 * time.Millisecond)
 		atomic.AddInt32(&running, -1)
 	}).Return(nil).Times(calls)
+
+	auctionService.On("GetByIDNonDTO", uint(aucID), mock.Anything).Return(&models.Auction{
+		OfferID:      1,
+		DateEnd:      time.Now().Add(24 * time.Hour),
+		BuyNowPrice:  100,
+		InitialPrice: 50,
+		Offer: &models.SaleOffer{
+			Status: enums.PUBLISHED,
+		},
+	}, nil)
 
 	auctionService.On("UpdatePrice", uint(aucID), mock.Anything).Run(func(args mock.Arguments) {
 		if atomic.AddInt32(&running, 1) > 1 {
@@ -115,6 +144,15 @@ func TestBidService_GetHighestBid_OK(t *testing.T) {
 	}
 	repo.On("GetHighestBid", uint(10)).Return(modelsBid, nil)
 	auctionService.On("UpdatePrice", uint(1), uint(0)).Return(nil)
+	auctionService.On("GetByIDNonDTO", uint(1), mock.Anything).Return(&models.Auction{
+		OfferID:      1,
+		DateEnd:      time.Now().Add(24 * time.Hour),
+		BuyNowPrice:  100,
+		InitialPrice: 50,
+		Offer: &models.SaleOffer{
+			Status: enums.PUBLISHED,
+		},
+	}, nil)
 
 	got, err := svc.GetHighestBid(10)
 
@@ -132,6 +170,15 @@ func TestBidService_GetHighestBid_Error(t *testing.T) {
 
 	repo.On("GetHighestBid", uint(10)).Return(nil, expectedErr)
 	auctionService.On("UpdatePrice", uint(1), uint(0)).Return(nil)
+	auctionService.On("GetByIDNonDTO", uint(1), mock.Anything).Return(&models.Auction{
+		OfferID:      1,
+		DateEnd:      time.Now().Add(24 * time.Hour),
+		BuyNowPrice:  100,
+		InitialPrice: 50,
+		Offer: &models.SaleOffer{
+			Status: enums.PUBLISHED,
+		},
+	}, nil)
 
 	got, err := svc.GetHighestBid(10)
 

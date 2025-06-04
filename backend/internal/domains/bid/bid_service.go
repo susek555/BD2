@@ -37,7 +37,7 @@ func (service *BidService) Create(bidDTO *CreateBidDTO, bidderID uint) (*Process
 	bid := bidDTO.MapToBid(bidderID)
 	l, _ := auctionLocks.LoadOrStore(bid.AuctionID, &sync.Mutex{})
 	m := l.(*sync.Mutex)
-	auction, err := service.AuctionService.GetByIdNonDTO(bid.AuctionID)
+	auction, err := service.AuctionService.GetByIDNonDTO(bid.AuctionID)
 	if err != nil {
 		return nil, err
 	}

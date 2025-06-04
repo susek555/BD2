@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
+	"github.com/susek555/BD2/car-dealer-api/internal/enums"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
 )
 
@@ -16,6 +17,7 @@ type AuctionServiceInterface interface {
 	Delete(id, userID uint) error
 	BuyNow(auctionID, userID uint) (*models.Auction, error)
 	UpdatePrice(auctionID uint, newPrice uint) error
+	GetByIDNonDTO(id uint) (*models.Auction, error)
 }
 
 type AuctionService struct {
@@ -129,7 +131,7 @@ func (s *AuctionService) BuyNow(auctionID, userID uint) (*models.Auction, error)
 }
 
 func (s *AuctionService) UpdatePrice(auctionID uint, newPrice uint) error {
-	auction, err := s.auctionRepo.GetById(auctionID)
+	auction, err := s.auctionRepo.GetByID(auctionID)
 	if err != nil {
 		return err
 	}
@@ -141,4 +143,12 @@ func (s *AuctionService) UpdatePrice(auctionID uint, newPrice uint) error {
 		return err
 	}
 	return nil
+}
+
+func (s *AuctionService) GetByIDNonDTO(id uint) (*models.Auction, error) {
+	auction, err := s.auctionRepo.GetByID(id)
+	if err != nil {
+		return nil, err
+	}
+	return auction, nil
 }
