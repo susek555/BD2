@@ -118,13 +118,3 @@ func (r *SaleOfferRepository) SaveToPurchases(offerID uint, buyerID uint, finalP
 	}
 	return r.DB.Create(&purchase).Error
 }
-
-func (r *SaleOfferRepository) buildBaseQuery() *gorm.DB {
-	query := r.DB.
-		Preload("Auction").
-		Preload("User").
-		Preload("Car").
-		Preload("Car.Model").
-		Preload("Car.Model.Manufacturer")
-	return query
-}
