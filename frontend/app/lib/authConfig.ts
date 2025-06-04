@@ -4,7 +4,7 @@ import camelcaseKeys from 'camelcase-keys';
 import { NextAuthOptions, User } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
-const ACCESS_TOKEN_LIFETIME = 2 * 60 * 60 * 1000; // 2 hours
+const ACCESS_TOKEN_LIFETIME = 30 * 60 * 1000; // 30 minutes
 // const ACCESS_TOKEN_LIFETIME = 30 * 1000; // 30 seconds
 
 async function updateAccessToken(refreshToken: string): Promise<string> {
@@ -79,7 +79,6 @@ export const authConfig: NextAuthOptions = {
       const jwtToken = token as ExtendedJWT;
 
       if (trigger === 'update' && session) {
-
         const isUserProfile =
           session.selector &&
           // typeof session.id === 'number' && // uncomment when main backend branch sends id on login
