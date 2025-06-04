@@ -1,41 +1,63 @@
 // /api/ws/subscribe/route.ts
 import { NextRequest } from 'next/server'
-import { startNotificationsSocket, subscribe, unsubscribeAll } from '@/app/lib/notifications-socket'
+import { getServerSession } from 'next-auth'
+import { authConfig } from '@/app/lib/authConfig'
+import WebSocket from 'ws'
 
 const encoder = new TextEncoder()
 
 export async function GET(request: NextRequest) {
+  const session = await getServerSession(authConfig)
+  const token = session?.user?.refreshToken
 
-    startNotificationsSocket()
+  if (!token) {
+    return new Response('Unauthorized', { status: 401 })
+  }
 
-    const stream = new ReadableStream({
-        start(controller) {
-            console.log('SSE stream started successfully')
+  let socket: WebSocket | null = null
 
-            const onMessage = (msg: string) => {
-                console.log(`Sending SSE message: ${msg.substring(0, 50)}${msg.length > 50 ? '...' : ''}`)
-                controller.enqueue(encoder.encode(`data: ${msg}\n\n`))
-            }
+  const stream = new ReadableStream({
+    async start(controller) {
+      socket = new WebSocket('ws://localhost:8080/ws', [token])
 
-            const unsubscribe = subscribe(onMessage)
+      socket.on('open', () => {
+        console.log('✅ WS connected for user:', session?.user?.email)
+      })
 
-            request.signal.addEventListener('abort', () => {
-                console.log('SSE connection aborted by client')
-                unsubscribe()
-                controller.close()
-            })
-        },
-        cancel() {
-            console.log('SSE stream cancelled')
-            unsubscribeAll()
-        },
-    })
+      socket.on('message', (data) => {
+        const msg = data.toString()
+        controller.enqueue(encoder.encode(`data: ${msg}\n\n`))
+      })
 
-    return new Response(stream, {
-        headers: {
-            'Content-Type': 'text/event-stream',
-            'Cache-Control': 'no-cache',
-            Connection: 'keep-alive',
-        },
-    })
+      socket.on('close', () => {
+        console.log('❌ WS closed for user:', session?.user?.email)
+        controller.close()
+      })
+
+      socket.on('error', (err) => {
+        console.error('WebSocket error:', err)
+        controller.error(err)
+      })
+
+      request.signal.addEventListener('abort', () => {
+        if (socket) {
+          socket.close()
+        }
+      })
+    },
+    cancel() {
+      if (socket) {
+        socket.close()
+      }
+    },
+  })
+
+  return new Response(stream, {
+    headers: {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      Connection: 'keep-alive',
+    },
+  })
 }
+
