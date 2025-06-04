@@ -94,15 +94,11 @@ func (r *UserRepository) Update(user *models.User) error {
 }
 
 func (r *UserRepository) UpdatePassword(userID uint, newPassword string) error {
-	return r.DB.Transaction(func(tx *gorm.DB) error {
-		return tx.Model(&models.User{}).Where("id = ?", userID).Update("password", newPassword).Error
-	})
+	return r.DB.Model(&models.User{}).Where("id = ?", userID).Update("password", newPassword).Error
 }
 
 func (r *UserRepository) Delete(id uint) error {
-	return r.DB.Transaction(func(tx *gorm.DB) error {
-		return tx.Delete(&models.User{}, id).Error
-	})
+	return r.DB.Delete(&models.User{}, id).Error
 }
 
 func (r *UserRepository) buildBaseQuery() *gorm.DB {
