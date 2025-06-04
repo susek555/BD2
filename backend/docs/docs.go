@@ -2030,7 +2030,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/sale_offer.OfferFilter"
+                            "$ref": "#/definitions/sale_offer.OfferFilterRequest"
                         }
                     }
                 ],
@@ -3000,222 +3000,6 @@ const docTemplate = `{
                 }
             }
         },
-<<<<<<< HEAD
-=======
-        "models.Auction": {
-            "type": "object",
-            "properties": {
-                "buy_now_price": {
-                    "type": "integer"
-                },
-                "date_end": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "offer": {
-                    "$ref": "#/definitions/models.SaleOffer"
-                }
-            }
-        },
-        "models.Car": {
-            "type": "object",
-            "properties": {
-                "color": {
-                    "$ref": "#/definitions/enums.Color"
-                },
-                "drive": {
-                    "$ref": "#/definitions/enums.Drive"
-                },
-                "engine_capacity": {
-                    "type": "integer"
-                },
-                "engine_power": {
-                    "type": "integer"
-                },
-                "fuel_type": {
-                    "$ref": "#/definitions/enums.FuelType"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "mileage": {
-                    "type": "integer"
-                },
-                "model": {
-                    "$ref": "#/definitions/models.Model"
-                },
-                "model_id": {
-                    "type": "integer"
-                },
-                "number_of_doors": {
-                    "type": "integer"
-                },
-                "number_of_gears": {
-                    "type": "integer"
-                },
-                "number_of_seats": {
-                    "type": "integer"
-                },
-                "production_year": {
-                    "type": "integer"
-                },
-                "registration_date": {
-                    "type": "string"
-                },
-                "registration_number": {
-                    "type": "string"
-                },
-                "transmission": {
-                    "$ref": "#/definitions/enums.Transmission"
-                },
-                "vin": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.Company": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "nip": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/models.User"
-                }
-            }
-        },
-        "models.LikedOffer": {
-            "type": "object",
-            "properties": {
-                "offer_id": {
-                    "type": "integer"
-                },
-                "saleOffer": {
-                    "$ref": "#/definitions/models.SaleOffer"
-                },
-                "user": {
-                    "$ref": "#/definitions/models.User"
-                },
-                "user_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "models.Manufacturer": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.Model": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "manufacturer": {
-                    "$ref": "#/definitions/models.Manufacturer"
-                },
-                "manufacturer_id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.Person": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "surname": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/models.User"
-                }
-            }
-        },
-        "models.SaleOffer": {
-            "type": "object",
-            "properties": {
-                "auction": {
-                    "$ref": "#/definitions/models.Auction"
-                },
-                "car": {
-                    "$ref": "#/definitions/models.Car"
-                },
-                "date_of_issue": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "margin": {
-                    "$ref": "#/definitions/enums.MarginValue"
-                },
-                "price": {
-                    "type": "integer"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/models.User"
-                },
-                "user_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "models.User": {
-            "type": "object",
-            "properties": {
-                "company": {
-                    "$ref": "#/definitions/models.Company"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "password": {
-                    "type": "string"
-                },
-                "person": {
-                    "$ref": "#/definitions/models.Person"
-                },
-                "selector": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
->>>>>>> 3706ff2 (Formatted docs and fixed wrong endpoint's paths.)
         "pagination.PaginationRequest": {
             "type": "object",
             "properties": {
@@ -3499,9 +3283,6 @@ const docTemplate = `{
                 "order_key": {
                     "type": "string"
                 },
-                "pagination": {
-                    "$ref": "#/definitions/pagination.PaginationRequest"
-                },
                 "price_range": {
                     "$ref": "#/definitions/sale_offer.MinMax-uint"
                 },
@@ -3519,6 +3300,17 @@ const docTemplate = `{
                 },
                 "year_range": {
                     "$ref": "#/definitions/sale_offer.MinMax-uint"
+                }
+            }
+        },
+        "sale_offer.OfferFilterRequest": {
+            "type": "object",
+            "properties": {
+                "filter": {
+                    "$ref": "#/definitions/sale_offer.OfferFilter"
+                },
+                "pagination": {
+                    "$ref": "#/definitions/pagination.PaginationRequest"
                 }
             }
         },
