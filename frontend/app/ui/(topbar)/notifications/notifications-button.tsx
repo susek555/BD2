@@ -20,17 +20,22 @@ export default function NotificationsButton({
 }) {
     const [newNotifications, setNewNotifications] = useState(newNotificationsData);
     const [notifications, setNotificationsData] = useState<Notification[]>(notificationsData || []);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { messages, connected, send } = useNotificationsSocket();
+
+    const { messages } = useNotificationsSocket()
 
     // Update notifications when new messages are received
     useEffect(() => {
         if (messages.length > 0) {
-            const newData = JSON.parse(messages[messages.length - 1]);
-            setNotificationsData(newData.notifications || []);
-            setNewNotifications(newData.unseen_notifs_count || 0);
+        try {
+            const latest = messages[messages.length - 1]
+            const newData = JSON.parse(latest)
+            setNotificationsData(newData.notifications || [])
+            setNewNotifications(newData.unseen_notifs_count || 0)
+        } catch (e) {
+            console.error('Błąd parsowania wiadomości:', e)
         }
-    }, [messages]);
+        }
+    }, [messages])
 
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
