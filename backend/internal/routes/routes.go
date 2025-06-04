@@ -33,7 +33,7 @@ func RegisterRoutes(router *gin.Engine) {
 func registerWebsocket(router *gin.Engine) {
 	// Start the WebSocket server
 	wsHandler := ws.ServeWS(initializers.Hub.(*ws.Hub))
-	router.GET("/ws", middleware.Authenticate(initializers.Verifier), wsHandler)
+	router.GET("/ws", middleware.AuthenticateWebSocket(initializers.Verifier), wsHandler)
 }
 
 func registerUserRoutes(router *gin.Engine) {

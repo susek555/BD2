@@ -9,8 +9,9 @@ import (
 )
 
 const (
-	authorizationHeader = "Authorization"
-	bearerPrefix        = "Bearer "
+	AuthorizationHeader = "Authorization"
+	BearerPrefix        = "Bearer "
+	SecWebSocketHeader  = "Sec-WebSocket-Protocol"
 )
 
 type ctxKey string
@@ -19,19 +20,37 @@ const userIDKey ctxKey = "userID"
 
 func Authenticate(verify *jwt.JWTVerifier) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		rawHeader := c.GetHeader(authorizationHeader)
+		rawHeader := c.GetHeader(AuthorizationHeader)
 		if rawHeader == "" {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "unauthorized"})
 			return
 		}
 
-		if !strings.HasPrefix(rawHeader, bearerPrefix) {
+		if !strings.HasPrefix(rawHeader, BearerPrefix) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "invalid authorization header"})
 			return
 		}
 
-		token := strings.TrimPrefix(rawHeader, bearerPrefix)
+		token := strings.TrimPrefix(rawHeader, BearerPrefix)
 
+		userID, err := verify.VerifyToken(token)
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"message": "forbidden"})
+			return
+		}
+
+		c.Set(string(userIDKey), uint(userID))
+		c.Next()
+	}
+}
+
+func AuthenticateWebSocket(verify *jwt.JWTVerifier) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		token := c.GetHeader(SecWebSocketHeader)
+		if token == "" {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "unauthorized"})
+			return
+		}
 		userID, err := verify.VerifyToken(token)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"message": "forbidden"})
@@ -45,18 +64,18 @@ func Authenticate(verify *jwt.JWTVerifier) gin.HandlerFunc {
 
 func OptionalAuthenticate(verify *jwt.JWTVerifier) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		rawHeader := c.GetHeader(authorizationHeader)
+		rawHeader := c.GetHeader(AuthorizationHeader)
 		if rawHeader == "" {
 			c.Next()
 			return
 		}
 
-		if !strings.HasPrefix(rawHeader, bearerPrefix) {
+		if !strings.HasPrefix(rawHeader, BearerPrefix) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "invalid authorization header"})
 			return
 		}
 
-		token := strings.TrimPrefix(rawHeader, bearerPrefix)
+		token := strings.TrimPrefix(rawHeader, BearerPrefix)
 
 		userID, err := verify.VerifyToken(token)
 		if err != nil {
