@@ -229,7 +229,7 @@ func (h *Hub) SendFourLatestNotificationsToClient(offerID, userID string) {
 			continue
 		}
 
-		notifications, err := h.clientNotificationRepo.GetLatestByUserId(uint(uid), 4)
+		notifications, err := h.clientNotificationRepo.GetLatestByUserID(uint(uid), 4)
 		if err != nil {
 			log.Printf("hub: cannot fetch latest notification for userID %q: %v", client.userID, err)
 			continue

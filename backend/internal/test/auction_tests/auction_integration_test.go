@@ -114,16 +114,16 @@ func newTestServer(seedManufacturers []models.Manufacturer, seedModels []models.
 	auctionHandler := auction.NewHandler(service, ms, mh, mn)
 	auctionRoutes := r.Group("/auction")
 	auctionRoutes.GET("/", auctionHandler.GetAllAuctions)
-	auctionRoutes.GET("/:id", auctionHandler.GetAuctionById)
+	auctionRoutes.GET("/:id", auctionHandler.GetAuctionByID)
 	auctionRoutes.POST("/", middleware.Authenticate(verifier), auctionHandler.CreateAuction)
 	auctionRoutes.PUT("/", middleware.Authenticate(verifier), auctionHandler.UpdateAuction)
-	auctionRoutes.DELETE("/:id", middleware.Authenticate(verifier), auctionHandler.DeleteAuctionById)
+	auctionRoutes.DELETE("/:id", middleware.Authenticate(verifier), auctionHandler.DeleteAuctionByID)
 	return r, service, nil
 }
 
-func getValidToken(userId uint, email string) (string, error) {
+func getValidToken(userID uint, email string) (string, error) {
 	secret := []byte("secret")
-	return jwt.GenerateToken(email, int64(userId), secret, time.Now().Add(1*time.Hour))
+	return jwt.GenerateToken(email, int64(userID), secret, time.Now().Add(1*time.Hour))
 }
 
 func TestCreateAuctionNoAuthHeader(t *testing.T) {

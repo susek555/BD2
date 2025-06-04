@@ -14,7 +14,7 @@ type RetrieveReviewDTO struct {
 type CreateReviewDTO struct {
 	Description string `json:"description"`
 	Rating      uint   `json:"rating"`
-	RevieweeId  uint   `json:"reviewee_id"`
+	RevieweeID  uint   `json:"reviewee_id"`
 }
 
 type UpdateReviewDTO struct {

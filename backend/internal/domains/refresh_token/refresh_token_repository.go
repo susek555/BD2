@@ -10,8 +10,8 @@ type RefreshTokenRepositoryInterface interface {
 	generic.CRUDRepository[models.RefreshToken]
 	FindByToken(token string) (*models.RefreshToken, error)
 	FindByUserEmail(email string) ([]models.RefreshToken, error)
-	FindByUserId(id uint) ([]models.RefreshToken, error)
-	DeleteByUserId(id uint) error
+	FindByUserID(id uint) ([]models.RefreshToken, error)
+	DeleteByUserID(id uint) error
 }
 
 type RefreshTokenRepository struct {
@@ -30,8 +30,8 @@ func (repo *RefreshTokenRepository) GetAll() ([]models.RefreshToken, error) {
 	return repo.repository.GetAll()
 }
 
-func (repo *RefreshTokenRepository) GetById(id uint) (*models.RefreshToken, error) {
-	return repo.repository.GetById(id)
+func (repo *RefreshTokenRepository) GetByID(id uint) (*models.RefreshToken, error) {
+	return repo.repository.GetByID(id)
 }
 
 func (repo *RefreshTokenRepository) Update(token *models.RefreshToken) error {
@@ -52,7 +52,7 @@ func (repo *RefreshTokenRepository) FindByUserEmail(email string) ([]models.Refr
 	return tokens, err
 }
 
-func (repo *RefreshTokenRepository) FindByUserId(id uint) ([]models.RefreshToken, error) {
+func (repo *RefreshTokenRepository) FindByUserID(id uint) ([]models.RefreshToken, error) {
 	var tokens []models.RefreshToken
 	err := repo.repository.
 		DB.
@@ -71,7 +71,7 @@ func (repo *RefreshTokenRepository) FindByToken(token string) (*models.RefreshTo
 	return &t, err
 }
 
-func (repo *RefreshTokenRepository) DeleteByUserId(id uint) error {
+func (repo *RefreshTokenRepository) DeleteByUserID(id uint) error {
 	err := repo.repository.
 		DB.
 		Where("user_id = ?", id).

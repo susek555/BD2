@@ -9,11 +9,11 @@ import (
 type BidServiceInterface interface {
 	Create(bidDTO *CreateBidDTO, bidderID uint) (*ProcessingBidDTO, error)
 	GetAll() ([]RetrieveBidDTO, error)
-	GetById(id uint) (*RetrieveBidDTO, error)
-	GetByBidderId(bidderId uint) ([]RetrieveBidDTO, error)
-	GetByAuctionId(auctionID uint) ([]RetrieveBidDTO, error)
-	GetHighestBid(auctionId uint) (*RetrieveBidDTO, error)
-	GetHighestBidByUserId(auctionId, userId uint) (*RetrieveBidDTO, error)
+	GetByID(id uint) (*RetrieveBidDTO, error)
+	GetByBidderID(bidderID uint) ([]RetrieveBidDTO, error)
+	GetByAuctionID(auctionID uint) ([]RetrieveBidDTO, error)
+	GetHighestBid(auctionID uint) (*RetrieveBidDTO, error)
+	GetHighestBidByUserID(auctionID, userID uint) (*RetrieveBidDTO, error)
 }
 
 type BidService struct {
@@ -52,16 +52,16 @@ func (service *BidService) GetAll() ([]RetrieveBidDTO, error) {
 	return mapping.MapSliceToDTOs(bids, MapToDTO), nil
 }
 
-func (service *BidService) GetById(id uint) (*RetrieveBidDTO, error) {
-	bid, err := service.Repo.GetById(id)
+func (service *BidService) GetByID(id uint) (*RetrieveBidDTO, error) {
+	bid, err := service.Repo.GetByID(id)
 	if err != nil {
 		return nil, err
 	}
 	return MapToDTO(bid), nil
 }
 
-func (service *BidService) GetByBidderId(bidderId uint) ([]RetrieveBidDTO, error) {
-	bids, err := service.Repo.GetByBidderId(bidderId)
+func (service *BidService) GetByBidderID(bidderID uint) ([]RetrieveBidDTO, error) {
+	bids, err := service.Repo.GetByBidderID(bidderID)
 	if err != nil {
 		return nil, err
 	}
@@ -69,8 +69,8 @@ func (service *BidService) GetByBidderId(bidderId uint) ([]RetrieveBidDTO, error
 	return mapping.MapSliceToDTOs(bids, MapToDTO), nil
 }
 
-func (service *BidService) GetByAuctionId(auctionID uint) ([]RetrieveBidDTO, error) {
-	bids, err := service.Repo.GetByAuctionId(auctionID)
+func (service *BidService) GetByAuctionID(auctionID uint) ([]RetrieveBidDTO, error) {
+	bids, err := service.Repo.GetByAuctionID(auctionID)
 	if err != nil {
 		return nil, err
 	}
@@ -78,16 +78,16 @@ func (service *BidService) GetByAuctionId(auctionID uint) ([]RetrieveBidDTO, err
 	return mapping.MapSliceToDTOs(bids, MapToDTO), nil
 }
 
-func (service *BidService) GetHighestBid(auctionId uint) (*RetrieveBidDTO, error) {
-	bid, err := service.Repo.GetHighestBid(auctionId)
+func (service *BidService) GetHighestBid(auctionID uint) (*RetrieveBidDTO, error) {
+	bid, err := service.Repo.GetHighestBid(auctionID)
 	if err != nil {
 		return nil, err
 	}
 	return MapToDTO(bid), nil
 }
 
-func (service *BidService) GetHighestBidByUserId(auctionId, userId uint) (*RetrieveBidDTO, error) {
-	bid, err := service.Repo.GetHighestBidByUserId(auctionId, userId)
+func (service *BidService) GetHighestBidByUserID(auctionID, userID uint) (*RetrieveBidDTO, error) {
+	bid, err := service.Repo.GetHighestBidByUserID(auctionID, userID)
 	if err != nil {
 		return nil, err
 	}

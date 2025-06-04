@@ -7,10 +7,10 @@ import (
 
 type ClientNotificationRepositoryInterface interface {
 	Create(clientNotification *models.ClientNotification) error
-	GetById(id uint) (*models.ClientNotification, error)
+	GetByID(id uint) (*models.ClientNotification, error)
 	GetAll() ([]models.ClientNotification, error)
-	GetByUserId(userId uint) ([]models.ClientNotification, error)
-	GetLatestByUserId(userId uint, count int) ([]models.ClientNotification, error)
+	GetByUserID(userID uint) ([]models.ClientNotification, error)
+	GetLatestByUserID(userID uint, count int) ([]models.ClientNotification, error)
 }
 
 type ClientNotificationRepository struct {
@@ -31,7 +31,7 @@ func (r *ClientNotificationRepository) Create(clientNotification *models.ClientN
 	return nil
 }
 
-func (r *ClientNotificationRepository) GetById(id uint) (*models.ClientNotification, error) {
+func (r *ClientNotificationRepository) GetByID(id uint) (*models.ClientNotification, error) {
 	db := r.DB
 	var clientNotification models.ClientNotification
 	if err := db.First(&clientNotification, id).Error; err != nil {
@@ -49,21 +49,21 @@ func (r *ClientNotificationRepository) GetAll() ([]models.ClientNotification, er
 	return clientNotifications, nil
 }
 
-func (r *ClientNotificationRepository) GetByUserId(userId uint) ([]models.ClientNotification, error) {
+func (r *ClientNotificationRepository) GetByUserID(userID uint) ([]models.ClientNotification, error) {
 	db := r.DB
 	var clientNotifications []models.ClientNotification
-	if err := db.Where("user_id = ?", userId).Find(&clientNotifications).Error; err != nil {
+	if err := db.Where("user_id = ?", userID).Find(&clientNotifications).Error; err != nil {
 		return nil, err
 	}
 	return clientNotifications, nil
 }
 
-func (r *ClientNotificationRepository) GetLatestByUserId(userId uint, count int) ([]models.ClientNotification, error) {
+func (r *ClientNotificationRepository) GetLatestByUserID(userID uint, count int) ([]models.ClientNotification, error) {
 	db := r.DB
 	var clientNotifications []models.ClientNotification
 	err := db.
 		Joins("JOIN notifications ON notifications.id = client_notifications.notification_id").
-		Where("client_notifications.user_id = ?", userId).
+		Where("client_notifications.user_id = ?", userID).
 		Order("notifications.created_at DESC").
 		Limit(count).
 		Preload("Notification").

@@ -35,7 +35,7 @@ func (h *Handler) GetAllUsers(c *gin.Context) {
 	c.JSON(http.StatusOK, userDTOs)
 }
 
-// GetUserById godoc
+// GetUserByID godoc
 //
 //	@Summary		Get user by id
 //	@Description	Returns user who has provided id. If user's subtype is person the company related fields will be omitted and vice versa.
@@ -48,13 +48,13 @@ func (h *Handler) GetAllUsers(c *gin.Context) {
 //	@Failure		404	{object}	custom_errors.HTTPError	"User not found"
 //	@Failure		500	{object}	custom_errors.HTTPError	"Internal server error"
 //	@Router			/users/id/{id} [get]
-func (h *Handler) GetUserById(c *gin.Context) {
+func (h *Handler) GetUserByID(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
-	userDTO, err := h.service.GetById(uint(id))
+	userDTO, err := h.service.GetByID(uint(id))
 	if err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return

@@ -30,10 +30,8 @@ type SaleOfferServiceInterface interface {
 	GetDetailedByID(id uint, userID *uint) (*RetrieveDetailedSaleOfferDTO, error)
 	GetByUserID(id uint, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error)
 	GetFiltered(filter *OfferFilter, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error)
-	GetModelID(manufacturerName, modelName string) (uint, error)
-	DetermineNewModelID(offer *models.SaleOffer, dto *UpdateSaleOfferDTO) (uint, error)
 	Buy(offerID uint, userID uint) (*models.SaleOffer, error)
-	GetByIdNonDTO(id uint, userID uint) (*models.SaleOffer, error)
+	GetByIDNonDTO(id uint, userID uint) (*models.SaleOffer, error)
 }
 type SaleOfferService struct {
 	saleOfferRepo   SaleOfferRepositoryInterface
@@ -133,7 +131,7 @@ func (s *SaleOfferService) GetDetailedByID(id uint, userID *uint) (*RetrieveDeta
 	return s.mapOfferWithAdditionalFieldsDetailed(offer, userID)
 }
 
-func (s *SaleOfferService) GetByIdNonDTO(id uint, userID uint) (*models.SaleOffer, error) {
+func (s *SaleOfferService) GetByIDNonDTO(id uint, userID uint) (*models.SaleOffer, error) {
 	offer, err := s.saleOfferRepo.GetByID(id)
 	if err != nil {
 		return nil, err

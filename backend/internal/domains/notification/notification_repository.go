@@ -7,7 +7,7 @@ import (
 
 type NotificationRepositoryInterface interface {
 	Create(notification *models.Notification) error
-	GetById(id uint) (*models.Notification, error)
+	GetByID(id uint) (*models.Notification, error)
 	GetAll() ([]models.Notification, error)
 }
 
@@ -29,7 +29,7 @@ func (r *NotificationRepository) Create(notification *models.Notification) error
 	return nil
 }
 
-func (r *NotificationRepository) GetById(id uint) (*models.Notification, error) {
+func (r *NotificationRepository) GetByID(id uint) (*models.Notification, error) {
 	db := r.DB
 	var notification models.Notification
 	if err := db.First(&notification, id).Error; err != nil {

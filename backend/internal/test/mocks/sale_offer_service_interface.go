@@ -256,12 +256,12 @@ func (_c *SaleOfferServiceInterface_GetByID_Call) RunAndReturn(run func(uint, *u
 	return _c
 }
 
-// GetByIdNonDTO provides a mock function with given fields: id, userID
-func (_m *SaleOfferServiceInterface) GetByIdNonDTO(id uint, userID uint) (*models.SaleOffer, error) {
+// GetByIDNonDTO provides a mock function with given fields: id, userID
+func (_m *SaleOfferServiceInterface) GetByIDNonDTO(id uint, userID uint) (*models.SaleOffer, error) {
 	ret := _m.Called(id, userID)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetByIdNonDTO")
+		panic("no return value specified for GetByIDNonDTO")
 	}
 
 	var r0 *models.SaleOffer
@@ -286,31 +286,31 @@ func (_m *SaleOfferServiceInterface) GetByIdNonDTO(id uint, userID uint) (*model
 	return r0, r1
 }
 
-// SaleOfferServiceInterface_GetByIdNonDTO_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetByIdNonDTO'
-type SaleOfferServiceInterface_GetByIdNonDTO_Call struct {
+// SaleOfferServiceInterface_GetByIDNonDTO_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetByIDNonDTO'
+type SaleOfferServiceInterface_GetByIDNonDTO_Call struct {
 	*mock.Call
 }
 
-// GetByIdNonDTO is a helper method to define mock.On call
+// GetByIDNonDTO is a helper method to define mock.On call
 //   - id uint
 //   - userID uint
-func (_e *SaleOfferServiceInterface_Expecter) GetByIdNonDTO(id interface{}, userID interface{}) *SaleOfferServiceInterface_GetByIdNonDTO_Call {
-	return &SaleOfferServiceInterface_GetByIdNonDTO_Call{Call: _e.mock.On("GetByIdNonDTO", id, userID)}
+func (_e *SaleOfferServiceInterface_Expecter) GetByIDNonDTO(id interface{}, userID interface{}) *SaleOfferServiceInterface_GetByIDNonDTO_Call {
+	return &SaleOfferServiceInterface_GetByIDNonDTO_Call{Call: _e.mock.On("GetByIDNonDTO", id, userID)}
 }
 
-func (_c *SaleOfferServiceInterface_GetByIdNonDTO_Call) Run(run func(id uint, userID uint)) *SaleOfferServiceInterface_GetByIdNonDTO_Call {
+func (_c *SaleOfferServiceInterface_GetByIDNonDTO_Call) Run(run func(id uint, userID uint)) *SaleOfferServiceInterface_GetByIDNonDTO_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(uint), args[1].(uint))
 	})
 	return _c
 }
 
-func (_c *SaleOfferServiceInterface_GetByIdNonDTO_Call) Return(_a0 *models.SaleOffer, _a1 error) *SaleOfferServiceInterface_GetByIdNonDTO_Call {
+func (_c *SaleOfferServiceInterface_GetByIDNonDTO_Call) Return(_a0 *models.SaleOffer, _a1 error) *SaleOfferServiceInterface_GetByIDNonDTO_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *SaleOfferServiceInterface_GetByIdNonDTO_Call) RunAndReturn(run func(uint, uint) (*models.SaleOffer, error)) *SaleOfferServiceInterface_GetByIdNonDTO_Call {
+func (_c *SaleOfferServiceInterface_GetByIDNonDTO_Call) RunAndReturn(run func(uint, uint) (*models.SaleOffer, error)) *SaleOfferServiceInterface_GetByIDNonDTO_Call {
 	_c.Call.Return(run)
 	return _c
 }

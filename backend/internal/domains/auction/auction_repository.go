@@ -40,7 +40,7 @@ func (a *AuctionRepository) GetAll() ([]models.Auction, error) {
 	return auctions, nil
 }
 
-func (a *AuctionRepository) GetById(id uint) (*models.Auction, error) {
+func (a *AuctionRepository) GetByID(id uint) (*models.Auction, error) {
 	db := a.DB
 	var auction models.Auction
 	err := db.Preload("Offer").
@@ -70,7 +70,7 @@ func (a *AuctionRepository) Delete(id uint) error {
 }
 
 func (a *AuctionRepository) BuyNow(auctionID, userID uint) (*models.Auction, error) {
-	auction, err := a.GetById(auctionID)
+	auction, err := a.GetByID(auctionID)
 	if err != nil {
 		return nil, err
 	}

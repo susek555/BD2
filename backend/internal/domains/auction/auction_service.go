@@ -10,10 +10,10 @@ import (
 type AuctionServiceInterface interface {
 	Create(auction *CreateAuctionDTO) (*RetrieveAuctionDTO, error)
 	GetAll() ([]RetrieveAuctionDTO, error)
-	GetById(id uint) (*RetrieveAuctionDTO, error)
-	GetByIdNonDTO(id uint) (*models.Auction, error)
+	GetByID(id uint) (*RetrieveAuctionDTO, error)
+	GetByIDNonDTO(id uint) (*models.Auction, error)
 	Update(auction *UpdateAuctionDTO, userID uint) (*RetrieveAuctionDTO, error)
-	Delete(id, userId uint) error
+	Delete(id, userID uint) error
 	BuyNow(auctionID, userID uint) (*models.Auction, error)
 }
 
@@ -48,7 +48,7 @@ func (s *AuctionService) Create(auction *CreateAuctionDTO) (*RetrieveAuctionDTO,
 	if err := s.auctionRepo.Create(auctionEntity); err != nil {
 		return nil, err
 	}
-	return s.GetById(auctionEntity.OfferID)
+	return s.GetByID(auctionEntity.OfferID)
 }
 
 func (s *AuctionService) GetAll() ([]RetrieveAuctionDTO, error) {
@@ -64,8 +64,8 @@ func (s *AuctionService) GetAll() ([]RetrieveAuctionDTO, error) {
 	return auctionsDTO, nil
 }
 
-func (s *AuctionService) GetById(id uint) (*RetrieveAuctionDTO, error) {
-	auction, err := s.auctionRepo.GetById(id)
+func (s *AuctionService) GetByID(id uint) (*RetrieveAuctionDTO, error) {
+	auction, err := s.auctionRepo.GetByID(id)
 	if err != nil {
 		return nil, err
 	}
@@ -73,8 +73,8 @@ func (s *AuctionService) GetById(id uint) (*RetrieveAuctionDTO, error) {
 	return dto, nil
 }
 
-func (s *AuctionService) GetByIdNonDTO(id uint) (*models.Auction, error) {
-	auction, err := s.auctionRepo.GetById(id)
+func (s *AuctionService) GetByIDNonDTO(id uint) (*models.Auction, error) {
+	auction, err := s.auctionRepo.GetByID(id)
 	if err != nil {
 		return nil, err
 	}
@@ -82,14 +82,12 @@ func (s *AuctionService) GetByIdNonDTO(id uint) (*models.Auction, error) {
 }
 
 func (s *AuctionService) Update(auction *UpdateAuctionDTO, userID uint) (*RetrieveAuctionDTO, error) {
-	auctionEntity, err := s.auctionRepo.GetById(auction.Id)
-	if err != nil {
-		return nil, err
+	if auction.UpdateSaleOfferDTO != nil {
+		if _, err := s.saleOfferService.Update(auction.UpdateSaleOfferDTO, userID); err != nil {
+			return nil, err
+		}
 	}
-	if auctionEntity.Offer.UserID != userID {
-		return nil, ErrModificationForbidden
-	}
-	modelID, err := s.saleOfferService.DetermineNewModelID(auctionEntity.Offer, auction.UpdateSaleOfferDTO)
+	auctionEntity, err := s.auctionRepo.GetByID(auction.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -97,23 +95,22 @@ func (s *AuctionService) Update(auction *UpdateAuctionDTO, userID uint) (*Retrie
 	if err != nil {
 		return nil, err
 	}
-	updatedAuction.Offer.Car.ModelID = modelID
 	err = s.auctionRepo.Update(updatedAuction)
 	if err != nil {
 		return nil, err
 	}
-	return s.GetById(updatedAuction.OfferID)
+	return s.GetByID(updatedAuction.OfferID)
 }
 
-func (s *AuctionService) Delete(id, userId uint) error {
-	auction, err := s.auctionRepo.GetById(id)
+func (s *AuctionService) Delete(ID, userID uint) error {
+	auction, err := s.auctionRepo.GetByID(ID)
 	if err != nil {
 		return err
 	}
-	if auction.Offer.UserID != userId {
+	if auction.Offer.UserID != userID {
 		return errors.New("you are not the owner of this auction")
 	}
-	err = s.auctionRepo.Delete(id)
+	err = s.auctionRepo.Delete(ID)
 	if err != nil {
 		return err
 	}
@@ -121,7 +118,7 @@ func (s *AuctionService) Delete(id, userId uint) error {
 }
 
 func (s *AuctionService) BuyNow(auctionID, userID uint) (*models.Auction, error) {
-	auction, err := s.auctionRepo.GetById(auctionID)
+	auction, err := s.auctionRepo.GetByID(auctionID)
 	if err != nil {
 		return nil, err
 	}

@@ -6,6 +6,7 @@ import (
 	mock "github.com/stretchr/testify/mock"
 	models "github.com/susek555/BD2/car-dealer-api/internal/models"
 	pagination "github.com/susek555/BD2/car-dealer-api/pkg/pagination"
+
 	review "github.com/susek555/BD2/car-dealer-api/internal/domains/review"
 )
 
@@ -171,27 +172,27 @@ func (_c *ReviewRepositoryInterface_GetAll_Call) RunAndReturn(run func() ([]mode
 	return _c
 }
 
-// GetAverageRatingByRevieweeId provides a mock function with given fields: revieweeId
-func (_m *ReviewRepositoryInterface) GetAverageRatingByRevieweeId(revieweeId uint) (float64, error) {
-	ret := _m.Called(revieweeId)
+// GetAverageRatingByRevieweeID provides a mock function with given fields: revieweeID
+func (_m *ReviewRepositoryInterface) GetAverageRatingByRevieweeID(revieweeID uint) (float64, error) {
+	ret := _m.Called(revieweeID)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetAverageRatingByRevieweeId")
+		panic("no return value specified for GetAverageRatingByRevieweeID")
 	}
 
 	var r0 float64
 	var r1 error
 	if rf, ok := ret.Get(0).(func(uint) (float64, error)); ok {
-		return rf(revieweeId)
+		return rf(revieweeID)
 	}
 	if rf, ok := ret.Get(0).(func(uint) float64); ok {
-		r0 = rf(revieweeId)
+		r0 = rf(revieweeID)
 	} else {
 		r0 = ret.Get(0).(float64)
 	}
 
 	if rf, ok := ret.Get(1).(func(uint) error); ok {
-		r1 = rf(revieweeId)
+		r1 = rf(revieweeID)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -199,40 +200,40 @@ func (_m *ReviewRepositoryInterface) GetAverageRatingByRevieweeId(revieweeId uin
 	return r0, r1
 }
 
-// ReviewRepositoryInterface_GetAverageRatingByRevieweeId_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetAverageRatingByRevieweeId'
-type ReviewRepositoryInterface_GetAverageRatingByRevieweeId_Call struct {
+// ReviewRepositoryInterface_GetAverageRatingByRevieweeID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetAverageRatingByRevieweeID'
+type ReviewRepositoryInterface_GetAverageRatingByRevieweeID_Call struct {
 	*mock.Call
 }
 
-// GetAverageRatingByRevieweeId is a helper method to define mock.On call
-//   - revieweeId uint
-func (_e *ReviewRepositoryInterface_Expecter) GetAverageRatingByRevieweeId(revieweeId interface{}) *ReviewRepositoryInterface_GetAverageRatingByRevieweeId_Call {
-	return &ReviewRepositoryInterface_GetAverageRatingByRevieweeId_Call{Call: _e.mock.On("GetAverageRatingByRevieweeId", revieweeId)}
+// GetAverageRatingByRevieweeID is a helper method to define mock.On call
+//   - revieweeID uint
+func (_e *ReviewRepositoryInterface_Expecter) GetAverageRatingByRevieweeID(revieweeID interface{}) *ReviewRepositoryInterface_GetAverageRatingByRevieweeID_Call {
+	return &ReviewRepositoryInterface_GetAverageRatingByRevieweeID_Call{Call: _e.mock.On("GetAverageRatingByRevieweeID", revieweeID)}
 }
 
-func (_c *ReviewRepositoryInterface_GetAverageRatingByRevieweeId_Call) Run(run func(revieweeId uint)) *ReviewRepositoryInterface_GetAverageRatingByRevieweeId_Call {
+func (_c *ReviewRepositoryInterface_GetAverageRatingByRevieweeID_Call) Run(run func(revieweeID uint)) *ReviewRepositoryInterface_GetAverageRatingByRevieweeID_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(uint))
 	})
 	return _c
 }
 
-func (_c *ReviewRepositoryInterface_GetAverageRatingByRevieweeId_Call) Return(_a0 float64, _a1 error) *ReviewRepositoryInterface_GetAverageRatingByRevieweeId_Call {
+func (_c *ReviewRepositoryInterface_GetAverageRatingByRevieweeID_Call) Return(_a0 float64, _a1 error) *ReviewRepositoryInterface_GetAverageRatingByRevieweeID_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *ReviewRepositoryInterface_GetAverageRatingByRevieweeId_Call) RunAndReturn(run func(uint) (float64, error)) *ReviewRepositoryInterface_GetAverageRatingByRevieweeId_Call {
+func (_c *ReviewRepositoryInterface_GetAverageRatingByRevieweeID_Call) RunAndReturn(run func(uint) (float64, error)) *ReviewRepositoryInterface_GetAverageRatingByRevieweeID_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
-// GetById provides a mock function with given fields: id
-func (_m *ReviewRepositoryInterface) GetById(id uint) (*models.Review, error) {
+// GetByID provides a mock function with given fields: id
+func (_m *ReviewRepositoryInterface) GetByID(id uint) (*models.Review, error) {
 	ret := _m.Called(id)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetById")
+		panic("no return value specified for GetByID")
 	}
 
 	var r0 *models.Review
@@ -257,49 +258,49 @@ func (_m *ReviewRepositoryInterface) GetById(id uint) (*models.Review, error) {
 	return r0, r1
 }
 
-// ReviewRepositoryInterface_GetById_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetById'
-type ReviewRepositoryInterface_GetById_Call struct {
+// ReviewRepositoryInterface_GetByID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetByID'
+type ReviewRepositoryInterface_GetByID_Call struct {
 	*mock.Call
 }
 
-// GetById is a helper method to define mock.On call
+// GetByID is a helper method to define mock.On call
 //   - id uint
-func (_e *ReviewRepositoryInterface_Expecter) GetById(id interface{}) *ReviewRepositoryInterface_GetById_Call {
-	return &ReviewRepositoryInterface_GetById_Call{Call: _e.mock.On("GetById", id)}
+func (_e *ReviewRepositoryInterface_Expecter) GetByID(id interface{}) *ReviewRepositoryInterface_GetByID_Call {
+	return &ReviewRepositoryInterface_GetByID_Call{Call: _e.mock.On("GetByID", id)}
 }
 
-func (_c *ReviewRepositoryInterface_GetById_Call) Run(run func(id uint)) *ReviewRepositoryInterface_GetById_Call {
+func (_c *ReviewRepositoryInterface_GetByID_Call) Run(run func(id uint)) *ReviewRepositoryInterface_GetByID_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(uint))
 	})
 	return _c
 }
 
-func (_c *ReviewRepositoryInterface_GetById_Call) Return(_a0 *models.Review, _a1 error) *ReviewRepositoryInterface_GetById_Call {
+func (_c *ReviewRepositoryInterface_GetByID_Call) Return(_a0 *models.Review, _a1 error) *ReviewRepositoryInterface_GetByID_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *ReviewRepositoryInterface_GetById_Call) RunAndReturn(run func(uint) (*models.Review, error)) *ReviewRepositoryInterface_GetById_Call {
+func (_c *ReviewRepositoryInterface_GetByID_Call) RunAndReturn(run func(uint) (*models.Review, error)) *ReviewRepositoryInterface_GetByID_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
-// GetByRevieweeId provides a mock function with given fields: reviewedId
-func (_m *ReviewRepositoryInterface) GetByRevieweeId(reviewedId uint) ([]models.Review, error) {
-	ret := _m.Called(reviewedId)
+// GetByRevieweeID provides a mock function with given fields: reviewedID
+func (_m *ReviewRepositoryInterface) GetByRevieweeID(reviewedID uint) ([]models.Review, error) {
+	ret := _m.Called(reviewedID)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetByRevieweeId")
+		panic("no return value specified for GetByRevieweeID")
 	}
 
 	var r0 []models.Review
 	var r1 error
 	if rf, ok := ret.Get(0).(func(uint) ([]models.Review, error)); ok {
-		return rf(reviewedId)
+		return rf(reviewedID)
 	}
 	if rf, ok := ret.Get(0).(func(uint) []models.Review); ok {
-		r0 = rf(reviewedId)
+		r0 = rf(reviewedID)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]models.Review)
@@ -307,7 +308,7 @@ func (_m *ReviewRepositoryInterface) GetByRevieweeId(reviewedId uint) ([]models.
 	}
 
 	if rf, ok := ret.Get(1).(func(uint) error); ok {
-		r1 = rf(reviewedId)
+		r1 = rf(reviewedID)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -315,49 +316,49 @@ func (_m *ReviewRepositoryInterface) GetByRevieweeId(reviewedId uint) ([]models.
 	return r0, r1
 }
 
-// ReviewRepositoryInterface_GetByRevieweeId_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetByRevieweeId'
-type ReviewRepositoryInterface_GetByRevieweeId_Call struct {
+// ReviewRepositoryInterface_GetByRevieweeID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetByRevieweeID'
+type ReviewRepositoryInterface_GetByRevieweeID_Call struct {
 	*mock.Call
 }
 
-// GetByRevieweeId is a helper method to define mock.On call
-//   - reviewedId uint
-func (_e *ReviewRepositoryInterface_Expecter) GetByRevieweeId(reviewedId interface{}) *ReviewRepositoryInterface_GetByRevieweeId_Call {
-	return &ReviewRepositoryInterface_GetByRevieweeId_Call{Call: _e.mock.On("GetByRevieweeId", reviewedId)}
+// GetByRevieweeID is a helper method to define mock.On call
+//   - reviewedID uint
+func (_e *ReviewRepositoryInterface_Expecter) GetByRevieweeID(reviewedID interface{}) *ReviewRepositoryInterface_GetByRevieweeID_Call {
+	return &ReviewRepositoryInterface_GetByRevieweeID_Call{Call: _e.mock.On("GetByRevieweeID", reviewedID)}
 }
 
-func (_c *ReviewRepositoryInterface_GetByRevieweeId_Call) Run(run func(reviewedId uint)) *ReviewRepositoryInterface_GetByRevieweeId_Call {
+func (_c *ReviewRepositoryInterface_GetByRevieweeID_Call) Run(run func(reviewedID uint)) *ReviewRepositoryInterface_GetByRevieweeID_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(uint))
 	})
 	return _c
 }
 
-func (_c *ReviewRepositoryInterface_GetByRevieweeId_Call) Return(_a0 []models.Review, _a1 error) *ReviewRepositoryInterface_GetByRevieweeId_Call {
+func (_c *ReviewRepositoryInterface_GetByRevieweeID_Call) Return(_a0 []models.Review, _a1 error) *ReviewRepositoryInterface_GetByRevieweeID_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *ReviewRepositoryInterface_GetByRevieweeId_Call) RunAndReturn(run func(uint) ([]models.Review, error)) *ReviewRepositoryInterface_GetByRevieweeId_Call {
+func (_c *ReviewRepositoryInterface_GetByRevieweeID_Call) RunAndReturn(run func(uint) ([]models.Review, error)) *ReviewRepositoryInterface_GetByRevieweeID_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
-// GetByReviewerId provides a mock function with given fields: reviewerId
-func (_m *ReviewRepositoryInterface) GetByReviewerId(reviewerId uint) ([]models.Review, error) {
-	ret := _m.Called(reviewerId)
+// GetByReviewerID provides a mock function with given fields: reviewerID
+func (_m *ReviewRepositoryInterface) GetByReviewerID(reviewerID uint) ([]models.Review, error) {
+	ret := _m.Called(reviewerID)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetByReviewerId")
+		panic("no return value specified for GetByReviewerID")
 	}
 
 	var r0 []models.Review
 	var r1 error
 	if rf, ok := ret.Get(0).(func(uint) ([]models.Review, error)); ok {
-		return rf(reviewerId)
+		return rf(reviewerID)
 	}
 	if rf, ok := ret.Get(0).(func(uint) []models.Review); ok {
-		r0 = rf(reviewerId)
+		r0 = rf(reviewerID)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]models.Review)
@@ -365,7 +366,7 @@ func (_m *ReviewRepositoryInterface) GetByReviewerId(reviewerId uint) ([]models.
 	}
 
 	if rf, ok := ret.Get(1).(func(uint) error); ok {
-		r1 = rf(reviewerId)
+		r1 = rf(reviewerID)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -373,49 +374,49 @@ func (_m *ReviewRepositoryInterface) GetByReviewerId(reviewerId uint) ([]models.
 	return r0, r1
 }
 
-// ReviewRepositoryInterface_GetByReviewerId_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetByReviewerId'
-type ReviewRepositoryInterface_GetByReviewerId_Call struct {
+// ReviewRepositoryInterface_GetByReviewerID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetByReviewerID'
+type ReviewRepositoryInterface_GetByReviewerID_Call struct {
 	*mock.Call
 }
 
-// GetByReviewerId is a helper method to define mock.On call
-//   - reviewerId uint
-func (_e *ReviewRepositoryInterface_Expecter) GetByReviewerId(reviewerId interface{}) *ReviewRepositoryInterface_GetByReviewerId_Call {
-	return &ReviewRepositoryInterface_GetByReviewerId_Call{Call: _e.mock.On("GetByReviewerId", reviewerId)}
+// GetByReviewerID is a helper method to define mock.On call
+//   - reviewerID uint
+func (_e *ReviewRepositoryInterface_Expecter) GetByReviewerID(reviewerID interface{}) *ReviewRepositoryInterface_GetByReviewerID_Call {
+	return &ReviewRepositoryInterface_GetByReviewerID_Call{Call: _e.mock.On("GetByReviewerID", reviewerID)}
 }
 
-func (_c *ReviewRepositoryInterface_GetByReviewerId_Call) Run(run func(reviewerId uint)) *ReviewRepositoryInterface_GetByReviewerId_Call {
+func (_c *ReviewRepositoryInterface_GetByReviewerID_Call) Run(run func(reviewerID uint)) *ReviewRepositoryInterface_GetByReviewerID_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(uint))
 	})
 	return _c
 }
 
-func (_c *ReviewRepositoryInterface_GetByReviewerId_Call) Return(_a0 []models.Review, _a1 error) *ReviewRepositoryInterface_GetByReviewerId_Call {
+func (_c *ReviewRepositoryInterface_GetByReviewerID_Call) Return(_a0 []models.Review, _a1 error) *ReviewRepositoryInterface_GetByReviewerID_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *ReviewRepositoryInterface_GetByReviewerId_Call) RunAndReturn(run func(uint) ([]models.Review, error)) *ReviewRepositoryInterface_GetByReviewerId_Call {
+func (_c *ReviewRepositoryInterface_GetByReviewerID_Call) RunAndReturn(run func(uint) ([]models.Review, error)) *ReviewRepositoryInterface_GetByReviewerID_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
-// GetByReviewerIdAndRevieweeId provides a mock function with given fields: reviewerId, reviewedId
-func (_m *ReviewRepositoryInterface) GetByReviewerIdAndRevieweeId(reviewerId uint, reviewedId uint) (*models.Review, error) {
-	ret := _m.Called(reviewerId, reviewedId)
+// GetByReviewerIDAndRevieweeID provides a mock function with given fields: reviewerID, reviewedID
+func (_m *ReviewRepositoryInterface) GetByReviewerIDAndRevieweeID(reviewerID uint, reviewedID uint) (*models.Review, error) {
+	ret := _m.Called(reviewerID, reviewedID)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetByReviewerIdAndRevieweeId")
+		panic("no return value specified for GetByReviewerIDAndRevieweeID")
 	}
 
 	var r0 *models.Review
 	var r1 error
 	if rf, ok := ret.Get(0).(func(uint, uint) (*models.Review, error)); ok {
-		return rf(reviewerId, reviewedId)
+		return rf(reviewerID, reviewedID)
 	}
 	if rf, ok := ret.Get(0).(func(uint, uint) *models.Review); ok {
-		r0 = rf(reviewerId, reviewedId)
+		r0 = rf(reviewerID, reviewedID)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*models.Review)
@@ -423,7 +424,7 @@ func (_m *ReviewRepositoryInterface) GetByReviewerIdAndRevieweeId(reviewerId uin
 	}
 
 	if rf, ok := ret.Get(1).(func(uint, uint) error); ok {
-		r1 = rf(reviewerId, reviewedId)
+		r1 = rf(reviewerID, reviewedID)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -431,31 +432,31 @@ func (_m *ReviewRepositoryInterface) GetByReviewerIdAndRevieweeId(reviewerId uin
 	return r0, r1
 }
 
-// ReviewRepositoryInterface_GetByReviewerIdAndRevieweeId_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetByReviewerIdAndRevieweeId'
-type ReviewRepositoryInterface_GetByReviewerIdAndRevieweeId_Call struct {
+// ReviewRepositoryInterface_GetByReviewerIDAndRevieweeID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetByReviewerIDAndRevieweeID'
+type ReviewRepositoryInterface_GetByReviewerIDAndRevieweeID_Call struct {
 	*mock.Call
 }
 
-// GetByReviewerIdAndRevieweeId is a helper method to define mock.On call
-//   - reviewerId uint
-//   - reviewedId uint
-func (_e *ReviewRepositoryInterface_Expecter) GetByReviewerIdAndRevieweeId(reviewerId interface{}, reviewedId interface{}) *ReviewRepositoryInterface_GetByReviewerIdAndRevieweeId_Call {
-	return &ReviewRepositoryInterface_GetByReviewerIdAndRevieweeId_Call{Call: _e.mock.On("GetByReviewerIdAndRevieweeId", reviewerId, reviewedId)}
+// GetByReviewerIDAndRevieweeID is a helper method to define mock.On call
+//   - reviewerID uint
+//   - reviewedID uint
+func (_e *ReviewRepositoryInterface_Expecter) GetByReviewerIDAndRevieweeID(reviewerID interface{}, reviewedID interface{}) *ReviewRepositoryInterface_GetByReviewerIDAndRevieweeID_Call {
+	return &ReviewRepositoryInterface_GetByReviewerIDAndRevieweeID_Call{Call: _e.mock.On("GetByReviewerIDAndRevieweeID", reviewerID, reviewedID)}
 }
 
-func (_c *ReviewRepositoryInterface_GetByReviewerIdAndRevieweeId_Call) Run(run func(reviewerId uint, reviewedId uint)) *ReviewRepositoryInterface_GetByReviewerIdAndRevieweeId_Call {
+func (_c *ReviewRepositoryInterface_GetByReviewerIDAndRevieweeID_Call) Run(run func(reviewerID uint, reviewedID uint)) *ReviewRepositoryInterface_GetByReviewerIDAndRevieweeID_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(uint), args[1].(uint))
 	})
 	return _c
 }
 
-func (_c *ReviewRepositoryInterface_GetByReviewerIdAndRevieweeId_Call) Return(_a0 *models.Review, _a1 error) *ReviewRepositoryInterface_GetByReviewerIdAndRevieweeId_Call {
+func (_c *ReviewRepositoryInterface_GetByReviewerIDAndRevieweeID_Call) Return(_a0 *models.Review, _a1 error) *ReviewRepositoryInterface_GetByReviewerIDAndRevieweeID_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *ReviewRepositoryInterface_GetByReviewerIdAndRevieweeId_Call) RunAndReturn(run func(uint, uint) (*models.Review, error)) *ReviewRepositoryInterface_GetByReviewerIdAndRevieweeId_Call {
+func (_c *ReviewRepositoryInterface_GetByReviewerIDAndRevieweeID_Call) RunAndReturn(run func(uint, uint) (*models.Review, error)) *ReviewRepositoryInterface_GetByReviewerIDAndRevieweeID_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -527,21 +528,21 @@ func (_c *ReviewRepositoryInterface_GetFiltered_Call) RunAndReturn(run func(*rev
 	return _c
 }
 
-// GetFrequencyOfRatingByRevieweeId provides a mock function with given fields: revieweeId
-func (_m *ReviewRepositoryInterface) GetFrequencyOfRatingByRevieweeId(revieweeId uint) (map[int]int, error) {
-	ret := _m.Called(revieweeId)
+// GetFrequencyOfRatingByRevieweeID provides a mock function with given fields: revieweeID
+func (_m *ReviewRepositoryInterface) GetFrequencyOfRatingByRevieweeID(revieweeID uint) (map[int]int, error) {
+	ret := _m.Called(revieweeID)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetFrequencyOfRatingByRevieweeId")
+		panic("no return value specified for GetFrequencyOfRatingByRevieweeID")
 	}
 
 	var r0 map[int]int
 	var r1 error
 	if rf, ok := ret.Get(0).(func(uint) (map[int]int, error)); ok {
-		return rf(revieweeId)
+		return rf(revieweeID)
 	}
 	if rf, ok := ret.Get(0).(func(uint) map[int]int); ok {
-		r0 = rf(revieweeId)
+		r0 = rf(revieweeID)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(map[int]int)
@@ -549,7 +550,7 @@ func (_m *ReviewRepositoryInterface) GetFrequencyOfRatingByRevieweeId(revieweeId
 	}
 
 	if rf, ok := ret.Get(1).(func(uint) error); ok {
-		r1 = rf(revieweeId)
+		r1 = rf(revieweeID)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -557,30 +558,30 @@ func (_m *ReviewRepositoryInterface) GetFrequencyOfRatingByRevieweeId(revieweeId
 	return r0, r1
 }
 
-// ReviewRepositoryInterface_GetFrequencyOfRatingByRevieweeId_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetFrequencyOfRatingByRevieweeId'
-type ReviewRepositoryInterface_GetFrequencyOfRatingByRevieweeId_Call struct {
+// ReviewRepositoryInterface_GetFrequencyOfRatingByRevieweeID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetFrequencyOfRatingByRevieweeID'
+type ReviewRepositoryInterface_GetFrequencyOfRatingByRevieweeID_Call struct {
 	*mock.Call
 }
 
-// GetFrequencyOfRatingByRevieweeId is a helper method to define mock.On call
-//   - revieweeId uint
-func (_e *ReviewRepositoryInterface_Expecter) GetFrequencyOfRatingByRevieweeId(revieweeId interface{}) *ReviewRepositoryInterface_GetFrequencyOfRatingByRevieweeId_Call {
-	return &ReviewRepositoryInterface_GetFrequencyOfRatingByRevieweeId_Call{Call: _e.mock.On("GetFrequencyOfRatingByRevieweeId", revieweeId)}
+// GetFrequencyOfRatingByRevieweeID is a helper method to define mock.On call
+//   - revieweeID uint
+func (_e *ReviewRepositoryInterface_Expecter) GetFrequencyOfRatingByRevieweeID(revieweeID interface{}) *ReviewRepositoryInterface_GetFrequencyOfRatingByRevieweeID_Call {
+	return &ReviewRepositoryInterface_GetFrequencyOfRatingByRevieweeID_Call{Call: _e.mock.On("GetFrequencyOfRatingByRevieweeID", revieweeID)}
 }
 
-func (_c *ReviewRepositoryInterface_GetFrequencyOfRatingByRevieweeId_Call) Run(run func(revieweeId uint)) *ReviewRepositoryInterface_GetFrequencyOfRatingByRevieweeId_Call {
+func (_c *ReviewRepositoryInterface_GetFrequencyOfRatingByRevieweeID_Call) Run(run func(revieweeID uint)) *ReviewRepositoryInterface_GetFrequencyOfRatingByRevieweeID_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(uint))
 	})
 	return _c
 }
 
-func (_c *ReviewRepositoryInterface_GetFrequencyOfRatingByRevieweeId_Call) Return(_a0 map[int]int, _a1 error) *ReviewRepositoryInterface_GetFrequencyOfRatingByRevieweeId_Call {
+func (_c *ReviewRepositoryInterface_GetFrequencyOfRatingByRevieweeID_Call) Return(_a0 map[int]int, _a1 error) *ReviewRepositoryInterface_GetFrequencyOfRatingByRevieweeID_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *ReviewRepositoryInterface_GetFrequencyOfRatingByRevieweeId_Call) RunAndReturn(run func(uint) (map[int]int, error)) *ReviewRepositoryInterface_GetFrequencyOfRatingByRevieweeId_Call {
+func (_c *ReviewRepositoryInterface_GetFrequencyOfRatingByRevieweeID_Call) RunAndReturn(run func(uint) (map[int]int, error)) *ReviewRepositoryInterface_GetFrequencyOfRatingByRevieweeID_Call {
 	_c.Call.Return(run)
 	return _c
 }

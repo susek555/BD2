@@ -41,7 +41,7 @@ func registerUserRoutes(router *gin.Engine) {
 	{
 		userRoutes.PUT("/", middleware.Authenticate(initializers.Verifier), initializers.UserHandler.UpdateUser)
 		userRoutes.GET("/", initializers.UserHandler.GetAllUsers)
-		userRoutes.GET("/id/:id", initializers.UserHandler.GetUserById)
+		userRoutes.GET("/id/:id", initializers.UserHandler.GetUserByID)
 		userRoutes.GET("/email/:email", initializers.UserHandler.GetUserByEmail)
 		userRoutes.DELETE("/:id", middleware.Authenticate(initializers.Verifier), initializers.UserHandler.DeleteUser)
 	}
@@ -61,16 +61,16 @@ func registerAuthRoutes(router *gin.Engine) {
 func registerReviewRoutes(router *gin.Engine) {
 	reviewRoutes := router.Group("/review")
 	reviewRoutes.GET("/", initializers.ReviewHandler.GetAllReviews)
-	reviewRoutes.GET("/:id", initializers.ReviewHandler.GetReviewById)
+	reviewRoutes.GET("/:id", initializers.ReviewHandler.GetReviewByID)
 	reviewRoutes.POST("/", middleware.Authenticate(initializers.Verifier), initializers.ReviewHandler.CreateReview)
 	reviewRoutes.PUT("/", middleware.Authenticate(initializers.Verifier), initializers.ReviewHandler.UpdateReview)
 	reviewRoutes.DELETE("/:id", middleware.Authenticate(initializers.Verifier), initializers.ReviewHandler.DeleteReview)
-	reviewRoutes.POST("/reviewer/:id", initializers.ReviewHandler.GetReviewsByReviewerId)
-	reviewRoutes.POST("/reviewee/:id", initializers.ReviewHandler.GetReviewsByRevieweeId)
-	reviewRoutes.GET("/reviewer/reviewee/:reviewerId/:revieweeId", initializers.ReviewHandler.GetReviewsByReviewerIdAndRevieweeId)
+	reviewRoutes.POST("/reviewer/:id", initializers.ReviewHandler.GetReviewsByReviewerID)
+	reviewRoutes.POST("/reviewee/:id", initializers.ReviewHandler.GetReviewsByRevieweeID)
+	reviewRoutes.GET("/reviewer/reviewee/:reviewerID/:revieweeID", initializers.ReviewHandler.GetReviewsByReviewerIDAndRevieweeID)
 	reviewRoutes.POST("/filtered", initializers.ReviewHandler.GetFilteredReviews)
-	reviewRoutes.GET("/average-rating/:id", initializers.ReviewHandler.GetAverageRatingByRevieweeId)
-	reviewRoutes.GET("/frequency/:id", initializers.ReviewHandler.GetFrequencyOfRatingByRevieweeId)
+	reviewRoutes.GET("/average-rating/:id", initializers.ReviewHandler.GetAverageRatingByRevieweeID)
+	reviewRoutes.GET("/frequency/:id", initializers.ReviewHandler.GetFrequencyOfRatingByRevieweeID)
 }
 
 func registerCarRoutes(router *gin.Engine) {
@@ -105,10 +105,10 @@ func registerSaleOfferRoutes(router *gin.Engine) {
 func registerAuctionRoutes(router *gin.Engine) {
 	auctionRoutes := router.Group("/auction")
 	auctionRoutes.GET("/", initializers.AuctionHandler.GetAllAuctions)
-	auctionRoutes.GET("/:id", initializers.AuctionHandler.GetAuctionById)
+	auctionRoutes.GET("/:id", initializers.AuctionHandler.GetAuctionByID)
 	auctionRoutes.POST("/", middleware.Authenticate(initializers.Verifier), initializers.AuctionHandler.CreateAuction)
 	auctionRoutes.PUT("/", middleware.Authenticate(initializers.Verifier), initializers.AuctionHandler.UpdateAuction)
-	auctionRoutes.DELETE("/:id", middleware.Authenticate(initializers.Verifier), initializers.AuctionHandler.DeleteAuctionById)
+	auctionRoutes.DELETE("/:id", middleware.Authenticate(initializers.Verifier), initializers.AuctionHandler.DeleteAuctionByID)
 	auctionRoutes.DELETE("/buy-now/:id", middleware.Authenticate(initializers.Verifier), initializers.AuctionHandler.BuyNow)
 }
 
@@ -117,10 +117,10 @@ func registerBidRoutes(router *gin.Engine) {
 	bidRoutes.POST("/", middleware.Authenticate(initializers.Verifier), initializers.BidHandler.CreateBid)
 	bidRoutes.GET("/", initializers.BidHandler.GetAllBids)
 	bidRoutes.GET("/:id", initializers.BidHandler.GetBidByID)
-	bidRoutes.GET("/bidder/:id", initializers.BidHandler.GetBidsByBidderId)
-	bidRoutes.GET("/auction/:id", initializers.BidHandler.GetBidsByAuctionId)
+	bidRoutes.GET("/bidder/:id", initializers.BidHandler.GetBidsByBidderID)
+	bidRoutes.GET("/auction/:id", initializers.BidHandler.GetBidsByAuctionID)
 	bidRoutes.GET("/highest/:id", initializers.BidHandler.GetHighestBid)
-	bidRoutes.GET("/highest/auction/:auctionId/bidder/:bidderId", initializers.BidHandler.GetHighestBidByUserId)
+	bidRoutes.GET("/highest/auction/:auctionID/bidder/:bidderID", initializers.BidHandler.GetHighestBidByUserID)
 }
 
 func registerFavouriteRoutes(router *gin.Engine) {

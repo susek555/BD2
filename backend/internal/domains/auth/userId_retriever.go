@@ -2,10 +2,10 @@ package auth
 
 import "github.com/gin-gonic/gin"
 
-func GetUserId(c *gin.Context) (uint, error) {
-	userId, exists := c.Get("userID")
+func GetUserID(c *gin.Context) (uint, error) {
+	userID, exists := c.Get("userID")
 	if !exists {
-		return 0, ErrUserIdNotFound
+		return 0, ErrUserIDNotFound
 	}
-	return userId.(uint), nil
+	return userID.(uint), nil
 }

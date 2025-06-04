@@ -17,8 +17,8 @@ func (service GenericService[T, R]) GetAll() ([]T, error) {
 	return service.Repo.GetAll()
 }
 
-func (service GenericService[T, R]) GetById(id uint) (*T, error) {
-	return service.Repo.GetById(id)
+func (service GenericService[T, R]) GetByID(id uint) (*T, error) {
+	return service.Repo.GetByID(id)
 }
 
 func (service GenericService[T, R]) Update(entity *T) error {

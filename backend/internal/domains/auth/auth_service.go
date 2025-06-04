@@ -110,13 +110,13 @@ func (s *AuthService) Logout(ctx context.Context, userID uint, provided string, 
 		return ErrRefreshTokenNotFound
 	}
 	if allDevices {
-		return s.RefreshTokenService.DeleteByUserId(userID)
+		return s.RefreshTokenService.DeleteByUserID(userID)
 	}
 	return s.RefreshTokenService.Delete(refresh.ID)
 }
 
 func (s *AuthService) ChangePassword(ctx context.Context, userID uint, oldPassword, newPassword string) map[string][]string {
-	user, err := s.Repo.GetById(userID)
+	user, err := s.Repo.GetByID(userID)
 	if err != nil {
 		return map[string][]string{"other": {ErrUserNotFound.Error()}}
 	}
@@ -133,11 +133,11 @@ func (s *AuthService) ChangePassword(ctx context.Context, userID uint, oldPasswo
 	return nil
 }
 
-func (s *AuthService) newRefreshToken(userId uint, userEmail string) (string, error) {
-	token, _ := jwt.GenerateToken(userEmail, int64(userId), s.JwtKey, time.Now().Add(RefreshTokenExpirationTime))
+func (s *AuthService) newRefreshToken(userID uint, userEmail string) (string, error) {
+	token, _ := jwt.GenerateToken(userEmail, int64(userID), s.JwtKey, time.Now().Add(RefreshTokenExpirationTime))
 	refresh := models.RefreshToken{
 		Token:      token,
-		UserID:     userId,
+		UserID:     userID,
 		ExpiryDate: time.Now().UTC().Add(30 * 24 * time.Hour),
 	}
 	err := s.RefreshTokenService.Create(&refresh)

@@ -17,7 +17,7 @@ var (
 	ErrRefreshTokenRequired = errors.New("refresh token required")
 	ErrRefreshTokenNotFound = errors.New("refresh token not found")
 	ErrUnauthorized         = errors.New("unauthorized")
-	ErrUserIdNotFound       = errors.New("user id not found")
+	ErrUserIDNotFound       = errors.New("user id not found")
 	ErrUserNotFound         = errors.New("user not found")
 	ErrInvalidOldPassword   = errors.New("invalid old password")
 )

@@ -657,7 +657,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/bid/highest/auction/{auctionId}/bidder/{bidderId}": {
+        "/bid/highest/auction/{auctionID}/bidder/{bidderID}": {
             "get": {
                 "description": "Retrieves the highest bid placed by a specific user on a specific auction",
                 "consumes": [
@@ -674,14 +674,14 @@ const docTemplate = `{
                     {
                         "type": "integer",
                         "description": "Auction ID",
-                        "name": "auctionId",
+                        "name": "auctionID",
                         "in": "path",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "Bidder ID",
-                        "name": "bidderId",
+                        "name": "bidderID",
                         "in": "path",
                         "required": true
                     }
@@ -959,7 +959,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Id is not a number",
+                        "description": "ID is not a number",
                         "schema": {
                             "$ref": "#/definitions/custom_errors.HTTPError"
                         }
@@ -1486,7 +1486,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Bad Request – validation or update error",
+                        "description": "Bad Request – valIDation or update error",
                         "schema": {
                             "$ref": "#/definitions/custom_errors.HTTPError"
                         }
@@ -1525,7 +1525,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Bad Request – validation or persistence error",
+                        "description": "Bad Request – valIDation or persistence error",
                         "schema": {
                             "$ref": "#/definitions/custom_errors.HTTPError"
                         }
@@ -1566,7 +1566,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Bad Request – invalid filter or query failed",
+                        "description": "Bad Request – invalID filter or query failed",
                         "schema": {
                             "$ref": "#/definitions/custom_errors.HTTPError"
                         }
@@ -1584,7 +1584,7 @@ const docTemplate = `{
                     "reviews"
                 ],
                 "summary": "List reviews about a reviewee",
-                "operationId": "getReviewsByRevieweeId",
+                "operationId": "getReviewsByRevieweeID",
                 "parameters": [
                     {
                         "type": "integer",
@@ -1605,7 +1605,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Bad Request – invalid ID format or query failed",
+                        "description": "Bad Request – invalID ID format or query failed",
                         "schema": {
                             "$ref": "#/definitions/custom_errors.HTTPError"
                         }
@@ -1623,7 +1623,7 @@ const docTemplate = `{
                     "reviews"
                 ],
                 "summary": "List reviews written by a reviewer",
-                "operationId": "getReviewsByReviewerId",
+                "operationId": "getReviewsByReviewerID",
                 "parameters": [
                     {
                         "type": "integer",
@@ -1644,7 +1644,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Bad Request – invalid ID format or query failed",
+                        "description": "Bad Request – invalID ID format or query failed",
                         "schema": {
                             "$ref": "#/definitions/custom_errors.HTTPError"
                         }
@@ -1652,9 +1652,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/review/reviewer/{reviewerId}/reviewee/{revieweeId}": {
+        "/review/reviewer/{reviewerID}/reviewee/{revieweeID}": {
             "get": {
-                "description": "Returns the review where \u003creviewerId\u003e is the author and \u003crevieweeId\u003e is the subject.",
+                "description": "Returns the review where \u003creviewerID\u003e is the author and \u003crevieweeID\u003e is the subject.",
                 "produces": [
                     "application/json"
                 ],
@@ -1667,14 +1667,14 @@ const docTemplate = `{
                     {
                         "type": "integer",
                         "description": "Reviewer ID",
-                        "name": "reviewerId",
+                        "name": "reviewerID",
                         "in": "path",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "Reviewee ID",
-                        "name": "revieweeId",
+                        "name": "revieweeID",
                         "in": "path",
                         "required": true
                     }
@@ -1687,7 +1687,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Bad Request – invalid ID format or query failed",
+                        "description": "Bad Request – invalID ID format or query failed",
                         "schema": {
                             "$ref": "#/definitions/custom_errors.HTTPError"
                         }
@@ -1697,27 +1697,27 @@ const docTemplate = `{
         },
         "/review/{id}": {
             "get": {
-                "description": "Returns review that match given id as an DTO.",
+                "description": "Returns review that match given ID as an DTO.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "reviews"
                 ],
-                "summary": "Get review by id",
-                "operationId": "getReviewById",
+                "summary": "Get review by ID",
+                "operationId": "getReviewByID",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Review id",
-                        "name": "id",
+                        "description": "Review ID",
+                        "name": "ID",
                         "in": "path",
                         "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK – review with given id",
+                        "description": "OK – review with given ID",
                         "schema": {
                             "$ref": "#/definitions/review.RetrieveReviewDTO"
                         }
@@ -1731,7 +1731,7 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "Deletes the review identified by its ID.",
+                "description": "Deletes the review IDentified by its ID.",
                 "tags": [
                     "reviews"
                 ],
@@ -1754,7 +1754,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Bad Request – invalid ID format or delete failed",
+                        "description": "Bad Request – invalID ID format or delete failed",
                         "schema": {
                             "$ref": "#/definitions/custom_errors.HTTPError"
                         }
@@ -1772,7 +1772,7 @@ const docTemplate = `{
                     "reviews"
                 ],
                 "summary": "Get average rating for a reviewee",
-                "operationId": "getAverageRatingByRevieweeId",
+                "operationId": "getAverageRatingByRevieweeID",
                 "parameters": [
                     {
                         "type": "integer",
@@ -1790,7 +1790,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Bad Request – invalid ID format or query failed",
+                        "description": "Bad Request – invalID ID format or query failed",
                         "schema": {
                             "$ref": "#/definitions/custom_errors.HTTPError"
                         }
@@ -1808,7 +1808,7 @@ const docTemplate = `{
                     "reviews"
                 ],
                 "summary": "Get distribution of ratings for a reviewee",
-                "operationId": "getFrequencyOfRatingByRevieweeId",
+                "operationId": "getFrequencyOfRatingByRevieweeID",
                 "parameters": [
                     {
                         "type": "integer",
@@ -1829,7 +1829,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Bad Request – invalid ID format or query failed",
+                        "description": "Bad Request – invalID ID format or query failed",
                         "schema": {
                             "$ref": "#/definitions/custom_errors.HTTPError"
                         }

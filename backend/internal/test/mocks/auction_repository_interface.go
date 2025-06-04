@@ -228,12 +228,12 @@ func (_c *AuctionRepositoryInterface_GetAll_Call) RunAndReturn(run func() ([]mod
 	return _c
 }
 
-// GetById provides a mock function with given fields: id
-func (_m *AuctionRepositoryInterface) GetById(id uint) (*models.Auction, error) {
+// GetByID provides a mock function with given fields: id
+func (_m *AuctionRepositoryInterface) GetByID(id uint) (*models.Auction, error) {
 	ret := _m.Called(id)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetById")
+		panic("no return value specified for GetByID")
 	}
 
 	var r0 *models.Auction
@@ -258,30 +258,30 @@ func (_m *AuctionRepositoryInterface) GetById(id uint) (*models.Auction, error) 
 	return r0, r1
 }
 
-// AuctionRepositoryInterface_GetById_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetById'
-type AuctionRepositoryInterface_GetById_Call struct {
+// AuctionRepositoryInterface_GetByID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetByID'
+type AuctionRepositoryInterface_GetByID_Call struct {
 	*mock.Call
 }
 
-// GetById is a helper method to define mock.On call
+// GetByID is a helper method to define mock.On call
 //   - id uint
-func (_e *AuctionRepositoryInterface_Expecter) GetById(id interface{}) *AuctionRepositoryInterface_GetById_Call {
-	return &AuctionRepositoryInterface_GetById_Call{Call: _e.mock.On("GetById", id)}
+func (_e *AuctionRepositoryInterface_Expecter) GetByID(id interface{}) *AuctionRepositoryInterface_GetByID_Call {
+	return &AuctionRepositoryInterface_GetByID_Call{Call: _e.mock.On("GetByID", id)}
 }
 
-func (_c *AuctionRepositoryInterface_GetById_Call) Run(run func(id uint)) *AuctionRepositoryInterface_GetById_Call {
+func (_c *AuctionRepositoryInterface_GetByID_Call) Run(run func(id uint)) *AuctionRepositoryInterface_GetByID_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(uint))
 	})
 	return _c
 }
 
-func (_c *AuctionRepositoryInterface_GetById_Call) Return(_a0 *models.Auction, _a1 error) *AuctionRepositoryInterface_GetById_Call {
+func (_c *AuctionRepositoryInterface_GetByID_Call) Return(_a0 *models.Auction, _a1 error) *AuctionRepositoryInterface_GetByID_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *AuctionRepositoryInterface_GetById_Call) RunAndReturn(run func(uint) (*models.Auction, error)) *AuctionRepositoryInterface_GetById_Call {
+func (_c *AuctionRepositoryInterface_GetByID_Call) RunAndReturn(run func(uint) (*models.Auction, error)) *AuctionRepositoryInterface_GetByID_Call {
 	_c.Call.Return(run)
 	return _c
 }

@@ -281,12 +281,12 @@ func (_c *UserRepositoryInterface_GetByEmail_Call) RunAndReturn(run func(string)
 	return _c
 }
 
-// GetById provides a mock function with given fields: id
-func (_m *UserRepositoryInterface) GetById(id uint) (*models.User, error) {
+// GetByID provides a mock function with given fields: id
+func (_m *UserRepositoryInterface) GetByID(id uint) (*models.User, error) {
 	ret := _m.Called(id)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetById")
+		panic("no return value specified for GetByID")
 	}
 
 	var r0 *models.User
@@ -311,30 +311,30 @@ func (_m *UserRepositoryInterface) GetById(id uint) (*models.User, error) {
 	return r0, r1
 }
 
-// UserRepositoryInterface_GetById_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetById'
-type UserRepositoryInterface_GetById_Call struct {
+// UserRepositoryInterface_GetByID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetByID'
+type UserRepositoryInterface_GetByID_Call struct {
 	*mock.Call
 }
 
-// GetById is a helper method to define mock.On call
+// GetByID is a helper method to define mock.On call
 //   - id uint
-func (_e *UserRepositoryInterface_Expecter) GetById(id interface{}) *UserRepositoryInterface_GetById_Call {
-	return &UserRepositoryInterface_GetById_Call{Call: _e.mock.On("GetById", id)}
+func (_e *UserRepositoryInterface_Expecter) GetByID(id interface{}) *UserRepositoryInterface_GetByID_Call {
+	return &UserRepositoryInterface_GetByID_Call{Call: _e.mock.On("GetByID", id)}
 }
 
-func (_c *UserRepositoryInterface_GetById_Call) Run(run func(id uint)) *UserRepositoryInterface_GetById_Call {
+func (_c *UserRepositoryInterface_GetByID_Call) Run(run func(id uint)) *UserRepositoryInterface_GetByID_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(uint))
 	})
 	return _c
 }
 
-func (_c *UserRepositoryInterface_GetById_Call) Return(_a0 *models.User, _a1 error) *UserRepositoryInterface_GetById_Call {
+func (_c *UserRepositoryInterface_GetByID_Call) Return(_a0 *models.User, _a1 error) *UserRepositoryInterface_GetByID_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *UserRepositoryInterface_GetById_Call) RunAndReturn(run func(uint) (*models.User, error)) *UserRepositoryInterface_GetById_Call {
+func (_c *UserRepositoryInterface_GetByID_Call) RunAndReturn(run func(uint) (*models.User, error)) *UserRepositoryInterface_GetByID_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -441,9 +441,9 @@ func (_c *UserRepositoryInterface_Update_Call) RunAndReturn(run func(*models.Use
 	return _c
 }
 
-// UpdatePassword provides a mock function with given fields: userId, newPassword
-func (_m *UserRepositoryInterface) UpdatePassword(userId uint, newPassword string) error {
-	ret := _m.Called(userId, newPassword)
+// UpdatePassword provides a mock function with given fields: userID, newPassword
+func (_m *UserRepositoryInterface) UpdatePassword(userID uint, newPassword string) error {
+	ret := _m.Called(userID, newPassword)
 
 	if len(ret) == 0 {
 		panic("no return value specified for UpdatePassword")
@@ -451,7 +451,7 @@ func (_m *UserRepositoryInterface) UpdatePassword(userId uint, newPassword strin
 
 	var r0 error
 	if rf, ok := ret.Get(0).(func(uint, string) error); ok {
-		r0 = rf(userId, newPassword)
+		r0 = rf(userID, newPassword)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -465,13 +465,13 @@ type UserRepositoryInterface_UpdatePassword_Call struct {
 }
 
 // UpdatePassword is a helper method to define mock.On call
-//   - userId uint
+//   - userID uint
 //   - newPassword string
-func (_e *UserRepositoryInterface_Expecter) UpdatePassword(userId interface{}, newPassword interface{}) *UserRepositoryInterface_UpdatePassword_Call {
-	return &UserRepositoryInterface_UpdatePassword_Call{Call: _e.mock.On("UpdatePassword", userId, newPassword)}
+func (_e *UserRepositoryInterface_Expecter) UpdatePassword(userID interface{}, newPassword interface{}) *UserRepositoryInterface_UpdatePassword_Call {
+	return &UserRepositoryInterface_UpdatePassword_Call{Call: _e.mock.On("UpdatePassword", userID, newPassword)}
 }
 
-func (_c *UserRepositoryInterface_UpdatePassword_Call) Run(run func(userId uint, newPassword string)) *UserRepositoryInterface_UpdatePassword_Call {
+func (_c *UserRepositoryInterface_UpdatePassword_Call) Run(run func(userID uint, newPassword string)) *UserRepositoryInterface_UpdatePassword_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(uint), args[1].(string))
 	})

@@ -46,13 +46,6 @@ func (dto *UpdateAuctionDTO) UpdatedAuctionFromDTO(auction *models.Auction) (*mo
 		}
 		auction.BuyNowPrice = *dto.BuyNowPrice
 	}
-	if dto.UpdateSaleOfferDTO != nil {
-		var err error
-		auction.Offer, err = dto.UpdateSaleOfferDTO.UpdatedOfferFromDTO(auction.Offer)
-		if err != nil {
-			return nil, err
-		}
-	}
 	return auction, nil
 }
 
