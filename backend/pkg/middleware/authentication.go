@@ -17,6 +17,7 @@ const (
 type ctxKey string
 
 const userIDKey ctxKey = "userID"
+const ctxTokenKey = "wsToken"
 
 func Authenticate(verify *jwt.JWTVerifier) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -58,6 +59,7 @@ func AuthenticateWebSocket(verify *jwt.JWTVerifier) gin.HandlerFunc {
 		}
 
 		c.Set(string(userIDKey), uint(userID))
+		c.Set(ctxTokenKey, token)
 		c.Next()
 	}
 }
