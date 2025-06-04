@@ -41,7 +41,7 @@ UNION
 SELECT user_id, offer_id FROM offer_likers;
 
 SELECT pgivm.create_immv(
-  'sale_offer_view',
+  'regular_sale_offer_view',
   $$ SELECT
     s.id,
     s.user_id,
@@ -67,12 +67,61 @@ SELECT pgivm.create_immv(
     c.number_of_gears,
     c.drive,
     man.name as brand,
-    mod.name as model
+    mod.name as model,
+    NULL::timestamp as date_end,
+    NULL::numeric as buy_now_price
     FROM sale_offers s
     JOIN users u ON u.id = s.user_id
+    JOIN cars c ON c.offer_id = s.id
+    JOIN models mod ON c.model_id = mod.id
+    JOIN manufacturers man ON mod.manufacturer_id = man.id
+    WHERE is_auction IS FALSE $$
+);
+
+CREATE UNIQUE INDEX ON regular_sale_offer_view(id);
+
+SELECT pgivm.create_immv(
+  'auction_sale_offer_view',
+  $$ SELECT
+    s.id,
+    s.user_id,
+    u.username,
+    s.description,
+    s.price,
+    s.date_of_issue,
+    s.margin,
+    s.status,
+    s.is_auction,
+    c.vin,
+    c.production_year,
+    c.mileage,
+    c.number_of_doors,
+    c.number_of_seats,
+    c.engine_power,
+    c.engine_capacity,
+    c.registration_number,
+    c.registration_date,
+    c.color,
+    c.fuel_type,
+    c.transmission,
+    c.number_of_gears,
+    c.drive,
+    man.name as brand,
+    mod.name as model,
+    a.date_end,
+    a.buy_now_price
+    FROM sale_offers s
+    JOIN users u ON u.id = s.user_id
+    JOIN auctions a ON a.offer_id = s.id
     JOIN cars c ON c.offer_id = s.id
     JOIN models mod ON c.model_id = mod.id
     JOIN manufacturers man ON mod.manufacturer_id = man.id $$
 );
 
-CREATE UNIQUE INDEX ON sale_offer_view (id);
+CREATE UNIQUE INDEX ON auction_sale_offer_view(id);
+
+CREATE VIEW sale_offer_view AS
+SELECT * FROM regular_sale_offer_view
+UNION ALL
+SELECT * FROM auction_sale_offer_view
+ORDER BY id;
