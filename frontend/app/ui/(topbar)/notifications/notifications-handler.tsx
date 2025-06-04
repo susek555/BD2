@@ -7,7 +7,7 @@ export default async function NotificationsHandler() {
 
     return (
         <>
-            <NotificationsButton newNotifications={newNotifications} notifications={notifications}/>
+            <NotificationsButton newNotificationsData={newNotifications} notificationsData={notifications}/>
         </>
     )
 }

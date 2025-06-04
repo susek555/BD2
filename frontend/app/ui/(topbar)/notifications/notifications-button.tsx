@@ -5,17 +5,33 @@ import { BaseAccountButton } from "@/app/ui/(topbar)/base-account-buttons/base-a
 import NotificationModal from "@/app/ui/(topbar)/notifications/notifications-modal"
 import { useState } from "react"
 import { Notification } from "@/app/lib/definitions/notification"
+import useNotificationsSocket from "./notifications-socket"
+import { useEffect } from "react"
 
 interface NotificationsButtonProps {
-    newNotifications: number;
-    notifications?: Notification[];
+    newNotificationsData: number;
+    notificationsData?: Notification[];
 }
 
 export default function NotificationsButton({
-    newNotifications = 0,
-    notifications,
-}: NotificationsButtonProps = { newNotifications: 0
+    newNotificationsData: newNotificationsData = 0,
+    notificationsData: notificationsData,
+}: NotificationsButtonProps = { newNotificationsData: 0
 }) {
+    const [newNotifications, setNewNotifications] = useState(newNotificationsData);
+    const [notifications, setNotificationsData] = useState<Notification[]>(notificationsData || []);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { messages, connected, send } = useNotificationsSocket();
+
+    // Update notifications when new messages are received
+    useEffect(() => {
+        if (messages.length > 0) {
+            const newData = JSON.parse(messages[messages.length - 1]);
+            setNotificationsData(newData.notifications || []);
+            setNewNotifications(newData.unseen_notifs_count || 0);
+        }
+    }, [messages]);
+
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     function handleNotificationsButtonClick() {
