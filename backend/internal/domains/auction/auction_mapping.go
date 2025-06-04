@@ -12,10 +12,6 @@ import (
 
 func (dto *CreateAuctionDTO) MapToAuction() (*models.Auction, error) {
 	var auction models.Auction
-	offer, err := dto.MapToSaleOffer()
-	if err != nil {
-		return nil, err
-	}
 	endDate, err := parseDate(dto.DateEnd)
 	if err != nil {
 		return nil, err
@@ -24,7 +20,6 @@ func (dto *CreateAuctionDTO) MapToAuction() (*models.Auction, error) {
 	if err != nil {
 		return nil, err
 	}
-	auction.Offer = offer
 	auction.DateEnd = endDate
 	auction.BuyNowPrice = dto.BuyNowPrice
 	return &auction, nil
