@@ -852,7 +852,7 @@ func TestGetFiltered_AuthorizedMyOffers(t *testing.T) {
 // Get offer by id tests
 // ----------------------
 
-func TestGetSaleOfferById_EmptyDatabase(t *testing.T) {
+func TestGetSaleOfferByID_EmptyDatabase(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	var seedOffers []models.SaleOffer
 
@@ -866,7 +866,7 @@ func TestGetSaleOfferById_EmptyDatabase(t *testing.T) {
 	u.CleanDB(DB)
 }
 
-func TestGetSaleOfferById_NonExistentID(t *testing.T) {
+func TestGetSaleOfferByID_NonExistentID(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedOffers := []models.SaleOffer{*createOffer(1)}
 
@@ -880,7 +880,7 @@ func TestGetSaleOfferById_NonExistentID(t *testing.T) {
 	u.CleanDB(DB)
 }
 
-func TestGetSaleOfferById_NegativeID(t *testing.T) {
+func TestGetSaleOfferByID_NegativeID(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedOffers := []models.SaleOffer{*createOffer(1)}
 
@@ -895,7 +895,7 @@ func TestGetSaleOfferById_NegativeID(t *testing.T) {
 	u.CleanDB(DB)
 }
 
-func TestGetSaleOfferById_StringID(t *testing.T) {
+func TestGetSaleOfferByID_StringID(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedOffers := []models.SaleOffer{*createOffer(1)}
 
@@ -909,7 +909,7 @@ func TestGetSaleOfferById_StringID(t *testing.T) {
 	u.CleanDB(DB)
 }
 
-func TestGetById_RegularOffer(t *testing.T) {
+func TestGetByID_RegularOffer(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedOffers := []models.SaleOffer{*createOffer(1)}
 
@@ -923,7 +923,7 @@ func TestGetById_RegularOffer(t *testing.T) {
 	u.CleanDB(DB)
 }
 
-func TestGetById_AuctionOffer(t *testing.T) {
+func TestGetByID_AuctionOffer(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedOffers := []models.SaleOffer{*createAuctionSaleOffer(1)}
 

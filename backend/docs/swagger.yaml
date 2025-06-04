@@ -1279,7 +1279,7 @@ paths:
       summary: Get the highest bid for an auction
       tags:
       - bid
-  /bid/highest/auction/{auctionId}/bidder/{bidderId}:
+  /bid/highest/auction/{auctionID}/bidder/{bidderID}:
     get:
       consumes:
       - application/json
@@ -1288,12 +1288,12 @@ paths:
       parameters:
       - description: Auction ID
         in: path
-        name: auctionId
+        name: auctionID
         required: true
         type: integer
       - description: Bidder ID
         in: path
-        name: bidderId
+        name: bidderID
         required: true
         type: integer
       produces:
@@ -1433,7 +1433,7 @@ paths:
               $ref: '#/definitions/model.RetrieveModelDTO'
             type: array
         "400":
-          description: Id is not a number
+          description: ID is not a number
           schema:
             $ref: '#/definitions/custom_errors.HTTPError'
         "404":
@@ -1786,7 +1786,7 @@ paths:
           schema:
             $ref: '#/definitions/review.RetrieveReviewDTO'
         "400":
-          description: Bad Request – validation or persistence error
+          description: Bad Request – valIDation or persistence error
           schema:
             $ref: '#/definitions/custom_errors.HTTPError'
       summary: Create a new review
@@ -1812,7 +1812,7 @@ paths:
           schema:
             $ref: '#/definitions/review.RetrieveReviewDTO'
         "400":
-          description: Bad Request – validation or update error
+          description: Bad Request – valIDation or update error
           schema:
             $ref: '#/definitions/custom_errors.HTTPError'
       summary: Update an existing review
@@ -1820,7 +1820,7 @@ paths:
       - reviews
   /review/{id}:
     delete:
-      description: Deletes the review identified by its ID.
+      description: Deletes the review IDentified by its ID.
       operationId: deleteReview
       parameters:
       - description: Review ID
@@ -1834,40 +1834,40 @@ paths:
           schema:
             type: string
         "400":
-          description: Bad Request – invalid ID format or delete failed
+          description: Bad Request – invalID ID format or delete failed
           schema:
             $ref: '#/definitions/custom_errors.HTTPError'
       summary: Delete a review
       tags:
       - reviews
     get:
-      description: Returns review that match given id as an DTO.
-      operationId: getReviewById
+      description: Returns review that match given ID as an DTO.
+      operationId: getReviewByID
       parameters:
-      - description: Review id
+      - description: Review ID
         in: path
-        name: id
+        name: ID
         required: true
         type: integer
       produces:
       - application/json
       responses:
         "200":
-          description: OK – review with given id
+          description: OK – review with given ID
           schema:
             $ref: '#/definitions/review.RetrieveReviewDTO'
         "400":
           description: Bad Request – query failed
           schema:
             $ref: '#/definitions/custom_errors.HTTPError'
-      summary: Get review by id
+      summary: Get review by ID
       tags:
       - reviews
   /review/{id}/average:
     get:
       description: Returns the average rating value calculated over all reviews for
         the given reviewee.
-      operationId: getAverageRatingByRevieweeId
+      operationId: getAverageRatingByRevieweeID
       parameters:
       - description: Reviewee ID
         in: path
@@ -1882,7 +1882,7 @@ paths:
           schema:
             type: number
         "400":
-          description: Bad Request – invalid ID format or query failed
+          description: Bad Request – invalID ID format or query failed
           schema:
             $ref: '#/definitions/custom_errors.HTTPError'
       summary: Get average rating for a reviewee
@@ -1892,7 +1892,7 @@ paths:
     get:
       description: Returns a map from rating value (1–5) to percentage frequency among
         all reviews for the given reviewee.
-      operationId: getFrequencyOfRatingByRevieweeId
+      operationId: getFrequencyOfRatingByRevieweeID
       parameters:
       - description: Reviewee ID
         in: path
@@ -1909,7 +1909,7 @@ paths:
               type: integer
             type: object
         "400":
-          description: Bad Request – invalid ID format or query failed
+          description: Bad Request – invalID ID format or query failed
           schema:
             $ref: '#/definitions/custom_errors.HTTPError'
       summary: Get distribution of ratings for a reviewee
@@ -1937,7 +1937,7 @@ paths:
           schema:
             $ref: '#/definitions/review.RetrieveReviewsWithPagination'
         "400":
-          description: Bad Request – invalid filter or query failed
+          description: Bad Request – invalID filter or query failed
           schema:
             $ref: '#/definitions/custom_errors.HTTPError'
       summary: Filter reviews with pagination
@@ -1946,7 +1946,7 @@ paths:
   /review/reviewee/{id}:
     post:
       description: Returns all reviews where the given user is the reviewee.
-      operationId: getReviewsByRevieweeId
+      operationId: getReviewsByRevieweeID
       parameters:
       - description: Reviewee ID
         in: path
@@ -1963,7 +1963,7 @@ paths:
               $ref: '#/definitions/review.RetrieveReviewDTO'
             type: array
         "400":
-          description: Bad Request – invalid ID format or query failed
+          description: Bad Request – invalID ID format or query failed
           schema:
             $ref: '#/definitions/custom_errors.HTTPError'
       summary: List reviews about a reviewee
@@ -1972,7 +1972,7 @@ paths:
   /review/reviewer/{id}:
     post:
       description: Returns all reviews authored by the reviewer specified by ID.
-      operationId: getReviewsByReviewerId
+      operationId: getReviewsByReviewerID
       parameters:
       - description: Reviewer ID
         in: path
@@ -1989,26 +1989,26 @@ paths:
               $ref: '#/definitions/review.RetrieveReviewDTO'
             type: array
         "400":
-          description: Bad Request – invalid ID format or query failed
+          description: Bad Request – invalID ID format or query failed
           schema:
             $ref: '#/definitions/custom_errors.HTTPError'
       summary: List reviews written by a reviewer
       tags:
       - reviews
-  /review/reviewer/{reviewerId}/reviewee/{revieweeId}:
+  /review/reviewer/{reviewerID}/reviewee/{revieweeID}:
     get:
-      description: Returns the review where <reviewerId> is the author and <revieweeId>
+      description: Returns the review where <reviewerID> is the author and <revieweeID>
         is the subject.
       operationId: getReviewByReviewerAndReviewee
       parameters:
       - description: Reviewer ID
         in: path
-        name: reviewerId
+        name: reviewerID
         required: true
         type: integer
       - description: Reviewee ID
         in: path
-        name: revieweeId
+        name: revieweeID
         required: true
         type: integer
       produces:
@@ -2019,7 +2019,7 @@ paths:
           schema:
             $ref: '#/definitions/review.RetrieveReviewDTO'
         "400":
-          description: Bad Request – invalid ID format or query failed
+          description: Bad Request – invalID ID format or query failed
           schema:
             $ref: '#/definitions/custom_errors.HTTPError'
       summary: Get review written by one user about another

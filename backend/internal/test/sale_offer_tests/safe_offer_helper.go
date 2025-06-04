@@ -214,6 +214,6 @@ func setOffersStatusToPublished(db *gorm.DB) {
 
 func wasEntityAddedToDB[T any](db *gorm.DB, id uint) bool {
 	repo := generic.GetGormRepository[T](db)
-	_, err := repo.GetById(id)
+	_, err := repo.GetByID(id)
 	return err == nil
 }

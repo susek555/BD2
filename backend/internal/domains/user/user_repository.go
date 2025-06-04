@@ -12,7 +12,7 @@ type UserRepositoryInterface interface {
 	GetByEmail(email string) (models.User, error)
 	GetByCompanyNip(nip string) (models.User, error)
 	GetByUsername(username string) (models.User, error)
-	UpdatePassword(userId uint, newPassword string) error
+	UpdatePassword(userID uint, newPassword string) error
 }
 
 type UserRepository struct {
@@ -43,7 +43,7 @@ func (r *UserRepository) GetAll() ([]models.User, error) {
 	return users, err
 }
 
-func (r *UserRepository) GetById(id uint) (*models.User, error) {
+func (r *UserRepository) GetByID(id uint) (*models.User, error) {
 	var user models.User
 	err := r.buildBaseQuery().First(&user, id).Error
 	if err != nil {
@@ -93,9 +93,9 @@ func (r *UserRepository) Update(user *models.User) error {
 	})
 }
 
-func (r *UserRepository) UpdatePassword(userId uint, newPassword string) error {
+func (r *UserRepository) UpdatePassword(userID uint, newPassword string) error {
 	return r.DB.Transaction(func(tx *gorm.DB) error {
-		return tx.Model(&models.User{}).Where("id = ?", userId).Update("password", newPassword).Error
+		return tx.Model(&models.User{}).Where("id = ?", userID).Update("password", newPassword).Error
 	})
 }
 

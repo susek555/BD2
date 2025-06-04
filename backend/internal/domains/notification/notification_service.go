@@ -59,7 +59,7 @@ func (s *NotificationService) CreateBuyNowNotification(notification *models.Noti
 }
 
 func (s *NotificationService) GetNotificationByID(id uint) (*models.Notification, error) {
-	notification, err := s.NotificationRepository.GetById(id)
+	notification, err := s.NotificationRepository.GetByID(id)
 	if err != nil {
 		return nil, err
 	}

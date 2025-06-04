@@ -53,9 +53,9 @@ func GetDefaultPaginationRequest() *pagination.PaginationRequest {
 
 const JWTSECRET = "secret"
 
-func GetValidToken(userId uint, email string) (string, error) {
+func GetValidToken(userID uint, email string) (string, error) {
 	secret := []byte("secret")
-	return jwt.GenerateToken(email, int64(userId), secret, time.Now().Add(1*time.Hour))
+	return jwt.GenerateToken(email, int64(userID), secret, time.Now().Add(1*time.Hour))
 }
 
 func InsertRecordsIntoDB[T any](db *gorm.DB, records []T) error {

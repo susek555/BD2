@@ -10,7 +10,7 @@ type LikedOfferCheckerInterface interface {
 }
 
 type BidRetrieverInterface interface {
-	GetByAuctionId(auctionID uint) ([]models.Bid, error)
+	GetByAuctionID(auctionID uint) ([]models.Bid, error)
 }
 
 type OfferAccessEvaluatorInterface interface {
@@ -52,7 +52,7 @@ func (e *OfferAccessEvaluator) IsOfferLikedByUser(offer *views.SaleOfferView, us
 }
 
 func (e *OfferAccessEvaluator) hasBids(offer *views.SaleOfferView) (bool, error) {
-	bids, err := e.bidRetriever.GetByAuctionId(offer.ID)
+	bids, err := e.bidRetriever.GetByAuctionID(offer.ID)
 	if err != nil {
 		return false, err
 	}

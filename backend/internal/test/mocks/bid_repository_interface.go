@@ -123,12 +123,12 @@ func (_c *BidRepositoryInterface_GetAll_Call) RunAndReturn(run func() ([]models.
 	return _c
 }
 
-// GetByAuctionId provides a mock function with given fields: auctionID
-func (_m *BidRepositoryInterface) GetByAuctionId(auctionID uint) ([]models.Bid, error) {
+// GetByAuctionID provides a mock function with given fields: auctionID
+func (_m *BidRepositoryInterface) GetByAuctionID(auctionID uint) ([]models.Bid, error) {
 	ret := _m.Called(auctionID)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetByAuctionId")
+		panic("no return value specified for GetByAuctionID")
 	}
 
 	var r0 []models.Bid
@@ -153,40 +153,40 @@ func (_m *BidRepositoryInterface) GetByAuctionId(auctionID uint) ([]models.Bid, 
 	return r0, r1
 }
 
-// BidRepositoryInterface_GetByAuctionId_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetByAuctionId'
-type BidRepositoryInterface_GetByAuctionId_Call struct {
+// BidRepositoryInterface_GetByAuctionID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetByAuctionID'
+type BidRepositoryInterface_GetByAuctionID_Call struct {
 	*mock.Call
 }
 
-// GetByAuctionId is a helper method to define mock.On call
+// GetByAuctionID is a helper method to define mock.On call
 //   - auctionID uint
-func (_e *BidRepositoryInterface_Expecter) GetByAuctionId(auctionID interface{}) *BidRepositoryInterface_GetByAuctionId_Call {
-	return &BidRepositoryInterface_GetByAuctionId_Call{Call: _e.mock.On("GetByAuctionId", auctionID)}
+func (_e *BidRepositoryInterface_Expecter) GetByAuctionID(auctionID interface{}) *BidRepositoryInterface_GetByAuctionID_Call {
+	return &BidRepositoryInterface_GetByAuctionID_Call{Call: _e.mock.On("GetByAuctionID", auctionID)}
 }
 
-func (_c *BidRepositoryInterface_GetByAuctionId_Call) Run(run func(auctionID uint)) *BidRepositoryInterface_GetByAuctionId_Call {
+func (_c *BidRepositoryInterface_GetByAuctionID_Call) Run(run func(auctionID uint)) *BidRepositoryInterface_GetByAuctionID_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(uint))
 	})
 	return _c
 }
 
-func (_c *BidRepositoryInterface_GetByAuctionId_Call) Return(_a0 []models.Bid, _a1 error) *BidRepositoryInterface_GetByAuctionId_Call {
+func (_c *BidRepositoryInterface_GetByAuctionID_Call) Return(_a0 []models.Bid, _a1 error) *BidRepositoryInterface_GetByAuctionID_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *BidRepositoryInterface_GetByAuctionId_Call) RunAndReturn(run func(uint) ([]models.Bid, error)) *BidRepositoryInterface_GetByAuctionId_Call {
+func (_c *BidRepositoryInterface_GetByAuctionID_Call) RunAndReturn(run func(uint) ([]models.Bid, error)) *BidRepositoryInterface_GetByAuctionID_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
-// GetByBidderId provides a mock function with given fields: bidderID
-func (_m *BidRepositoryInterface) GetByBidderId(bidderID uint) ([]models.Bid, error) {
+// GetByBidderID provides a mock function with given fields: bidderID
+func (_m *BidRepositoryInterface) GetByBidderID(bidderID uint) ([]models.Bid, error) {
 	ret := _m.Called(bidderID)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetByBidderId")
+		panic("no return value specified for GetByBidderID")
 	}
 
 	var r0 []models.Bid
@@ -211,40 +211,40 @@ func (_m *BidRepositoryInterface) GetByBidderId(bidderID uint) ([]models.Bid, er
 	return r0, r1
 }
 
-// BidRepositoryInterface_GetByBidderId_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetByBidderId'
-type BidRepositoryInterface_GetByBidderId_Call struct {
+// BidRepositoryInterface_GetByBidderID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetByBidderID'
+type BidRepositoryInterface_GetByBidderID_Call struct {
 	*mock.Call
 }
 
-// GetByBidderId is a helper method to define mock.On call
+// GetByBidderID is a helper method to define mock.On call
 //   - bidderID uint
-func (_e *BidRepositoryInterface_Expecter) GetByBidderId(bidderID interface{}) *BidRepositoryInterface_GetByBidderId_Call {
-	return &BidRepositoryInterface_GetByBidderId_Call{Call: _e.mock.On("GetByBidderId", bidderID)}
+func (_e *BidRepositoryInterface_Expecter) GetByBidderID(bidderID interface{}) *BidRepositoryInterface_GetByBidderID_Call {
+	return &BidRepositoryInterface_GetByBidderID_Call{Call: _e.mock.On("GetByBidderID", bidderID)}
 }
 
-func (_c *BidRepositoryInterface_GetByBidderId_Call) Run(run func(bidderID uint)) *BidRepositoryInterface_GetByBidderId_Call {
+func (_c *BidRepositoryInterface_GetByBidderID_Call) Run(run func(bidderID uint)) *BidRepositoryInterface_GetByBidderID_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(uint))
 	})
 	return _c
 }
 
-func (_c *BidRepositoryInterface_GetByBidderId_Call) Return(_a0 []models.Bid, _a1 error) *BidRepositoryInterface_GetByBidderId_Call {
+func (_c *BidRepositoryInterface_GetByBidderID_Call) Return(_a0 []models.Bid, _a1 error) *BidRepositoryInterface_GetByBidderID_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *BidRepositoryInterface_GetByBidderId_Call) RunAndReturn(run func(uint) ([]models.Bid, error)) *BidRepositoryInterface_GetByBidderId_Call {
+func (_c *BidRepositoryInterface_GetByBidderID_Call) RunAndReturn(run func(uint) ([]models.Bid, error)) *BidRepositoryInterface_GetByBidderID_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
-// GetById provides a mock function with given fields: id
-func (_m *BidRepositoryInterface) GetById(id uint) (*models.Bid, error) {
+// GetByID provides a mock function with given fields: id
+func (_m *BidRepositoryInterface) GetByID(id uint) (*models.Bid, error) {
 	ret := _m.Called(id)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetById")
+		panic("no return value specified for GetByID")
 	}
 
 	var r0 *models.Bid
@@ -269,30 +269,30 @@ func (_m *BidRepositoryInterface) GetById(id uint) (*models.Bid, error) {
 	return r0, r1
 }
 
-// BidRepositoryInterface_GetById_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetById'
-type BidRepositoryInterface_GetById_Call struct {
+// BidRepositoryInterface_GetByID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetByID'
+type BidRepositoryInterface_GetByID_Call struct {
 	*mock.Call
 }
 
-// GetById is a helper method to define mock.On call
+// GetByID is a helper method to define mock.On call
 //   - id uint
-func (_e *BidRepositoryInterface_Expecter) GetById(id interface{}) *BidRepositoryInterface_GetById_Call {
-	return &BidRepositoryInterface_GetById_Call{Call: _e.mock.On("GetById", id)}
+func (_e *BidRepositoryInterface_Expecter) GetByID(id interface{}) *BidRepositoryInterface_GetByID_Call {
+	return &BidRepositoryInterface_GetByID_Call{Call: _e.mock.On("GetByID", id)}
 }
 
-func (_c *BidRepositoryInterface_GetById_Call) Run(run func(id uint)) *BidRepositoryInterface_GetById_Call {
+func (_c *BidRepositoryInterface_GetByID_Call) Run(run func(id uint)) *BidRepositoryInterface_GetByID_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(uint))
 	})
 	return _c
 }
 
-func (_c *BidRepositoryInterface_GetById_Call) Return(_a0 *models.Bid, _a1 error) *BidRepositoryInterface_GetById_Call {
+func (_c *BidRepositoryInterface_GetByID_Call) Return(_a0 *models.Bid, _a1 error) *BidRepositoryInterface_GetByID_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *BidRepositoryInterface_GetById_Call) RunAndReturn(run func(uint) (*models.Bid, error)) *BidRepositoryInterface_GetById_Call {
+func (_c *BidRepositoryInterface_GetByID_Call) RunAndReturn(run func(uint) (*models.Bid, error)) *BidRepositoryInterface_GetByID_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -355,12 +355,12 @@ func (_c *BidRepositoryInterface_GetHighestBid_Call) RunAndReturn(run func(uint)
 	return _c
 }
 
-// GetHighestBidByUserId provides a mock function with given fields: auctionID, userID
-func (_m *BidRepositoryInterface) GetHighestBidByUserId(auctionID uint, userID uint) (*models.Bid, error) {
+// GetHighestBidByUserID provides a mock function with given fields: auctionID, userID
+func (_m *BidRepositoryInterface) GetHighestBidByUserID(auctionID uint, userID uint) (*models.Bid, error) {
 	ret := _m.Called(auctionID, userID)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetHighestBidByUserId")
+		panic("no return value specified for GetHighestBidByUserID")
 	}
 
 	var r0 *models.Bid
@@ -385,31 +385,31 @@ func (_m *BidRepositoryInterface) GetHighestBidByUserId(auctionID uint, userID u
 	return r0, r1
 }
 
-// BidRepositoryInterface_GetHighestBidByUserId_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetHighestBidByUserId'
-type BidRepositoryInterface_GetHighestBidByUserId_Call struct {
+// BidRepositoryInterface_GetHighestBidByUserID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetHighestBidByUserID'
+type BidRepositoryInterface_GetHighestBidByUserID_Call struct {
 	*mock.Call
 }
 
-// GetHighestBidByUserId is a helper method to define mock.On call
+// GetHighestBidByUserID is a helper method to define mock.On call
 //   - auctionID uint
 //   - userID uint
-func (_e *BidRepositoryInterface_Expecter) GetHighestBidByUserId(auctionID interface{}, userID interface{}) *BidRepositoryInterface_GetHighestBidByUserId_Call {
-	return &BidRepositoryInterface_GetHighestBidByUserId_Call{Call: _e.mock.On("GetHighestBidByUserId", auctionID, userID)}
+func (_e *BidRepositoryInterface_Expecter) GetHighestBidByUserID(auctionID interface{}, userID interface{}) *BidRepositoryInterface_GetHighestBidByUserID_Call {
+	return &BidRepositoryInterface_GetHighestBidByUserID_Call{Call: _e.mock.On("GetHighestBidByUserID", auctionID, userID)}
 }
 
-func (_c *BidRepositoryInterface_GetHighestBidByUserId_Call) Run(run func(auctionID uint, userID uint)) *BidRepositoryInterface_GetHighestBidByUserId_Call {
+func (_c *BidRepositoryInterface_GetHighestBidByUserID_Call) Run(run func(auctionID uint, userID uint)) *BidRepositoryInterface_GetHighestBidByUserID_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(uint), args[1].(uint))
 	})
 	return _c
 }
 
-func (_c *BidRepositoryInterface_GetHighestBidByUserId_Call) Return(_a0 *models.Bid, _a1 error) *BidRepositoryInterface_GetHighestBidByUserId_Call {
+func (_c *BidRepositoryInterface_GetHighestBidByUserID_Call) Return(_a0 *models.Bid, _a1 error) *BidRepositoryInterface_GetHighestBidByUserID_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *BidRepositoryInterface_GetHighestBidByUserId_Call) RunAndReturn(run func(uint, uint) (*models.Bid, error)) *BidRepositoryInterface_GetHighestBidByUserId_Call {
+func (_c *BidRepositoryInterface_GetHighestBidByUserID_Call) RunAndReturn(run func(uint, uint) (*models.Bid, error)) *BidRepositoryInterface_GetHighestBidByUserID_Call {
 	_c.Call.Return(run)
 	return _c
 }

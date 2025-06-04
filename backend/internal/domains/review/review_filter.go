@@ -10,8 +10,8 @@ type ReviewFilter struct {
 	OrderKey    *string                      `json:"order_key"`
 	IsOrderDesc *bool                        `json:"is_order_desc"`
 	Ratings     *[]uint                      `json:"ratings"`
-	ReviewerId  *uint                        `json:"reviewer_id"`
-	RevieweeId  *uint                        `json:"reviewee_id"`
+	ReviewerID  *uint                        `json:"reviewer_id"`
+	RevieweeID  *uint                        `json:"reviewee_id"`
 }
 
 func NewReviewFilter() *ReviewFilter {
@@ -32,11 +32,11 @@ func (f *ReviewFilter) ApplyReviewFilters(query *gorm.DB) (*gorm.DB, error) {
 	if len(*f.Ratings) > 0 {
 		query = query.Where("rating IN ?", *f.Ratings)
 	}
-	if f.ReviewerId != nil {
-		query = query.Where("reviewer_id = ?", *f.ReviewerId)
+	if f.ReviewerID != nil {
+		query = query.Where("reviewer_id = ?", *f.ReviewerID)
 	}
-	if f.RevieweeId != nil {
-		query = query.Where("reviewee_id = ?", *f.RevieweeId)
+	if f.RevieweeID != nil {
+		query = query.Where("reviewee_id = ?", *f.RevieweeID)
 	}
 	return query, nil
 }

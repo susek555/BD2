@@ -53,7 +53,7 @@ func newTestServer(db *gorm.DB, seedUsers []models.User) (*gin.Engine, error) {
 	{
 		userRoutes.PUT("/", middleware.Authenticate(verifier), userHandler.UpdateUser)
 		userRoutes.GET("/", userHandler.GetAllUsers)
-		userRoutes.GET("/id/:id", userHandler.GetUserById)
+		userRoutes.GET("/id/:id", userHandler.GetUserByID)
 		userRoutes.GET("/email/:email", userHandler.GetUserByEmail)
 		userRoutes.DELETE("/id/:id", middleware.Authenticate(verifier), userHandler.DeleteUser)
 	}

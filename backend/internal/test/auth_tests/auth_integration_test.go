@@ -67,9 +67,9 @@ func newTestServer(seedUsers []models.User, refreshTokens []models.RefreshToken)
 	return r, h, rtSvc, nil
 }
 
-func getValidToken(userId uint, email string) (string, error) {
+func getValidToken(userID uint, email string) (string, error) {
 	secret := []byte("secret")
-	return jwt.GenerateToken(email, int64(userId), secret, time.Now().Add(1*time.Hour))
+	return jwt.GenerateToken(email, int64(userID), secret, time.Now().Add(1*time.Hour))
 }
 func TestRegisterPersonSuccess(t *testing.T) {
 	gin.SetMode(gin.TestMode)
@@ -810,10 +810,10 @@ func TestLogoutAllDevicesSuccess(t *testing.T) {
 	w := httptest.NewRecorder()
 	server.ServeHTTP(w, req)
 	assert.Equal(t, wantStatus, w.Code)
-	user1Tokens, err := rtSvc.FindByUserId(1)
+	user1Tokens, err := rtSvc.FindByUserID(1)
 	assert.NoError(t, err)
 	assert.Len(t, user1Tokens, 0)
-	users2Tokens, err := rtSvc.FindByUserId(2)
+	users2Tokens, err := rtSvc.FindByUserID(2)
 	assert.NoError(t, err)
 	assert.Len(t, users2Tokens, 1)
 	assert.Equal(t, "valid_refresh_token_3", users2Tokens[0].Token)
@@ -887,7 +887,7 @@ func TestLogoutAllDevicesNonExistingToken(t *testing.T) {
 	err = json.Unmarshal(w.Body.Bytes(), &response)
 	assert.NoError(t, err)
 	assert.Equal(t, "refresh token not found", response["error_description"])
-	user1Tokens, err := rtSvc.FindByUserId(1)
+	user1Tokens, err := rtSvc.FindByUserID(1)
 	assert.NoError(t, err)
 	assert.Len(t, user1Tokens, 1)
 	assert.Equal(t, "valid_refresh_token", user1Tokens[0].Token)
@@ -940,7 +940,7 @@ func TestLogoutAllDevicesEmptyToken(t *testing.T) {
 	err = json.Unmarshal(w.Body.Bytes(), &response)
 	assert.NoError(t, err)
 	assert.Equal(t, "refresh token required", response["error_description"])
-	user1Tokens, err := rtSvc.FindByUserId(1)
+	user1Tokens, err := rtSvc.FindByUserID(1)
 	assert.NoError(t, err)
 	assert.Len(t, user1Tokens, 1)
 	assert.Equal(t, "valid_refresh_token", user1Tokens[0].Token)

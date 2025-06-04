@@ -42,21 +42,21 @@ func TestGetAll_RecordsFound(t *testing.T) {
 	assert.Len(t, users, 1)
 }
 
-func TestGetById_UserNotFound(t *testing.T) {
+func TestGetByID_UserNotFound(t *testing.T) {
 	uRepo := mocks.NewUserRepositoryInterface(t)
-	uRepo.On("GetById", uint(1)).Return(nil, gorm.ErrRecordNotFound)
+	uRepo.On("GetByID", uint(1)).Return(nil, gorm.ErrRecordNotFound)
 	uService := user.NewUserService(uRepo)
-	user, err := uService.GetById(1)
+	user, err := uService.GetByID(1)
 	assert.Error(t, err)
 	assert.Equal(t, gorm.ErrRecordNotFound, err)
 	assert.Empty(t, user)
 }
 
-func TestGetById_UserFound(t *testing.T) {
+func TestGetByID_UserFound(t *testing.T) {
 	uRepo := mocks.NewUserRepositoryInterface(t)
-	uRepo.On("GetById", uint(1)).Return(createUser(), nil)
+	uRepo.On("GetByID", uint(1)).Return(createUser(), nil)
 	uService := user.NewUserService(uRepo)
-	user, err := uService.GetById(1)
+	user, err := uService.GetByID(1)
 	assert.NoError(t, err)
 	assert.Equal(t, "john", user.Username)
 }
@@ -82,7 +82,7 @@ func TestGetByEmail_UserFound(t *testing.T) {
 
 func TestUpdate_UserNotFound(t *testing.T) {
 	uRepo := mocks.NewUserRepositoryInterface(t)
-	uRepo.On("GetById", uint(1)).Return(nil, gorm.ErrRecordNotFound)
+	uRepo.On("GetByID", uint(1)).Return(nil, gorm.ErrRecordNotFound)
 	uService := user.NewUserService(uRepo)
 	err := uService.Update(&user.UpdateUserDTO{ID: 1})
 	assert.Equal(t, []string{gorm.ErrRecordNotFound.Error()}, err["id"])
@@ -91,7 +91,7 @@ func TestUpdate_UserNotFound(t *testing.T) {
 func TestUpdate_UserFoundNoChange(t *testing.T) {
 	uRepo := mocks.NewUserRepositoryInterface(t)
 	existingUser := createUser()
-	uRepo.On("GetById", uint(1)).Return(existingUser, nil)
+	uRepo.On("GetByID", uint(1)).Return(existingUser, nil)
 	uRepo.On("GetByUsername", "john").Return(*existingUser, nil)
 	uRepo.On("GetByEmail", "john@example.com").Return(*existingUser, nil)
 	uRepo.On("Update", existingUser).Return(nil)
@@ -102,7 +102,7 @@ func TestUpdate_UserFoundNoChange(t *testing.T) {
 
 func TestUpdate_UserFoundChange(t *testing.T) {
 	uRepo := mocks.NewUserRepositoryInterface(t)
-	uRepo.On("GetById", uint(1)).Return(createUser(), nil)
+	uRepo.On("GetByID", uint(1)).Return(createUser(), nil)
 	uService := user.NewUserService(uRepo)
 	uRepo.On("Update", mock.AnythingOfType("*models.User")).Return(nil)
 	uRepo.On("GetByUsername", "new_username").Return(models.User{}, gorm.ErrRecordNotFound)

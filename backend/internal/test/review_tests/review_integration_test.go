@@ -60,20 +60,20 @@ func newTestServer(seedUsers []models.User, seedReviews []models.Review) (*gin.E
 	router := gin.Default()
 	reviewRoutes := router.Group("/review")
 	reviewRoutes.GET("/", reviewHandler.GetAllReviews)
-	reviewRoutes.GET("/:id", reviewHandler.GetReviewById)
+	reviewRoutes.GET("/:id", reviewHandler.GetReviewByID)
 	reviewRoutes.POST("/", middleware.Authenticate(verifier), reviewHandler.CreateReview)
 	reviewRoutes.PUT("/", middleware.Authenticate(verifier), reviewHandler.UpdateReview)
 	reviewRoutes.DELETE("/:id", middleware.Authenticate(verifier), reviewHandler.DeleteReview)
-	reviewRoutes.POST("/reviewer/:id", reviewHandler.GetReviewsByReviewerId)
-	reviewRoutes.POST("/reviewee/:id", reviewHandler.GetReviewsByRevieweeId)
-	reviewRoutes.GET("/reviewer/reviewee/:reviewerId/:revieweeId", reviewHandler.GetReviewsByReviewerIdAndRevieweeId)
+	reviewRoutes.POST("/reviewer/:id", reviewHandler.GetReviewsByReviewerID)
+	reviewRoutes.POST("/reviewee/:id", reviewHandler.GetReviewsByRevieweeID)
+	reviewRoutes.GET("/reviewer/reviewee/:reviewerID/:revieweeID", reviewHandler.GetReviewsByReviewerIDAndRevieweeID)
 
 	return router, reviewService, userService, nil
 }
 
-func getValidToken(userId uint, email string) (string, error) {
+func getValidToken(userID uint, email string) (string, error) {
 	secret := []byte("secret")
-	return jwt.GenerateToken(email, int64(userId), secret, time.Now().Add(1*time.Hour))
+	return jwt.GenerateToken(email, int64(userID), secret, time.Now().Add(1*time.Hour))
 }
 
 func TestGetAllReviewsNoReviews(t *testing.T) {
@@ -121,7 +121,7 @@ func TestGetAllReviewsOneReview(t *testing.T) {
 	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
-			RevieweeId:  2,
+			RevieweeID:  2,
 			Rating:      5,
 			Description: "Great service!",
 		},
@@ -141,7 +141,7 @@ func TestGetAllReviewsOneReview(t *testing.T) {
 	assert.Equal(t, seedReviews[0].Rating, got[0].Rating)
 	assert.Equal(t, seedReviews[0].Description, got[0].Description)
 	assert.Equal(t, seedReviews[0].ReviewerID, got[0].Reviewer.ID)
-	assert.Equal(t, seedReviews[0].RevieweeId, got[0].Reviewee.ID)
+	assert.Equal(t, seedReviews[0].RevieweeID, got[0].Reviewee.ID)
 	assert.Equal(t, uint(1), got[0].ID)
 }
 
@@ -182,31 +182,31 @@ func TestGetAllReviewsMultipleReviews(t *testing.T) {
 	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
-			RevieweeId:  2,
+			RevieweeID:  2,
 			Rating:      5,
 			Description: "Great service!",
 		},
 		{
 			ReviewerID:  1,
-			RevieweeId:  3,
+			RevieweeID:  3,
 			Rating:      4,
 			Description: "Good service!",
 		},
 		{
 			ReviewerID:  2,
-			RevieweeId:  1,
+			RevieweeID:  1,
 			Rating:      3,
 			Description: "Average service!",
 		},
 		{
 			ReviewerID:  2,
-			RevieweeId:  3,
+			RevieweeID:  3,
 			Rating:      2,
 			Description: "Bad service!",
 		},
 		{
 			ReviewerID:  3,
-			RevieweeId:  1,
+			RevieweeID:  1,
 			Rating:      1,
 			Description: "Terrible service!",
 		},
@@ -227,12 +227,12 @@ func TestGetAllReviewsMultipleReviews(t *testing.T) {
 		assert.Equal(t, review_.Rating, got[i].Rating)
 		assert.Equal(t, review_.Description, got[i].Description)
 		assert.Equal(t, review_.ReviewerID, got[i].Reviewer.ID)
-		assert.Equal(t, review_.RevieweeId, got[i].Reviewee.ID)
+		assert.Equal(t, review_.RevieweeID, got[i].Reviewee.ID)
 		assert.Equal(t, uint(i+1), got[i].ID)
 	}
 }
 
-func TestGetReviewByIdNotFound(t *testing.T) {
+func TestGetReviewByIDNotFound(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []models.User{
 		{
@@ -259,7 +259,7 @@ func TestGetReviewByIdNotFound(t *testing.T) {
 	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
-			RevieweeId:  2,
+			RevieweeID:  2,
 			Rating:      5,
 			Description: "Great service!",
 		},
@@ -278,7 +278,7 @@ func TestGetReviewByIdNotFound(t *testing.T) {
 	assert.Empty(t, got)
 }
 
-func TestGetReviewById(t *testing.T) {
+func TestGetReviewByID(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []models.User{
 		{
@@ -305,7 +305,7 @@ func TestGetReviewById(t *testing.T) {
 	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
-			RevieweeId:  2,
+			RevieweeID:  2,
 			Rating:      5,
 			Description: "Great service!",
 		},
@@ -324,7 +324,7 @@ func TestGetReviewById(t *testing.T) {
 	assert.Equal(t, seedReviews[0].Rating, got.Rating)
 	assert.Equal(t, seedReviews[0].Description, got.Description)
 	assert.Equal(t, seedReviews[0].ReviewerID, got.Reviewer.ID)
-	assert.Equal(t, seedReviews[0].RevieweeId, got.Reviewee.ID)
+	assert.Equal(t, seedReviews[0].RevieweeID, got.Reviewee.ID)
 	assert.Equal(t, uint(1), got.ID)
 }
 
@@ -438,7 +438,7 @@ func TestCreateReviewSuccess(t *testing.T) {
 	reviewInput := review.CreateReviewDTO{
 		Rating:      5,
 		Description: "Great service!",
-		RevieweeId:  2,
+		RevieweeID:  2,
 	}
 	reviewInputJSON, err := json.Marshal(reviewInput)
 	assert.NoError(t, err)
@@ -455,7 +455,7 @@ func TestCreateReviewSuccess(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, reviewInput.Rating, got.Rating)
 	assert.Equal(t, reviewInput.Description, got.Description)
-	assert.Equal(t, reviewInput.RevieweeId, got.Reviewee.ID)
+	assert.Equal(t, reviewInput.RevieweeID, got.Reviewee.ID)
 	assert.Equal(t, uint(1), got.Reviewer.ID)
 	assert.Equal(t, uint(1), got.ID)
 }
@@ -491,7 +491,7 @@ func TestCreateReviewInvalidRating(t *testing.T) {
 	reviewInput := review.CreateReviewDTO{
 		Rating:      6,
 		Description: "Great service!",
-		RevieweeId:  2,
+		RevieweeID:  2,
 	}
 	reviewInputJSON, err := json.Marshal(reviewInput)
 	assert.NoError(t, err)
@@ -530,7 +530,7 @@ func TestCreateReviewSelfReview(t *testing.T) {
 	reviewInput := review.CreateReviewDTO{
 		Rating:      5,
 		Description: "Great service!",
-		RevieweeId:  1,
+		RevieweeID:  1,
 	}
 	reviewInputJSON, err := json.Marshal(reviewInput)
 	assert.NoError(t, err)
@@ -575,7 +575,7 @@ func TestCreateReviewReviewAlreadyExists(t *testing.T) {
 	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
-			RevieweeId:  2,
+			RevieweeID:  2,
 			Rating:      5,
 			Description: "Great service!",
 		},
@@ -586,7 +586,7 @@ func TestCreateReviewReviewAlreadyExists(t *testing.T) {
 	reviewInput := review.CreateReviewDTO{
 		Rating:      5,
 		Description: "Great service!",
-		RevieweeId:  2,
+		RevieweeID:  2,
 	}
 	reviewInputJSON, err := json.Marshal(reviewInput)
 	assert.NoError(t, err)
@@ -631,7 +631,7 @@ func TestUpdateReviewNoAuthHeader(t *testing.T) {
 	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
-			RevieweeId:  2,
+			RevieweeID:  2,
 			Rating:      5,
 			Description: "Great service!",
 		},
@@ -677,7 +677,7 @@ func TestUpdateReviewInvalidToken(t *testing.T) {
 	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
-			RevieweeId:  2,
+			RevieweeID:  2,
 			Rating:      5,
 			Description: "Great service!",
 		},
@@ -724,7 +724,7 @@ func TestUpdateReviewSuccess(t *testing.T) {
 	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
-			RevieweeId:  2,
+			RevieweeID:  2,
 			Rating:      5,
 			Description: "Great service!",
 		},
@@ -753,7 +753,7 @@ func TestUpdateReviewSuccess(t *testing.T) {
 	assert.Equal(t, reviewInput.Rating, got.Rating)
 	assert.Equal(t, reviewInput.Description, got.Description)
 	assert.Equal(t, seedReviews[0].ReviewerID, got.Reviewer.ID)
-	assert.Equal(t, seedReviews[0].RevieweeId, got.Reviewee.ID)
+	assert.Equal(t, seedReviews[0].RevieweeID, got.Reviewee.ID)
 	assert.Equal(t, uint(1), got.ID)
 	assert.Equal(t, uint(1), got.Reviewer.ID)
 	assert.Equal(t, uint(2), got.Reviewee.ID)
@@ -786,7 +786,7 @@ func TestUpdateReviewNotFound(t *testing.T) {
 	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
-			RevieweeId:  2,
+			RevieweeID:  2,
 			Rating:      5,
 			Description: "Great service!",
 		},
@@ -842,7 +842,7 @@ func TestUpdateReviewInvalidRating(t *testing.T) {
 	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
-			RevieweeId:  2,
+			RevieweeID:  2,
 			Rating:      5,
 			Description: "Great service!",
 		},
@@ -908,7 +908,7 @@ func TestUpdateNotYourReview(t *testing.T) {
 	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
-			RevieweeId:  2,
+			RevieweeID:  2,
 			Rating:      5,
 			Description: "Great service!",
 		},
@@ -968,7 +968,7 @@ func TestDeleteReviewNoAuthHeader(t *testing.T) {
 	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
-			RevieweeId:  2,
+			RevieweeID:  2,
 			Rating:      5,
 			Description: "Great service!",
 		},
@@ -1014,7 +1014,7 @@ func TestDeleteReviewInvalidToken(t *testing.T) {
 	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
-			RevieweeId:  2,
+			RevieweeID:  2,
 			Rating:      5,
 			Description: "Great service!",
 		},
@@ -1061,7 +1061,7 @@ func TestDeleteReviewSuccess(t *testing.T) {
 	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
-			RevieweeId:  2,
+			RevieweeID:  2,
 			Rating:      5,
 			Description: "Great service!",
 		},
@@ -1116,7 +1116,7 @@ func TestDeleteReviewNotFound(t *testing.T) {
 	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
-			RevieweeId:  2,
+			RevieweeID:  2,
 			Rating:      5,
 			Description: "Great service!",
 		},
@@ -1165,7 +1165,7 @@ func TestDeleteNotYourReview(t *testing.T) {
 	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
-			RevieweeId:  2,
+			RevieweeID:  2,
 			Rating:      5,
 			Description: "Great service!",
 		},
@@ -1191,7 +1191,7 @@ func TestDeleteNotYourReview(t *testing.T) {
 	assert.Equal(t, "you are not the reviewer of this review", got["error_description"])
 }
 
-func TestGetReviewsByReviewerIdNoReviews(t *testing.T) {
+func TestGetReviewsByReviewerIDNoReviews(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []models.User{
 		{
@@ -1237,7 +1237,7 @@ func TestGetReviewsByReviewerIdNoReviews(t *testing.T) {
 	assert.Equal(t, int64(1), got.PaginationResponse.TotalPages)
 }
 
-func TestGetReviewsByReviewerId(t *testing.T) {
+func TestGetReviewsByReviewerID(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []models.User{
 		{
@@ -1264,13 +1264,13 @@ func TestGetReviewsByReviewerId(t *testing.T) {
 	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
-			RevieweeId:  2,
+			RevieweeID:  2,
 			Rating:      5,
 			Description: "Great service!",
 		},
 		{
 			ReviewerID:  2,
-			RevieweeId:  1,
+			RevieweeID:  1,
 			Rating:      4,
 			Description: "Good service!",
 		},
@@ -1295,12 +1295,12 @@ func TestGetReviewsByReviewerId(t *testing.T) {
 	assert.Equal(t, seedReviews[0].Rating, got.Reviews[0].Rating)
 	assert.Equal(t, seedReviews[0].Description, got.Reviews[0].Description)
 	assert.Equal(t, seedReviews[0].ReviewerID, got.Reviews[0].Reviewer.ID)
-	assert.Equal(t, seedReviews[0].RevieweeId, got.Reviews[0].Reviewee.ID)
+	assert.Equal(t, seedReviews[0].RevieweeID, got.Reviews[0].Reviewee.ID)
 	assert.Equal(t, int64(1), got.PaginationResponse.TotalRecords)
 	assert.Equal(t, int64(1), got.PaginationResponse.TotalPages)
 }
 
-func TestGetReviewsByReviewerIdNotFound(t *testing.T) {
+func TestGetReviewsByReviewerIDNotFound(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []models.User{
 		{
@@ -1327,13 +1327,13 @@ func TestGetReviewsByReviewerIdNotFound(t *testing.T) {
 	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
-			RevieweeId:  2,
+			RevieweeID:  2,
 			Rating:      5,
 			Description: "Great service!",
 		},
 		{
 			ReviewerID:  2,
-			RevieweeId:  1,
+			RevieweeID:  1,
 			Rating:      4,
 			Description: "Good service!",
 		},
@@ -1359,7 +1359,7 @@ func TestGetReviewsByReviewerIdNotFound(t *testing.T) {
 	assert.Equal(t, int64(1), got.PaginationResponse.TotalPages)
 }
 
-func TestGetReviewsByRevieweeIdNoReviews(t *testing.T) {
+func TestGetReviewsByRevieweeIDNoReviews(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []models.User{
 		{
@@ -1405,7 +1405,7 @@ func TestGetReviewsByRevieweeIdNoReviews(t *testing.T) {
 	assert.Equal(t, int64(1), got.PaginationResponse.TotalPages)
 }
 
-func TestGetReviewsByRevieweeId(t *testing.T) {
+func TestGetReviewsByRevieweeID(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []models.User{
 		{
@@ -1432,13 +1432,13 @@ func TestGetReviewsByRevieweeId(t *testing.T) {
 	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
-			RevieweeId:  2,
+			RevieweeID:  2,
 			Rating:      5,
 			Description: "Great service!",
 		},
 		{
 			ReviewerID:  2,
-			RevieweeId:  1,
+			RevieweeID:  1,
 			Rating:      4,
 			Description: "Good service!",
 		},
@@ -1463,12 +1463,12 @@ func TestGetReviewsByRevieweeId(t *testing.T) {
 	assert.Equal(t, seedReviews[0].Rating, got.Reviews[0].Rating)
 	assert.Equal(t, seedReviews[0].Description, got.Reviews[0].Description)
 	assert.Equal(t, seedReviews[0].ReviewerID, got.Reviews[0].Reviewer.ID)
-	assert.Equal(t, seedReviews[0].RevieweeId, got.Reviews[0].Reviewee.ID)
+	assert.Equal(t, seedReviews[0].RevieweeID, got.Reviews[0].Reviewee.ID)
 	assert.Equal(t, int64(1), got.PaginationResponse.TotalRecords)
 	assert.Equal(t, int64(1), got.PaginationResponse.TotalPages)
 }
 
-func TestGetReviewsByRevieweeIdNotFound(t *testing.T) {
+func TestGetReviewsByRevieweeIDNotFound(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []models.User{
 		{
@@ -1495,13 +1495,13 @@ func TestGetReviewsByRevieweeIdNotFound(t *testing.T) {
 	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
-			RevieweeId:  2,
+			RevieweeID:  2,
 			Rating:      5,
 			Description: "Great service!",
 		},
 		{
 			ReviewerID:  2,
-			RevieweeId:  1,
+			RevieweeID:  1,
 			Rating:      4,
 			Description: "Good service!",
 		},
@@ -1527,7 +1527,7 @@ func TestGetReviewsByRevieweeIdNotFound(t *testing.T) {
 	assert.Equal(t, int64(1), got.PaginationResponse.TotalPages)
 }
 
-func TestGetReviewsByReviewerIdAndRevieweeIdNoReviews(t *testing.T) {
+func TestGetReviewsByReviewerIDAndRevieweeIDNoReviews(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []models.User{
 		{
@@ -1562,7 +1562,7 @@ func TestGetReviewsByReviewerIdAndRevieweeIdNoReviews(t *testing.T) {
 	assert.Equal(t, wantStatus, w.Code)
 }
 
-func TestGetReviewsByReviewerIdAndRevieweeId(t *testing.T) {
+func TestGetReviewsByReviewerIDAndRevieweeID(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedUsers := []models.User{
 		{
@@ -1589,13 +1589,13 @@ func TestGetReviewsByReviewerIdAndRevieweeId(t *testing.T) {
 	seedReviews := []models.Review{
 		{
 			ReviewerID:  1,
-			RevieweeId:  2,
+			RevieweeID:  2,
 			Rating:      5,
 			Description: "Great service!",
 		},
 		{
 			ReviewerID:  2,
-			RevieweeId:  1,
+			RevieweeID:  1,
 			Rating:      4,
 			Description: "Good service!",
 		},
@@ -1614,7 +1614,7 @@ func TestGetReviewsByReviewerIdAndRevieweeId(t *testing.T) {
 	assert.Equal(t, seedReviews[0].Rating, got.Rating)
 	assert.Equal(t, seedReviews[0].Description, got.Description)
 	assert.Equal(t, seedReviews[0].ReviewerID, got.Reviewer.ID)
-	assert.Equal(t, seedReviews[0].RevieweeId, got.Reviewee.ID)
+	assert.Equal(t, seedReviews[0].RevieweeID, got.Reviewee.ID)
 	assert.Equal(t, uint(1), got.ID)
 	assert.Equal(t, uint(1), got.Reviewer.ID)
 	assert.Equal(t, uint(2), got.Reviewee.ID)

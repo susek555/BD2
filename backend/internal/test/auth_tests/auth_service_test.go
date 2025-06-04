@@ -260,7 +260,7 @@ func TestService_Logout(t *testing.T) {
 		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
 
 		rtSvc.EXPECT().
-			DeleteByUserId(userID).
+			DeleteByUserID(userID).
 			Return(nil)
 
 		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
@@ -311,7 +311,7 @@ func TestService_Logout(t *testing.T) {
 		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
 
 		rtSvc.EXPECT().
-			DeleteByUserId(userID).
+			DeleteByUserID(userID).
 			Return(errors.New("db down"))
 		rtSvc.EXPECT().FindByToken(rt.Token).Return(&rt, nil)
 

@@ -7,7 +7,7 @@ import (
 type UserServiceInterface interface {
 	Create(CreateUserDTO) error
 	GetAll() ([]RetrieveUserDTO, error)
-	GetById(id uint) (*RetrieveUserDTO, error)
+	GetByID(id uint) (*RetrieveUserDTO, error)
 	GetByEmail(email string) (*RetrieveUserDTO, error)
 	GetByCompanyNip(email string) (*RetrieveUserDTO, error)
 	GetByUsername(username string) (*RetrieveUserDTO, error)
@@ -40,8 +40,8 @@ func (s *UserService) GetAll() ([]RetrieveUserDTO, error) {
 	return userDTOs, nil
 }
 
-func (s *UserService) GetById(id uint) (*RetrieveUserDTO, error) {
-	user, err := s.repo.GetById(id)
+func (s *UserService) GetByID(id uint) (*RetrieveUserDTO, error) {
+	user, err := s.repo.GetByID(id)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +77,7 @@ func (s *UserService) GetByCompanyNip(nip string) (*RetrieveUserDTO, error) {
 }
 
 func (s *UserService) Update(in *UpdateUserDTO) map[string][]string {
-	user, err := s.repo.GetById(in.ID)
+	user, err := s.repo.GetByID(in.ID)
 	var errs = make(map[string][]string)
 	if err != nil {
 		errs["id"] = []string{err.Error()}

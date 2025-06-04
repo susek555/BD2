@@ -23,7 +23,7 @@ func ServeWS(hub *Hub) gin.HandlerFunc {
 			log.Println("Error upgrading connection:", err)
 			return
 		}
-		uid, err := auth.GetUserId(c)
+		uid, err := auth.GetUserID(c)
 		if err != nil {
 			log.Println("Error getting user ID:", err)
 			conn.Close()

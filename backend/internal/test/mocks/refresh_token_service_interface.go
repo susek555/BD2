@@ -112,12 +112,12 @@ func (_c *RefreshTokenServiceInterface_Delete_Call) RunAndReturn(run func(uint) 
 	return _c
 }
 
-// DeleteByUserId provides a mock function with given fields: userID
-func (_m *RefreshTokenServiceInterface) DeleteByUserId(userID uint) error {
+// DeleteByUserID provides a mock function with given fields: userID
+func (_m *RefreshTokenServiceInterface) DeleteByUserID(userID uint) error {
 	ret := _m.Called(userID)
 
 	if len(ret) == 0 {
-		panic("no return value specified for DeleteByUserId")
+		panic("no return value specified for DeleteByUserID")
 	}
 
 	var r0 error
@@ -130,30 +130,30 @@ func (_m *RefreshTokenServiceInterface) DeleteByUserId(userID uint) error {
 	return r0
 }
 
-// RefreshTokenServiceInterface_DeleteByUserId_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'DeleteByUserId'
-type RefreshTokenServiceInterface_DeleteByUserId_Call struct {
+// RefreshTokenServiceInterface_DeleteByUserID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'DeleteByUserID'
+type RefreshTokenServiceInterface_DeleteByUserID_Call struct {
 	*mock.Call
 }
 
-// DeleteByUserId is a helper method to define mock.On call
+// DeleteByUserID is a helper method to define mock.On call
 //   - userID uint
-func (_e *RefreshTokenServiceInterface_Expecter) DeleteByUserId(userID interface{}) *RefreshTokenServiceInterface_DeleteByUserId_Call {
-	return &RefreshTokenServiceInterface_DeleteByUserId_Call{Call: _e.mock.On("DeleteByUserId", userID)}
+func (_e *RefreshTokenServiceInterface_Expecter) DeleteByUserID(userID interface{}) *RefreshTokenServiceInterface_DeleteByUserID_Call {
+	return &RefreshTokenServiceInterface_DeleteByUserID_Call{Call: _e.mock.On("DeleteByUserID", userID)}
 }
 
-func (_c *RefreshTokenServiceInterface_DeleteByUserId_Call) Run(run func(userID uint)) *RefreshTokenServiceInterface_DeleteByUserId_Call {
+func (_c *RefreshTokenServiceInterface_DeleteByUserID_Call) Run(run func(userID uint)) *RefreshTokenServiceInterface_DeleteByUserID_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(uint))
 	})
 	return _c
 }
 
-func (_c *RefreshTokenServiceInterface_DeleteByUserId_Call) Return(_a0 error) *RefreshTokenServiceInterface_DeleteByUserId_Call {
+func (_c *RefreshTokenServiceInterface_DeleteByUserID_Call) Return(_a0 error) *RefreshTokenServiceInterface_DeleteByUserID_Call {
 	_c.Call.Return(_a0)
 	return _c
 }
 
-func (_c *RefreshTokenServiceInterface_DeleteByUserId_Call) RunAndReturn(run func(uint) error) *RefreshTokenServiceInterface_DeleteByUserId_Call {
+func (_c *RefreshTokenServiceInterface_DeleteByUserID_Call) RunAndReturn(run func(uint) error) *RefreshTokenServiceInterface_DeleteByUserID_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -274,12 +274,12 @@ func (_c *RefreshTokenServiceInterface_FindByUserEmail_Call) RunAndReturn(run fu
 	return _c
 }
 
-// FindByUserId provides a mock function with given fields: id
-func (_m *RefreshTokenServiceInterface) FindByUserId(id uint) ([]models.RefreshToken, error) {
+// FindByUserID provides a mock function with given fields: id
+func (_m *RefreshTokenServiceInterface) FindByUserID(id uint) ([]models.RefreshToken, error) {
 	ret := _m.Called(id)
 
 	if len(ret) == 0 {
-		panic("no return value specified for FindByUserId")
+		panic("no return value specified for FindByUserID")
 	}
 
 	var r0 []models.RefreshToken
@@ -304,30 +304,30 @@ func (_m *RefreshTokenServiceInterface) FindByUserId(id uint) ([]models.RefreshT
 	return r0, r1
 }
 
-// RefreshTokenServiceInterface_FindByUserId_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'FindByUserId'
-type RefreshTokenServiceInterface_FindByUserId_Call struct {
+// RefreshTokenServiceInterface_FindByUserID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'FindByUserID'
+type RefreshTokenServiceInterface_FindByUserID_Call struct {
 	*mock.Call
 }
 
-// FindByUserId is a helper method to define mock.On call
+// FindByUserID is a helper method to define mock.On call
 //   - id uint
-func (_e *RefreshTokenServiceInterface_Expecter) FindByUserId(id interface{}) *RefreshTokenServiceInterface_FindByUserId_Call {
-	return &RefreshTokenServiceInterface_FindByUserId_Call{Call: _e.mock.On("FindByUserId", id)}
+func (_e *RefreshTokenServiceInterface_Expecter) FindByUserID(id interface{}) *RefreshTokenServiceInterface_FindByUserID_Call {
+	return &RefreshTokenServiceInterface_FindByUserID_Call{Call: _e.mock.On("FindByUserID", id)}
 }
 
-func (_c *RefreshTokenServiceInterface_FindByUserId_Call) Run(run func(id uint)) *RefreshTokenServiceInterface_FindByUserId_Call {
+func (_c *RefreshTokenServiceInterface_FindByUserID_Call) Run(run func(id uint)) *RefreshTokenServiceInterface_FindByUserID_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(uint))
 	})
 	return _c
 }
 
-func (_c *RefreshTokenServiceInterface_FindByUserId_Call) Return(_a0 []models.RefreshToken, _a1 error) *RefreshTokenServiceInterface_FindByUserId_Call {
+func (_c *RefreshTokenServiceInterface_FindByUserID_Call) Return(_a0 []models.RefreshToken, _a1 error) *RefreshTokenServiceInterface_FindByUserID_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *RefreshTokenServiceInterface_FindByUserId_Call) RunAndReturn(run func(uint) ([]models.RefreshToken, error)) *RefreshTokenServiceInterface_FindByUserId_Call {
+func (_c *RefreshTokenServiceInterface_FindByUserID_Call) RunAndReturn(run func(uint) ([]models.RefreshToken, error)) *RefreshTokenServiceInterface_FindByUserID_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -389,12 +389,12 @@ func (_c *RefreshTokenServiceInterface_GetAll_Call) RunAndReturn(run func() ([]m
 	return _c
 }
 
-// GetById provides a mock function with given fields: id
-func (_m *RefreshTokenServiceInterface) GetById(id uint) (*models.RefreshToken, error) {
+// GetByID provides a mock function with given fields: id
+func (_m *RefreshTokenServiceInterface) GetByID(id uint) (*models.RefreshToken, error) {
 	ret := _m.Called(id)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetById")
+		panic("no return value specified for GetByID")
 	}
 
 	var r0 *models.RefreshToken
@@ -419,30 +419,30 @@ func (_m *RefreshTokenServiceInterface) GetById(id uint) (*models.RefreshToken, 
 	return r0, r1
 }
 
-// RefreshTokenServiceInterface_GetById_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetById'
-type RefreshTokenServiceInterface_GetById_Call struct {
+// RefreshTokenServiceInterface_GetByID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetByID'
+type RefreshTokenServiceInterface_GetByID_Call struct {
 	*mock.Call
 }
 
-// GetById is a helper method to define mock.On call
+// GetByID is a helper method to define mock.On call
 //   - id uint
-func (_e *RefreshTokenServiceInterface_Expecter) GetById(id interface{}) *RefreshTokenServiceInterface_GetById_Call {
-	return &RefreshTokenServiceInterface_GetById_Call{Call: _e.mock.On("GetById", id)}
+func (_e *RefreshTokenServiceInterface_Expecter) GetByID(id interface{}) *RefreshTokenServiceInterface_GetByID_Call {
+	return &RefreshTokenServiceInterface_GetByID_Call{Call: _e.mock.On("GetByID", id)}
 }
 
-func (_c *RefreshTokenServiceInterface_GetById_Call) Run(run func(id uint)) *RefreshTokenServiceInterface_GetById_Call {
+func (_c *RefreshTokenServiceInterface_GetByID_Call) Run(run func(id uint)) *RefreshTokenServiceInterface_GetByID_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(uint))
 	})
 	return _c
 }
 
-func (_c *RefreshTokenServiceInterface_GetById_Call) Return(_a0 *models.RefreshToken, _a1 error) *RefreshTokenServiceInterface_GetById_Call {
+func (_c *RefreshTokenServiceInterface_GetByID_Call) Return(_a0 *models.RefreshToken, _a1 error) *RefreshTokenServiceInterface_GetByID_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *RefreshTokenServiceInterface_GetById_Call) RunAndReturn(run func(uint) (*models.RefreshToken, error)) *RefreshTokenServiceInterface_GetById_Call {
+func (_c *RefreshTokenServiceInterface_GetByID_Call) RunAndReturn(run func(uint) (*models.RefreshToken, error)) *RefreshTokenServiceInterface_GetByID_Call {
 	_c.Call.Return(run)
 	return _c
 }

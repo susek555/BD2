@@ -25,12 +25,12 @@ func newServiceWithMock() (*review.ReviewService, *mocks.ReviewRepositoryInterfa
 // Custom query methods
 // -------------------------
 
-func TestGetByReviewerId_Success(t *testing.T) {
+func TestGetByReviewerID_Success(t *testing.T) {
 	svc, repo := newServiceWithMock()
 
 	mockReviews := []models.Review{
-		{ID: 1, ReviewerID: 10, RevieweeId: 1, Reviewer: &models.User{ID: 10, Username: "reviewer1"}, Reviewee: &models.User{ID: 1, Username: "reviewee1"}},
-		{ID: 2, ReviewerID: 10, RevieweeId: 2, Reviewer: &models.User{ID: 10, Username: "reviewer1"}, Reviewee: &models.User{ID: 2, Username: "reviewee2"}},
+		{ID: 1, ReviewerID: 10, RevieweeID: 1, Reviewer: &models.User{ID: 10, Username: "reviewer1"}, Reviewee: &models.User{ID: 1, Username: "reviewee1"}},
+		{ID: 2, ReviewerID: 10, RevieweeID: 2, Reviewer: &models.User{ID: 10, Username: "reviewer1"}, Reviewee: &models.User{ID: 2, Username: "reviewee2"}},
 	}
 
 	var expectedDTOs []review.RetrieveReviewDTO
@@ -38,33 +38,33 @@ func TestGetByReviewerId_Success(t *testing.T) {
 		expectedDTOs = append(expectedDTOs, *review.MapToDTO(&r))
 	}
 
-	repo.On("GetByReviewerId", uint(10)).Return(mockReviews, nil).Once()
+	repo.On("GetByReviewerID", uint(10)).Return(mockReviews, nil).Once()
 
-	got, err := svc.GetByReviewerId(10)
+	got, err := svc.GetByReviewerID(10)
 
 	require.NoError(t, err)
 	assert.Equal(t, expectedDTOs, got)
 	repo.AssertExpectations(t)
 }
 
-func TestGetByReviewerId_Error(t *testing.T) {
+func TestGetByReviewerID_Error(t *testing.T) {
 	svc, repo := newServiceWithMock()
 
 	repoErr := errors.New("db error")
-	repo.On("GetByReviewerId", uint(10)).Return(nil, repoErr).Once()
+	repo.On("GetByReviewerID", uint(10)).Return(nil, repoErr).Once()
 
-	got, err := svc.GetByReviewerId(10)
+	got, err := svc.GetByReviewerID(10)
 
 	require.ErrorIs(t, err, repoErr)
 	assert.Nil(t, got)
 	repo.AssertExpectations(t)
 }
 
-func TestGetByRevieweeId_Success(t *testing.T) {
+func TestGetByRevieweeID_Success(t *testing.T) {
 	svc, repo := newServiceWithMock()
 
 	mockReviews := []models.Review{
-		{ID: 3, ReviewerID: 5, RevieweeId: 20, Reviewer: &models.User{ID: 5, Username: "reviewer"}, Reviewee: &models.User{ID: 20, Username: "reviewee"}},
+		{ID: 3, ReviewerID: 5, RevieweeID: 20, Reviewer: &models.User{ID: 5, Username: "reviewer"}, Reviewee: &models.User{ID: 20, Username: "reviewee"}},
 	}
 
 	var expectedDTOs []review.RetrieveReviewDTO
@@ -72,9 +72,9 @@ func TestGetByRevieweeId_Success(t *testing.T) {
 		expectedDTOs = append(expectedDTOs, *review.MapToDTO(&r))
 	}
 
-	repo.On("GetByRevieweeId", uint(20)).Return(mockReviews, nil).Once()
+	repo.On("GetByRevieweeID", uint(20)).Return(mockReviews, nil).Once()
 
-	got, err := svc.GetByRevieweeId(20)
+	got, err := svc.GetByRevieweeID(20)
 
 	require.NoError(t, err)
 	assert.Equal(t, expectedDTOs, got)
@@ -87,15 +87,15 @@ func TestGetByReviewerAndReviewee_Success(t *testing.T) {
 	mockReview := &models.Review{
 		ID:         4,
 		ReviewerID: 10,
-		RevieweeId: 20,
+		RevieweeID: 20,
 		Reviewer:   &models.User{ID: 10, Username: "reviewer"},
 		Reviewee:   &models.User{ID: 20, Username: "reviewee"},
 	}
 	expectedDTO := *review.MapToDTO(mockReview)
 
-	repo.On("GetByReviewerIdAndRevieweeId", uint(10), uint(20)).Return(mockReview, nil).Once()
+	repo.On("GetByReviewerIDAndRevieweeID", uint(10), uint(20)).Return(mockReview, nil).Once()
 
-	got, err := svc.GetByReviewerIdAndRevieweeId(10, 20)
+	got, err := svc.GetByReviewerIDAndRevieweeID(10, 20)
 
 	require.NoError(t, err)
 	assert.Equal(t, &expectedDTO, got)
@@ -106,9 +106,9 @@ func TestGetByReviewerAndReviewee_Error(t *testing.T) {
 	svc, repo := newServiceWithMock()
 
 	repoErr := errors.New("not found")
-	repo.On("GetByReviewerIdAndRevieweeId", uint(10), uint(20)).Return(nil, repoErr).Once()
+	repo.On("GetByReviewerIDAndRevieweeID", uint(10), uint(20)).Return(nil, repoErr).Once()
 
-	got, err := svc.GetByReviewerIdAndRevieweeId(10, 20)
+	got, err := svc.GetByReviewerIDAndRevieweeID(10, 20)
 
 	require.ErrorIs(t, err, repoErr)
 	assert.Nil(t, got)
@@ -123,7 +123,7 @@ func TestCreate_Success(t *testing.T) {
 	svc, repo := newServiceWithMock()
 	userID := uint(1)
 
-	in := &review.CreateReviewDTO{Description: "ok", Rating: 1, RevieweeId: 2}
+	in := &review.CreateReviewDTO{Description: "ok", Rating: 1, RevieweeID: 2}
 
 	repo.
 		On("Create", mock.AnythingOfType("*models.Review")).
@@ -132,7 +132,7 @@ func TestCreate_Success(t *testing.T) {
 
 			r.ID = 1
 			r.Reviewer = &models.User{ID: 1, Username: "author"}
-			r.Reviewee = &models.User{ID: r.RevieweeId, Username: "user"}
+			r.Reviewee = &models.User{ID: r.RevieweeID, Username: "user"}
 		}).
 		Return(nil).
 		Once()
@@ -145,7 +145,7 @@ func TestCreate_Success(t *testing.T) {
 	assert.Equal(t, uint(1), got.ID)
 	assert.Equal(t, in.Description, got.Description)
 	assert.Equal(t, in.Rating, got.Rating)
-	assert.Equal(t, in.RevieweeId, got.Reviewee.ID)
+	assert.Equal(t, in.RevieweeID, got.Reviewee.ID)
 }
 
 func TestCreate_Error(t *testing.T) {
@@ -174,7 +174,7 @@ func TestGet_Success(t *testing.T) {
 	want := models.Review{
 		ID:         7,
 		ReviewerID: 1,
-		RevieweeId: 2,
+		RevieweeID: 2,
 		Reviewer: &models.User{
 			ID:       1,
 			Username: "reviewer",
@@ -184,9 +184,9 @@ func TestGet_Success(t *testing.T) {
 			Username: "reviewee",
 		},
 	}
-	repo.On("GetById", uint(7)).Return(&want, nil).Once()
+	repo.On("GetByID", uint(7)).Return(&want, nil).Once()
 
-	got, err := svc.GetById(7)
+	got, err := svc.GetByID(7)
 	expected := review.MapToDTO(&want)
 	require.NoError(t, err)
 	assert.Equal(t, expected, got)
@@ -197,9 +197,9 @@ func TestGet_Error(t *testing.T) {
 	svc, repo := newServiceWithMock()
 
 	repoErr := errors.New("no review found")
-	repo.On("GetById", uint(7)).Return(&models.Review{}, repoErr).Once()
+	repo.On("GetByID", uint(7)).Return(&models.Review{}, repoErr).Once()
 
-	got, err := svc.GetById(7)
+	got, err := svc.GetByID(7)
 	var want *review.RetrieveReviewDTO = nil
 
 	require.Error(t, err)
@@ -224,22 +224,22 @@ func TestUpdate_Success(t *testing.T) {
 
 	// ── step 1: service asks the repo for the existing review ──
 	repo.
-		On("GetById", reviewID).
+		On("GetByID", reviewID).
 		Return(&models.Review{
 			ID:         reviewID,
 			ReviewerID: reviewerID,
-			RevieweeId: 2,
+			RevieweeID: 2,
 			Reviewer:   &models.User{ID: reviewerID, Username: "author"},
 			Reviewee:   &models.User{ID: 2, Username: "user"},
 		}, nil).
 		Once()
 
 	repo.
-		On("GetByReviewerIdAndRevieweeId", reviewerID, uint(2)).
+		On("GetByReviewerIDAndRevieweeID", reviewerID, uint(2)).
 		Return(&models.Review{
 			ID:         reviewID,
 			ReviewerID: reviewerID,
-			RevieweeId: 2,
+			RevieweeID: 2,
 			Reviewer:   &models.User{ID: reviewerID, Username: "author"},
 			Reviewee:   &models.User{ID: 2, Username: "user"},
 		}, nil).
@@ -253,7 +253,7 @@ func TestUpdate_Success(t *testing.T) {
 
 			// simulate DB finishing the mutation and preloading relations
 			r.Reviewer = &models.User{ID: reviewerID, Username: "author"}
-			r.Reviewee = &models.User{ID: r.RevieweeId, Username: "user"}
+			r.Reviewee = &models.User{ID: r.RevieweeID, Username: "user"}
 		}).
 		Return(nil).
 		Once()
@@ -278,12 +278,12 @@ func TestUpdate_Error(t *testing.T) {
 
 	repoErr := errors.New("update failed")
 
-	repo.On("GetById", reviewID).
-		Return(&models.Review{ID: reviewID, ReviewerID: reviewerID, RevieweeId: 2}, nil).
+	repo.On("GetByID", reviewID).
+		Return(&models.Review{ID: reviewID, ReviewerID: reviewerID, RevieweeID: 2}, nil).
 		Once()
 
-	repo.On("GetByReviewerIdAndRevieweeId", reviewerID, uint(2)).
-		Return(&models.Review{ID: reviewID, ReviewerID: reviewerID, RevieweeId: 2}, nil).
+	repo.On("GetByReviewerIDAndRevieweeID", reviewerID, uint(2)).
+		Return(&models.Review{ID: reviewID, ReviewerID: reviewerID, RevieweeID: 2}, nil).
 		Once()
 
 	repo.On("Update", mock.AnythingOfType("*models.Review")).Return(repoErr).Once()
@@ -303,7 +303,7 @@ func TestDelete_Success(t *testing.T) {
 	userID := uint(9)
 	reviewID := uint(10)
 
-	repo.On("GetById", reviewID).
+	repo.On("GetByID", reviewID).
 		Return(&models.Review{ID: reviewID, ReviewerID: userID}, nil).
 		Once()
 	repo.On("Delete", reviewID).Return(nil).Once()
@@ -321,7 +321,7 @@ func TestDelete_Error(t *testing.T) {
 	reviewID := uint(10)
 	repoErr := errors.New("delete failed")
 
-	repo.On("GetById", reviewID).
+	repo.On("GetByID", reviewID).
 		Return(&models.Review{ID: reviewID, ReviewerID: userID}, nil).
 		Once()
 	repo.On("Delete", reviewID).Return(repoErr).Once()

@@ -49,12 +49,12 @@ func (h *Handler) CreateBid(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
-	userId, err := auth.GetUserId(c)
+	userID, err := auth.GetUserID(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
-	dto, err := h.bidService.Create(&in, userId)
+	dto, err := h.bidService.Create(&in, userID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
@@ -62,7 +62,7 @@ func (h *Handler) CreateBid(c *gin.Context) {
 	retrieveDTO := ProcessingToRetrieve(dto)
 	c.JSON(http.StatusCreated, retrieveDTO)
 	auctionIDStr := strconv.FormatUint(uint64(dto.AuctionID), 10)
-	userIDStr := strconv.FormatUint(uint64(userId), 10)
+	userIDStr := strconv.FormatUint(uint64(userID), 10)
 	amountInt64 := int64(dto.Amount)
 	notification := &models.Notification{
 		OfferID: dto.AuctionID,
@@ -73,7 +73,7 @@ func (h *Handler) CreateBid(c *gin.Context) {
 		log.Println("Error creating notification:", err)
 		return
 	}
-	h.hub.SaveNotificationForClients(auctionIDStr, userId, notification)
+	h.hub.SaveNotificationForClients(auctionIDStr, userID, notification)
 	// TODO: think about the best way to do this
 	// auctionws.PublishAuctionEvent(c, h.redisClient, auctionIDStr, env)
 	go h.hub.SendFourLatestNotificationsToClient(auctionIDStr, userIDStr)
@@ -115,14 +115,14 @@ func (h *Handler) GetBidByID(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
-	bid, err := h.bidService.GetById(uint(bidID))
+	bid, err := h.bidService.GetByID(uint(bidID))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
 	c.JSON(http.StatusOK, bid)
 }
 
-// GetBidsByBidderId godoc
+// GetBidsByBidderID godoc
 //
 //	@Summary		Get bids by bidder ID
 //	@Description	Retrieves all bids placed by a specific bidder
@@ -133,19 +133,19 @@ func (h *Handler) GetBidByID(c *gin.Context) {
 //	@Success		200	{array}		RetrieveBidDTO			"List of bids"
 //	@Failure		400	{object}	custom_errors.HTTPError	"Invalid bidder ID or retrieval error"
 //	@Router			/bid/bidder/{id} [get]
-func (h *Handler) GetBidsByBidderId(c *gin.Context) {
-	bidderId, err := strconv.ParseUint(c.Param("id"), 10, 32)
+func (h *Handler) GetBidsByBidderID(c *gin.Context) {
+	bidderID, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
-	bids, err := h.bidService.GetByBidderId(uint(bidderId))
+	bids, err := h.bidService.GetByBidderID(uint(bidderID))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
 	c.JSON(http.StatusOK, bids)
 }
 
-// GetBidsByAuctionId godoc
+// GetBidsByAuctionID godoc
 //
 //	@Summary		Get bids by auction ID
 //	@Description	Retrieves all bids placed on a specific auction
@@ -156,12 +156,12 @@ func (h *Handler) GetBidsByBidderId(c *gin.Context) {
 //	@Success		200	{array}		RetrieveBidDTO			"List of bids"
 //	@Failure		400	{object}	custom_errors.HTTPError	"Invalid auction ID or retrieval error"
 //	@Router			/bid/auction/{id} [get]
-func (h *Handler) GetBidsByAuctionId(c *gin.Context) {
-	auctionId, err := strconv.ParseUint(c.Param("id"), 10, 32)
+func (h *Handler) GetBidsByAuctionID(c *gin.Context) {
+	auctionID, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
-	bids, err := h.bidService.GetByAuctionId(uint(auctionId))
+	bids, err := h.bidService.GetByAuctionID(uint(auctionID))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
@@ -180,39 +180,39 @@ func (h *Handler) GetBidsByAuctionId(c *gin.Context) {
 //	@Failure		400	{object}	custom_errors.HTTPError	"Invalid auction ID or retrieval error"
 //	@Router			/bid/highest/{id} [get]
 func (h *Handler) GetHighestBid(c *gin.Context) {
-	auctionId, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	auctionID, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
-	bid, err := h.bidService.GetHighestBid(uint(auctionId))
+	bid, err := h.bidService.GetHighestBid(uint(auctionID))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
 	c.JSON(http.StatusOK, bid)
 }
 
-// GetHighestBidByUserId godoc
+// GetHighestBidByUserID godoc
 //
 //	@Summary		Get the highest bid by a user for a specific auction
 //	@Description	Retrieves the highest bid placed by a specific user on a specific auction
 //	@Tags			bid
 //	@Accept			json
 //	@Produce		json
-//	@Param			auctionId	path		uint					true	"Auction ID"
-//	@Param			bidderId	path		uint					true	"Bidder ID"
+//	@Param			auctionID	path		uint					true	"Auction ID"
+//	@Param			bidderID	path		uint					true	"Bidder ID"
 //	@Success		200			{object}	RetrieveBidDTO			"Highest bid details"
 //	@Failure		400			{object}	custom_errors.HTTPError	"Invalid auction ID, bidder ID, or retrieval error"
-//	@Router			/bid/highest/auction/{auctionId}/bidder/{bidderId} [get]
-func (h *Handler) GetHighestBidByUserId(c *gin.Context) {
-	auctionId, err := strconv.ParseUint(c.Param("auctionId"), 10, 32)
+//	@Router			/bid/highest/auction/{auctionID}/bidder/{bidderID} [get]
+func (h *Handler) GetHighestBidByUserID(c *gin.Context) {
+	auctionID, err := strconv.ParseUint(c.Param("auctionID"), 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
-	bidderId, err := strconv.ParseUint(c.Param("bidderId"), 10, 32)
+	bidderID, err := strconv.ParseUint(c.Param("bidderID"), 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}
-	bid, err := h.bidService.GetHighestBidByUserId(uint(auctionId), uint(bidderId))
+	bid, err := h.bidService.GetHighestBidByUserID(uint(auctionID), uint(bidderID))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 	}

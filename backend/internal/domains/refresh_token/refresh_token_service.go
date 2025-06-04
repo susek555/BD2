@@ -14,9 +14,9 @@ type RefreshTokenServiceInterface interface {
 
 	FindByToken(token string) (*models.RefreshToken, error)
 	FindByUserEmail(email string) ([]models.RefreshToken, error)
-	FindByUserId(id uint) ([]models.RefreshToken, error)
+	FindByUserID(id uint) ([]models.RefreshToken, error)
 	VerifyExpiration(token *models.RefreshToken) (*models.RefreshToken, error)
-	DeleteByUserId(userID uint) error
+	DeleteByUserID(userID uint) error
 }
 
 type RefreshTokenService struct {
@@ -39,8 +39,8 @@ func (s *RefreshTokenService) FindByUserEmail(email string) ([]models.RefreshTok
 	return s.Repo.FindByUserEmail(email)
 }
 
-func (s *RefreshTokenService) FindByUserId(id uint) ([]models.RefreshToken, error) {
-	return s.Repo.FindByUserId(id)
+func (s *RefreshTokenService) FindByUserID(id uint) ([]models.RefreshToken, error) {
+	return s.Repo.FindByUserID(id)
 }
 
 func (s *RefreshTokenService) VerifyExpiration(token *models.RefreshToken) (*models.RefreshToken, error) {
@@ -51,6 +51,6 @@ func (s *RefreshTokenService) VerifyExpiration(token *models.RefreshToken) (*mod
 	return token, nil
 }
 
-func (s *RefreshTokenService) DeleteByUserId(userID uint) error {
-	return s.Repo.DeleteByUserId(userID)
+func (s *RefreshTokenService) DeleteByUserID(userID uint) error {
+	return s.Repo.DeleteByUserID(userID)
 }

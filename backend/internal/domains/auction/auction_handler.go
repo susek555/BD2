@@ -32,19 +32,19 @@ func NewHandler(service AuctionServiceInterface, sched scheduler.SchedulerInterf
 	}
 }
 
-//	@Summary		Create Auction
-//	@Description	Creates a new auction with the provided details
-//	@Tags			auction
-//	@Accept			json
-//	@Produce		json
-//	@Param			body	body		CreateAuctionDTO		true	"Auction details"
-//	@Success		201		{object}	RetrieveAuctionDTO		"Created auction"
-//	@Failure		400		{object}	custom_errors.HTTPError	"Bad request"
-//	@Failure		401		{object}	custom_errors.HTTPError	"Unauthorized"
-//	@Router			/auction [post]
-//	@Security		BearerAuth
+// @Summary		Create Auction
+// @Description	Creates a new auction with the provided details
+// @Tags			auction
+// @Accept			json
+// @Produce		json
+// @Param			body	body		CreateAuctionDTO		true	"Auction details"
+// @Success		201		{object}	RetrieveAuctionDTO		"Created auction"
+// @Failure		400		{object}	custom_errors.HTTPError	"Bad request"
+// @Failure		401		{object}	custom_errors.HTTPError	"Unauthorized"
+// @Router			/auction [post]
+// @Security		BearerAuth
 func (h *Handler) CreateAuction(c *gin.Context) {
-	userId, err := auth.GetUserId(c)
+	userID, err := auth.GetUserID(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, custom_errors.NewHTTPError(err.Error()))
 		return
@@ -54,7 +54,7 @@ func (h *Handler) CreateAuction(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
-	in.UserID = (uint)(userId)
+	in.UserID = (uint)(userID)
 	dto, err := h.service.Create(&in)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
@@ -74,8 +74,8 @@ func (h *Handler) CreateAuction(c *gin.Context) {
 		// TODO: Do sth
 	}
 	dateEnd := dateEndLocal.UTC()
-	userIdStr := strconv.FormatUint(uint64(userId), 10)
-	h.hub.SubscribeUser(userIdStr, auctionID)
+	userIDStr := strconv.FormatUint(uint64(userID), 10)
+	h.hub.SubscribeUser(userIDStr, auctionID)
 	h.sched.AddAuction(auctionID, dateEnd)
 	log.Printf("scheduler: added %s ends %s", auctionID, dateEnd)
 	c.JSON(http.StatusCreated, dto)
@@ -100,7 +100,7 @@ func (h *Handler) GetAllAuctions(c *gin.Context) {
 	c.JSON(http.StatusOK, auctions)
 }
 
-// GetAuctionById godoc
+// GetAuctionByID godoc
 //
 //	@Summary		Get auction by ID
 //	@Description	Retrieves a specific auction by its ID
@@ -111,13 +111,13 @@ func (h *Handler) GetAllAuctions(c *gin.Context) {
 //	@Success		200	{object}	RetrieveAuctionDTO
 //	@Failure		400	{object}	custom_errors.HTTPError
 //	@Router			/auction/{id} [get]
-func (h *Handler) GetAuctionById(c *gin.Context) {
+func (h *Handler) GetAuctionByID(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
-	auction, err := h.service.GetById(uint(id))
+	auction, err := h.service.GetByID(uint(id))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
@@ -125,7 +125,7 @@ func (h *Handler) GetAuctionById(c *gin.Context) {
 	c.JSON(http.StatusOK, auction)
 }
 
-// DeleteAuctionById godoc
+// DeleteAuctionByID godoc
 //
 //	@Summary		Delete auction by ID
 //	@Description	Deletes a specific auction by its ID
@@ -138,8 +138,8 @@ func (h *Handler) GetAuctionById(c *gin.Context) {
 //	@Failure		401	{object}	custom_errors.HTTPError
 //	@Router			/auction/{id} [delete]
 //	@Security		BearerAuth
-func (h *Handler) DeleteAuctionById(c *gin.Context) {
-	userId, err := auth.GetUserId(c)
+func (h *Handler) DeleteAuctionByID(c *gin.Context) {
+	userID, err := auth.GetUserID(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, custom_errors.NewHTTPError(err.Error()))
 		return
@@ -149,7 +149,7 @@ func (h *Handler) DeleteAuctionById(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
-	err = h.service.Delete(uint(id), uint(userId))
+	err = h.service.Delete(uint(id), uint(userID))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
@@ -171,7 +171,7 @@ func (h *Handler) DeleteAuctionById(c *gin.Context) {
 //	@Router			/auction [put]
 //	@Security		BearerAuth
 func (h *Handler) UpdateAuction(c *gin.Context) {
-	userId, err := auth.GetUserId(c)
+	userID, err := auth.GetUserID(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, custom_errors.NewHTTPError(err.Error()))
 		return
@@ -181,7 +181,7 @@ func (h *Handler) UpdateAuction(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
-	dto, err := h.service.Update(&auctionInput, uint(userId))
+	dto, err := h.service.Update(&auctionInput, uint(userID))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
@@ -190,6 +190,7 @@ func (h *Handler) UpdateAuction(c *gin.Context) {
 }
 
 // BuyNow godoc
+//
 //	@Summary		Buy an auction at its buy now price
 //	@Description	Allows a user to instantly purchase an auction at its buy now price if available
 //	@Tags			auctions
@@ -202,7 +203,7 @@ func (h *Handler) UpdateAuction(c *gin.Context) {
 //	@Router			/auctions/buy-now/{id} [delete]
 //	@Security		BearerAuth
 func (h *Handler) BuyNow(c *gin.Context) {
-	userId, err := auth.GetUserId(c)
+	userID, err := auth.GetUserID(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, custom_errors.NewHTTPError(err.Error()))
 		return
@@ -212,7 +213,7 @@ func (h *Handler) BuyNow(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
-	auction, err := h.service.BuyNow(uint(id), uint(userId))
+	auction, err := h.service.BuyNow(uint(id), uint(userID))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
@@ -221,11 +222,11 @@ func (h *Handler) BuyNow(c *gin.Context) {
 	notification := &models.Notification{
 		OfferID: uint(id),
 	}
-	err = h.notificationService.CreateBuyNowNotification(notification, strconv.FormatUint(uint64(userId), 10), auction)
+	err = h.notificationService.CreateBuyNowNotification(notification, strconv.FormatUint(uint64(userID), 10), auction)
 	if err != nil {
 		log.Printf("Error creating buy now notification for auction ID %d: %v", id, err)
 		return
 	}
-	h.hub.SaveNotificationForClients(strconv.FormatUint(id, 10), userId, notification)
-	go h.hub.SendFourLatestNotificationsToClient(strconv.FormatUint(id, 10), strconv.FormatUint(uint64(userId), 10))
+	h.hub.SaveNotificationForClients(strconv.FormatUint(id, 10), userID, notification)
+	go h.hub.SendFourLatestNotificationsToClient(strconv.FormatUint(id, 10), strconv.FormatUint(uint64(userID), 10))
 }

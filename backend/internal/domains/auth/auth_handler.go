@@ -154,13 +154,13 @@ func (h *Handler) Logout(c *gin.Context) {
 		return
 	}
 
-	userId, ok := c.Get("userID")
+	userID, ok := c.Get("userID")
 	if !ok {
 		custom_errors.HandleError(c, ErrUnauthorized, ErrorMap)
 		return
 	}
 
-	if err := h.Service.Logout(c, userId.(uint), req.RefreshToken, req.AllDevices); err != nil {
+	if err := h.Service.Logout(c, userID.(uint), req.RefreshToken, req.AllDevices); err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
@@ -188,13 +188,13 @@ func (h *Handler) ChangePassword(c *gin.Context) {
 		return
 	}
 
-	userId, err := GetUserId(c)
+	userID, err := GetUserID(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, ChangePasswordResponse{Errors: map[string][]string{"other": {ErrUnauthorized.Error()}}})
 		return
 	}
 
-	errors := h.Service.ChangePassword(c, userId, req.OldPassword, req.NewPassword)
+	errors := h.Service.ChangePassword(c, userID, req.OldPassword, req.NewPassword)
 	if len(errors) > 0 {
 		c.JSON(http.StatusBadRequest, ChangePasswordResponse{Errors: errors})
 		return
