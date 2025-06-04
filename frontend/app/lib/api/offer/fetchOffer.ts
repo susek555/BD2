@@ -1,8 +1,10 @@
+import { fetchWithRefresh } from "../fetchWithRefresh";
+
 const API_URL = process.env.API_URL;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function getOfferData(id : number) : Promise<any> {
-  const response = await fetch(`${API_URL}/sale-offer/id/${id}`, {
+  const response = await fetchWithRefresh(`${API_URL}/sale-offer/id/${id}`, {
     method: "GET",
   });
 
