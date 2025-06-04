@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
-	"github.com/susek555/BD2/car-dealer-api/internal/enums"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
 )
 
@@ -31,31 +30,25 @@ func NewAuctionService(repo AuctionRepositoryInterface, service sale_offer.SaleO
 }
 
 func (s *AuctionService) Create(auction *CreateAuctionDTO) (*RetrieveAuctionDTO, error) {
+	offer, err := s.saleOfferService.Create(&auction.CreateSaleOfferDTO)
+	if err != nil {
+		return nil, err
+	}
 	auctionEntity, err := auction.MapToAuction()
 	if err != nil {
 		return nil, err
 	}
-	modelID, err := s.saleOfferService.GetModelID(auction.ManufacturerName, auction.ModelName)
-	if err != nil {
-		return nil, err
-	}
-	auctionEntity.Offer.Car.ModelID = modelID
-	auctionEntity.Offer.Status = enums.PENDING
 	if auctionEntity.BuyNowPrice < 1 {
 		return nil, ErrBuyNowPriceLessThan1
 	}
-	if auctionEntity.BuyNowPrice < auctionEntity.Offer.Price {
+	if auctionEntity.BuyNowPrice < offer.Price {
 		return nil, ErrBuyNowPriceLessThanOfferPrice
 	}
-	err = s.auctionRepo.Create(auctionEntity)
-	if err != nil {
+	auctionEntity.OfferID = offer.ID
+	if err := s.auctionRepo.Create(auctionEntity); err != nil {
 		return nil, err
 	}
-	dto, err := s.GetById(auctionEntity.OfferID)
-	if err != nil {
-		return nil, err
-	}
-	return dto, nil
+	return s.GetById(auctionEntity.OfferID)
 }
 
 func (s *AuctionService) GetAll() ([]RetrieveAuctionDTO, error) {

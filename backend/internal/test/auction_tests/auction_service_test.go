@@ -136,8 +136,8 @@ func TestAuctionService_Create_OK(t *testing.T) {
 	dtoIn := makeValidCreateDTO()
 
 	// Mock the GetModelID call
-	saleOfferSvc.On("GetModelID", "Tesla", "ModelS").Return(uint(1), nil)
-
+	saleOfferSvc.On("Create", mock.AnythingOfType("*sale_offer.CreateSaleOfferDTO")).
+		Return(&sale_offer.RetrieveDetailedSaleOfferDTO{ID: 7, Price: dtoIn.Price}, nil)
 	repo.On("Create", mock.AnythingOfType("*models.Auction")).Run(func(args mock.Arguments) {
 		a := args.Get(0).(*models.Auction)
 		full := makeFullAuctionEntity(7, a.DateEnd, a.BuyNowPrice)
@@ -166,8 +166,8 @@ func TestAuctionService_Create_Error(t *testing.T) {
 	expected := errors.New("db failure")
 
 	// Mock the GetModelID call that happens before Create
-	saleOfferSvc.On("GetModelID", "Tesla", "ModelS").Return(uint(1), nil)
-
+	saleOfferSvc.On("Create", mock.AnythingOfType("*sale_offer.CreateSaleOfferDTO")).
+		Return(&sale_offer.RetrieveDetailedSaleOfferDTO{ID: 1, Price: dtoIn.Price}, nil)
 	repo.On("Create", mock.Anything).Return(expected)
 
 	out, err := svc.Create(dtoIn)
