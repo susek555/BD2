@@ -120,6 +120,12 @@ func (s *SaleOfferService) Buy(offerID uint, userID uint) (*models.SaleOffer, er
 	if err != nil {
 		return nil, err
 	}
+	if offer.Status != enums.PUBLISHED {
+		return nil, ErrOfferNotPublished
+	}
+	if offer.IsAuction {
+		return nil, ErrOfferIsAuction
+	}
 	if offer.BelongsToUser(userID) {
 		return nil, ErrOfferOwnedByUser
 	}
@@ -216,12 +222,6 @@ func (s *SaleOfferService) mapOfferWithAdditionalFields(offer *views.SaleOfferVi
 	urls, err := s.getOfferImagesURLs(offer)
 	if err != nil {
 		return nil, err
-	}
-	if offer.Status != enums.PUBLISHED {
-		return nil, ErrOfferNotPublished
-	}
-	if isAuction(offer) {
-		return nil, ErrOfferIsAuction
 	}
 	if len(urls) > 0 {
 		offerDTO.MainURL = urls[0]
