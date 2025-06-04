@@ -34,9 +34,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
 
   const [sellerAverageRating, myCurrentBid] = await Promise.all([
     fetchAverageRating(offer.sellerId),
-    // TODO: Uncomment when getMyCurrentBid is implemented
-    // (offer.isAuction && user_id) ? getMyCurrentBid(offer.id, user_id!) : Promise.resolve(undefined)
-    Promise.resolve(undefined)
+    (offer.isAuction && user_id) ? getMyCurrentBid(offer.id, user_id!) : Promise.resolve(undefined)
   ]);
 
   console.log('My current bid:', myCurrentBid);
