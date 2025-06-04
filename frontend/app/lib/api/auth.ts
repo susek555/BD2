@@ -13,7 +13,8 @@ export type AccountFieldValidationResult = {
 
 export type PasswordValidationResult = {
   errors?: {
-    current_password: string[]
+    current_password?: string[];
+    other?: string[];
   };
 };
 
