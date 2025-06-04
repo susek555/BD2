@@ -5,7 +5,6 @@ import (
 	"log"
 	"time"
 
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"github.com/susek555/BD2/car-dealer-api/pkg/formats"
 )
@@ -65,13 +64,10 @@ func MapToDTO(auction *models.Auction) *RetrieveAuctionDTO {
 	if err != nil {
 		log.Println("error loading location:", err)
 	}
-
 	dateEnd := auction.DateEnd.In(loc).Format(formats.DateTimeLayout)
-	offerDTO := sale_offer.MapToDTO(auction.Offer)
 	return &RetrieveAuctionDTO{
-		offerDTO,
-		dateEnd,
-		auction.BuyNowPrice,
+		DateEnd:     dateEnd,
+		BuyNowPrice: auction.BuyNowPrice,
 	}
 }
 

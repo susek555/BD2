@@ -186,66 +186,9 @@ func (_c *AuctionServiceInterface_Delete_Call) RunAndReturn(run func(uint, uint)
 	return _c
 }
 
-// GetAll provides a mock function with no fields
-func (_m *AuctionServiceInterface) GetAll() ([]auction.RetrieveAuctionDTO, error) {
-	ret := _m.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetAll")
-	}
-
-	var r0 []auction.RetrieveAuctionDTO
-	var r1 error
-	if rf, ok := ret.Get(0).(func() ([]auction.RetrieveAuctionDTO, error)); ok {
-		return rf()
-	}
-	if rf, ok := ret.Get(0).(func() []auction.RetrieveAuctionDTO); ok {
-		r0 = rf()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]auction.RetrieveAuctionDTO)
-		}
-	}
-
-	if rf, ok := ret.Get(1).(func() error); ok {
-		r1 = rf()
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// AuctionServiceInterface_GetAll_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetAll'
-type AuctionServiceInterface_GetAll_Call struct {
-	*mock.Call
-}
-
-// GetAll is a helper method to define mock.On call
-func (_e *AuctionServiceInterface_Expecter) GetAll() *AuctionServiceInterface_GetAll_Call {
-	return &AuctionServiceInterface_GetAll_Call{Call: _e.mock.On("GetAll")}
-}
-
-func (_c *AuctionServiceInterface_GetAll_Call) Run(run func()) *AuctionServiceInterface_GetAll_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run()
-	})
-	return _c
-}
-
-func (_c *AuctionServiceInterface_GetAll_Call) Return(_a0 []auction.RetrieveAuctionDTO, _a1 error) *AuctionServiceInterface_GetAll_Call {
-	_c.Call.Return(_a0, _a1)
-	return _c
-}
-
-func (_c *AuctionServiceInterface_GetAll_Call) RunAndReturn(run func() ([]auction.RetrieveAuctionDTO, error)) *AuctionServiceInterface_GetAll_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetByID provides a mock function with given fields: id
-func (_m *AuctionServiceInterface) GetByID(id uint) (*auction.RetrieveAuctionDTO, error) {
-	ret := _m.Called(id)
+// GetByID provides a mock function with given fields: id, userID
+func (_m *AuctionServiceInterface) GetByID(id uint, userID *uint) (*auction.RetrieveAuctionDTO, error) {
+	ret := _m.Called(id, userID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetByID")
@@ -253,19 +196,19 @@ func (_m *AuctionServiceInterface) GetByID(id uint) (*auction.RetrieveAuctionDTO
 
 	var r0 *auction.RetrieveAuctionDTO
 	var r1 error
-	if rf, ok := ret.Get(0).(func(uint) (*auction.RetrieveAuctionDTO, error)); ok {
-		return rf(id)
+	if rf, ok := ret.Get(0).(func(uint, *uint) (*auction.RetrieveAuctionDTO, error)); ok {
+		return rf(id, userID)
 	}
-	if rf, ok := ret.Get(0).(func(uint) *auction.RetrieveAuctionDTO); ok {
-		r0 = rf(id)
+	if rf, ok := ret.Get(0).(func(uint, *uint) *auction.RetrieveAuctionDTO); ok {
+		r0 = rf(id, userID)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*auction.RetrieveAuctionDTO)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(uint) error); ok {
-		r1 = rf(id)
+	if rf, ok := ret.Get(1).(func(uint, *uint) error); ok {
+		r1 = rf(id, userID)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -280,13 +223,14 @@ type AuctionServiceInterface_GetByID_Call struct {
 
 // GetByID is a helper method to define mock.On call
 //   - id uint
-func (_e *AuctionServiceInterface_Expecter) GetByID(id interface{}) *AuctionServiceInterface_GetByID_Call {
-	return &AuctionServiceInterface_GetByID_Call{Call: _e.mock.On("GetByID", id)}
+//   - userID *uint
+func (_e *AuctionServiceInterface_Expecter) GetByID(id interface{}, userID interface{}) *AuctionServiceInterface_GetByID_Call {
+	return &AuctionServiceInterface_GetByID_Call{Call: _e.mock.On("GetByID", id, userID)}
 }
 
-func (_c *AuctionServiceInterface_GetByID_Call) Run(run func(id uint)) *AuctionServiceInterface_GetByID_Call {
+func (_c *AuctionServiceInterface_GetByID_Call) Run(run func(id uint, userID *uint)) *AuctionServiceInterface_GetByID_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(uint))
+		run(args[0].(uint), args[1].(*uint))
 	})
 	return _c
 }
@@ -296,7 +240,7 @@ func (_c *AuctionServiceInterface_GetByID_Call) Return(_a0 *auction.RetrieveAuct
 	return _c
 }
 
-func (_c *AuctionServiceInterface_GetByID_Call) RunAndReturn(run func(uint) (*auction.RetrieveAuctionDTO, error)) *AuctionServiceInterface_GetByID_Call {
+func (_c *AuctionServiceInterface_GetByID_Call) RunAndReturn(run func(uint, *uint) (*auction.RetrieveAuctionDTO, error)) *AuctionServiceInterface_GetByID_Call {
 	_c.Call.Return(run)
 	return _c
 }

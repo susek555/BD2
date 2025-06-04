@@ -11,3 +11,7 @@ type Auction struct {
 	Offer        *SaleOffer `gorm:"foreignKey:OfferID;references:ID"`
 	InitialPrice uint       `json:"initial_price"`
 }
+
+func (a *Auction) BelongsToUser(userID uint) bool {
+	return a.Offer.UserID == userID
+}

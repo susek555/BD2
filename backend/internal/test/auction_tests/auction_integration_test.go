@@ -113,8 +113,6 @@ func newTestServer(seedManufacturers []models.Manufacturer, seedModels []models.
 	mn := new(mocks.NotificationServiceInterface)
 	auctionHandler := auction.NewHandler(service, ms, mh, mn)
 	auctionRoutes := r.Group("/auction")
-	auctionRoutes.GET("/", auctionHandler.GetAllAuctions)
-	auctionRoutes.GET("/:id", auctionHandler.GetAuctionByID)
 	auctionRoutes.POST("/", middleware.Authenticate(verifier), auctionHandler.CreateAuction)
 	auctionRoutes.PUT("/", middleware.Authenticate(verifier), auctionHandler.UpdateAuction)
 	auctionRoutes.DELETE("/:id", middleware.Authenticate(verifier), auctionHandler.DeleteAuctionByID)

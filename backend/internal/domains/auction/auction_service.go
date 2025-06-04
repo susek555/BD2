@@ -1,8 +1,6 @@
 package auction
 
 import (
-	"errors"
-
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/enums"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
@@ -11,13 +9,12 @@ import (
 //go:generate mockery --name=AuctionServiceInterface --output=../../test/mocks --case=snake --with-expecter
 type AuctionServiceInterface interface {
 	Create(auction *CreateAuctionDTO) (*RetrieveAuctionDTO, error)
-	GetAll() ([]RetrieveAuctionDTO, error)
-	GetByID(id uint) (*RetrieveAuctionDTO, error)
 	Update(auction *UpdateAuctionDTO, userID uint) (*RetrieveAuctionDTO, error)
-	Delete(id, userID uint) error
+	GetByID(id uint, userID *uint) (*RetrieveAuctionDTO, error)
 	BuyNow(auctionID, userID uint) (*models.Auction, error)
 	UpdatePrice(auctionID uint, newPrice uint) error
 	GetByIDNonDTO(id uint) (*models.Auction, error)
+	Delete(id, userID uint) error
 }
 
 type AuctionService struct {
@@ -51,30 +48,9 @@ func (s *AuctionService) Create(auction *CreateAuctionDTO) (*RetrieveAuctionDTO,
 	if err := s.auctionRepo.Create(auctionEntity); err != nil {
 		return nil, err
 	}
-	return s.GetByID(auctionEntity.OfferID)
+	return s.GetByID(offer.ID, &offer.UserID)
 }
 
-func (s *AuctionService) GetAll() ([]RetrieveAuctionDTO, error) {
-	auctions, err := s.auctionRepo.GetAll()
-	if err != nil {
-		return nil, err
-	}
-	var auctionsDTO []RetrieveAuctionDTO
-	for _, auction := range auctions {
-		dto := MapToDTO(&auction)
-		auctionsDTO = append(auctionsDTO, *dto)
-	}
-	return auctionsDTO, nil
-}
-
-func (s *AuctionService) GetByID(id uint) (*RetrieveAuctionDTO, error) {
-	auction, err := s.auctionRepo.GetByID(id)
-	if err != nil {
-		return nil, err
-	}
-	dto := MapToDTO(auction)
-	return dto, nil
-}
 func (s *AuctionService) Update(auction *UpdateAuctionDTO, userID uint) (*RetrieveAuctionDTO, error) {
 	if auction.UpdateSaleOfferDTO != nil {
 		if _, err := s.saleOfferService.Update(auction.UpdateSaleOfferDTO, userID); err != nil {
@@ -93,22 +69,21 @@ func (s *AuctionService) Update(auction *UpdateAuctionDTO, userID uint) (*Retrie
 	if err != nil {
 		return nil, err
 	}
-	return s.GetByID(updatedAuction.OfferID)
+	return s.GetByID(updatedAuction.OfferID, &userID)
 }
 
-func (s *AuctionService) Delete(ID, userID uint) error {
-	auction, err := s.auctionRepo.GetByID(ID)
+func (s *AuctionService) GetByID(id uint, userID *uint) (*RetrieveAuctionDTO, error) {
+	offer, err := s.saleOfferService.GetByID(id, userID)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	if auction.Offer.UserID != userID {
-		return errors.New("you are not the owner of this auction")
-	}
-	err = s.auctionRepo.Delete(ID)
+	auction, err := s.auctionRepo.GetByID(id)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	dto := MapToDTO(auction)
+	dto.RetrieveSaleOfferDTO = offer
+	return dto, nil
 }
 
 func (s *AuctionService) BuyNow(auctionID, userID uint) (*models.Auction, error) {
@@ -116,17 +91,16 @@ func (s *AuctionService) BuyNow(auctionID, userID uint) (*models.Auction, error)
 	if err != nil {
 		return nil, err
 	}
-	if auction.Offer.Status != enums.PUBLISHED {
-		return nil, ErrAuctionNotPublished
-	}
 	if auction.Offer.UserID == userID {
 		return nil, ErrAuctionOwnedByUser
 	}
-	auction, err = s.auctionRepo.BuyNow(auctionID, userID)
-	if err != nil {
+	if auction.Offer.Status != enums.PUBLISHED {
+		return nil, ErrAuctionNotPublished
+	}
+	if err := s.auctionRepo.BuyNow(auction, userID); err != nil {
 		return nil, err
 	}
-	s.UpdatePrice(auctionID, auction.BuyNowPrice)
+	_ = s.UpdatePrice(auctionID, auction.BuyNowPrice)
 	return auction, err
 }
 
@@ -151,4 +125,15 @@ func (s *AuctionService) GetByIDNonDTO(id uint) (*models.Auction, error) {
 		return nil, err
 	}
 	return auction, nil
+}
+
+func (s *AuctionService) Delete(id, userID uint) error {
+	auction, err := s.auctionRepo.GetByID(id)
+	if err != nil {
+		return err
+	}
+	if !auction.BelongsToUser(userID) {
+		return ErrAuctionNotOwned
+	}
+	return s.auctionRepo.Delete(id)
 }
