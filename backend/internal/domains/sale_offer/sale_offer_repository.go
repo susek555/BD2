@@ -19,7 +19,6 @@ type SaleOfferRepositoryInterface interface {
 	GetByUserID(id uint, pagRequest *pagination.PaginationRequest) ([]views.SaleOfferView, *pagination.PaginationResponse, error)
 	GetFiltered(filter *OfferFilter, pagRequest *pagination.PaginationRequest) ([]views.SaleOfferView, *pagination.PaginationResponse, error)
 	GetAllActiveAuctions() ([]models.SaleOffer, error)
-
 	UpdateStatus(offerID uint, status enums.Status) error
 	SaveToPurchases(offerID uint, buyerID uint, finalPrice uint) error
 }

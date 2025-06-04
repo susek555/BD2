@@ -177,68 +177,6 @@ func TestAuctionService_Create_Error(t *testing.T) {
 	repo.AssertExpectations(t)
 	saleOfferSvc.AssertExpectations(t)
 }
-func TestAuctionService_GetAll_OK(t *testing.T) {
-	repo := new(mocks.AuctionRepositoryInterface)
-	saleOfferSvc := new(mocks.SaleOfferServiceInterface)
-	svc := auction.NewAuctionService(repo, saleOfferSvc)
-
-	now := time.Now()
-	a1 := makeFullAuctionEntity(1, now.Add(time.Hour), 100)
-	a2 := makeFullAuctionEntity(2, now.Add(2*time.Hour), 200)
-
-	repo.On("GetAll").Return([]models.Auction{*a1, *a2}, nil)
-
-	all, err := svc.GetAll()
-	assert.NoError(t, err)
-	assert.Len(t, all, 2)
-
-	assert.Equal(t, uint(1), all[0].ID)
-	assert.Equal(t, "alice", all[0].Username)
-	assert.Equal(t, uint(100), all[0].BuyNowPrice)
-
-	assert.Equal(t, uint(2), all[1].ID)
-	assert.Equal(t, uint(200), all[1].BuyNowPrice)
-}
-
-func TestAuctionService_GetAll_Error(t *testing.T) {
-	repo := new(mocks.AuctionRepositoryInterface)
-	saleOfferSvc := new(mocks.SaleOfferServiceInterface)
-	svc := auction.NewAuctionService(repo, saleOfferSvc)
-	expected := errors.New("fail")
-	repo.On("GetAll").Return(nil, expected)
-
-	all, err := svc.GetAll()
-	assert.Nil(t, all)
-	assert.ErrorIs(t, err, expected)
-}
-func TestAuctionService_GetByID_OK(t *testing.T) {
-	repo := new(mocks.AuctionRepositoryInterface)
-	saleOfferSvc := new(mocks.SaleOfferServiceInterface)
-	svc := auction.NewAuctionService(repo, saleOfferSvc)
-
-	now := time.Now()
-	full := makeFullAuctionEntity(3, now.Add(time.Hour), 300)
-	repo.On("GetByID", uint(3)).Return(full, nil)
-
-	out, err := svc.GetByID(3)
-	assert.NoError(t, err)
-
-	assert.Equal(t, uint(3), out.ID)
-	assert.Equal(t, "alice", out.Username)
-}
-func TestAuctionService_GetByID_Error(t *testing.T) {
-	repo := new(mocks.AuctionRepositoryInterface)
-	saleOfferSvc := new(mocks.SaleOfferServiceInterface)
-	svc := auction.NewAuctionService(repo, saleOfferSvc)
-
-	expected := errors.New("not found")
-	repo.On("GetByID", uint(3)).Return(nil, expected)
-
-	out, err := svc.GetByID(3)
-	assert.Nil(t, out)
-	assert.ErrorIs(t, err, expected)
-	repo.AssertExpectations(t)
-}
 func TestAuctionService_Update_OK(t *testing.T) {
 	repo := new(mocks.AuctionRepositoryInterface)
 	saleOfferSvc := new(mocks.SaleOfferServiceInterface)

@@ -32,6 +32,8 @@ type SaleOfferView struct {
 	Drive              enums.Drive
 	Brand              string
 	Model              string
+	DateEnd            time.Time
+	BuyNowPrice        uint
 }
 
 func (v *SaleOfferView) BelongsToUser(userID uint) bool {

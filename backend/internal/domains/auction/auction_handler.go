@@ -81,50 +81,6 @@ func (h *Handler) CreateAuction(c *gin.Context) {
 	c.JSON(http.StatusCreated, dto)
 }
 
-// GetAllAuctions godoc
-//
-//	@Summary		Get all auctions
-//	@Description	Retrieves all available auctions from the system
-//	@Tags			auction
-//	@Accept			json
-//	@Produce		json
-//	@Success		200	{array}		RetrieveAuctionDTO
-//	@Failure		400	{object}	custom_errors.HTTPError
-//	@Router			/auction [get]
-func (h *Handler) GetAllAuctions(c *gin.Context) {
-	auctions, err := h.service.GetAll()
-	if err != nil {
-		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
-		return
-	}
-	c.JSON(http.StatusOK, auctions)
-}
-
-// GetAuctionByID godoc
-//
-//	@Summary		Get auction by ID
-//	@Description	Retrieves a specific auction by its ID
-//	@Tags			auction
-//	@Accept			json
-//	@Produce		json
-//	@Param			id	path		int	true	"Auction ID"
-//	@Success		200	{object}	RetrieveAuctionDTO
-//	@Failure		400	{object}	custom_errors.HTTPError
-//	@Router			/auction/{id} [get]
-func (h *Handler) GetAuctionByID(c *gin.Context) {
-	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
-		return
-	}
-	auction, err := h.service.GetByID(uint(id))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
-		return
-	}
-	c.JSON(http.StatusOK, auction)
-}
-
 // DeleteAuctionByID godoc
 //
 //	@Summary		Delete auction by ID
