@@ -13,12 +13,13 @@ import (
 type SaleOfferRepositoryInterface interface {
 	Create(offer *models.SaleOffer) error
 	Update(offer *models.SaleOffer) error
+	BuyOffer(offer *models.SaleOffer, buyerID uint) error
 	GetByID(id uint) (*models.SaleOffer, error)
 	GetViewByID(id uint) (*views.SaleOfferView, error)
 	GetByUserID(id uint, pagRequest *pagination.PaginationRequest) ([]views.SaleOfferView, *pagination.PaginationResponse, error)
 	GetFiltered(filter *OfferFilter, pagRequest *pagination.PaginationRequest) ([]views.SaleOfferView, *pagination.PaginationResponse, error)
 	GetAllActiveAuctions() ([]models.SaleOffer, error)
-	BuyOffer(offerID uint, buyerID uint) (*models.SaleOffer, error)
+
 	UpdateStatus(offerID uint, status enums.Status) error
 	SaveToPurchases(offerID uint, buyerID uint, finalPrice uint) error
 }
@@ -74,32 +75,19 @@ func (r *SaleOfferRepository) GetFiltered(filter *OfferFilter, pagRequest *pagin
 
 func (r *SaleOfferRepository) GetAllActiveAuctions() ([]models.SaleOffer, error) {
 	var auctions []models.SaleOffer
-	err := r.DB.
-		Preload("Auction").
-		Joins("JOIN auctions ON auctions.offer_id = sale_offers.id").
-		Where("auctions.offer_id IS NOT NULL").
-		Where("auctions.date_end > NOW()").
-		Find(&auctions).
-		Error
+	err := r.DB.Table("sale_offer_view").Where("is_auction IS TRUE").Find(&auctions).Error
 	if err != nil {
 		return nil, err
 	}
 	return auctions, nil
 }
 
-func (r *SaleOfferRepository) BuyOffer(offerID uint, buyerID uint) (*models.SaleOffer, error) {
-	offer, err := r.GetByID(offerID)
-	if err != nil {
-		return nil, err
+func (r *SaleOfferRepository) BuyOffer(offer *models.SaleOffer, buyerID uint) error {
+	offer.Status = enums.SOLD
+	if err := r.Update(offer); err != nil {
+		return err
 	}
-	if offer.Status == enums.SOLD {
-		return nil, ErrOfferAlreadySold
-	}
-	err = r.UpdateStatus(offerID, enums.SOLD)
-	if err != nil {
-		return nil, err
-	}
-	return offer, r.SaveToPurchases(offerID, buyerID, offer.Price)
+	return r.SaveToPurchases(offer.ID, buyerID, offer.Price)
 }
 
 func (r *SaleOfferRepository) UpdateStatus(offerID uint, status enums.Status) error {

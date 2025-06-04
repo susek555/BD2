@@ -108,8 +108,7 @@ func (s *SaleOfferService) Publish(id uint, userID uint) (*RetrieveDetailedSaleO
 	if offer.Status != enums.READY {
 		return nil, ErrOfferNotReadyToPublish
 	}
-	offer.Status = enums.PUBLISHED
-	if err := s.saleOfferRepo.Update(offer); err != nil {
+	if err := s.saleOfferRepo.UpdateStatus(offer.ID, enums.PUBLISHED); err != nil {
 		return nil, err
 	}
 	return s.GetDetailedByID(id, &userID)
@@ -120,16 +119,19 @@ func (s *SaleOfferService) Buy(offerID uint, userID uint) (*models.SaleOffer, er
 	if err != nil {
 		return nil, err
 	}
-	if offer.Status != enums.PUBLISHED {
-		return nil, ErrOfferNotPublished
+	if offer.BelongsToUser(userID) {
+		return nil, ErrOfferOwnedByUser
 	}
 	if offer.IsAuction {
 		return nil, ErrOfferIsAuction
 	}
-	if offer.BelongsToUser(userID) {
-		return nil, ErrOfferOwnedByUser
+	if offer.Status != enums.PUBLISHED {
+		return nil, ErrOfferNotPublished
 	}
-	return s.saleOfferRepo.BuyOffer(offerID, userID)
+	if err := s.saleOfferRepo.BuyOffer(offer, userID); err != nil {
+		return nil, err
+	}
+	return s.saleOfferRepo.GetByID(offerID)
 }
 
 func (s *SaleOfferService) GetByID(id uint, userID *uint) (*RetrieveSaleOfferDTO, error) {
