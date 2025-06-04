@@ -53,18 +53,18 @@ func (s *Scheduler) LoadAuctions() error {
 	}
 	for _, offer := range offers {
 		auctionID := strconv.FormatUint(uint64(offer.ID), 10)
-		if offer.Auction.DateEnd.Local().Before(time.Now()) {
-			log.Printf("scheduler: skipping auction %s with end time %s, already ended", auctionID, offer.Auction.DateEnd)
+		if offer.DateEnd.Local().Before(time.Now()) {
+			log.Printf("scheduler: skipping auction %s with end time %s, already ended", auctionID, offer.DateEnd)
 			continue
 		}
 		item := &Item{
 			AuctionID: auctionID,
-			EndAt:     offer.Auction.DateEnd,
+			EndAt:     offer.DateEnd,
 		}
 		s.mu.Lock()
 		heap.Push(&s.heap, item)
 		s.mu.Unlock()
-		log.Printf("scheduler: loaded auction %s with end time %s", auctionID, offer.Auction.DateEnd)
+		log.Printf("scheduler: loaded auction %s with end time %s", auctionID, offer.DateEnd)
 	}
 	return nil
 }
