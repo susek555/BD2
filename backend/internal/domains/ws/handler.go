@@ -7,29 +7,33 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/auth"
 )
-
-var upgrader = websocket.Upgrader{
-	CheckOrigin: func(r *http.Request) bool {
-		return true
-	},
-}
 
 func ServeWS(hub *Hub) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
-		if err != nil {
-			log.Println("Error upgrading connection:", err)
+		rawToken, ok := c.Get("wsToken")
+		if !ok {
+			c.AbortWithStatusJSON(http.StatusUnauthorized,
+				gin.H{"error": "missing protocol token"})
 			return
 		}
-		uid, err := auth.GetUserID(c)
+		token := rawToken.(string)
+
+		up := websocket.Upgrader{
+			CheckOrigin:  func(r *http.Request) bool { return true },
+			Subprotocols: []string{token}, // echo
+		}
+
+		conn, err := up.Upgrade(c.Writer, c.Request, nil)
 		if err != nil {
-			log.Println("Error getting user ID:", err)
-			conn.Close()
+			log.Println("ws upgrade:", err)
 			return
 		}
+
+		uidAny, _ := c.Get("userID")
+		uid := uidAny.(uint)
 		uidStr := strconv.Itoa(int(uid))
+
 		client := &Client{
 			conn:   conn,
 			send:   make(chan []byte, 128),
@@ -37,9 +41,10 @@ func ServeWS(hub *Hub) gin.HandlerFunc {
 			hub:    hub,
 			rooms:  make(map[string]bool),
 		}
+
 		hub.register <- client
 		hub.LoadClientToRooms(uidStr)
-		log.Printf("Client %s connected\n", uidStr)
+
 		go client.writePump()
 		go client.readPump()
 	}
