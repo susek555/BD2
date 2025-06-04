@@ -20,7 +20,7 @@ import (
 func init() {
 	initializers.LoadEnvVariables()
 	initializers.ConnectToDatabase()
-	initializers.MigrateModels()
+
 	initializers.ConnectToRedis(context.Background())
 	initializers.ConnectToCloudinary()
 	initializers.InitializeVerifier()
