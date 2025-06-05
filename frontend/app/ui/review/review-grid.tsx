@@ -1,34 +1,18 @@
-import { ReviewSearchParams } from '@/app/lib/definitions/reviews';
-import {
-  fetchReviewsByReviewee,
-  fetchReviewsByReviewer,
-} from '@/app/lib/data/reviews/data';
+import { ReviewPage } from '@/app/lib/definitions/reviews';
 import { ReviewCard } from './review-card';
 
 interface ReviewGridProps {
   variant: 'for' | 'by';
-  userId: number;
   className?: string;
-  searchParams: ReviewSearchParams;
+  reviewPage: ReviewPage;
 }
 
 export async function ReviewGrid({
   variant,
-  userId,
   className = '',
-  searchParams: serachParams,
+  reviewPage,
 }: ReviewGridProps) {
-  let fetchFunc;
-
-  if (variant === 'for') {
-    fetchFunc = fetchReviewsByReviewee;
-  } else {
-    fetchFunc = fetchReviewsByReviewer;
-  }
-
-  const reviews = await fetchFunc(userId, serachParams);
-
-  if (reviews.length === 0) {
+  if (reviewPage.reviews.length === 0) {
     return (
       <div className='p-4 text-center text-sm text-gray-500'>
         No reviews found.
@@ -38,7 +22,7 @@ export async function ReviewGrid({
 
   return (
     <div className={`grid grid-cols-1 gap-4 md:grid-cols-2 ${className}`}>
-      {reviews.map((review) => (
+      {reviewPage.reviews.map((review) => (
         <ReviewCard key={review.id} review={review} variant={variant} />
       ))}
     </div>
