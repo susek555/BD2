@@ -48,7 +48,7 @@ func InitializeServices() {
 	NotificationService = notification.NewNotificationService(NotificationRepo)
 	ReviewService = review.NewReviewService(ReviewRepo)
 	AccessEvaluator = sale_offer.NewAccessEvaluator(BidRepo, LikedOfferRepo)
-	SaleOfferService = sale_offer.NewSaleOfferService(SaleOfferRepo, ManufacturerRepo, ModelRepo, ImageRepo, AccessEvaluator)
+	SaleOfferService = sale_offer.NewSaleOfferService(SaleOfferRepo, ManufacturerRepo, ModelRepo, ImageRepo, AccessEvaluator, PurchaseRepo)
 	AuctionService = auction.NewAuctionService(AuctionRepo, SaleOfferService)
 	BidService = bid.NewBidService(BidRepo, AuctionRepo, AuctionService)
 	LikedOfferService = liked_offer.NewLikedOfferService(LikedOfferRepo, SaleOfferRepo)
