@@ -1,6 +1,8 @@
 package sale_offer
 
 import (
+	"time"
+
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
 	"github.com/susek555/BD2/car-dealer-api/internal/enums"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
@@ -19,6 +21,10 @@ type ManufacturerRetrieverInterface interface {
 
 type ModelRetrieverInterface interface {
 	GetByManufacturerAndModelName(manufacturerName, modelName string) (*models.Model, error)
+}
+
+type PurchaseCreatorInterface interface {
+	Create(purchase *models.Purchase) error
 }
 
 //go:generate mockery --name=SaleOfferServiceInterface --output=../../test/mocks --case=snake --with-expecter
@@ -40,6 +46,7 @@ type SaleOfferService struct {
 	modelRetriever  ModelRetrieverInterface
 	imageRetriever  ImageRetrieverInterface
 	accessEvaluator OfferAccessEvaluatorInterface
+	purchaseCreator PurchaseCreatorInterface
 }
 
 func NewSaleOfferService(
@@ -48,6 +55,7 @@ func NewSaleOfferService(
 	modelRetriever ModelRetrieverInterface,
 	imageRetriever ImageRetrieverInterface,
 	accessEvaluator OfferAccessEvaluatorInterface,
+	purchaseCreator PurchaseCreatorInterface,
 ) SaleOfferServiceInterface {
 	return &SaleOfferService{
 		saleOfferRepo:   saleOfferRepository,
@@ -55,6 +63,7 @@ func NewSaleOfferService(
 		modelRetriever:  modelRetriever,
 		imageRetriever:  imageRetriever,
 		accessEvaluator: accessEvaluator,
+		purchaseCreator: purchaseCreator,
 	}
 }
 
@@ -132,7 +141,12 @@ func (s *SaleOfferService) Buy(id uint, userID uint) (*models.SaleOffer, error) 
 	if offer.Status != enums.PUBLISHED {
 		return nil, ErrOfferNotPublished
 	}
-	if err := s.saleOfferRepo.BuyOffer(offer, userID); err != nil {
+	offer.Status = enums.SOLD
+	if err := s.saleOfferRepo.Update(offer); err != nil {
+		return nil, err
+	}
+	purchaseModel := &models.Purchase{ID: offer.ID, BuyerID: userID, FinalPrice: offer.Price, IssueDate: time.Now()}
+	if err := s.purchaseCreator.Create(purchaseModel); err != nil {
 		return nil, err
 	}
 	return s.saleOfferRepo.GetByID(id)
