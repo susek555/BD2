@@ -1,10 +1,10 @@
-import { authConfig } from "@/app/lib/authConfig";
-import { getServerSession } from "next-auth";
-import { getSession, signIn } from "next-auth/react";
+import { authConfig } from '@/app/lib/authConfig';
+import { getServerSession } from 'next-auth';
+import { getSession, signIn } from 'next-auth/react';
 
 export async function fetchWithRefresh(
   input: RequestInfo,
-  init: RequestInit = {}
+  init: RequestInit = {},
 ): Promise<Response> {
   const session = await getServerSession(authConfig);
   const accessToken = session?.user?.accessToken;
@@ -17,8 +17,9 @@ export async function fetchWithRefresh(
     },
   });
 
+  // TODO fix handling when token expired
   if (res.status === 401 || res.status === 403) {
-    await signIn("credentials", { redirect: false });
+    await signIn('credentials', { redirect: false });
 
     const newSession = await getSession();
     const newToken = newSession?.user?.accessToken;
