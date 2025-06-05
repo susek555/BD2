@@ -14,7 +14,7 @@ export async function fetchSessionData(): Promise<UserProfile> {
 
   const userProfile: UserProfile = {
     selector: user.selector,
-    id: user.userId,
+    userId: user.userId,
     username: user.username,
     email: user.email,
   };
@@ -26,6 +26,7 @@ export async function fetchSessionData(): Promise<UserProfile> {
     userProfile.companyName = user.companyName;
     userProfile.companyNip = user.companyNip;
   }
+  console.log(userProfile);
 
   return userProfile;
 }
