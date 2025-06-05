@@ -73,11 +73,10 @@ func (service *ReviewService) GetFiltered(filter *ReviewFilter) (*RetrieveReview
 
 func (service *ReviewService) GetAverageRatingByRevieweeID(revieweeID uint) (float64, error) {
 	averageRating, err := service.Repo.GetAverageRatingByRevieweeID(revieweeID)
-	if err != nil {
+	if err != nil && err.Error() == "no reviews found" {
+		return 0, nil
+	} else if err != nil {
 		return 0, err
-	}
-	if averageRating == 0 {
-		return 0, ErrNoReviewsFound
 	}
 	return averageRating, nil
 }
@@ -153,9 +152,6 @@ func (service *ReviewService) GetFrequencyOfRatingByRevieweeID(revieweeID uint) 
 	frequency, err := service.Repo.GetFrequencyOfRatingByRevieweeID(revieweeID)
 	if err != nil {
 		return nil, err
-	}
-	if len(frequency) == 0 {
-		return nil, ErrNoReviewsFound
 	}
 	return frequency, nil
 }
