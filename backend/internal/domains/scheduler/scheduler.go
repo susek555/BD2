@@ -10,21 +10,32 @@ import (
 
 	"github.com/redis/go-redis/v9"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/notification"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/ws"
+	"github.com/susek555/BD2/car-dealer-api/internal/enums"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
+	"github.com/susek555/BD2/car-dealer-api/internal/views"
 )
 
-type BidRepo interface {
+type AuctionRetriverInterface interface {
+	GetAllActiveAuctions() ([]views.SaleOfferView, error)
+}
+
+type BidRetrieverInterface interface {
 	GetHighestBid(auctionID uint) (*models.Bid, error)
 }
 
+type SaleOfferRepositoryInterface interface {
+	GetByID(id uint) (*models.SaleOffer, error)
+	UpdateStatus(offerID uint, status enums.Status) error
+	SaveToPurchases(offerID uint, buyerID uint, finalPrice uint) error
+}
+
 type Scheduler struct {
-	mu                  sync.Mutex
-	heap                timerHeap
-	eventsCh            chan AuctionEvent
-	closer              AuctionCloser
-	saleOfferRepository sale_offer.SaleOfferRepositoryInterface
+	mu               sync.Mutex
+	heap             timerHeap
+	eventsCh         chan AuctionEvent
+	closer           AuctionCloserInterface
+	auctionRetriever AuctionRetriverInterface
 }
 
 //go:generate mockery --name=SchedulerInterface --output=../../test/mocks --case=snake --with-expecter
@@ -35,18 +46,25 @@ type SchedulerInterface interface {
 	ForceCloseAuction(auctionID string, buyerID uint, amount uint)
 }
 
-func NewScheduler(repo BidRepo, redisClient *redis.Client, notificationService notification.NotificationServiceInterface, saleOfferRepo sale_offer.SaleOfferRepositoryInterface, hub ws.HubInterface) SchedulerInterface {
+func NewScheduler(
+	repo BidRetrieverInterface,
+	redisClient *redis.Client,
+	notificationService notification.NotificationServiceInterface,
+	auctionRetriever AuctionRetriverInterface,
+	saleOfferRepo SaleOfferRepositoryInterface,
+	hub ws.HubInterface,
+) SchedulerInterface {
 	closer := NewAuctionCloser(repo, saleOfferRepo, notificationService, hub)
 	return &Scheduler{
-		heap:                make(timerHeap, 0),
-		eventsCh:            make(chan AuctionEvent, 1024),
-		closer:              closer,
-		saleOfferRepository: saleOfferRepo,
+		heap:             make(timerHeap, 0),
+		eventsCh:         make(chan AuctionEvent, 1024),
+		closer:           closer,
+		auctionRetriever: auctionRetriever,
 	}
 }
 
 func (s *Scheduler) LoadAuctions() error {
-	offers, err := s.saleOfferRepository.GetAllActiveAuctions()
+	offers, err := s.auctionRetriever.GetAllActiveAuctions()
 	if err != nil {
 		log.Println("scheduler: error loading auctions:", err)
 		return err
