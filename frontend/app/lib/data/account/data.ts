@@ -52,7 +52,8 @@ export async function getHistory(
   const url = `${process.env.URL}/api/account/history`;
 
   const response = await fetch(url, {
-    method: 'GET',
+    method: 'POST',
+    body: JSON.stringify(params),
   });
 
   if (!response.ok) {
@@ -79,7 +80,8 @@ export async function getListings(
   const url = `${process.env.URL}/api/account/listings`;
 
   const response = await fetch(url, {
-    method: 'GET',
+    method: 'POST',
+    body: JSON.stringify(params),
   });
 
   if (!response.ok) {
@@ -106,7 +108,8 @@ export async function getFavorites(
   const url = `${process.env.URL}/api/account/favorites`;
 
   const response = await fetch(url, {
-    method: 'GET',
+    method: 'POST',
+    body: JSON.stringify(params),
   });
 
   if (!response.ok) {
@@ -124,8 +127,6 @@ export async function fetchHistory(params: SearchParams): Promise<{
   try {
     const data = await getHistory(params);
 
-    console.log('History page data: ', data);
-
     return {
       totalPages: data.pagination.total_pages,
       totalOffers: data.pagination.total_records,
@@ -133,7 +134,7 @@ export async function fetchHistory(params: SearchParams): Promise<{
     };
   } catch (error) {
     console.error('Api error:', error);
-    throw new Error('Failed to fetch home page data.');
+    throw new Error("Failed to fetch user's history.");
   }
 }
 
@@ -145,8 +146,6 @@ export async function fetchListings(params: SearchParams): Promise<{
   try {
     const data = await getListings(params);
 
-    console.log('Listings page data: ', data);
-
     return {
       totalPages: data.pagination.total_pages,
       totalOffers: data.pagination.total_records,
@@ -154,7 +153,7 @@ export async function fetchListings(params: SearchParams): Promise<{
     };
   } catch (error) {
     console.error('Api error:', error);
-    throw new Error('Failed to fetch home page data.');
+    throw new Error("Failed to fetch user's listings.");
   }
 }
 
@@ -164,8 +163,6 @@ export async function fetchFavorites(
   try {
     const data = await getFavorites(params);
 
-    console.log('Favorites page data: ', data);
-
     return {
       totalPages: data.pagination.total_pages,
       totalOffers: data.pagination.total_records,
@@ -173,6 +170,6 @@ export async function fetchFavorites(
     };
   } catch (error) {
     console.error('Api error:', error);
-    throw new Error('Failed to fetch home page data.');
+    throw new Error('Failed to fetch favorite offers.');
   }
 }

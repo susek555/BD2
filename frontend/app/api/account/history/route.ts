@@ -1,7 +1,7 @@
 import { HistoryOffer } from '@/app/lib/definitions/SaleOffer';
 import { NextResponse } from 'next/server';
 
-export async function GET(request: Request) {
+export async function POST(request: Request) {
   const offers: HistoryOffer[] = [
     {
       main_url: '/images/offers/1.jpg',

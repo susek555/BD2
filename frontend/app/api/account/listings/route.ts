@@ -1,7 +1,7 @@
 import { BaseOffer } from '@/app/lib/definitions/SaleOffer';
 import { NextResponse } from 'next/server';
 
-export async function GET(request: Request) {
+export async function POST(request: Request) {
   const offers: BaseOffer[] = [
     {
       main_url: '/images/offers/1.jpg',
@@ -71,6 +71,6 @@ export async function GET(request: Request) {
 
   return NextResponse.json({
     offers,
-    pagination
+    pagination,
   });
 }
