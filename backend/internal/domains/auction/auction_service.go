@@ -57,9 +57,6 @@ func (s *AuctionService) Create(auction *CreateAuctionDTO) (*sale_offer.Retrieve
 }
 
 func (s *AuctionService) Update(auction *UpdateAuctionDTO, userID uint) (*sale_offer.RetrieveDetailedSaleOfferDTO, error) {
-	if _, err := s.saleOfferService.Update(&auction.UpdateSaleOfferDTO, userID); err != nil {
-		return nil, err
-	}
 	auctionEntity, err := s.auctionRepo.GetByID(auction.ID)
 	if err != nil {
 		return nil, err
@@ -72,7 +69,7 @@ func (s *AuctionService) Update(auction *UpdateAuctionDTO, userID uint) (*sale_o
 	if err != nil {
 		return nil, err
 	}
-	return s.saleOfferService.GetDetailedByID(auction.ID, &userID)
+	return s.saleOfferService.Update(&auction.UpdateSaleOfferDTO, userID)
 }
 
 func (s *AuctionService) BuyNow(auctionID, userID uint) (*models.Auction, error) {
