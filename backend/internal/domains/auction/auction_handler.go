@@ -171,7 +171,7 @@ func (h *Handler) BuyNow(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
-	auction, err := h.service.BuyNow(uint(id), uint(userID))
+	auction, err := h.service.BuyNow(uint(id), userID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
