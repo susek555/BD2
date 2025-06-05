@@ -92,7 +92,7 @@ func (c *auctionCloser) CloseAuction(cmd CloseCmd) {
 
 	_ = c.saleRepo.UpdateStatus(auctionID, enums.SOLD)
 
-	n := models.Notification{OfferID: uint(auctionID)}
+	n := models.Notification{OfferID: auctionID}
 	if err := c.notificationService.CreateEndAuctionNotification(&n, winnerID, amount, offer); err != nil {
 		log.Printf("closer: notif err: %v", err)
 		_ = c.saleRepo.UpdateStatus(auctionID, enums.EXPIRED)
