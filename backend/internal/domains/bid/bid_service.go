@@ -3,11 +3,19 @@ package bid
 import (
 	"sync"
 
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/auction"
 	"github.com/susek555/BD2/car-dealer-api/internal/enums"
+	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"github.com/susek555/BD2/car-dealer-api/pkg/mapping"
 	"gorm.io/gorm"
 )
+
+type AuctionRetrieverInterface interface {
+	GetByID(id uint) (*models.Auction, error)
+}
+
+type AuctionPriceUpdaterInterface interface {
+	UpdatePrice(auction *models.Auction, newPrice uint) error
+}
 
 type BidServiceInterface interface {
 	Create(bidDTO *CreateBidDTO, bidderID uint) (*ProcessingBidDTO, error)
@@ -20,14 +28,16 @@ type BidServiceInterface interface {
 }
 
 type BidService struct {
-	Repo           BidRepositoryInterface
-	AuctionService auction.AuctionServiceInterface
+	Repo                BidRepositoryInterface
+	AuctionRetriever    AuctionRetrieverInterface
+	AuctionPriceUpdater AuctionPriceUpdaterInterface
 }
 
-func NewBidService(repo BidRepositoryInterface, auctionService auction.AuctionServiceInterface) BidServiceInterface {
+func NewBidService(repo BidRepositoryInterface, auctionRetriever AuctionRetrieverInterface, auctionPriceUpdater AuctionPriceUpdaterInterface) BidServiceInterface {
 	return &BidService{
-		Repo:           repo,
-		AuctionService: auctionService,
+		Repo:                repo,
+		AuctionRetriever:    auctionRetriever,
+		AuctionPriceUpdater: auctionPriceUpdater,
 	}
 }
 
@@ -37,7 +47,7 @@ func (service *BidService) Create(bidDTO *CreateBidDTO, bidderID uint) (*Process
 	bid := bidDTO.MapToBid(bidderID)
 	l, _ := auctionLocks.LoadOrStore(bid.AuctionID, &sync.Mutex{})
 	m := l.(*sync.Mutex)
-	auction, err := service.AuctionService.GetByIDNonDTO(bid.AuctionID)
+	auction, err := service.AuctionRetriever.GetByID(bid.AuctionID)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +60,7 @@ func (service *BidService) Create(bidDTO *CreateBidDTO, bidderID uint) (*Process
 	if err != nil {
 		return nil, err
 	}
-	err = service.AuctionService.UpdatePrice(bid.AuctionID, bid.Amount)
+	err = service.AuctionPriceUpdater.UpdatePrice(auction, bid.Amount)
 	if err != nil {
 		return nil, err
 	}
