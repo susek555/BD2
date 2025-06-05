@@ -20,11 +20,22 @@ import (
 func TestBidService_Create_OK(t *testing.T) {
 	repo := new(mocks.BidRepositoryInterface)
 	auctionService := new(mocks.AuctionServiceInterface)
-	svc := bid.NewBidService(repo, auctionService)
+	auctionRepo := new(mocks.AuctionRepositoryInterface)
+	svc := bid.NewBidService(repo, auctionRepo, auctionService)
 
 	repo.On("Create", mock.MatchedBy(func(b *models.Bid) bool {
 		return b.AuctionID == 1 && b.BidderID == 1
 	})).Return(nil)
+
+	auctionRepo.On("GetByID", uint(1)).Return(&models.Auction{
+		OfferID:      1,
+		DateEnd:      time.Now().Add(24 * time.Hour),
+		BuyNowPrice:  100,
+		InitialPrice: 50,
+		Offer: &models.SaleOffer{
+			Status: enums.PUBLISHED,
+		},
+	}, nil)
 
 	auctionService.On("GetByIDNonDTO", uint(1)).Return(&models.Auction{
 		OfferID:      1,
@@ -35,7 +46,7 @@ func TestBidService_Create_OK(t *testing.T) {
 			Status: enums.PUBLISHED,
 		},
 	}, nil)
-	auctionService.On("UpdatePrice", uint(1), uint(0)).Return(nil)
+	auctionService.On("UpdatePrice", mock.AnythingOfType("*models.Auction"), uint(0)).Return(nil)
 
 	dto := &bid.CreateBidDTO{
 		AuctionID: 1,
@@ -47,13 +58,24 @@ func TestBidService_Create_OK(t *testing.T) {
 func TestBidService_Create_Error(t *testing.T) {
 	repo := new(mocks.BidRepositoryInterface)
 	auctionService := new(mocks.AuctionServiceInterface)
-	svc := bid.NewBidService(repo, auctionService)
+	auctionRepo := new(mocks.AuctionRepositoryInterface)
+	svc := bid.NewBidService(repo, auctionRepo, auctionService)
 
 	expectedErr := errors.New("insert failed")
 
 	repo.On("Create", mock.MatchedBy(func(b *models.Bid) bool {
 		return b.AuctionID == 1
 	})).Return(expectedErr)
+
+	auctionRepo.On("GetByID", uint(1)).Return(&models.Auction{
+		OfferID:      1,
+		DateEnd:      time.Now().Add(24 * time.Hour),
+		BuyNowPrice:  100,
+		InitialPrice: 50,
+		Offer: &models.SaleOffer{
+			Status: enums.PUBLISHED,
+		},
+	}, nil)
 
 	auctionService.On("GetByIDNonDTO", uint(1)).Return(&models.Auction{
 		OfferID:      1,
@@ -77,7 +99,8 @@ func TestBidService_Create_Error(t *testing.T) {
 func TestBidService_Create_SerializesPerAuction(t *testing.T) {
 	repo := new(mocks.BidRepositoryInterface)
 	auctionService := new(mocks.AuctionServiceInterface)
-	svc := bid.NewBidService(repo, auctionService)
+	auctionRepo := new(mocks.AuctionRepositoryInterface)
+	svc := bid.NewBidService(repo, auctionRepo, auctionService)
 
 	const calls = 2
 	const aucID = 777
@@ -91,6 +114,16 @@ func TestBidService_Create_SerializesPerAuction(t *testing.T) {
 		atomic.AddInt32(&running, -1)
 	}).Return(nil).Times(calls)
 
+	auctionRepo.On("GetByID", uint(aucID)).Return(&models.Auction{
+		OfferID:      1,
+		DateEnd:      time.Now().Add(24 * time.Hour),
+		BuyNowPrice:  100,
+		InitialPrice: 50,
+		Offer: &models.SaleOffer{
+			Status: enums.PUBLISHED,
+		},
+	}, nil)
+
 	auctionService.On("GetByIDNonDTO", uint(aucID), mock.Anything).Return(&models.Auction{
 		OfferID:      1,
 		DateEnd:      time.Now().Add(24 * time.Hour),
@@ -101,7 +134,7 @@ func TestBidService_Create_SerializesPerAuction(t *testing.T) {
 		},
 	}, nil)
 
-	auctionService.On("UpdatePrice", uint(aucID), mock.Anything).Run(func(args mock.Arguments) {
+	auctionService.On("UpdatePrice", mock.AnythingOfType("*models.Auction"), mock.Anything).Run(func(args mock.Arguments) {
 		if atomic.AddInt32(&running, 1) > 1 {
 			t.Errorf("mutex did not work – AuctionService.UpdatePrice")
 		}
@@ -128,7 +161,8 @@ func TestBidService_Create_SerializesPerAuction(t *testing.T) {
 func TestBidService_GetHighestBid_OK(t *testing.T) {
 	repo := new(mocks.BidRepositoryInterface)
 	auctionService := new(mocks.AuctionServiceInterface)
-	svc := bid.NewBidService(repo, auctionService)
+	auctionRepo := new(mocks.AuctionRepositoryInterface)
+	svc := bid.NewBidService(repo, auctionRepo, auctionService)
 
 	expected := &bid.RetrieveBidDTO{
 		AuctionID: 10,
@@ -164,7 +198,8 @@ func TestBidService_GetHighestBid_OK(t *testing.T) {
 func TestBidService_GetHighestBid_Error(t *testing.T) {
 	repo := new(mocks.BidRepositoryInterface)
 	auctionService := new(mocks.AuctionServiceInterface)
-	svc := bid.NewBidService(repo, auctionService)
+	auctionRepo := new(mocks.AuctionRepositoryInterface)
+	svc := bid.NewBidService(repo, auctionRepo, auctionService)
 
 	expectedErr := errors.New("db error")
 
