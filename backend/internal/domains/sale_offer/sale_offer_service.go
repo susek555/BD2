@@ -83,6 +83,9 @@ func (s *SaleOfferService) Update(in *UpdateSaleOfferDTO, userID uint) (*Retriev
 	if !offer.BelongsToUser(userID) {
 		return nil, ErrOfferNotOwned
 	}
+	if err := s.authorizeModificationByUser(offer, userID); err != nil {
+		return nil, err
+	}
 	modelID, err := s.determineNewModelID(offer, in)
 	if err != nil {
 		return nil, err
@@ -185,8 +188,8 @@ func (s *SaleOfferService) Delete(id uint, userID uint) error {
 	if err != nil {
 		return err
 	}
-	if !offer.BelongsToUser(userID) {
-		return ErrOfferNotOwned
+	if err := s.authorizeModificationByUser(offer, userID); err != nil {
+		return err
 	}
 	return s.saleOfferRepo.Delete(id)
 }
@@ -276,4 +279,18 @@ func (s *SaleOfferService) getOfferImagesURLs(offer *views.SaleOfferView) ([]str
 		return nil, err
 	}
 	return mapping.MapSliceToDTOs(images, func(m *models.Image) *string { return &m.Url }), nil
+}
+
+func (s *SaleOfferService) authorizeModificationByUser(offer SaleOfferEntityInterface, userID uint) error {
+	if !offer.BelongsToUser(userID) {
+		return ErrOfferNotOwned
+	}
+	canBeModifed, err := s.accessEvaluator.CanBeModifiedByUser(offer, &userID)
+	if err != nil {
+		return err
+	}
+	if !canBeModifed {
+		return ErrOfferModificatoin
+	}
+	return nil
 }
