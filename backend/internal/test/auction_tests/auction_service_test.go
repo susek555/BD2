@@ -100,8 +100,7 @@ func makeValidUpdateDTO() *auction.UpdateAuctionDTO {
 	dateEnd := future.Format(formats.DateTimeLayout)
 	buyNowPrice := uint(6000)
 	return &auction.UpdateAuctionDTO{
-		ID: 42,
-		UpdateSaleOfferDTO: &sale_offer.UpdateSaleOfferDTO{
+		UpdateSaleOfferDTO: sale_offer.UpdateSaleOfferDTO{
 			ID:                 42,
 			Description:        &description,
 			Price:              &price,
