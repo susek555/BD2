@@ -1,8 +1,10 @@
 import {
   fetchAverageRating,
   fetchRatingDistribution,
+  fetchReviewsByReviewee,
 } from '@/app/lib/data/reviews/data';
 import { ReviewSearchParams } from '@/app/lib/definitions/reviews';
+import Pagination from '@/app/ui/(offers-table)/pagination';
 import { RatingDistribution } from '@/app/ui/review/rating-distribution';
 import { ReviewFilterBox } from '@/app/ui/review/review-filters';
 import { ReviewGrid } from '@/app/ui/review/review-grid';
@@ -15,7 +17,7 @@ interface PageProps {
     sellerId: string;
   }>;
   searchParams?: Promise<{
-    orderKey?: 'rating' | 'date';
+    orderKey?: 'rating' | 'review_date';
     isOrderDesc?: string;
     ratings?: string;
     page?: string;
@@ -28,7 +30,7 @@ export default async function ReviewsPage({ params, searchParams }: PageProps) {
   const serachParams = (await searchParams) || {};
 
   const callbackUrl = serachParams.callbackUrl || '/';
-  const orderKey = serachParams.orderKey || 'date';
+  const orderKey = serachParams.orderKey || 'review_date';
   const isOrderDesc = serachParams.isOrderDesc !== 'false';
   const page = Number(serachParams.page || 1);
 
@@ -36,9 +38,6 @@ export default async function ReviewsPage({ params, searchParams }: PageProps) {
   const selectedRatings = ratingsParam
     ? ratingsParam.split(',').map(Number)
     : [];
-
-  // TODO get page count from API
-  const totalPages = 10;
 
   const reviewSearchParams: ReviewSearchParams = {
     is_order_desc: isOrderDesc,

@@ -11,19 +11,19 @@ export default async function ReviewsPage({
 }: {
   searchParams?: Promise<{
     variant?: 'by' | 'for';
-    orderKey?: 'rating' | 'date';
+    orderKey?: 'rating' | 'review_date';
     isOrderDesc?: string;
     ratings?: string;
     page?: string;
   }>;
 }) {
-  const { id: userId } = await fetchSessionData();
+  const { userId } = await fetchSessionData();
 
   const params = (await searchParams) || {};
 
   const variant = (params.variant === 'by' ? 'by' : 'for') as 'for' | 'by';
 
-  const orderKey = params.orderKey || 'date';
+  const orderKey = params.orderKey || 'review_date';
   const isOrderDesc = params.isOrderDesc !== 'false';
   const page = Number(params.page || 1);
 
@@ -31,9 +31,6 @@ export default async function ReviewsPage({
   const selectedRatings = ratingsParam
     ? ratingsParam.split(',').map(Number)
     : [];
-
-  // TODO get page count from API
-  const totalPages = 10;
 
   const reviewSearchParams: ReviewSearchParams = {
     is_order_desc: isOrderDesc,

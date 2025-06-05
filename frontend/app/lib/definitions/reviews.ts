@@ -17,17 +17,25 @@ export interface Review extends BaseReview {
   reviewee: ReviewUser;
 }
 
+export interface ReviewPage {
+  reviews: Review[];
+  pagination: {
+    totalPages: number;
+    totalRecords: number;
+  };
+}
+
 export interface NewReview extends BaseReview {
   revieweeId: number;
 }
 
 export interface UpdatedReview extends BaseReview {
-  id: number
+  id: number;
 }
 
 export interface ReviewSearchParams {
   is_order_desc: boolean;
-  order_key: 'rating' | 'date';
+  order_key: 'rating' | 'review_date';
   pagination: {
     page: number;
     page_size: number;
