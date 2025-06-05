@@ -5,7 +5,6 @@ import (
 	"strconv"
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/notification"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/ws"
 	"github.com/susek555/BD2/car-dealer-api/internal/enums"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
@@ -27,18 +26,18 @@ type CloseCmd struct {
 	Amount    *uint
 }
 
-type AuctionCloser interface {
+type AuctionCloserInterface interface {
 	CloseAuction(cmd CloseCmd)
 }
 
 type auctionCloser struct {
-	bidRepo             BidRepo
-	saleRepo            sale_offer.SaleOfferRepositoryInterface
+	bidRepo             BidRetrieverInterface
+	saleRepo            SaleOfferRepositoryInterface
 	notificationService notification.NotificationServiceInterface
 	hub                 ws.HubInterface
 }
 
-func NewAuctionCloser(bidRepo BidRepo, saleRepo sale_offer.SaleOfferRepositoryInterface, notificationService notification.NotificationServiceInterface, hub ws.HubInterface) AuctionCloser {
+func NewAuctionCloser(bidRepo BidRetrieverInterface, saleRepo SaleOfferRepositoryInterface, notificationService notification.NotificationServiceInterface, hub ws.HubInterface) AuctionCloserInterface {
 	return &auctionCloser{
 		bidRepo:             bidRepo,
 		saleRepo:            saleRepo,
