@@ -26,7 +26,7 @@ type SaleOfferServiceInterface interface {
 	Create(in *CreateSaleOfferDTO) (*RetrieveDetailedSaleOfferDTO, error)
 	Update(in *UpdateSaleOfferDTO, userID uint) (*RetrieveDetailedSaleOfferDTO, error)
 	Publish(id uint, userID uint) (*RetrieveDetailedSaleOfferDTO, error)
-	Buy(offerID uint, userID uint) (*models.SaleOffer, error)
+	Buy(id uint, userID uint) (*models.SaleOffer, error)
 	GetByID(id uint, userID *uint) (*RetrieveSaleOfferDTO, error)
 	GetDetailedByID(id uint, userID *uint) (*RetrieveDetailedSaleOfferDTO, error)
 	GetByUserID(id uint, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error)
@@ -118,8 +118,8 @@ func (s *SaleOfferService) Publish(id uint, userID uint) (*RetrieveDetailedSaleO
 	return s.GetDetailedByID(id, &userID)
 }
 
-func (s *SaleOfferService) Buy(offerID uint, userID uint) (*models.SaleOffer, error) {
-	offer, err := s.saleOfferRepo.GetByID(offerID)
+func (s *SaleOfferService) Buy(id uint, userID uint) (*models.SaleOffer, error) {
+	offer, err := s.saleOfferRepo.GetByID(id)
 	if err != nil {
 		return nil, err
 	}
@@ -135,7 +135,7 @@ func (s *SaleOfferService) Buy(offerID uint, userID uint) (*models.SaleOffer, er
 	if err := s.saleOfferRepo.BuyOffer(offer, userID); err != nil {
 		return nil, err
 	}
-	return s.saleOfferRepo.GetByID(offerID)
+	return s.saleOfferRepo.GetByID(id)
 }
 
 func (s *SaleOfferService) GetByID(id uint, userID *uint) (*RetrieveSaleOfferDTO, error) {
@@ -290,7 +290,7 @@ func (s *SaleOfferService) authorizeModificationByUser(offer SaleOfferEntityInte
 		return err
 	}
 	if !canBeModifed {
-		return ErrOfferModificatoin
+		return ErrOfferModification
 	}
 	return nil
 }

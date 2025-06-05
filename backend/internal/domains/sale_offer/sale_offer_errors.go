@@ -26,7 +26,7 @@ var (
 	ErrOfferAlreadySold             = errors.New("offer is already sold - cannot buy it again")
 	ErrOfferNotPublished            = errors.New("offer is not published - cannot buy it")
 	ErrOfferIsAuction               = errors.New("offer is an auction - cannot buy it directly, use bids instead")
-	ErrOfferModificatoin            = errors.New("offer cannot be modified - it doesn't belong to user or has some bids")
+	ErrOfferModification            = errors.New("offer cannot be modified - it doesn't belong to user or has some bids")
 )
 
 var ErrorMap = map[error]int{
