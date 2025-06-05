@@ -11,23 +11,11 @@ import (
 	"github.com/redis/go-redis/v9"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/notification"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/ws"
-	"github.com/susek555/BD2/car-dealer-api/internal/enums"
-	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"github.com/susek555/BD2/car-dealer-api/internal/views"
 )
 
 type AuctionRetriverInterface interface {
 	GetAllActiveAuctions() ([]views.SaleOfferView, error)
-}
-
-type BidRetrieverInterface interface {
-	GetHighestBid(auctionID uint) (*models.Bid, error)
-}
-
-type SaleOfferRepositoryInterface interface {
-	GetByID(id uint) (*models.SaleOffer, error)
-	UpdateStatus(offerID uint, status enums.Status) error
-	SaveToPurchases(offerID uint, buyerID uint, finalPrice uint) error
 }
 
 type Scheduler struct {
@@ -52,9 +40,10 @@ func NewScheduler(
 	notificationService notification.NotificationServiceInterface,
 	auctionRetriever AuctionRetriverInterface,
 	saleOfferRepo SaleOfferRepositoryInterface,
+	purchaseCreator PurchaseCreatorInterface,
 	hub ws.HubInterface,
 ) SchedulerInterface {
-	closer := NewAuctionCloser(repo, saleOfferRepo, notificationService, hub)
+	closer := NewAuctionCloser(repo, saleOfferRepo, purchaseCreator, notificationService, hub)
 	return &Scheduler{
 		heap:             make(timerHeap, 0),
 		eventsCh:         make(chan AuctionEvent, 1024),
