@@ -31,6 +31,7 @@ type SaleOfferServiceInterface interface {
 	GetDetailedByID(id uint, userID *uint) (*RetrieveDetailedSaleOfferDTO, error)
 	GetByUserID(id uint, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error)
 	GetFiltered(filter *OfferFilter, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error)
+	Delete(id uint, userID uint) error
 }
 
 type SaleOfferService struct {
@@ -177,6 +178,17 @@ func (s *SaleOfferService) GetFiltered(filter *OfferFilter, pagRequest *paginati
 		return nil, err
 	}
 	return &RetrieveOffersWithPagination{Offers: offerDTOs, PaginationResponse: pagResponse}, nil
+}
+
+func (s *SaleOfferService) Delete(id uint, userID uint) error {
+	offer, err := s.saleOfferRepo.GetByID(id)
+	if err != nil {
+		return err
+	}
+	if !offer.BelongsToUser(userID) {
+		return ErrOfferNotOwned
+	}
+	return s.saleOfferRepo.Delete(id)
 }
 
 func (s *SaleOfferService) getModelID(manufacturerName, modelName string) (uint, error) {
