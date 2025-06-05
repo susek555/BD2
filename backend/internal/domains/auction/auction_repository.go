@@ -16,8 +16,6 @@ type AuctionRepositoryInterface interface {
 	BuyNow(auction *models.Auction, userID uint) error
 	GetByID(id uint) (*models.Auction, error)
 	GetViewByID(id uint) (*views.SaleOfferView, error)
-	UpdatePrice(auctionID uint, newPrice uint) error
-	Delete(id uint) error
 }
 
 type AuctionRepository struct {
@@ -54,17 +52,6 @@ func (a *AuctionRepository) BuyNow(auction *models.Auction, userID uint) error {
 
 func (a *AuctionRepository) Update(auction *models.Auction) error {
 	return a.DB.Save(auction).Error
-}
-
-func (a *AuctionRepository) UpdatePrice(auctionID uint, newPrice uint) error {
-	return a.DB.Model(&models.SaleOffer{}).
-		Where("id = ?", auctionID).
-		Update("price", newPrice).
-		Error
-}
-
-func (a *AuctionRepository) Delete(id uint) error {
-	return a.DB.Delete(&models.SaleOffer{}, id).Error
 }
 
 func (r *AuctionRepository) SaveToPurchases(offerID uint, buyerID uint, finalPrice uint) error {
