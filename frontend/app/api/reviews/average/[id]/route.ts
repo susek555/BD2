@@ -2,6 +2,10 @@ export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const randomRating = Math.round((Math.random() * 4 + 1) * 100) / 100;
-  return new Response(JSON.stringify(randomRating));
+  const { id } = await params;
+  // TODO uncomment once fixed on backend
+  // const response = await fetch(`${process.env.API_URL}/review/${id}/average`);
+  // const data = await response.json();
+  // return Response.json(data);
+  return Response.json(1);
 }
