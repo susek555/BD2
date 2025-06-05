@@ -1,8 +1,6 @@
 package sale_offer
 
 import (
-	"time"
-
 	"github.com/susek555/BD2/car-dealer-api/internal/enums"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"github.com/susek555/BD2/car-dealer-api/internal/views"
@@ -13,13 +11,11 @@ import (
 type SaleOfferRepositoryInterface interface {
 	Create(offer *models.SaleOffer) error
 	Update(offer *models.SaleOffer) error
-	BuyOffer(offer *models.SaleOffer, buyerID uint) error
 	GetByID(id uint) (*models.SaleOffer, error)
 	GetViewByID(id uint) (*views.SaleOfferView, error)
 	GetByUserID(id uint, pagRequest *pagination.PaginationRequest) ([]views.SaleOfferView, *pagination.PaginationResponse, error)
 	GetFiltered(filter *OfferFilter, pagRequest *pagination.PaginationRequest) ([]views.SaleOfferView, *pagination.PaginationResponse, error)
 	UpdateStatus(offerID uint, status enums.Status) error
-	SaveToPurchases(offerID uint, buyerID uint, finalPrice uint) error
 	Delete(id uint) error
 }
 
@@ -72,29 +68,11 @@ func (r *SaleOfferRepository) GetFiltered(filter *OfferFilter, pagRequest *pagin
 	return saleOffers, paginationResponse, nil
 }
 
-func (r *SaleOfferRepository) BuyOffer(offer *models.SaleOffer, buyerID uint) error {
-	offer.Status = enums.SOLD
-	if err := r.Update(offer); err != nil {
-		return err
-	}
-	return r.SaveToPurchases(offer.ID, buyerID, offer.Price)
-}
-
 func (r *SaleOfferRepository) UpdateStatus(offerID uint, status enums.Status) error {
 	return r.DB.Model(&models.SaleOffer{}).
 		Where("id = ?", offerID).
 		Update("status", status).
 		Error
-}
-
-func (r *SaleOfferRepository) SaveToPurchases(offerID uint, buyerID uint, finalPrice uint) error {
-	purchase := models.Purchase{
-		OfferID:    offerID,
-		BuyerID:    buyerID,
-		FinalPrice: finalPrice,
-		IssueDate:  time.Now(),
-	}
-	return r.DB.Create(&purchase).Error
 }
 
 func (r *SaleOfferRepository) Delete(id uint) error {
