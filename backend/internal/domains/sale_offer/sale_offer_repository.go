@@ -21,6 +21,7 @@ type SaleOfferRepositoryInterface interface {
 	GetAllActiveAuctions() ([]views.SaleOfferView, error)
 	UpdateStatus(offerID uint, status enums.Status) error
 	SaveToPurchases(offerID uint, buyerID uint, finalPrice uint) error
+	Delete(id uint) error
 }
 
 type SaleOfferRepository struct {
@@ -104,4 +105,8 @@ func (r *SaleOfferRepository) SaveToPurchases(offerID uint, buyerID uint, finalP
 		IssueDate:  time.Now(),
 	}
 	return r.DB.Create(&purchase).Error
+}
+
+func (r *SaleOfferRepository) Delete(id uint) error {
+	return r.DB.Delete(&models.SaleOffer{}, id).Error
 }
