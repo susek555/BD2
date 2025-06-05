@@ -11,11 +11,11 @@ import (
 type SaleOfferRepositoryInterface interface {
 	Create(offer *models.SaleOffer) error
 	Update(offer *models.SaleOffer) error
+	UpdateStatus(offer *models.SaleOffer, status enums.Status) error
 	GetByID(id uint) (*models.SaleOffer, error)
 	GetViewByID(id uint) (*views.SaleOfferView, error)
 	GetByUserID(id uint, pagRequest *pagination.PaginationRequest) ([]views.SaleOfferView, *pagination.PaginationResponse, error)
 	GetFiltered(filter *OfferFilter, pagRequest *pagination.PaginationRequest) ([]views.SaleOfferView, *pagination.PaginationResponse, error)
-	UpdateStatus(offerID uint, status enums.Status) error
 	Delete(id uint) error
 }
 
@@ -33,6 +33,11 @@ func (r *SaleOfferRepository) Create(offer *models.SaleOffer) error {
 
 func (r *SaleOfferRepository) Update(offer *models.SaleOffer) error {
 	return r.DB.Save(offer).Error
+}
+
+func (r *SaleOfferRepository) UpdateStatus(offer *models.SaleOffer, status enums.Status) error {
+	offer.Status = status
+	return r.Update(offer)
 }
 
 func (r *SaleOfferRepository) GetByID(id uint) (*models.SaleOffer, error) {
@@ -66,13 +71,6 @@ func (r *SaleOfferRepository) GetFiltered(filter *OfferFilter, pagRequest *pagin
 		return nil, nil, err
 	}
 	return saleOffers, paginationResponse, nil
-}
-
-func (r *SaleOfferRepository) UpdateStatus(offerID uint, status enums.Status) error {
-	return r.DB.Model(&models.SaleOffer{}).
-		Where("id = ?", offerID).
-		Update("status", status).
-		Error
 }
 
 func (r *SaleOfferRepository) Delete(id uint) error {
