@@ -11,6 +11,7 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/liked_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/purchase"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/enums"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
@@ -88,7 +89,8 @@ func newTestServer(db *gorm.DB, seedOffers []models.SaleOffer) (*gin.Engine, sal
 	bidRepository := bid.NewBidRepository(db)
 	imageRepo := image.NewImageRepository(db)
 	accessEvaluator := sale_offer.NewAccessEvaluator(bidRepository, likedOfferRepository)
-	saleOfferService := sale_offer.NewSaleOfferService(saleOfferRepo, manufacturerRepo, modelRepo, imageRepo, accessEvaluator)
+	purchaseCreator := purchase.NewPurchaseRepository(db)
+	saleOfferService := sale_offer.NewSaleOfferService(saleOfferRepo, manufacturerRepo, modelRepo, imageRepo, accessEvaluator, purchaseCreator)
 	likedOfferService := liked_offer.NewLikedOfferService(likedOfferRepository, saleOfferRepo)
 	mh := new(mocks.HubInterface)
 	mh.On("SubscribeUser", mock.Anything, mock.Anything).Return()
