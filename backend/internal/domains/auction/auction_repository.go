@@ -15,7 +15,7 @@ type AuctionRepositoryInterface interface {
 	Update(auction *models.Auction) error
 	BuyNow(auction *models.Auction, userID uint) error
 	GetByID(id uint) (*models.Auction, error)
-	GetViewByID(id uint) (*views.SaleOfferView, error)
+	GetAllActiveAuctions() ([]views.SaleOfferView, error)
 }
 
 type AuctionRepository struct {
@@ -36,12 +36,6 @@ func (a *AuctionRepository) GetByID(id uint) (*models.Auction, error) {
 	return &auction, err
 }
 
-func (a *AuctionRepository) GetViewByID(id uint) (*views.SaleOfferView, error) {
-	var auction views.SaleOfferView
-	err := a.DB.Table("sale_offer_view").First(&auction, id).Error
-	return &auction, err
-}
-
 func (a *AuctionRepository) BuyNow(auction *models.Auction, userID uint) error {
 	auction.Offer.Status = enums.SOLD
 	if err := a.Update(auction); err != nil {
@@ -50,16 +44,25 @@ func (a *AuctionRepository) BuyNow(auction *models.Auction, userID uint) error {
 	return a.SaveToPurchases(auction.OfferID, userID, auction.BuyNowPrice)
 }
 
+func (a *AuctionRepository) GetAllActiveAuctions() ([]views.SaleOfferView, error) {
+	var auctions []views.SaleOfferView
+	err := a.DB.Table("sale_offer_view").Where("is_auction IS TRUE").Find(&auctions).Error
+	if err != nil {
+		return nil, err
+	}
+	return auctions, nil
+}
+
 func (a *AuctionRepository) Update(auction *models.Auction) error {
 	return a.DB.Save(auction).Error
 }
 
-func (r *AuctionRepository) SaveToPurchases(offerID uint, buyerID uint, finalPrice uint) error {
+func (a *AuctionRepository) SaveToPurchases(offerID uint, buyerID uint, finalPrice uint) error {
 	purchase := models.Purchase{
 		OfferID:    offerID,
 		BuyerID:    buyerID,
 		FinalPrice: finalPrice,
 		IssueDate:  time.Now(),
 	}
-	return r.DB.Create(&purchase).Error
+	return a.DB.Create(&purchase).Error
 }
