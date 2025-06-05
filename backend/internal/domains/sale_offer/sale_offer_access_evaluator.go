@@ -2,7 +2,6 @@ package sale_offer
 
 import (
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
-	"github.com/susek555/BD2/car-dealer-api/internal/views"
 )
 
 type LikedOfferCheckerInterface interface {
@@ -14,8 +13,8 @@ type BidRetrieverInterface interface {
 }
 
 type OfferAccessEvaluatorInterface interface {
-	CanBeModifiedByUser(*views.SaleOfferView, *uint) (bool, error)
-	IsOfferLikedByUser(*views.SaleOfferView, *uint) bool
+	CanBeModifiedByUser(SaleOfferEntityInterface, *uint) (bool, error)
+	IsOfferLikedByUser(SaleOfferEntityInterface, *uint) bool
 }
 
 type OfferAccessEvaluator struct {
@@ -27,32 +26,32 @@ func NewAccessEvaluator(bidRetriever BidRetrieverInterface, likedChecker LikedOf
 	return &OfferAccessEvaluator{bidRetriever: bidRetriever, likedChecker: likedChecker}
 }
 
-func (e *OfferAccessEvaluator) CanBeModifiedByUser(offerView *views.SaleOfferView, userID *uint) (bool, error) {
+func (e *OfferAccessEvaluator) CanBeModifiedByUser(offer SaleOfferEntityInterface, userID *uint) (bool, error) {
 	if userID == nil {
 		return false, nil
 	}
-	if !offerView.BelongsToUser(*userID) {
+	if !offer.BelongsToUser(*userID) {
 		return false, nil
 	}
-	if !offerView.IsAuction {
+	if !offer.IsAuctionOffer() {
 		return true, nil
 	}
-	hasBids, err := e.hasBids(offerView)
+	hasBids, err := e.hasBids(offer)
 	if err != nil {
 		return false, err
 	}
 	return !hasBids, nil
 }
 
-func (e *OfferAccessEvaluator) IsOfferLikedByUser(offer *views.SaleOfferView, userID *uint) bool {
+func (e *OfferAccessEvaluator) IsOfferLikedByUser(offer SaleOfferEntityInterface, userID *uint) bool {
 	if userID == nil {
 		return false
 	}
-	return e.likedChecker.IsOfferLikedByUser(offer.ID, *userID)
+	return e.likedChecker.IsOfferLikedByUser(offer.GetID(), *userID)
 }
 
-func (e *OfferAccessEvaluator) hasBids(offer *views.SaleOfferView) (bool, error) {
-	bids, err := e.bidRetriever.GetByAuctionID(offer.ID)
+func (e *OfferAccessEvaluator) hasBids(offer SaleOfferEntityInterface) (bool, error) {
+	bids, err := e.bidRetriever.GetByAuctionID(offer.GetID())
 	if err != nil {
 		return false, err
 	}

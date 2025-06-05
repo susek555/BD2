@@ -20,6 +20,14 @@ type SaleOffer struct {
 	Auction     *Auction          `gorm:"foreignKey:OfferID;references:ID"`
 }
 
+func (o *SaleOffer) GetID() uint {
+	return o.ID
+}
+
+func (o *SaleOffer) IsAuctionOffer() bool {
+	return o.IsAuction
+}
+
 func (o *SaleOffer) BelongsToUser(userID uint) bool {
 	return o.UserID == userID
 }
