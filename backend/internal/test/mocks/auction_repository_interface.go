@@ -114,6 +114,63 @@ func (_c *AuctionRepositoryInterface_Create_Call) RunAndReturn(run func(*models.
 	return _c
 }
 
+// GetAllActiveAuctions provides a mock function with no fields
+func (_m *AuctionRepositoryInterface) GetAllActiveAuctions() ([]views.SaleOfferView, error) {
+	ret := _m.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetAllActiveAuctions")
+	}
+
+	var r0 []views.SaleOfferView
+	var r1 error
+	if rf, ok := ret.Get(0).(func() ([]views.SaleOfferView, error)); ok {
+		return rf()
+	}
+	if rf, ok := ret.Get(0).(func() []views.SaleOfferView); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]views.SaleOfferView)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// AuctionRepositoryInterface_GetAllActiveAuctions_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetAllActiveAuctions'
+type AuctionRepositoryInterface_GetAllActiveAuctions_Call struct {
+	*mock.Call
+}
+
+// GetAllActiveAuctions is a helper method to define mock.On call
+func (_e *AuctionRepositoryInterface_Expecter) GetAllActiveAuctions() *AuctionRepositoryInterface_GetAllActiveAuctions_Call {
+	return &AuctionRepositoryInterface_GetAllActiveAuctions_Call{Call: _e.mock.On("GetAllActiveAuctions")}
+}
+
+func (_c *AuctionRepositoryInterface_GetAllActiveAuctions_Call) Run(run func()) *AuctionRepositoryInterface_GetAllActiveAuctions_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *AuctionRepositoryInterface_GetAllActiveAuctions_Call) Return(_a0 []views.SaleOfferView, _a1 error) *AuctionRepositoryInterface_GetAllActiveAuctions_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *AuctionRepositoryInterface_GetAllActiveAuctions_Call) RunAndReturn(run func() ([]views.SaleOfferView, error)) *AuctionRepositoryInterface_GetAllActiveAuctions_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // GetByID provides a mock function with given fields: id
 func (_m *AuctionRepositoryInterface) GetByID(id uint) (*models.Auction, error) {
 	ret := _m.Called(id)
@@ -168,64 +225,6 @@ func (_c *AuctionRepositoryInterface_GetByID_Call) Return(_a0 *models.Auction, _
 }
 
 func (_c *AuctionRepositoryInterface_GetByID_Call) RunAndReturn(run func(uint) (*models.Auction, error)) *AuctionRepositoryInterface_GetByID_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetViewByID provides a mock function with given fields: id
-func (_m *AuctionRepositoryInterface) GetViewByID(id uint) (*views.SaleOfferView, error) {
-	ret := _m.Called(id)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetViewByID")
-	}
-
-	var r0 *views.SaleOfferView
-	var r1 error
-	if rf, ok := ret.Get(0).(func(uint) (*views.SaleOfferView, error)); ok {
-		return rf(id)
-	}
-	if rf, ok := ret.Get(0).(func(uint) *views.SaleOfferView); ok {
-		r0 = rf(id)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*views.SaleOfferView)
-		}
-	}
-
-	if rf, ok := ret.Get(1).(func(uint) error); ok {
-		r1 = rf(id)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// AuctionRepositoryInterface_GetViewByID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetViewByID'
-type AuctionRepositoryInterface_GetViewByID_Call struct {
-	*mock.Call
-}
-
-// GetViewByID is a helper method to define mock.On call
-//   - id uint
-func (_e *AuctionRepositoryInterface_Expecter) GetViewByID(id interface{}) *AuctionRepositoryInterface_GetViewByID_Call {
-	return &AuctionRepositoryInterface_GetViewByID_Call{Call: _e.mock.On("GetViewByID", id)}
-}
-
-func (_c *AuctionRepositoryInterface_GetViewByID_Call) Run(run func(id uint)) *AuctionRepositoryInterface_GetViewByID_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(uint))
-	})
-	return _c
-}
-
-func (_c *AuctionRepositoryInterface_GetViewByID_Call) Return(_a0 *views.SaleOfferView, _a1 error) *AuctionRepositoryInterface_GetViewByID_Call {
-	_c.Call.Return(_a0, _a1)
-	return _c
-}
-
-func (_c *AuctionRepositoryInterface_GetViewByID_Call) RunAndReturn(run func(uint) (*views.SaleOfferView, error)) *AuctionRepositoryInterface_GetViewByID_Call {
 	_c.Call.Return(run)
 	return _c
 }

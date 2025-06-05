@@ -17,6 +17,7 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/liked_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/purchase"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/enums"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
@@ -84,6 +85,7 @@ func setupDB(manufacturers []models.Manufacturer, models_ []models.Model, cars [
 		model.NewModelRepository(db),
 		image.NewImageRepository(db),
 		sale_offer.NewAccessEvaluator(bidRepo, likedOfferRepo),
+		purchase.NewPurchaseRepository(db),
 	)
 	service := auction.NewAuctionService(repo, saleOfferService.(*sale_offer.SaleOfferService))
 	return service, nil
