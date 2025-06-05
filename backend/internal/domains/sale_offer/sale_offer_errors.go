@@ -19,7 +19,7 @@ var (
 	ErrInvalidDateFormat            = errors.New("invalid date format, should be YYYY-MM-DD")
 	ErrInvalidOrderKey              = errors.New("invalid order-key")
 	ErrInvalidManufacturer          = errors.New("invalid manufacturer")
-	ErrInvalidManufacturerModelPair = errors.New("manufcaturer and model don't match")
+	ErrInvalidManufacturerModelPair = errors.New("manufacturer and model don't match")
 	ErrOfferNotOwned                = errors.New("provided offer does not belong to logged in user")
 	ErrOfferNotReadyToPublish       = errors.New("offer is not ready to be published - make sure that it have at least 3 images attached")
 	ErrOfferOwnedByUser             = errors.New("offer is owned by user - cannot buy your own offer")

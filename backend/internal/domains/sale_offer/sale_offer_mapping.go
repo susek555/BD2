@@ -57,57 +57,11 @@ func (dto *UpdateSaleOfferDTO) UpdatedOfferFromDTO(offer *models.SaleOffer) (*mo
 	return offer, nil
 }
 
-func MapToDTO(offer *models.SaleOffer) *RetrieveSaleOfferDTO {
-	return &RetrieveSaleOfferDTO{
-		ID:             offer.ID,
-		Username:       offer.User.Username,
-		Name:           offer.Car.Model.Manufacturer.Name + " " + offer.Car.Model.Name,
-		Price:          offer.Price,
-		Mileage:        offer.Car.Mileage,
-		ProductionYear: offer.Car.ProductionYear,
-		Color:          offer.Car.Color,
-		Status:         offer.Status,
-		IsAuction:      offer.IsAuction,
-	}
-}
-
 func MapViewToDTO(offerView *views.SaleOfferView) *RetrieveSaleOfferDTO {
 	dto := &RetrieveSaleOfferDTO{}
 	_ = copier.Copy(dto, offerView)
 	dto.Name = offerView.Brand + " " + offerView.Model
 	return dto
-}
-
-func MapToDetailedDTO(offer *models.SaleOffer) *RetrieveDetailedSaleOfferDTO {
-	buyNow, endDate := prepareAuctionValues(offer)
-	return &RetrieveDetailedSaleOfferDTO{
-		ID:                 offer.ID,
-		UserID:             offer.UserID,
-		Username:           offer.User.Username,
-		Description:        offer.Description,
-		Price:              offer.Price,
-		Margin:             offer.Margin,
-		DateOfIssue:        offer.DateOfIssue.Format(formats.DateLayout),
-		Vin:                offer.Car.Vin,
-		ProductionYear:     offer.Car.ProductionYear,
-		Mileage:            offer.Car.Mileage,
-		NumberOfDoors:      offer.Car.NumberOfDoors,
-		NumberOfSeats:      offer.Car.NumberOfSeats,
-		EnginePower:        offer.Car.EnginePower,
-		EngineCapacity:     offer.Car.EngineCapacity,
-		RegistrationNumber: offer.Car.RegistrationNumber,
-		RegistrationDate:   offer.Car.RegistrationDate.Format(formats.DateLayout),
-		Color:              offer.Car.Color,
-		FuelType:           offer.Car.FuelType,
-		Transmission:       offer.Car.Transmission,
-		NumberOfGears:      offer.Car.NumberOfGears,
-		Drive:              offer.Car.Drive,
-		Brand:              offer.Car.Model.Manufacturer.Name,
-		Model:              offer.Car.Model.Name,
-		DateEnd:            endDate,
-		BuyNowPrice:        buyNow,
-		IsAuction:          offer.Auction != nil,
-	}
 }
 
 func MapViewToDetailedDTO(offerView *views.SaleOfferView) *RetrieveDetailedSaleOfferDTO {
@@ -120,14 +74,6 @@ func MapViewToDetailedDTO(offerView *views.SaleOfferView) *RetrieveDetailedSaleO
 		dto.DateEnd = &date
 	}
 	return dto
-}
-
-func prepareAuctionValues(offer *models.SaleOffer) (*uint, *string) {
-	if offer.Auction == nil {
-		return nil, nil
-	}
-	dateEnd := offer.Auction.DateEnd.Format(formats.DateTimeLayout)
-	return &offer.Auction.BuyNowPrice, &dateEnd
 }
 
 func (dto *CreateSaleOfferDTO) validateParams() error {
