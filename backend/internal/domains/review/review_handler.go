@@ -280,7 +280,7 @@ func (h *Handler) GetFilteredReviews(c *gin.Context) {
 //	@Param			id	path		int						true	"Reviewee ID"
 //	@Success		200	{number}	float64					"OK – average rating (rounded to two decimals)"
 //	@Failure		400	{object}	custom_errors.HTTPError	"Bad Request – invalID ID format or query failed"
-//	@Router			/review/{id}/average [get]
+//	@Router			/review/average-rating/{id} [get]
 func (h *Handler) GetAverageRatingByRevieweeID(c *gin.Context) {
 	ID, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
@@ -305,7 +305,7 @@ func (h *Handler) GetAverageRatingByRevieweeID(c *gin.Context) {
 //	@Param			id	path		int						true	"Reviewee ID"
 //	@Success		200	{object}	map[int]int				"OK – percentage frequencies for ratings 1 through 5"
 //	@Failure		400	{object}	custom_errors.HTTPError	"Bad Request – invalID ID format or query failed"
-//	@Router			/review/{id}/frequency [get]
+//	@Router			/review/frequency/{id} [get]
 func (h *Handler) GetFrequencyOfRatingByRevieweeID(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {

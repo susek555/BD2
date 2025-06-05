@@ -1533,6 +1533,42 @@ const docTemplate = `{
                 }
             }
         },
+        "/review/average-rating/{id}": {
+            "get": {
+                "description": "Returns the average rating value calculated over all reviews for the given reviewee.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "Get average rating for a reviewee",
+                "operationId": "getAverageRatingByRevieweeID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Reviewee ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK – average rating (rounded to two decimals)",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request – invalID ID format or query failed",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/review/filter": {
             "post": {
                 "description": "Returns reviews matching podanych kryteriów filtrowania wraz z paginacją.",
@@ -1567,6 +1603,45 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request – invalID filter or query failed",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/review/frequency/{id}": {
+            "get": {
+                "description": "Returns a map from rating value (1–5) to percentage frequency among all reviews for the given reviewee.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "Get distribution of ratings for a reviewee",
+                "operationId": "getFrequencyOfRatingByRevieweeID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Reviewee ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK – percentage frequencies for ratings 1 through 5",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request – invalID ID format or query failed",
                         "schema": {
                             "$ref": "#/definitions/custom_errors.HTTPError"
                         }
@@ -1755,81 +1830,6 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request – invalID ID format or delete failed",
-                        "schema": {
-                            "$ref": "#/definitions/custom_errors.HTTPError"
-                        }
-                    }
-                }
-            }
-        },
-        "/review/{id}/average": {
-            "get": {
-                "description": "Returns the average rating value calculated over all reviews for the given reviewee.",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "reviews"
-                ],
-                "summary": "Get average rating for a reviewee",
-                "operationId": "getAverageRatingByRevieweeID",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Reviewee ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK – average rating (rounded to two decimals)",
-                        "schema": {
-                            "type": "number"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request – invalID ID format or query failed",
-                        "schema": {
-                            "$ref": "#/definitions/custom_errors.HTTPError"
-                        }
-                    }
-                }
-            }
-        },
-        "/review/{id}/frequency": {
-            "get": {
-                "description": "Returns a map from rating value (1–5) to percentage frequency among all reviews for the given reviewee.",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "reviews"
-                ],
-                "summary": "Get distribution of ratings for a reviewee",
-                "operationId": "getFrequencyOfRatingByRevieweeID",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Reviewee ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK – percentage frequencies for ratings 1 through 5",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "integer"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request – invalID ID format or query failed",
                         "schema": {
                             "$ref": "#/definitions/custom_errors.HTTPError"
                         }
