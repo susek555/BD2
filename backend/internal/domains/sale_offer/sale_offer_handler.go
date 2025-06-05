@@ -154,7 +154,7 @@ func (h *Handler) GetFilteredSaleOffers(c *gin.Context) {
 	c.JSON(http.StatusOK, saleOffers)
 }
 
-// GetSaleOfferByID godoc
+// GetDetailedSaleOfferByID godoc
 //
 //	@Summary		Get sale offer by ID
 //	@Description	Returns a sale offer by its ID. Can be used to retrieve detailed information about sale offer.
@@ -239,20 +239,21 @@ func (h *Handler) GetOrderKeys(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"order_keys": keys})
 }
 
-// @Summary		Buy a sale offer
-// @Description	Allows a user to buy an item from a sale offer
-// @Tags			sale-offer
-// @Accept			json
-// @Produce		json
-// @Param			id	path	uint	true	"Sale Offer ID"
-// @Security		ApiKeyAuth
-// @Success		200	"Successfully purchased offer"
-// @Failure		403	"Forbidden - user cannot buy his own offer"
-// @Failure		404	"Not Found - sale offer not found"
-// @Failure		500	"Internal Server Error"
-// @Failure		401	"Unauthorized - user must be logged in to buy an offer"
-// @Router			/sale-offer/buy/{id} [post]
-// @Security		BearerAuth
+// Buy godoc
+//
+//	@Summary		Buy a sale offer
+//	@Description	Allows a user to buy an item from a sale offer
+//	@Tags			sale-offer
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path	uint	true	"Sale Offer ID"
+//	@Success		200	"Successfully purchased offer"
+//	@Failure		403	"Forbidden - user cannot buy his own offer"
+//	@Failure		404	"Not Found - sale offer not found"
+//	@Failure		500	"Internal Server Error"
+//	@Failure		401	"Unauthorized - user must be logged in to buy an offer"
+//	@Router			/sale-offer/buy/{id} [post]
+//	@Security		BearerAuth
 func (h *Handler) Buy(c *gin.Context) {
 	offerID, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
