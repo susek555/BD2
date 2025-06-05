@@ -25,8 +25,8 @@ type BidRetrieverInterface interface {
 }
 
 type SaleOfferRepositoryInterface interface {
+	UpdateStatus(offer *models.SaleOffer, status enums.Status) error
 	GetByID(id uint) (*models.SaleOffer, error)
-	UpdateStatus(offerID uint, status enums.Status) error
 }
 
 type PurchaseCreatorInterface interface {
@@ -86,7 +86,7 @@ func (c *auctionCloser) CloseAuction(cmd CloseCmd) {
 		highest, err := c.bidRepo.GetHighestBid(auctionID)
 		if err != nil {
 			if err == gorm.ErrRecordNotFound {
-				_ = c.saleRepo.UpdateStatus(auctionID, enums.EXPIRED)
+				_ = c.saleRepo.UpdateStatus(offer, enums.EXPIRED)
 				return
 			}
 			log.Printf("closer: GetHighestBid err: %v", err)
@@ -106,12 +106,12 @@ func (c *auctionCloser) CloseAuction(cmd CloseCmd) {
 		_ = c.purchaseCreator.Create(purchaseModel)
 	}
 
-	_ = c.saleRepo.UpdateStatus(auctionID, enums.SOLD)
+	_ = c.saleRepo.UpdateStatus(offer, enums.SOLD)
 
 	n := models.Notification{OfferID: auctionID}
 	if err := c.notificationService.CreateEndAuctionNotification(&n, winnerID, amount, offer); err != nil {
 		log.Printf("closer: notif err: %v", err)
-		_ = c.saleRepo.UpdateStatus(auctionID, enums.EXPIRED)
+		_ = c.saleRepo.UpdateStatus(offer, enums.EXPIRED)
 		return
 	}
 	idStr := strconv.FormatUint(uint64(auctionID), 10)
