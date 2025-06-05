@@ -140,59 +140,49 @@ func (_c *SaleOfferServiceInterface_Create_Call) RunAndReturn(run func(*sale_off
 	return _c
 }
 
-// DetermineNewModelID provides a mock function with given fields: offer, dto
-func (_m *SaleOfferServiceInterface) DetermineNewModelID(offer *models.SaleOffer, dto *sale_offer.UpdateSaleOfferDTO) (uint, error) {
-	ret := _m.Called(offer, dto)
+// Delete provides a mock function with given fields: id, userID
+func (_m *SaleOfferServiceInterface) Delete(id uint, userID uint) error {
+	ret := _m.Called(id, userID)
 
 	if len(ret) == 0 {
-		panic("no return value specified for DetermineNewModelID")
+		panic("no return value specified for Delete")
 	}
 
-	var r0 uint
-	var r1 error
-	if rf, ok := ret.Get(0).(func(*models.SaleOffer, *sale_offer.UpdateSaleOfferDTO) (uint, error)); ok {
-		return rf(offer, dto)
-	}
-	if rf, ok := ret.Get(0).(func(*models.SaleOffer, *sale_offer.UpdateSaleOfferDTO) uint); ok {
-		r0 = rf(offer, dto)
+	var r0 error
+	if rf, ok := ret.Get(0).(func(uint, uint) error); ok {
+		r0 = rf(id, userID)
 	} else {
-		r0 = ret.Get(0).(uint)
+		r0 = ret.Error(0)
 	}
 
-	if rf, ok := ret.Get(1).(func(*models.SaleOffer, *sale_offer.UpdateSaleOfferDTO) error); ok {
-		r1 = rf(offer, dto)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
+	return r0
 }
 
-// SaleOfferServiceInterface_DetermineNewModelID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'DetermineNewModelID'
-type SaleOfferServiceInterface_DetermineNewModelID_Call struct {
+// SaleOfferServiceInterface_Delete_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Delete'
+type SaleOfferServiceInterface_Delete_Call struct {
 	*mock.Call
 }
 
-// DetermineNewModelID is a helper method to define mock.On call
-//   - offer *models.SaleOffer
-//   - dto *sale_offer.UpdateSaleOfferDTO
-func (_e *SaleOfferServiceInterface_Expecter) DetermineNewModelID(offer interface{}, dto interface{}) *SaleOfferServiceInterface_DetermineNewModelID_Call {
-	return &SaleOfferServiceInterface_DetermineNewModelID_Call{Call: _e.mock.On("DetermineNewModelID", offer, dto)}
+// Delete is a helper method to define mock.On call
+//   - id uint
+//   - userID uint
+func (_e *SaleOfferServiceInterface_Expecter) Delete(id interface{}, userID interface{}) *SaleOfferServiceInterface_Delete_Call {
+	return &SaleOfferServiceInterface_Delete_Call{Call: _e.mock.On("Delete", id, userID)}
 }
 
-func (_c *SaleOfferServiceInterface_DetermineNewModelID_Call) Run(run func(offer *models.SaleOffer, dto *sale_offer.UpdateSaleOfferDTO)) *SaleOfferServiceInterface_DetermineNewModelID_Call {
+func (_c *SaleOfferServiceInterface_Delete_Call) Run(run func(id uint, userID uint)) *SaleOfferServiceInterface_Delete_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(*models.SaleOffer), args[1].(*sale_offer.UpdateSaleOfferDTO))
+		run(args[0].(uint), args[1].(uint))
 	})
 	return _c
 }
 
-func (_c *SaleOfferServiceInterface_DetermineNewModelID_Call) Return(_a0 uint, _a1 error) *SaleOfferServiceInterface_DetermineNewModelID_Call {
-	_c.Call.Return(_a0, _a1)
+func (_c *SaleOfferServiceInterface_Delete_Call) Return(_a0 error) *SaleOfferServiceInterface_Delete_Call {
+	_c.Call.Return(_a0)
 	return _c
 }
 
-func (_c *SaleOfferServiceInterface_DetermineNewModelID_Call) RunAndReturn(run func(*models.SaleOffer, *sale_offer.UpdateSaleOfferDTO) (uint, error)) *SaleOfferServiceInterface_DetermineNewModelID_Call {
+func (_c *SaleOfferServiceInterface_Delete_Call) RunAndReturn(run func(uint, uint) error) *SaleOfferServiceInterface_Delete_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -252,65 +242,6 @@ func (_c *SaleOfferServiceInterface_GetByID_Call) Return(_a0 *sale_offer.Retriev
 }
 
 func (_c *SaleOfferServiceInterface_GetByID_Call) RunAndReturn(run func(uint, *uint) (*sale_offer.RetrieveSaleOfferDTO, error)) *SaleOfferServiceInterface_GetByID_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetByIDNonDTO provides a mock function with given fields: id, userID
-func (_m *SaleOfferServiceInterface) GetByIDNonDTO(id uint, userID uint) (*models.SaleOffer, error) {
-	ret := _m.Called(id, userID)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetByIDNonDTO")
-	}
-
-	var r0 *models.SaleOffer
-	var r1 error
-	if rf, ok := ret.Get(0).(func(uint, uint) (*models.SaleOffer, error)); ok {
-		return rf(id, userID)
-	}
-	if rf, ok := ret.Get(0).(func(uint, uint) *models.SaleOffer); ok {
-		r0 = rf(id, userID)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*models.SaleOffer)
-		}
-	}
-
-	if rf, ok := ret.Get(1).(func(uint, uint) error); ok {
-		r1 = rf(id, userID)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// SaleOfferServiceInterface_GetByIDNonDTO_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetByIDNonDTO'
-type SaleOfferServiceInterface_GetByIDNonDTO_Call struct {
-	*mock.Call
-}
-
-// GetByIDNonDTO is a helper method to define mock.On call
-//   - id uint
-//   - userID uint
-func (_e *SaleOfferServiceInterface_Expecter) GetByIDNonDTO(id interface{}, userID interface{}) *SaleOfferServiceInterface_GetByIDNonDTO_Call {
-	return &SaleOfferServiceInterface_GetByIDNonDTO_Call{Call: _e.mock.On("GetByIDNonDTO", id, userID)}
-}
-
-func (_c *SaleOfferServiceInterface_GetByIDNonDTO_Call) Run(run func(id uint, userID uint)) *SaleOfferServiceInterface_GetByIDNonDTO_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(uint), args[1].(uint))
-	})
-	return _c
-}
-
-func (_c *SaleOfferServiceInterface_GetByIDNonDTO_Call) Return(_a0 *models.SaleOffer, _a1 error) *SaleOfferServiceInterface_GetByIDNonDTO_Call {
-	_c.Call.Return(_a0, _a1)
-	return _c
-}
-
-func (_c *SaleOfferServiceInterface_GetByIDNonDTO_Call) RunAndReturn(run func(uint, uint) (*models.SaleOffer, error)) *SaleOfferServiceInterface_GetByIDNonDTO_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -488,63 +419,6 @@ func (_c *SaleOfferServiceInterface_GetFiltered_Call) Return(_a0 *sale_offer.Ret
 }
 
 func (_c *SaleOfferServiceInterface_GetFiltered_Call) RunAndReturn(run func(*sale_offer.OfferFilter, *pagination.PaginationRequest) (*sale_offer.RetrieveOffersWithPagination, error)) *SaleOfferServiceInterface_GetFiltered_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetModelID provides a mock function with given fields: manufacturerName, modelName
-func (_m *SaleOfferServiceInterface) GetModelID(manufacturerName string, modelName string) (uint, error) {
-	ret := _m.Called(manufacturerName, modelName)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetModelID")
-	}
-
-	var r0 uint
-	var r1 error
-	if rf, ok := ret.Get(0).(func(string, string) (uint, error)); ok {
-		return rf(manufacturerName, modelName)
-	}
-	if rf, ok := ret.Get(0).(func(string, string) uint); ok {
-		r0 = rf(manufacturerName, modelName)
-	} else {
-		r0 = ret.Get(0).(uint)
-	}
-
-	if rf, ok := ret.Get(1).(func(string, string) error); ok {
-		r1 = rf(manufacturerName, modelName)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// SaleOfferServiceInterface_GetModelID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetModelID'
-type SaleOfferServiceInterface_GetModelID_Call struct {
-	*mock.Call
-}
-
-// GetModelID is a helper method to define mock.On call
-//   - manufacturerName string
-//   - modelName string
-func (_e *SaleOfferServiceInterface_Expecter) GetModelID(manufacturerName interface{}, modelName interface{}) *SaleOfferServiceInterface_GetModelID_Call {
-	return &SaleOfferServiceInterface_GetModelID_Call{Call: _e.mock.On("GetModelID", manufacturerName, modelName)}
-}
-
-func (_c *SaleOfferServiceInterface_GetModelID_Call) Run(run func(manufacturerName string, modelName string)) *SaleOfferServiceInterface_GetModelID_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(string), args[1].(string))
-	})
-	return _c
-}
-
-func (_c *SaleOfferServiceInterface_GetModelID_Call) Return(_a0 uint, _a1 error) *SaleOfferServiceInterface_GetModelID_Call {
-	_c.Call.Return(_a0, _a1)
-	return _c
-}
-
-func (_c *SaleOfferServiceInterface_GetModelID_Call) RunAndReturn(run func(string, string) (uint, error)) *SaleOfferServiceInterface_GetModelID_Call {
 	_c.Call.Return(run)
 	return _c
 }

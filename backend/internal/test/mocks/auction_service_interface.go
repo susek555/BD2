@@ -188,64 +188,6 @@ func (_c *AuctionServiceInterface_Delete_Call) RunAndReturn(run func(uint, uint)
 	return _c
 }
 
-// GetByIDNonDTO provides a mock function with given fields: id
-func (_m *AuctionServiceInterface) GetByIDNonDTO(id uint) (*models.Auction, error) {
-	ret := _m.Called(id)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetByIDNonDTO")
-	}
-
-	var r0 *models.Auction
-	var r1 error
-	if rf, ok := ret.Get(0).(func(uint) (*models.Auction, error)); ok {
-		return rf(id)
-	}
-	if rf, ok := ret.Get(0).(func(uint) *models.Auction); ok {
-		r0 = rf(id)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*models.Auction)
-		}
-	}
-
-	if rf, ok := ret.Get(1).(func(uint) error); ok {
-		r1 = rf(id)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// AuctionServiceInterface_GetByIDNonDTO_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetByIDNonDTO'
-type AuctionServiceInterface_GetByIDNonDTO_Call struct {
-	*mock.Call
-}
-
-// GetByIDNonDTO is a helper method to define mock.On call
-//   - id uint
-func (_e *AuctionServiceInterface_Expecter) GetByIDNonDTO(id interface{}) *AuctionServiceInterface_GetByIDNonDTO_Call {
-	return &AuctionServiceInterface_GetByIDNonDTO_Call{Call: _e.mock.On("GetByIDNonDTO", id)}
-}
-
-func (_c *AuctionServiceInterface_GetByIDNonDTO_Call) Run(run func(id uint)) *AuctionServiceInterface_GetByIDNonDTO_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(uint))
-	})
-	return _c
-}
-
-func (_c *AuctionServiceInterface_GetByIDNonDTO_Call) Return(_a0 *models.Auction, _a1 error) *AuctionServiceInterface_GetByIDNonDTO_Call {
-	_c.Call.Return(_a0, _a1)
-	return _c
-}
-
-func (_c *AuctionServiceInterface_GetByIDNonDTO_Call) RunAndReturn(run func(uint) (*models.Auction, error)) *AuctionServiceInterface_GetByIDNonDTO_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
 // Update provides a mock function with given fields: _a0, userID
 func (_m *AuctionServiceInterface) Update(_a0 *auction.UpdateAuctionDTO, userID uint) (*sale_offer.RetrieveDetailedSaleOfferDTO, error) {
 	ret := _m.Called(_a0, userID)
@@ -305,17 +247,17 @@ func (_c *AuctionServiceInterface_Update_Call) RunAndReturn(run func(*auction.Up
 	return _c
 }
 
-// UpdatePrice provides a mock function with given fields: auctionID, newPrice
-func (_m *AuctionServiceInterface) UpdatePrice(auctionID uint, newPrice uint) error {
-	ret := _m.Called(auctionID, newPrice)
+// UpdatePrice provides a mock function with given fields: _a0, newPrice
+func (_m *AuctionServiceInterface) UpdatePrice(_a0 *models.Auction, newPrice uint) error {
+	ret := _m.Called(_a0, newPrice)
 
 	if len(ret) == 0 {
 		panic("no return value specified for UpdatePrice")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(uint, uint) error); ok {
-		r0 = rf(auctionID, newPrice)
+	if rf, ok := ret.Get(0).(func(*models.Auction, uint) error); ok {
+		r0 = rf(_a0, newPrice)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -329,15 +271,15 @@ type AuctionServiceInterface_UpdatePrice_Call struct {
 }
 
 // UpdatePrice is a helper method to define mock.On call
-//   - auctionID uint
+//   - _a0 *models.Auction
 //   - newPrice uint
-func (_e *AuctionServiceInterface_Expecter) UpdatePrice(auctionID interface{}, newPrice interface{}) *AuctionServiceInterface_UpdatePrice_Call {
-	return &AuctionServiceInterface_UpdatePrice_Call{Call: _e.mock.On("UpdatePrice", auctionID, newPrice)}
+func (_e *AuctionServiceInterface_Expecter) UpdatePrice(_a0 interface{}, newPrice interface{}) *AuctionServiceInterface_UpdatePrice_Call {
+	return &AuctionServiceInterface_UpdatePrice_Call{Call: _e.mock.On("UpdatePrice", _a0, newPrice)}
 }
 
-func (_c *AuctionServiceInterface_UpdatePrice_Call) Run(run func(auctionID uint, newPrice uint)) *AuctionServiceInterface_UpdatePrice_Call {
+func (_c *AuctionServiceInterface_UpdatePrice_Call) Run(run func(_a0 *models.Auction, newPrice uint)) *AuctionServiceInterface_UpdatePrice_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(uint), args[1].(uint))
+		run(args[0].(*models.Auction), args[1].(uint))
 	})
 	return _c
 }
@@ -347,7 +289,7 @@ func (_c *AuctionServiceInterface_UpdatePrice_Call) Return(_a0 error) *AuctionSe
 	return _c
 }
 
-func (_c *AuctionServiceInterface_UpdatePrice_Call) RunAndReturn(run func(uint, uint) error) *AuctionServiceInterface_UpdatePrice_Call {
+func (_c *AuctionServiceInterface_UpdatePrice_Call) RunAndReturn(run func(*models.Auction, uint) error) *AuctionServiceInterface_UpdatePrice_Call {
 	_c.Call.Return(run)
 	return _c
 }
