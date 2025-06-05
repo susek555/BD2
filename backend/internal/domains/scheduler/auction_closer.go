@@ -3,6 +3,7 @@ package scheduler
 import (
 	"log"
 	"strconv"
+	"time"
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/notification"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/ws"
@@ -19,6 +20,19 @@ const (
 	ReasonBidOverBuyNow
 )
 
+type BidRetrieverInterface interface {
+	GetHighestBid(auctionID uint) (*models.Bid, error)
+}
+
+type SaleOfferRepositoryInterface interface {
+	GetByID(id uint) (*models.SaleOffer, error)
+	UpdateStatus(offerID uint, status enums.Status) error
+}
+
+type PurchaseCreatorInterface interface {
+	Create(purchase *models.Purchase) error
+}
+
 type CloseCmd struct {
 	AuctionID uint
 	Reason    CloseReason
@@ -33,14 +47,16 @@ type AuctionCloserInterface interface {
 type auctionCloser struct {
 	bidRepo             BidRetrieverInterface
 	saleRepo            SaleOfferRepositoryInterface
+	purchaseCreator     PurchaseCreatorInterface
 	notificationService notification.NotificationServiceInterface
 	hub                 ws.HubInterface
 }
 
-func NewAuctionCloser(bidRepo BidRetrieverInterface, saleRepo SaleOfferRepositoryInterface, notificationService notification.NotificationServiceInterface, hub ws.HubInterface) AuctionCloserInterface {
+func NewAuctionCloser(bidRepo BidRetrieverInterface, saleRepo SaleOfferRepositoryInterface, purchaseCreator PurchaseCreatorInterface, notificationService notification.NotificationServiceInterface, hub ws.HubInterface) AuctionCloserInterface {
 	return &auctionCloser{
 		bidRepo:             bidRepo,
 		saleRepo:            saleRepo,
+		purchaseCreator:     purchaseCreator,
 		notificationService: notificationService,
 		hub:                 hub,
 	}
@@ -86,7 +102,8 @@ func (c *auctionCloser) CloseAuction(cmd CloseCmd) {
 			log.Printf("closer: invalid winnerID %q: %v", winnerID, err)
 			return
 		}
-		_ = c.saleRepo.SaveToPurchases(auctionID, uint(winnerIDint), uint(amount))
+		purchaseModel := &models.Purchase{ID: auctionID, BuyerID: uint(winnerIDint), FinalPrice: uint(amount), IssueDate: time.Now()}
+		_ = c.purchaseCreator.Create(purchaseModel)
 	}
 
 	_ = c.saleRepo.UpdateStatus(auctionID, enums.SOLD)
