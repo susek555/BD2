@@ -1,12 +1,14 @@
 import { fetchFavorites } from '@/app/lib/data/account/data';
-import {
-  parseFiltersParams,
-} from '@/app/lib/definitions/SearchParams';
+import { parseFiltersParams } from '@/app/lib/definitions/SearchParams';
 import FoundInfo from '@/app/ui/(common)/found-info';
+import SideBar from '@/app/ui/(filters-sidebar)/sidebar';
 import OffersTable from '@/app/ui/(offers-table)/offers-table';
 import Pagination from '@/app/ui/(offers-table)/pagination';
-import SideBar from '@/app/ui/(filters-sidebar)/sidebar';
-import { OffersFoundSkeleton, OffersTableSkeleton, SideBarSkeleton } from '@/app/ui/skeletons';
+import {
+  OffersFoundSkeleton,
+  OffersTableSkeleton,
+  SideBarSkeleton,
+} from '@/app/ui/skeletons';
 import { Suspense } from 'react';
 
 export default async function ActivityPage(props: {
@@ -36,7 +38,12 @@ export default async function ActivityPage(props: {
 }) {
   const searchParams = await props.searchParams;
 
-  const params = parseFiltersParams(searchParams);
+  let params = parseFiltersParams(searchParams);
+
+  params = {
+    ...params,
+    liked_only: true,
+  };
 
   console.log('Search Params:', params);
 
@@ -51,7 +58,7 @@ export default async function ActivityPage(props: {
       </div>
       <div className='flex-grow p-6 md:px-12 md:py-8'>
         <Suspense fallback={<OffersFoundSkeleton />}>
-          <FoundInfo title={"Offers found"} totalOffers={totalOffers} />
+          <FoundInfo title={'Offers found'} totalOffers={totalOffers} />
         </Suspense>
         <div className='my-4' />
         <Suspense fallback={<OffersTableSkeleton />}>
