@@ -11,7 +11,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { ReviewToggle } from '../account/reviews/created-received-toggle';
 
 const orderOptions = [
-  { label: 'Date', value: 'date' },
+  { label: 'Date', value: 'review_date' },
   { label: 'Rating', value: 'rating' },
 ];
 
@@ -32,7 +32,7 @@ export function ReviewFilterBox({
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const orderKey = searchParams.get('orderKey') || 'date';
+  const orderKey = searchParams.get('orderKey') || 'review_date';
   const isOrderDesc = searchParams.get('isOrderDesc') !== 'false';
   const ratingsParam = searchParams.get('ratings');
   const selectedRatings = ratingsParam
@@ -48,7 +48,7 @@ export function ReviewFilterBox({
   const [hasChanges, setHasChanges] = useState(false);
 
   useEffect(() => {
-    const urlOrderKey = searchParams.get('orderKey') || 'date';
+    const urlOrderKey = searchParams.get('orderKey') || 'review_date';
     const urlIsOrderDesc = searchParams.get('isOrderDesc') !== 'false';
     const urlRatingsParam = searchParams.get('ratings');
     const urlSelectedRatings = urlRatingsParam
@@ -141,14 +141,14 @@ export function ReviewFilterBox({
 
   const clearFilters = useCallback((): void => {
     const defaultFilters = {
-      orderKey: 'date',
+      orderKey: 'review_date',
       isOrderDesc: true,
       selectedRatings: [],
     };
 
     setLocalFilters(defaultFilters);
 
-    const currentOrderKey = searchParams.get('orderKey') || 'date';
+    const currentOrderKey = searchParams.get('orderKey') || 'review_date';
     const currentIsOrderDesc = searchParams.get('isOrderDesc') !== 'false';
     const currentRatings = searchParams.get('ratings')
       ? searchParams.get('ratings')!.split(',').map(Number)
@@ -248,7 +248,7 @@ export function ReviewFilterBox({
       <div className='mt-4 flex w-full items-center justify-between'>
         <div>
           {(localFilters.selectedRatings.length > 0 ||
-            localFilters.orderKey !== 'date' ||
+            localFilters.orderKey !== 'review_date' ||
             !localFilters.isOrderDesc) && (
             <button
               className='flex items-center text-sm text-gray-500 hover:text-gray-700'

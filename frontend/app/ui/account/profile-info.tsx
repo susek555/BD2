@@ -1,8 +1,8 @@
-import { UserProfile } from '@/app/lib/definitions/user';
 import {
   fetchAverageRating,
   fetchRatingDistribution,
 } from '@/app/lib/data/reviews/data';
+import { UserProfile } from '@/app/lib/definitions/user';
 import { UserCircleIcon } from '@heroicons/react/24/outline';
 import RatingDisplay from './rating-display';
 
@@ -11,7 +11,7 @@ interface ProfileInfoProps {
 }
 
 export default async function ProfileInfo({ user }: ProfileInfoProps) {
-  const rating = await fetchAverageRating(1);
+  const rating = await fetchAverageRating(user.userId);
   const distribution = await fetchRatingDistribution(1);
 
   return (
