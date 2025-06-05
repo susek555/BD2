@@ -49,11 +49,12 @@ export default async function ReviewsPage({ params, searchParams }: PageProps) {
     ratings: selectedRatings.length > 0 ? selectedRatings : undefined,
   };
 
-  // Fetch all necessary data
-  const [sellerAverageRating, ratingDistribution] = await Promise.all([
-    fetchAverageRating(Number(sellerId)),
-    fetchRatingDistribution(Number(sellerId)),
-  ]);
+  const [sellerAverageRating, ratingDistribution, reviewPage] =
+    await Promise.all([
+      fetchAverageRating(Number(sellerId)),
+      fetchRatingDistribution(Number(sellerId)),
+      fetchReviewsByReviewee(Number(sellerId), reviewSearchParams),
+    ]);
 
   return (
     <div className='my-3'>
@@ -99,14 +100,18 @@ export default async function ReviewsPage({ params, searchParams }: PageProps) {
             </div>
           </div>
 
-          <div className='lg:col-span-6'>
-            <Suspense fallback={<ReviewGridSkeleton />}>
-              <ReviewGrid
-                variant='for'
-                userId={Number(sellerId)}
-                searchParams={reviewSearchParams}
-              />
-            </Suspense>
+          <div className='flex flex-1 flex-col'>
+            <div className='flex-1, p-6 px-12'>
+              <Suspense fallback={<ReviewGridSkeleton />}>
+                <ReviewGrid variant='for' reviewPage={reviewPage} />
+              </Suspense>
+            </div>
+
+            <div className='mt-5 flex w-full justify-center pb-4'>
+              <Suspense>
+                <Pagination totalPages={reviewPage.pagination.totalPages} />
+              </Suspense>
+            </div>
           </div>
 
           <div className='lg:col-span-3'>
