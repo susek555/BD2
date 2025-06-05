@@ -53,12 +53,10 @@ func parseDate(date string) (time.Time, error) {
 	if err != nil {
 		return time.Time{}, err
 	}
-
 	t, err := time.ParseInLocation(formats.DateTimeLayout, date, loc)
 	if err != nil {
 		return time.Time{}, err
 	}
-
 	return t.UTC(), nil
 }
 
