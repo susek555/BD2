@@ -1863,7 +1863,7 @@ paths:
       summary: Get review by ID
       tags:
       - reviews
-  /review/{id}/average:
+  /review/average-rating/{id}:
     get:
       description: Returns the average rating value calculated over all reviews for
         the given reviewee.
@@ -1886,33 +1886,6 @@ paths:
           schema:
             $ref: '#/definitions/custom_errors.HTTPError'
       summary: Get average rating for a reviewee
-      tags:
-      - reviews
-  /review/{id}/frequency:
-    get:
-      description: Returns a map from rating value (1–5) to percentage frequency among
-        all reviews for the given reviewee.
-      operationId: getFrequencyOfRatingByRevieweeID
-      parameters:
-      - description: Reviewee ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK – percentage frequencies for ratings 1 through 5
-          schema:
-            additionalProperties:
-              type: integer
-            type: object
-        "400":
-          description: Bad Request – invalID ID format or query failed
-          schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
-      summary: Get distribution of ratings for a reviewee
       tags:
       - reviews
   /review/filter:
@@ -1941,6 +1914,33 @@ paths:
           schema:
             $ref: '#/definitions/custom_errors.HTTPError'
       summary: Filter reviews with pagination
+      tags:
+      - reviews
+  /review/frequency/{id}:
+    get:
+      description: Returns a map from rating value (1–5) to percentage frequency among
+        all reviews for the given reviewee.
+      operationId: getFrequencyOfRatingByRevieweeID
+      parameters:
+      - description: Reviewee ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK – percentage frequencies for ratings 1 through 5
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
+        "400":
+          description: Bad Request – invalID ID format or query failed
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Get distribution of ratings for a reviewee
       tags:
       - reviews
   /review/reviewee/{id}:
