@@ -36,6 +36,14 @@ type SaleOfferView struct {
 	BuyNowPrice        uint
 }
 
+func (v *SaleOfferView) GetID() uint {
+	return v.ID
+}
+
+func (v *SaleOfferView) IsAuctionOffer() bool {
+	return v.IsAuction
+}
+
 func (v *SaleOfferView) BelongsToUser(userID uint) bool {
 	return v.UserID == userID
 }
