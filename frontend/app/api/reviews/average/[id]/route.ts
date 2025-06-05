@@ -3,9 +3,9 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
-  // TODO uncomment once fixed on backend
-  // const response = await fetch(`${process.env.API_URL}/review/${id}/average`);
-  // const data = await response.json();
-  // return Response.json(data);
-  return Response.json(1);
+  const response = await fetch(
+    `${process.env.API_URL}/review/average-rating/${id}`,
+  );
+  const data = await response.json();
+  return Response.json(data);
 }
