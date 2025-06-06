@@ -141,6 +141,6 @@ func registerImageRoutes(router *gin.Engine) {
 func registerNotificationRoutes(router *gin.Engine) {
 	notificationRoutes := router.Group("/notification")
 	{
-		notificationRoutes.POST("/filtered", middleware.Authenticate(initializers.Verifier), initializers.NotificationHandler.GetFilteredNotifications)
+		notificationRoutes.POST("/filter", middleware.Authenticate(initializers.Verifier), initializers.NotificationHandler.GetFilteredNotifications)
 	}
 }
