@@ -24,7 +24,7 @@ func NewHandler(service NotificationServiceInterface) *Handler {
 // @Tags notification
 // @Accept json
 // @Produce json
-// @Body {object} NotificationFilter "Filter criteria for notifications"
+// @Param body body NotificationFilter true "Filter criteria for notifications"
 // @Security BearerAuth
 // @Success 200 {array} RetrieveNotificationsWithPagination "List of notifications"
 // @Failure 400 {object} custom_errors.HTTPError "Invalid body or bad request"
