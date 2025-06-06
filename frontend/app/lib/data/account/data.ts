@@ -1,5 +1,6 @@
 import { getServerSession } from 'next-auth';
 import { cache } from 'react';
+import { fetchWithRefresh } from '../../api/fetchWithRefresh';
 import { authConfig } from '../../authConfig';
 import { HistoryOffer, SaleOffer } from '../../definitions/SaleOffer';
 import { SearchParams } from '../../definitions/SearchParams';
@@ -105,12 +106,16 @@ export async function getFavorites(
     total_records: number;
   };
 }> {
-  const url = `${process.env.URL}/api/account/favorites`;
-
-  const response = await fetch(url, {
-    method: 'POST',
-    body: JSON.stringify(params),
-  });
+  const response = await fetchWithRefresh(
+    `${process.env.API_URL}/sale-offer/filtered`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(params),
+    },
+  );
 
   if (!response.ok) {
     throw new Error('Failed to fetch favorite offers');
