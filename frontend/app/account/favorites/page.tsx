@@ -58,17 +58,19 @@ export default async function FavoritesPage(props: {
       </div>
       <div className='flex-grow p-6 md:px-12 md:py-8'>
         <Suspense fallback={<OffersFoundSkeleton />}>
-          <FoundInfo title={'Offers found'} totalOffers={totalOffers} />
+          <FoundInfo title={'Favorites found'} totalOffers={totalOffers} />
         </Suspense>
         <div className='my-4' />
         <Suspense fallback={<OffersTableSkeleton />}>
           <OffersTable offers={offers} />
         </Suspense>
-        <div className='mt-5 flex w-full justify-center'>
-          <Suspense>
-            <Pagination totalPages={totalPages} />
-          </Suspense>
-        </div>
+        {totalOffers !== 0 && (
+          <div className='mt-5 flex w-full justify-center'>
+            <Suspense>
+              <Pagination totalPages={totalPages} />
+            </Suspense>
+          </div>
+        )}
       </div>
     </div>
   );
