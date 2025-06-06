@@ -1413,6 +1413,98 @@ const docTemplate = `{
                 }
             }
         },
+        "/notifications/seen/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates the seen status of a specific notification to true for the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notifications"
+                ],
+                "summary": "Mark notification as seen",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Notification ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Status OK"
+                    },
+                    "400": {
+                        "description": "Bad Request - Invalid notification ID or update failed",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/notifications/{id}/unseen": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates the seen status of a notification to unseen for the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notifications"
+                ],
+                "summary": "Mark notification as unseen",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Notification ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/review": {
             "get": {
                 "description": "Returns every review in the system as an array of DTOs.",
