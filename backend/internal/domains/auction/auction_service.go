@@ -8,10 +8,12 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
 )
 
+//go:generate mockery --name=PurchaseCreatorInterface --output=../../test/mocks --case=snake --with-expecter
 type PurchaseCreatorInterface interface {
 	Create(purchase *models.Purchase) error
 }
 
+//go:generate mockery --name=SaleOfferServiceInterface --output=../../test/mocks --case=snake --with-expecter
 type SaleOfferServiceInterface interface {
 	PrepareForCreateSaleOffer(in *sale_offer.CreateSaleOfferDTO) (*models.SaleOffer, error)
 	PrepareForUpdateSaleOffer(in *sale_offer.UpdateSaleOfferDTO, userID uint) (*models.SaleOffer, error)
@@ -64,11 +66,11 @@ func (s *AuctionService) Update(in *UpdateAuctionDTO, userID uint) (*sale_offer.
 	if err != nil {
 		return nil, err
 	}
-	updatedAuction, err := s.PrepareForUpdateAuction(in, updatedOffer.Auction)
+	updatedAuction, err := s.PrepareForUpdateAuction(in, updatedOffer)
 	if err != nil {
 		return nil, err
 	}
-	updatedOffer.Auction = updatedAuction
+	updatedOffer = updatedAuction
 	if err := s.saleOfferRepo.Update(updatedOffer); err != nil {
 		return nil, err
 	}
@@ -121,7 +123,7 @@ func (s *AuctionService) PrepareForCreateAuction(in *CreateAuctionDTO) (*models.
 	return auction, nil
 }
 
-func (s *AuctionService) PrepareForUpdateAuction(in *UpdateAuctionDTO, auction *models.Auction) (*models.Auction, error) {
+func (s *AuctionService) PrepareForUpdateAuction(in *UpdateAuctionDTO, auction *models.SaleOffer) (*models.SaleOffer, error) {
 	updatedAuction, err := in.UpdatedAuctionFromDTO(auction)
 	if err != nil {
 		return nil, err
