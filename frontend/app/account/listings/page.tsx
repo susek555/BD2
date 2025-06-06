@@ -1,12 +1,14 @@
 import { fetchListings } from '@/app/lib/data/account/data';
-import {
-  parseFiltersParams
-} from '@/app/lib/definitions/SearchParams';
-import UsersListingsTable from '@/app/ui/account/listings/user-listings-table';
+import { parseFiltersParams } from '@/app/lib/definitions/SearchParams';
 import FoundInfo from '@/app/ui/(common)/found-info';
-import Pagination from '@/app/ui/(offers-table)/pagination';
 import SideBar from '@/app/ui/(filters-sidebar)/sidebar';
-import { OffersFoundSkeleton, OffersTableSkeleton, SideBarSkeleton } from '@/app/ui/skeletons';
+import Pagination from '@/app/ui/(offers-table)/pagination';
+import UsersListingsTable from '@/app/ui/account/listings/user-listings-table';
+import {
+  OffersFoundSkeleton,
+  OffersTableSkeleton,
+  SideBarSkeleton,
+} from '@/app/ui/skeletons';
 import { PlusIcon } from '@heroicons/react/20/solid';
 import Link from 'next/link';
 import { Suspense } from 'react';
@@ -54,7 +56,7 @@ export default async function ListingsPage(props: {
       <div className='flex-grow p-6 md:px-12 md:py-8'>
         <div className='flex w-full items-center justify-between'>
           <Suspense fallback={<OffersFoundSkeleton />}>
-            <FoundInfo title={"Offers found"} totalOffers={totalOffers} />
+            <FoundInfo title={'Offers found'} totalOffers={totalOffers} />
           </Suspense>
           <Link
             href='/listing/create' // TODO add actual creeate redirect
@@ -68,11 +70,13 @@ export default async function ListingsPage(props: {
         <Suspense fallback={<OffersTableSkeleton />}>
           <UsersListingsTable offers={offers} />
         </Suspense>
-        <div className='mt-5 flex w-full justify-center'>
-          <Suspense>
-            <Pagination totalPages={totalPages} />
-          </Suspense>
-        </div>
+        {totalOffers !== 0 && (
+          <div className='mt-5 flex w-full justify-center'>
+            <Suspense>
+              <Pagination totalPages={totalPages} />
+            </Suspense>
+          </div>
+        )}
       </div>
     </div>
   );
