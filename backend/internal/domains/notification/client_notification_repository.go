@@ -16,6 +16,7 @@ type ClientNotificationRepositoryInterface interface {
 	GetAllCountByUserId(userId uint) (uint, error)
 	GetFiltered(filter *NotificationFilter) ([]models.ClientNotification, *pagination.PaginationResponse, error)
 	UpdateSeenStatus(notificationID, userID uint, seen bool) error
+	UpdateSeenStatusForAll(userID uint, seen bool) error
 }
 
 type ClientNotificationRepository struct {
@@ -125,6 +126,17 @@ func (r *ClientNotificationRepository) UpdateSeenStatus(notificationID, userID u
 	db := r.DB
 	err := db.Model(&models.ClientNotification{}).
 		Where("notification_id = ? AND user_id = ?", notificationID, userID).
+		Update("seen", seen).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *ClientNotificationRepository) UpdateSeenStatusForAll(userID uint, seen bool) error {
+	db := r.DB
+	err := db.Model(&models.ClientNotification{}).
+		Where("user_id = ?", userID).
 		Update("seen", seen).Error
 	if err != nil {
 		return err
