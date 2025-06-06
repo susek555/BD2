@@ -35,7 +35,7 @@ func (h *Handler) GetAllUsers(c *gin.Context) {
 	c.JSON(http.StatusOK, userDTOs)
 }
 
-// GetUserById godoc
+// GetUserByID godoc
 //
 //	@Summary		Get user by id
 //	@Description	Returns user who has provided id. If user's subtype is person the company related fields will be omitted and vice versa.
@@ -48,13 +48,13 @@ func (h *Handler) GetAllUsers(c *gin.Context) {
 //	@Failure		404	{object}	custom_errors.HTTPError	"User not found"
 //	@Failure		500	{object}	custom_errors.HTTPError	"Internal server error"
 //	@Router			/users/id/{id} [get]
-func (h *Handler) GetUserById(c *gin.Context) {
+func (h *Handler) GetUserByID(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
-	userDTO, err := h.service.GetById(uint(id))
+	userDTO, err := h.service.GetByID(uint(id))
 	if err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
@@ -91,9 +91,11 @@ func (h *Handler) GetUserByEmail(c *gin.Context) {
 //	@Tags			users
 //	@Accept			json
 //	@Produce		json
-//	@Param			body	body		UpdateUserDTO			true	"Update form"
-//	@Success		200		{object}	UpdateUserDTO			"User updated"
+//	@Param			body	body		UpdateUserDTO	true	"Update form"
+//	@Success		200		{object}	UpdateUserDTO	"User updated"
 //	@Failure		400		{object}	UpdateResponse	"Invalid input data - email, username or nip taken"
+//	@Failure		401		{object}	UpdateResponse	"Unauthorized - user be logged in to update his data"
+//	@Failure		403		{object}	UpdateResponse	"Forbidden - user can only update his own data"
 //	@Failure		404		{object}	UpdateResponse	"User not found"
 //	@Failure		500		{object}	UpdateResponse	"Internal server error"
 //	@Router			/users [put]
@@ -133,6 +135,8 @@ func (h *Handler) UpdateUser(c *gin.Context) {
 //	@Param			id	path	int	true	"User ID"
 //	@Success		204	"User successfully deleted"
 //	@Failure		400	{object}	custom_errors.HTTPError	"ID is not a number"
+//	@Failure		401	{object}	custom_errors.HTTPError	"Unauthorized - user must be logged in to delete his account"
+//	@Failure		403	{object}	custom_errors.HTTPError	"Forbidden - user can only delete his own account"
 //	@Failure		404	{object}	custom_errors.HTTPError	"User not found"
 //	@Failure		500	{object}	custom_errors.HTTPError	"Internal server error"
 //	@Router			/users/{id} [delete]
@@ -146,7 +150,7 @@ func (h *Handler) DeleteUser(c *gin.Context) {
 	}
 	userID, ok := c.Get("userID")
 	if !ok || userID != uint(id) {
-		custom_errors.HandleError(c, ErrForbidden, ErrorMap)
+		custom_errors.HandleError(c, ErrInvalidUserID, ErrorMap)
 		return
 	}
 	err = h.service.Delete(uint(id))

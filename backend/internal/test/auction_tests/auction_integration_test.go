@@ -8,15 +8,19 @@ import (
 	"testing"
 	"time"
 
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
-	"github.com/susek555/BD2/car-dealer-api/internal/test/mocks"
-
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auction"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/bid"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/image"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/liked_offer"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
+	"github.com/susek555/BD2/car-dealer-api/internal/enums"
+	"github.com/susek555/BD2/car-dealer-api/internal/models"
+	"github.com/susek555/BD2/car-dealer-api/internal/test/mocks"
 	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
 	"github.com/susek555/BD2/car-dealer-api/pkg/middleware"
 	"gorm.io/driver/postgres"
@@ -72,7 +76,16 @@ func setupDB(manufacturers []models.Manufacturer, models_ []models.Model, cars [
 	}
 
 	repo := auction.NewAuctionRepository(db)
-	service := auction.NewAuctionService(repo)
+	bidRepo := bid.NewBidRepository(db)
+	likedOfferRepo := liked_offer.NewLikedOfferRepository(db)
+	saleOfferService := sale_offer.NewSaleOfferService(
+		sale_offer.NewSaleOfferRepository(db),
+		manufacturer.NewManufacturerRepository(db),
+		model.NewModelRepository(db),
+		image.NewImageRepository(db),
+		sale_offer.NewAccessEvaluator(bidRepo, likedOfferRepo),
+	)
+	service := auction.NewAuctionService(repo, saleOfferService.(*sale_offer.SaleOfferService))
 	return service, nil
 }
 
@@ -90,19 +103,27 @@ func newTestServer(seedManufacturers []models.Manufacturer, seedModels []models.
 			mock.AnythingOfType("time.Time"), // termin zakończenia
 		).
 		Return(nil)
-	auctionHandler := auction.NewHandler(service, ms)
+	mh := new(mocks.HubInterface)
+	mh.
+		On("SubscribeUser",
+			mock.AnythingOfType("string"), // user ID
+			mock.AnythingOfType("string"), // auction ID
+		).
+		Return(nil)
+	mn := new(mocks.NotificationServiceInterface)
+	auctionHandler := auction.NewHandler(service, ms, mh, mn)
 	auctionRoutes := r.Group("/auction")
 	auctionRoutes.GET("/", auctionHandler.GetAllAuctions)
-	auctionRoutes.GET("/:id", auctionHandler.GetAuctionById)
+	auctionRoutes.GET("/:id", auctionHandler.GetAuctionByID)
 	auctionRoutes.POST("/", middleware.Authenticate(verifier), auctionHandler.CreateAuction)
 	auctionRoutes.PUT("/", middleware.Authenticate(verifier), auctionHandler.UpdateAuction)
-	auctionRoutes.DELETE("/:id", middleware.Authenticate(verifier), auctionHandler.DeleteAuctionById)
+	auctionRoutes.DELETE("/:id", middleware.Authenticate(verifier), auctionHandler.DeleteAuctionByID)
 	return r, service, nil
 }
 
-func getValidToken(userId uint, email string) (string, error) {
+func getValidToken(userID uint, email string) (string, error) {
 	secret := []byte("secret")
-	return jwt.GenerateToken(email, int64(userId), secret, time.Now().Add(1*time.Hour))
+	return jwt.GenerateToken(email, int64(userID), secret, time.Now().Add(1*time.Hour))
 }
 
 func TestCreateAuctionNoAuthHeader(t *testing.T) {
@@ -199,14 +220,15 @@ func TestCreateAuctionSuccess(t *testing.T) {
 			EngineCapacity:     2000,
 			RegistrationNumber: "ABC123",
 			RegistrationDate:   "2023-10-01",
-			Color:              car_params.ORANGE,
-			FuelType:           car_params.PETROL,
-			Transmission:       car_params.MANUAL,
+			Color:              enums.ORANGE,
+			FuelType:           enums.PETROL,
+			Transmission:       enums.MANUAL,
 			NumberOfGears:      6,
-			Drive:              car_params.FWD,
-			ModelID:            1,
+			Drive:              enums.FWD,
+			ManufacturerName:   "Toyota",
+			ModelName:          "Corolla",
 		},
-		DateEnd:     "15:04 02/01/2026",
+		DateEnd:     "15:04 2026-02-01",
 		BuyNowPrice: 12000,
 	}
 	auctionInputJSON, err := json.Marshal(auctionInput)
@@ -280,14 +302,15 @@ func TestCreateAuctionInvalidDate(t *testing.T) {
 			EngineCapacity:     2000,
 			RegistrationNumber: "ABC123",
 			RegistrationDate:   "2023-10-01",
-			Color:              car_params.ORANGE,
-			FuelType:           car_params.PETROL,
-			Transmission:       car_params.MANUAL,
+			Color:              enums.ORANGE,
+			FuelType:           enums.PETROL,
+			Transmission:       enums.MANUAL,
 			NumberOfGears:      6,
-			Drive:              car_params.FWD,
-			ModelID:            1,
+			Drive:              enums.FWD,
+			ManufacturerName:   "Toyota",
+			ModelName:          "Corolla",
 		},
-		DateEnd:     "15:04 02/01/2025",
+		DateEnd:     "15:04 2023-01-01",
 		BuyNowPrice: 12000,
 	}
 	auctionInputJSON, err := json.Marshal(auctionInput)
@@ -355,12 +378,13 @@ func TestCreateAuctionInvalidDateFormat(t *testing.T) {
 			EngineCapacity:     2000,
 			RegistrationNumber: "ABC123",
 			RegistrationDate:   "2023-10-01",
-			Color:              car_params.ORANGE,
-			FuelType:           car_params.PETROL,
-			Transmission:       car_params.MANUAL,
+			Color:              enums.ORANGE,
+			FuelType:           enums.PETROL,
+			Transmission:       enums.MANUAL,
 			NumberOfGears:      6,
-			Drive:              car_params.FWD,
-			ModelID:            1,
+			Drive:              enums.FWD,
+			ManufacturerName:   "Toyota",
+			ModelName:          "Corolla",
 		},
 		DateEnd:     "25:04 02/01/2025",
 		BuyNowPrice: 12000,

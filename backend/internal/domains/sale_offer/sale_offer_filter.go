@@ -4,7 +4,7 @@ import (
 	"slices"
 	"time"
 
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
+	"github.com/susek555/BD2/car-dealer-api/internal/enums"
 	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
 	"gorm.io/gorm"
 )
@@ -13,10 +13,10 @@ import (
 
 var OrderKeysMap = map[string]string{
 	"Price":           "price",
-	"Mileage":         "cars.mileage",
-	"Production year": "cars.production_year",
-	"Engine power":    "cars.engine_power",
-	"Engine capacity": "cars.engine_capacity",
+	"Mileage":         "mileage",
+	"Production year": "production_year",
+	"Engine power":    "engine_power",
+	"Engine capacity": "engine_capacity",
 	"Date of issue":   "date_of_issue"}
 
 type MinMax[T uint | string | time.Time] struct {
@@ -27,43 +27,51 @@ type MinMax[T uint | string | time.Time] struct {
 type FieldsConstraints struct {
 	OfferTypes    []OfferType
 	Manufacturers []string
-	Colors        []car_params.Color
-	Drives        []car_params.Drive
-	FuelTypes     []car_params.FuelType
-	Transmissions []car_params.Transmission
+	Colors        []enums.Color
+	Drives        []enums.Drive
+	FuelTypes     []enums.FuelType
+	Transmissions []enums.Transmission
 }
 
 type OfferFilter struct {
-	Pagination               pagination.PaginationRequest `json:"pagination"`
-	UserID                   *uint                        `json:"user_id"`
-	Query                    *string                      `json:"query"`
-	OrderKey                 *string                      `json:"order_key"`
-	IsOrderDesc              *bool                        `json:"is_order_desc"`
-	LikedOnly                *bool                        `json:"liked_only"`
-	OfferType                *OfferType                   `json:"offer_type"`
-	Manufacturers            *[]string                    `json:"manufacturers"`
-	Colors                   *[]car_params.Color          `json:"colors"`
-	Drives                   *[]car_params.Drive          `json:"drives"`
-	FuelTypes                *[]car_params.FuelType       `json:"fuel_types"`
-	Transmissions            *[]car_params.Transmission   `json:"transmissions"`
-	PriceRange               *MinMax[uint]                `json:"price_range"`
-	MileageRange             *MinMax[uint]                `json:"mileage_range"`
-	YearRange                *MinMax[uint]                `json:"year_range"`
-	EnginePowerRange         *MinMax[uint]                `json:"engine_power_range"`
-	EngineCapacityRange      *MinMax[uint]                `json:"engine_capacity_range"`
-	CarRegistrationDateRange *MinMax[string]              `json:"car_registration_date_range"`
-	OfferCreationDateRange   *MinMax[string]              `json:"offer_creation_date_range"`
-	Constraints              FieldsConstraints            `json:"-"`
+	UserID                   *uint                 `json:"user_id"`
+	Query                    *string               `json:"query"`
+	OrderKey                 *string               `json:"order_key"`
+	IsOrderDesc              *bool                 `json:"is_order_desc"`
+	LikedOnly                *bool                 `json:"liked_only"`
+	OfferType                *OfferType            `json:"offer_type"`
+	Manufacturers            *[]string             `json:"manufacturers"`
+	Colors                   *[]enums.Color        `json:"colors"`
+	Drives                   *[]enums.Drive        `json:"drives"`
+	FuelTypes                *[]enums.FuelType     `json:"fuel_types"`
+	Transmissions            *[]enums.Transmission `json:"transmissions"`
+	PriceRange               *MinMax[uint]         `json:"price_range"`
+	MileageRange             *MinMax[uint]         `json:"mileage_range"`
+	YearRange                *MinMax[uint]         `json:"year_range"`
+	EnginePowerRange         *MinMax[uint]         `json:"engine_power_range"`
+	EngineCapacityRange      *MinMax[uint]         `json:"engine_capacity_range"`
+	CarRegistrationDateRange *MinMax[string]       `json:"car_registration_date_range"`
+	OfferCreationDateRange   *MinMax[string]       `json:"offer_creation_date_range"`
+	Constraints              FieldsConstraints     `json:"-"`
+}
+
+type OfferFilterRequest struct {
+	PagRequest pagination.PaginationRequest `json:"pagination"`
+	Filter     OfferFilter                  `json:"filter"`
 }
 
 func NewOfferFilter() *OfferFilter {
 	return &OfferFilter{Constraints: FieldsConstraints{
 		OfferTypes:    OfferTypes,
-		Colors:        car_params.Colors,
-		Drives:        car_params.Drives,
-		FuelTypes:     car_params.Types,
-		Transmissions: car_params.Transmissions,
+		Colors:        enums.Colors,
+		Drives:        enums.Drives,
+		FuelTypes:     enums.Types,
+		Transmissions: enums.Transmissions,
 	}}
+}
+
+func NewOfferFilterRequest() *OfferFilterRequest {
+	return &OfferFilterRequest{Filter: *NewOfferFilter()}
 }
 
 func (of *OfferFilter) ApplyOfferFilters(query *gorm.DB) (*gorm.DB, error) {
@@ -73,17 +81,17 @@ func (of *OfferFilter) ApplyOfferFilters(query *gorm.DB) (*gorm.DB, error) {
 	query = applyUserFilter(query, of.UserID)
 	query = applyOfferTypeFilter(query, of.OfferType)
 	query = applyLikedOnlyFilter(query, of.LikedOnly, of.UserID)
-	query = applyManufacturersFilter(query, of.Manufacturers)
-	query = applyInSliceFilter(query, "cars.color", of.Colors)
-	query = applyInSliceFilter(query, "cars.drive", of.Drives)
-	query = applyInSliceFilter(query, "cars.fuel_type", of.FuelTypes)
-	query = applyInSliceFilter(query, "cars.transmission", of.Transmissions)
+	query = applyInSliceFilter(query, "brand", of.Manufacturers)
+	query = applyInSliceFilter(query, "color", of.Colors)
+	query = applyInSliceFilter(query, "drive", of.Drives)
+	query = applyInSliceFilter(query, "fuel_type", of.FuelTypes)
+	query = applyInSliceFilter(query, "transmission", of.Transmissions)
 	query = applyInRangeFilter(query, "price", of.PriceRange)
-	query = applyInRangeFilter(query, "cars.mileage", of.MileageRange)
-	query = applyInRangeFilter(query, "cars.production_year", of.YearRange)
-	query = applyInRangeFilter(query, "cars.engine_power", of.EnginePowerRange)
-	query = applyInRangeFilter(query, "cars.engine_capacity", of.EngineCapacityRange)
-	query = applyDateInRangeFilter(query, "cars.registration_date", of.CarRegistrationDateRange)
+	query = applyInRangeFilter(query, "mileage", of.MileageRange)
+	query = applyInRangeFilter(query, "production_year", of.YearRange)
+	query = applyInRangeFilter(query, "engine_power", of.EnginePowerRange)
+	query = applyInRangeFilter(query, "engine_capacity", of.EngineCapacityRange)
+	query = applyDateInRangeFilter(query, "registration_date", of.CarRegistrationDateRange)
 	query = applyDateInRangeFilter(query, "date_of_issue", of.OfferCreationDateRange)
 	query = applyOrderFilter(query, of.OrderKey, of.IsOrderDesc)
 	return query, nil
@@ -91,7 +99,7 @@ func (of *OfferFilter) ApplyOfferFilters(query *gorm.DB) (*gorm.DB, error) {
 
 func applyUserFilter(query *gorm.DB, userID *uint) *gorm.DB {
 	if userID != nil {
-		query = query.Where("sale_offers.user_id != ?", *userID)
+		query = query.Where("user_id != ?", *userID)
 	}
 	return query
 }
@@ -101,29 +109,20 @@ func applyOfferTypeFilter(query *gorm.DB, offerType *OfferType) *gorm.DB {
 		return query
 	}
 	switch *offerType {
-	case AUCTION:
-		return query.Where("auctions.offer_id IS NOT NULL")
 	case REGULAR_OFFER:
-		return query.Where("auctions.offer_id IS NULL")
+		return query.Where("is_auction IS FALSE")
+	case AUCTION:
+		return query.Where("is_auction IS TRUE")
 	default:
 		return query
 	}
 }
 
-func applyManufacturersFilter(query *gorm.DB, values *[]string) *gorm.DB {
-	if values != nil && len(*values) > 0 {
-		query = query.
-			Joins("JOIN models ON models.id = cars.model_id").
-			Joins("JOIN manufacturers ON manufacturers.id = models.manufacturer_id").
-			Where("manufacturers.name IN ?", *values)
-	}
-	return query
-}
-
+// TODO write tests
 func applyLikedOnlyFilter(query *gorm.DB, likedOnly *bool, userID *uint) *gorm.DB {
 	if likedOnly != nil && userID != nil {
 		query = query.
-			Joins("JOIN liked_offers ON liked_offers.offer_id = sale_offers.id").
+			Joins("JOIN liked_offers ON liked_offers.offer_id = sale_offer_view.id").
 			Where("liked_offers.user_id = ?", *userID)
 	}
 	return query
@@ -204,7 +203,7 @@ func (of *OfferFilter) validateEnums() error {
 func (of *OfferFilter) validateRanges() error {
 	ranges := []*MinMax[uint]{of.PriceRange, of.YearRange, of.MileageRange, of.EnginePowerRange, of.EngineCapacityRange}
 	for _, r := range ranges {
-		if r != nil && !areMinMaxValidNumbers(*r) {
+		if r != nil && !isMinMaxValidNumbers(*r) {
 			return ErrInvalidRange
 		}
 	}
@@ -260,7 +259,7 @@ func parseDateRange(minmax *MinMax[string]) (*MinMax[time.Time], error) {
 	return &MinMax[time.Time]{Min: minValue, Max: maxValue}, nil
 }
 
-func areMinMaxValidNumbers(minmax MinMax[uint]) bool {
+func isMinMaxValidNumbers(minmax MinMax[uint]) bool {
 	if minmax.Min != nil && minmax.Max != nil {
 		return *minmax.Max > *minmax.Min
 	}

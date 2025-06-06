@@ -15,4 +15,3 @@ RUN cd /tmp && \
     make && \
     make install
 
-COPY init-pg-ivm.sql /docker-entrypoint-initdb.d/00-init-pg-ivm.sql

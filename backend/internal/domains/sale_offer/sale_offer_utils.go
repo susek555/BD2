@@ -3,12 +3,12 @@ package sale_offer
 import (
 	"slices"
 	"time"
+
+	"github.com/susek555/BD2/car-dealer-api/pkg/formats"
 )
 
-var LAYOUT = "2006-01-02"
-
 func ParseDate(date string) (*time.Time, error) {
-	t, err := time.Parse(LAYOUT, date)
+	t, err := time.Parse(formats.DateLayout, date)
 	if err != nil {
 		return nil, err
 	}

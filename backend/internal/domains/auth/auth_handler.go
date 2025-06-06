@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
+	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"github.com/susek555/BD2/car-dealer-api/pkg/custom_errors"
 )
 
@@ -99,7 +100,7 @@ func prepareLoginResponse(access, refresh string, user models.User) *LoginRespon
 	}
 	if user.Selector == "C" {
 		loginResponse.CompanyName = user.Company.Name
-		loginResponse.CompanyNip = user.Company.NIP
+		loginResponse.CompanyNip = user.Company.Nip
 	} else if user.Selector == "P" {
 		loginResponse.PersonName = user.Person.Name
 		loginResponse.PersonSurname = user.Person.Surname
@@ -155,13 +156,13 @@ func (h *Handler) Logout(c *gin.Context) {
 		return
 	}
 
-	userId, ok := c.Get("userID")
+	userID, ok := c.Get("userID")
 	if !ok {
 		custom_errors.HandleError(c, ErrUnauthorized, ErrorMap)
 		return
 	}
 
-	if err := h.Service.Logout(c, userId.(uint), req.RefreshToken, req.AllDevices); err != nil {
+	if err := h.Service.Logout(c, userID.(uint), req.RefreshToken, req.AllDevices); err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
@@ -169,18 +170,19 @@ func (h *Handler) Logout(c *gin.Context) {
 }
 
 // ChangePassword godoc
-// @Summary Change user password
-// @Description Changes the password of the authenticated user
-// @Tags auth
-// @Accept json
-// @Produce json
-// @Param Authorization header string true "Bearer token"
-// @Param request body ChangePasswordDTO true "Password change details"
-// @Success 200 "Password successfully changed"
-// @Failure 400 {object} ChangePasswordResponse "Invalid request or password validation failed"
-// @Failure 401 {object} ChangePasswordResponse "Unauthorized access"
-// @Router /auth/change-password [put]
-// @Security Bearer
+//
+//	@Summary		Change user password
+//	@Description	Changes the password of the authenticated user
+//	@Tags			auth
+//	@Accept			json
+//	@Produce		json
+//	@Param			Authorization	header	string				true	"Bearer token"
+//	@Param			request			body	ChangePasswordDTO	true	"Password change details"
+//	@Success		200				"Password successfully changed"
+//	@Failure		400				{object}	ChangePasswordResponse	"Invalid request or password validation failed"
+//	@Failure		401				{object}	ChangePasswordResponse	"Unauthorized access"
+//	@Router			/auth/change-password [put]
+//	@Security		Bearer
 func (h *Handler) ChangePassword(c *gin.Context) {
 	var req ChangePasswordDTO
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -188,13 +190,13 @@ func (h *Handler) ChangePassword(c *gin.Context) {
 		return
 	}
 
-	userId, err := GetUserId(c)
+	userID, err := GetUserID(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, ChangePasswordResponse{Errors: map[string][]string{"other": {ErrUnauthorized.Error()}}})
 		return
 	}
 
-	errors := h.Service.ChangePassword(c, userId, req.OldPassword, req.NewPassword)
+	errors := h.Service.ChangePassword(c, userID, req.OldPassword, req.NewPassword)
 	if len(errors) > 0 {
 		c.JSON(http.StatusBadRequest, ChangePasswordResponse{Errors: errors})
 		return

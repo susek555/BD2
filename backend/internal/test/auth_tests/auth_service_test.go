@@ -6,18 +6,15 @@ import (
 	"testing"
 	"time"
 
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
-
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/auth"
-
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/auth"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
+	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"github.com/susek555/BD2/car-dealer-api/internal/test/mocks"
 	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
-	"gorm.io/gorm"
-
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
 	"github.com/susek555/BD2/car-dealer-api/pkg/passwords"
+	"gorm.io/gorm"
 )
 
 var jwtKey = []byte("test-secret")
@@ -76,14 +73,14 @@ func TestService_Register_Company(t *testing.T) {
 		ctx := context.Background()
 		uRepo := mocks.NewUserRepositoryInterface(t)
 		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
-		company := models.Company{Name: "Awesome Name", NIP: "123233234234"}
+		company := models.Company{Name: "Awesome Name", Nip: "123233234234"}
 
 		in := user.CreateUserDTO{
 			Email:       "john@example.com",
 			Password:    "secret",
 			Username:    "john",
 			CompanyName: &company.Name,
-			CompanyNIP:  &company.NIP,
+			CompanyNIP:  &company.Nip,
 			Selector:    "C",
 		}
 
@@ -199,9 +196,9 @@ func TestService_Refresh(t *testing.T) {
 	baseRT := models.RefreshToken{
 		ID:         101,
 		Token:      oldToken,
-		UserId:     1,
+		UserID:     1,
 		ExpiryDate: time.Now().Add(24 * time.Hour),
-		User:       models.User{ID: 1, Email: "john@example.com"},
+		User:       &models.User{ID: 1, Email: "john@example.com"},
 	}
 
 	t.Run("happy‑path – returns new access", func(t *testing.T) {
@@ -263,7 +260,7 @@ func TestService_Logout(t *testing.T) {
 		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
 
 		rtSvc.EXPECT().
-			DeleteByUserId(userID).
+			DeleteByUserID(userID).
 			Return(nil)
 
 		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
@@ -314,7 +311,7 @@ func TestService_Logout(t *testing.T) {
 		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
 
 		rtSvc.EXPECT().
-			DeleteByUserId(userID).
+			DeleteByUserID(userID).
 			Return(errors.New("db down"))
 		rtSvc.EXPECT().FindByToken(rt.Token).Return(&rt, nil)
 

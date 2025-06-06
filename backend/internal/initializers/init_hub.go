@@ -2,13 +2,14 @@ package initializers
 
 import (
 	"context"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/auctionws"
+
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/ws"
 )
 
-var Hub *auctionws.Hub
+var Hub ws.HubInterface
 
 func InitializeHub() {
-	Hub = auctionws.NewHub()
+	Hub = ws.NewHub(ClientNotificationRepo, DB)
 	go Hub.Run()
 	ctx := context.Background()
 	Hub.StartRedisFanIn(ctx, RedisClient)

@@ -8,13 +8,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
-
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auth"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/refresh_token"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
+	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
 	"github.com/susek555/BD2/car-dealer-api/pkg/middleware"
 	"github.com/susek555/BD2/car-dealer-api/pkg/passwords"
@@ -68,9 +67,9 @@ func newTestServer(seedUsers []models.User, refreshTokens []models.RefreshToken)
 	return r, h, rtSvc, nil
 }
 
-func getValidToken(userId uint, email string) (string, error) {
+func getValidToken(userID uint, email string) (string, error) {
 	secret := []byte("secret")
-	return jwt.GenerateToken(email, int64(userId), secret, time.Now().Add(1*time.Hour))
+	return jwt.GenerateToken(email, int64(userID), secret, time.Now().Add(1*time.Hour))
 }
 func TestRegisterPersonSuccess(t *testing.T) {
 	gin.SetMode(gin.TestMode)
@@ -238,7 +237,7 @@ func TestRegisterCompanyEmailAlreadyExists(t *testing.T) {
 			Selector: "C",
 			Company: &models.Company{
 				Name: "Herakles",
-				NIP:  "1234567890",
+				Nip:  "1234567890",
 			},
 		},
 	}
@@ -277,7 +276,7 @@ func TestRegisterCompanyUsernameAlreadyExists(t *testing.T) {
 			Selector: "C",
 			Company: &models.Company{
 				Name: "Herakles",
-				NIP:  "1234567890",
+				Nip:  "1234567890",
 			},
 		},
 	}
@@ -316,7 +315,7 @@ func TestRegisterCompanyNipAlreadyExists(t *testing.T) {
 			Selector: "C",
 			Company: &models.Company{
 				Name: "Herakles",
-				NIP:  "1234567890",
+				Nip:  "1234567890",
 			},
 		},
 	}
@@ -504,7 +503,7 @@ func TestRefreshSuccess(t *testing.T) {
 	}
 	seedRefreshTokens := []models.RefreshToken{
 		{
-			UserId:     1,
+			UserID:     1,
 			Token:      "valid_refresh_token",
 			ExpiryDate: time.Now().Add(30 * 24 * time.Hour),
 		},
@@ -526,7 +525,6 @@ func TestRefreshSuccess(t *testing.T) {
 	err = json.Unmarshal(w.Body.Bytes(), &response)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, response["access_token"])
-
 }
 
 func TestRefreshInvalidToken(t *testing.T) {
@@ -568,7 +566,7 @@ func TestRefreshExpiredToken(t *testing.T) {
 	}
 	seedRefreshTokens := []models.RefreshToken{
 		{
-			UserId:     1,
+			UserID:     1,
 			Token:      "expired_refresh_token",
 			ExpiryDate: time.Now().Add(-30 * 24 * time.Hour),
 		},
@@ -631,7 +629,7 @@ func TestLogoutSuccess(t *testing.T) {
 	}
 	seedRefreshTokens := []models.RefreshToken{
 		{
-			UserId:     1,
+			UserID:     1,
 			Token:      "valid_refresh_token",
 			ExpiryDate: time.Now().Add(30 * 24 * time.Hour),
 		},
@@ -779,17 +777,17 @@ func TestLogoutAllDevicesSuccess(t *testing.T) {
 	}
 	seedRefreshTokens := []models.RefreshToken{
 		{
-			UserId:     1,
+			UserID:     1,
 			Token:      "valid_refresh_token",
 			ExpiryDate: time.Now().Add(30 * 24 * time.Hour),
 		},
 		{
-			UserId:     1,
+			UserID:     1,
 			Token:      "valid_refresh_token_2",
 			ExpiryDate: time.Now().Add(30 * 24 * time.Hour),
 		},
 		{
-			UserId:     2,
+			UserID:     2,
 			Token:      "valid_refresh_token_3",
 			ExpiryDate: time.Now().Add(30 * 24 * time.Hour),
 		},
@@ -812,14 +810,14 @@ func TestLogoutAllDevicesSuccess(t *testing.T) {
 	w := httptest.NewRecorder()
 	server.ServeHTTP(w, req)
 	assert.Equal(t, wantStatus, w.Code)
-	user1Tokens, err := rtSvc.FindByUserId(1)
+	user1Tokens, err := rtSvc.FindByUserID(1)
 	assert.NoError(t, err)
 	assert.Len(t, user1Tokens, 0)
-	users2Tokens, err := rtSvc.FindByUserId(2)
+	users2Tokens, err := rtSvc.FindByUserID(2)
 	assert.NoError(t, err)
 	assert.Len(t, users2Tokens, 1)
 	assert.Equal(t, "valid_refresh_token_3", users2Tokens[0].Token)
-	assert.Equal(t, uint(2), users2Tokens[0].UserId)
+	assert.Equal(t, uint(2), users2Tokens[0].UserID)
 }
 
 func TestLogoutAllDevicesNoHeader(t *testing.T) {
@@ -862,7 +860,7 @@ func TestLogoutAllDevicesNonExistingToken(t *testing.T) {
 	}
 	seedRefreshTokens := []models.RefreshToken{
 		{
-			UserId:     1,
+			UserID:     1,
 			Token:      "valid_refresh_token",
 			ExpiryDate: time.Now().UTC().Add(30 * 24 * time.Hour),
 		},
@@ -889,12 +887,14 @@ func TestLogoutAllDevicesNonExistingToken(t *testing.T) {
 	err = json.Unmarshal(w.Body.Bytes(), &response)
 	assert.NoError(t, err)
 	assert.Equal(t, "refresh token not found", response["error_description"])
-	user1Tokens, err := rtSvc.FindByUserId(1)
+	user1Tokens, err := rtSvc.FindByUserID(1)
 	assert.NoError(t, err)
 	assert.Len(t, user1Tokens, 1)
 	assert.Equal(t, "valid_refresh_token", user1Tokens[0].Token)
-	assert.Equal(t, uint(1), user1Tokens[0].UserId)
-	assert.Equal(t, time.Now().UTC().Add(30*24*time.Hour).Format(time.RFC3339), user1Tokens[0].ExpiryDate.UTC().Format(time.RFC3339))
+	assert.Equal(t, uint(1), user1Tokens[0].UserID)
+	warsawLocation, _ := time.LoadLocation("Europe/Warsaw")
+	assert.Equal(t, time.Now().In(warsawLocation).Add(30*24*time.Hour).Format(time.RFC3339),
+		user1Tokens[0].ExpiryDate.In(warsawLocation).Format(time.RFC3339))
 }
 
 func TestLogoutAllDevicesEmptyToken(t *testing.T) {
@@ -913,7 +913,7 @@ func TestLogoutAllDevicesEmptyToken(t *testing.T) {
 	}
 	seedRefreshTokens := []models.RefreshToken{
 		{
-			UserId:     1,
+			UserID:     1,
 			Token:      "valid_refresh_token",
 			ExpiryDate: time.Now().UTC().Add(30 * 24 * time.Hour),
 		},
@@ -940,11 +940,11 @@ func TestLogoutAllDevicesEmptyToken(t *testing.T) {
 	err = json.Unmarshal(w.Body.Bytes(), &response)
 	assert.NoError(t, err)
 	assert.Equal(t, "refresh token required", response["error_description"])
-	user1Tokens, err := rtSvc.FindByUserId(1)
+	user1Tokens, err := rtSvc.FindByUserID(1)
 	assert.NoError(t, err)
 	assert.Len(t, user1Tokens, 1)
 	assert.Equal(t, "valid_refresh_token", user1Tokens[0].Token)
-	assert.Equal(t, uint(1), user1Tokens[0].UserId)
+	assert.Equal(t, uint(1), user1Tokens[0].UserID)
 	assert.Equal(t, time.Now().UTC().Add(30*24*time.Hour).Format(time.RFC3339), user1Tokens[0].ExpiryDate.UTC().Format(time.RFC3339))
 }
 

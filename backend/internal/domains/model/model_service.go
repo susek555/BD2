@@ -4,7 +4,7 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/pkg/mapping"
 )
 
-type ModelServiceInterace interface {
+type ModelServiceInterface interface {
 	GetByManufacturerID(id uint) ([]RetrieveModelDTO, error)
 	GetByManufacturerName(name string) ([]RetrieveModelDTO, error)
 }
@@ -13,7 +13,7 @@ type ModelService struct {
 	repo ModelRepositoryInterface
 }
 
-func NewModelService(modelRepository ModelRepositoryInterface) ModelServiceInterace {
+func NewModelService(modelRepository ModelRepositoryInterface) ModelServiceInterface {
 	return &ModelService{repo: modelRepository}
 }
 

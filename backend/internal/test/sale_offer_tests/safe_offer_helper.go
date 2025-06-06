@@ -6,12 +6,17 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 
 	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/mock"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/bid"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/car/car_params"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/generic"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/image"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/liked_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/model"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
+	"github.com/susek555/BD2/car-dealer-api/internal/enums"
+	"github.com/susek555/BD2/car-dealer-api/internal/models"
+	"github.com/susek555/BD2/car-dealer-api/internal/test/mocks"
 	u "github.com/susek555/BD2/car-dealer-api/internal/test/test_utils"
 	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
 	"github.com/susek555/BD2/car-dealer-api/pkg/middleware"
@@ -70,32 +75,46 @@ func setupDB() (*gorm.DB, error) {
 func getRepositoryWithSaleOffers(db *gorm.DB, offers []models.SaleOffer) sale_offer.SaleOfferRepositoryInterface {
 	repo := sale_offer.NewSaleOfferRepository(db)
 	for _, offer := range offers {
+		offer.Status = enums.PUBLISHED
 		repo.Create(&offer)
 	}
 	return repo
 }
 
-func newTestServer(db *gorm.DB, seedOffers []models.SaleOffer) (*gin.Engine, sale_offer.SaleOfferServiceInterface) {
+func newTestServer(db *gorm.DB, seedOffers []models.SaleOffer) (*gin.Engine, sale_offer.SaleOfferServiceInterface, sale_offer.OfferAccessEvaluatorInterface) {
 	verifier := jwt.NewJWTVerifier(u.JWTSECRET)
 	saleOfferRepo := getRepositoryWithSaleOffers(db, seedOffers)
 	manufacturerRepo := manufacturer.NewManufacturerRepository(db)
+	modelRepo := model.NewModelRepository(db)
 	likedOfferRepository := liked_offer.NewLikedOfferRepository(db)
 	bidRepository := bid.NewBidRepository(db)
-	saleOfferService := sale_offer.NewSaleOfferService(saleOfferRepo, manufacturerRepo, likedOfferRepository, bidRepository)
-	saleOfferHandler := sale_offer.NewHandler(saleOfferService)
+	imageRepo := image.NewImageRepository(db)
+	accessEvaluator := sale_offer.NewAccessEvaluator(bidRepository, likedOfferRepository)
+	saleOfferService := sale_offer.NewSaleOfferService(saleOfferRepo, manufacturerRepo, modelRepo, imageRepo, accessEvaluator)
+	likedOfferService := liked_offer.NewLikedOfferService(likedOfferRepository, saleOfferRepo)
+	mh := new(mocks.HubInterface)
+	mh.On("SubscribeUser", mock.Anything, mock.Anything).Return()
+	mh.On("UnsubscribeUser", mock.Anything, mock.Anything).Return()
+	likedOfferHandler := liked_offer.NewHandler(likedOfferService, mh)
+	mn := new(mocks.NotificationServiceInterface)
+	saleOfferHandler := sale_offer.NewHandler(saleOfferService, mh, mn)
 	r := gin.Default()
 	saleOfferRoutes := r.Group("/sale-offer")
 	{
 		saleOfferRoutes.POST("/", middleware.Authenticate(verifier), saleOfferHandler.CreateSaleOffer)
+		saleOfferRoutes.PUT("/", middleware.Authenticate(verifier), saleOfferHandler.UpdateSaleOffer)
 		saleOfferRoutes.POST("/filtered", middleware.OptionalAuthenticate(verifier), saleOfferHandler.GetFilteredSaleOffers)
 		saleOfferRoutes.POST("/my-offers", middleware.Authenticate(verifier), saleOfferHandler.GetMySaleOffers)
-		saleOfferRoutes.GET("/id/:id", middleware.OptionalAuthenticate(verifier), saleOfferHandler.GetSaleOfferByID)
-		saleOfferRoutes.POST("/like/:id", middleware.Authenticate(verifier), saleOfferHandler.LikeOffer)
-		saleOfferRoutes.DELETE("/dislike/:id", middleware.Authenticate(verifier), saleOfferHandler.DislikeOffer)
+		saleOfferRoutes.GET("/id/:id", middleware.OptionalAuthenticate(verifier), saleOfferHandler.GetDetailedSaleOfferByID)
 		saleOfferRoutes.GET("/offer-types", saleOfferHandler.GetSaleOfferTypes)
 		saleOfferRoutes.GET("/order-keys", saleOfferHandler.GetOrderKeys)
 	}
-	return r, saleOfferService
+	favourtieRoutes := r.Group("/favourite")
+	{
+		favourtieRoutes.POST("/like/:id", middleware.Authenticate(verifier), likedOfferHandler.LikeOffer)
+		favourtieRoutes.DELETE("/dislike/:id", middleware.Authenticate(verifier), likedOfferHandler.DislikeOffer)
+	}
+	return r, saleOfferService, accessEvaluator
 }
 
 // ------------
@@ -114,17 +133,17 @@ func createOffer(id uint) *models.SaleOffer {
 		EngineCapacity:     2000,
 		RegistrationNumber: "default",
 		RegistrationDate:   time.Now(),
-		Color:              car_params.BLACK,
-		FuelType:           car_params.PETROL,
-		Transmission:       car_params.MANUAL,
+		Color:              enums.BLACK,
+		FuelType:           enums.PETROL,
+		Transmission:       enums.MANUAL,
 		NumberOfGears:      6,
-		Drive:              car_params.FWD,
+		Drive:              enums.FWD,
 		ModelID:            1,
-		Model: models.Model{
+		Model: &models.Model{
 			ID:             1,
 			Name:           MODELS[0].Name,
 			ManufacturerID: MODELS[0].ManufacturerID,
-			Manufacturer:   MANUFACTURERS[0],
+			Manufacturer:   &MANUFACTURERS[0],
 		},
 	}
 	offer := &models.SaleOffer{
@@ -133,9 +152,10 @@ func createOffer(id uint) *models.SaleOffer {
 		User:        &USERS[0],
 		Description: "offer",
 		Price:       1000,
-		Margin:      models.LOW_MARGIN,
+		Margin:      enums.LOW_MARGIN,
 		DateOfIssue: time.Now(),
 		Car:         c,
+		Status:      enums.PUBLISHED,
 	}
 	return offer
 }
@@ -171,7 +191,7 @@ func createSaleOfferDTO() *sale_offer.CreateSaleOfferDTO {
 		UserID:             1,
 		Description:        "offer",
 		Price:              1000,
-		Margin:             models.LOW_MARGIN,
+		Margin:             enums.LOW_MARGIN,
 		Vin:                "vin",
 		ProductionYear:     2025,
 		Mileage:            1000,
@@ -181,38 +201,22 @@ func createSaleOfferDTO() *sale_offer.CreateSaleOfferDTO {
 		EngineCapacity:     2000,
 		RegistrationNumber: "default",
 		RegistrationDate:   time.Now().Format("2006-01-02"),
-		Color:              car_params.BLACK,
-		FuelType:           car_params.PETROL,
-		Transmission:       car_params.MANUAL,
+		Color:              enums.BLACK,
+		FuelType:           enums.PETROL,
+		Transmission:       enums.MANUAL,
 		NumberOfGears:      6,
-		Drive:              car_params.FWD,
-		ModelID:            1,
+		Drive:              enums.FWD,
+		ManufacturerName:   "Audi",
+		ModelName:          "A3",
 	}
 }
 
-func doSaleOfferAndRetrieveSaleOfferDTOsMatch(offer models.SaleOffer, dto sale_offer.RetrieveSaleOfferDTO, s sale_offer.SaleOfferServiceInterface, userID *uint) bool {
-	var likedCondition bool
-	var bidCondition bool
-	condition := offer.ID == dto.ID &&
-		offer.User.Username == dto.Username &&
-		offer.Car.Model.Manufacturer.Name+" "+offer.Car.Model.Name == dto.Name &&
-		offer.Price == dto.Price &&
-		offer.Car.Mileage == dto.Mileage &&
-		offer.Car.ProductionYear == dto.ProductionYear &&
-		offer.Car.Color == dto.Color &&
-		(offer.Auction != nil) == dto.IsAuction
-	if userID == nil {
-		likedCondition = false
-		bidCondition = false
-	} else {
-		likedCondition = s.IsOfferLikedByUser(offer.ID, *userID)
-		bidCondition, _ = s.CanBeModifiedByUser(offer.ID, *userID)
-	}
-	return condition && bidCondition == dto.CanModify && likedCondition == dto.IsLiked
+func setOffersStatusToPublished(db *gorm.DB) {
+	db.Model(&models.SaleOffer{}).Update("status", enums.PUBLISHED)
 }
 
 func wasEntityAddedToDB[T any](db *gorm.DB, id uint) bool {
 	repo := generic.GetGormRepository[T](db)
-	_, err := repo.GetById(id)
+	_, err := repo.GetByID(id)
 	return err == nil
 }

@@ -1,21 +1,31 @@
 package sale_offer
 
 import (
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
+	"log"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/auth"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/notification"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/ws"
+	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"github.com/susek555/BD2/car-dealer-api/pkg/custom_errors"
 	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
 )
 
 type Handler struct {
-	service SaleOfferServiceInterface
+	service             SaleOfferServiceInterface
+	hub                 ws.HubInterface
+	notificationService notification.NotificationServiceInterface
 }
 
-func NewHandler(s SaleOfferServiceInterface) *Handler {
-	return &Handler{service: s}
+func NewHandler(s SaleOfferServiceInterface, hub ws.HubInterface, notificationService notification.NotificationServiceInterface) *Handler {
+	return &Handler{
+		service:             s,
+		hub:                 hub,
+		notificationService: notificationService,
+	}
 }
 
 // CreateSaleOffer godoc
@@ -43,19 +53,70 @@ func NewHandler(s SaleOfferServiceInterface) *Handler {
 //	@Router			/sale-offer [post]
 //	@Security		Bearer
 func (h *Handler) CreateSaleOffer(c *gin.Context) {
+	userID, _ := c.Get("userID")
 	var offerDTO CreateSaleOfferDTO
 	if err := c.ShouldBindJSON(&offerDTO); err != nil {
-		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
-	userID, _ := c.Get("userID")
 	offerDTO.UserID = userID.(uint)
-	retrieveDTO, err := h.service.Create(offerDTO)
+	retrieveDTO, err := h.service.Create(&offerDTO)
 	if err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
 	c.JSON(http.StatusCreated, retrieveDTO)
+	offerIDstr := strconv.FormatUint(uint64(retrieveDTO.ID), 10)
+	userIDstr := strconv.FormatUint(uint64(userID.(uint)), 10)
+	h.hub.SubscribeUser(userIDstr, offerIDstr)
+}
+
+// UpdateSaleOffer godoc
+//
+//	@Summary		Update a sale offer
+//	@Description	Updates an existing sale offer in the database. To update a sale offer, the user must be logged in and must be the owner of the offer. Constraints are the same as when creating a sale offer.
+//	@Tags			sale-offer
+//	@Accept			json
+//	@Produce		json
+//	@Param			offer	body		UpdateSaleOfferDTO				true	"Sale offer form"
+//	@Success		200		{object}	RetrieveDetailedSaleOfferDTO	"Updated - returns the updated sale offer"
+//	@Failure		400		{object}	custom_errors.HTTPError			"Invalid input data"
+//	@Failure		401		{object}	custom_errors.HTTPError			"Unauthorized - user must be logged in to update his offer"
+//	@Failure		403		{object}	custom_errors.HTTPError			"Forbidden - user can only update his own offer"
+//	@Failure		404		{object}	custom_errors.HTTPError			"Sale offer not found"
+//	@Failure		500		{object}	custom_errors.HTTPError			"Internal server error"
+//	@Router			/sale-offer [put]
+//	@Security		Bearer
+func (h *Handler) UpdateSaleOffer(c *gin.Context) {
+	userID, _ := c.Get("userID")
+	id := userID.(uint)
+	var offerDTO UpdateSaleOfferDTO
+	if err := c.ShouldBindJSON(&offerDTO); err != nil {
+		custom_errors.HandleError(c, err, ErrorMap)
+		return
+	}
+
+	retrieveDTO, err := h.service.Update(&offerDTO, id)
+	if err != nil {
+		custom_errors.HandleError(c, err, ErrorMap)
+		return
+	}
+	c.JSON(http.StatusOK, retrieveDTO)
+}
+
+func (h *Handler) PublishSaleOffer(c *gin.Context) {
+	userID, _ := c.Get("userID")
+	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		custom_errors.HandleError(c, err, ErrorMap)
+		return
+	}
+	retrieveDTO, err := h.service.Publish(uint(id), userID.(uint))
+	if err != nil {
+		custom_errors.HandleError(c, err, ErrorMap)
+		return
+	}
+	c.JSON(http.StatusOK, retrieveDTO)
 }
 
 // GetFilteredSaleOffers godoc
@@ -73,19 +134,19 @@ func (h *Handler) CreateSaleOffer(c *gin.Context) {
 //	@Tags			sale-offer
 //	@Accept			json
 //	@Produce		json
-//	@Param			filter	body		OfferFilter						true	"Sale offer filter"
+//	@Param			filter	body		OfferFilterRequest				true	"Sale offer filter"
 //	@Success		200		{object}	RetrieveOffersWithPagination	"List of sale offers"
 //	@Failure		400		{object}	custom_errors.HTTPError			"Invalid input data"
 //	@Failure		500		{object}	custom_errors.HTTPError			"Internal server error"
 //	@Router			/sale-offer/filtered [post]
 func (h *Handler) GetFilteredSaleOffers(c *gin.Context) {
-	filter := NewOfferFilter()
-	if err := c.ShouldBindJSON(filter); err != nil {
+	filterRequest := NewOfferFilterRequest()
+	if err := c.ShouldBindJSON(filterRequest); err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
-	filter.UserID = getOptionalUserID(c)
-	saleOffers, err := h.service.GetFiltered(filter)
+	filterRequest.Filter.UserID = getOptionalUserID(c)
+	saleOffers, err := h.service.GetFiltered(&filterRequest.Filter, &filterRequest.PagRequest)
 	if err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
@@ -106,13 +167,13 @@ func (h *Handler) GetFilteredSaleOffers(c *gin.Context) {
 //	@Failure		404	{object}	custom_errors.HTTPError			"Sale offer not found"
 //	@Failure		500	{object}	custom_errors.HTTPError			"Internal server error"
 //	@Router			/sale-offer/id/{id} [get]
-func (h *Handler) GetSaleOfferByID(c *gin.Context) {
+func (h *Handler) GetDetailedSaleOfferByID(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
-	offerDTO, err := h.service.GetByID(uint(id), getOptionalUserID(c))
+	offerDTO, err := h.service.GetDetailedByID(uint(id), getOptionalUserID(c))
 	if err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
@@ -129,17 +190,17 @@ func (h *Handler) GetSaleOfferByID(c *gin.Context) {
 //	@Produce		json
 //	@Param			filter	body		pagination.PaginationRequest	true	"Pagination request"
 //	@Success		200		{object}	RetrieveOffersWithPagination	"List of sale offers"
-//	@Failure		401		{object}	custom_errors.HTTPError			"Unauthorized - user not logged in"
+//	@Failure		401		{object}	custom_errors.HTTPError			"Unauthorized - user must be logged in to retrieve his offers"
 //	@Failure		500		{object}	custom_errors.HTTPError			"Internal server error"
 //	@Router			/sale-offer/my-offers [post]
 //	@Security		Bearer
 func (h *Handler) GetMySaleOffers(c *gin.Context) {
+	userID, _ := c.Get("userID")
 	var pagRequest pagination.PaginationRequest
 	if err := c.ShouldBindJSON(&pagRequest); err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
-	userID, _ := c.Get("userID")
 	saleOffers, err := h.service.GetByUserID(userID.(uint), &pagRequest)
 	if err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
@@ -178,62 +239,48 @@ func (h *Handler) GetOrderKeys(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"order_keys": keys})
 }
 
-// LikeNewOffer godoc
-//
-//	@Summary		Like new offer
-//	@Description	Like new offer by giving it's id. You have to be logged in to perform this operation.
-//	@Tags			sale-offer
-//	@Accept			json
-//	@Produce		json
-//	@Param			id	path		uint					true	"Sale offer ID"
-//	@Success		200	{object}	models.LikedOffer	"Liked offer"
-//	@Failure		400	{object}	custom_errors.HTTPError	"Invalid input data"
-//	@Failure		401	{object}	custom_errors.HTTPError	"Unauthorized - user not logged in"
-//	@Failure		404	{object}	custom_errors.HTTPError	"Sale offer not found"
-//	@Failure		500	{object}	custom_errors.HTTPError	"Internal server error"
-//	@Router			/sale-offer/id/like/{id} [post]
-//	@Security		Bearer
-func (h *Handler) LikeOffer(c *gin.Context) {
+// @Summary		Buy a sale offer
+// @Description	Allows a user to buy an item from a sale offer
+// @Tags			sale-offer
+// @Accept			json
+// @Produce		json
+// @Param			id	path	uint	true	"Sale Offer ID"
+// @Security		ApiKeyAuth
+// @Success		200	"Successfully purchased offer"
+// @Failure		403	"Forbidden - user cannot buy his own offer"
+// @Failure		404	"Not Found - sale offer not found"
+// @Failure		500	"Internal Server Error"
+// @Failure		401	"Unauthorized - user must be logged in to buy an offer"
+// @Router			/sale-offer/buy/{id} [post]
+// @Security		BearerAuth
+func (h *Handler) Buy(c *gin.Context) {
 	offerID, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
-	userID, _ := c.Get("userID")
-	if err := h.service.LikeOffer(uint(offerID), userID.(uint)); err != nil {
-		custom_errors.HandleError(c, err, ErrorMap)
-		return
-	}
-	c.JSON(http.StatusOK, models.LikedOffer{OfferID: uint(offerID), UserID: userID.(uint)})
-}
-
-// DislikeOffer godoc
-//
-//	@Summary		Dislike offer
-//	@Description	Dislike offer by giving it's id. You have to be logged in to perform this operation.
-//	@Tags			sale-offer
-//	@Accept			json
-//	@Produce		json
-//	@Param			id	path		uint					true	"Sale offer ID"
-//	@Success		204	{object}	nil						"No content"
-//	@Failure		400	{object}	custom_errors.HTTPError	"Invalid input data"
-//	@Failure		401	{object}	custom_errors.HTTPError	"Unauthorized - user not logged in"
-//	@Failure		404	{object}	custom_errors.HTTPError	"Sale offer not found"
-//	@Failure		500	{object}	custom_errors.HTTPError	"Internal server error"
-//	@Router			/sale-offer/id/dislike/{id} [delete]
-//	@Security		Bearer
-func (h *Handler) DislikeOffer(c *gin.Context) {
-	offerID, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	userID, err := auth.GetUserID(c)
 	if err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
-	userID, _ := c.Get("userID")
-	if err := h.service.DislikeOffer(uint(offerID), userID.(uint)); err != nil {
+	offer, err := h.service.Buy(uint(offerID), userID)
+	if err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
-	c.Status(http.StatusNoContent)
+	c.Status(http.StatusOK)
+	notification := &models.Notification{
+		OfferID: uint(offerID),
+	}
+	err = h.notificationService.CreateBuyNotication(notification, strconv.FormatUint(uint64(userID), 10), offer)
+	if err != nil {
+		log.Printf("Error creating buy notification for offer ID %d: %v", offerID, err)
+		return
+	}
+	h.hub.SaveNotificationForClients(strconv.FormatUint(offerID, 10), userID, notification)
+	h.hub.SendFourLatestNotificationsToClient(strconv.FormatUint(offerID, 10), strconv.FormatUint(uint64(userID), 10))
+	h.hub.RemoveRoom(strconv.FormatUint(offerID, 10))
 }
 
 func getOptionalUserID(c *gin.Context) *uint {

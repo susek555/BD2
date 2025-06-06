@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
+	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	u "github.com/susek555/BD2/car-dealer-api/internal/test/test_utils"
 	"github.com/susek555/BD2/car-dealer-api/pkg/custom_errors"
 	"github.com/susek555/BD2/car-dealer-api/pkg/passwords"
@@ -275,7 +276,7 @@ func TestUpdateUser_Forbidden(t *testing.T) {
 	var got custom_errors.HTTPError
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
-	assert.NotEmpty(t, user.ErrForbidden.Error())
+	assert.NotEmpty(t, user.ErrInvalidUserID.Error())
 }
 
 func TestUpdateUser_UpdateUsername(t *testing.T) {
@@ -290,7 +291,7 @@ func TestUpdateUser_UpdateUsername(t *testing.T) {
 	_, receivedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
 	assert.Equal(t, http.StatusOK, receivedStatus)
 	userRepo, _, _ := getRepositories(db)
-	got, err := userRepo.GetById(seedUsers[0].ID)
+	got, err := userRepo.GetByID(seedUsers[0].ID)
 	assert.NoError(t, err)
 	assert.Equal(t, got.Username, newUsername)
 }
@@ -329,7 +330,7 @@ func TestUpdateUser_UpdateEmail(t *testing.T) {
 	_, receivedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
 	assert.Equal(t, http.StatusOK, receivedStatus)
 	userRepo, _, _ := getRepositories(db)
-	got, err := userRepo.GetById(seedUsers[0].ID)
+	got, err := userRepo.GetByID(seedUsers[0].ID)
 	assert.NoError(t, err)
 	assert.Equal(t, got.Email, newEmail)
 }
@@ -368,7 +369,7 @@ func TestUpdateUser_UpdatePassword(t *testing.T) {
 	_, receivedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
 	assert.Equal(t, http.StatusOK, receivedStatus)
 	userRepo, _, _ := getRepositories(db)
-	got, err := userRepo.GetById(seedUsers[0].ID)
+	got, err := userRepo.GetByID(seedUsers[0].ID)
 	assert.NoError(t, err)
 	assert.Equal(t, passwords.Match(newPassword, got.Password), true)
 }
@@ -385,7 +386,7 @@ func TestUpdateUser_UpdateCompanyNameAsCompany(t *testing.T) {
 	_, receivedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
 	assert.Equal(t, http.StatusOK, receivedStatus)
 	_, companyRepo, _ := getRepositories(db)
-	got, err := companyRepo.GetById(1)
+	got, err := companyRepo.GetByID(1)
 	assert.NoError(t, err)
 	assert.Equal(t, newCompanyName, got.Name)
 }
@@ -419,9 +420,9 @@ func TestUpdateUser_UpdateNIPAsCompany(t *testing.T) {
 	_, receivedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
 	assert.Equal(t, http.StatusOK, receivedStatus)
 	_, companyRepo, _ := getRepositories(db)
-	got, err := companyRepo.GetById(1)
+	got, err := companyRepo.GetByID(1)
 	assert.NoError(t, err)
-	assert.Equal(t, got.NIP, newNIP)
+	assert.Equal(t, got.Nip, newNIP)
 }
 
 func TestUpdateUser_UpdateNIPAsCompanyNotUnique(t *testing.T) {
@@ -429,7 +430,7 @@ func TestUpdateUser_UpdateNIPAsCompanyNotUnique(t *testing.T) {
 	newNIP := "1234567890"
 	seedUsers := []models.User{
 		*createCompany(1),
-		*u.Build(createCompany(2), withCompanyField(u.WithField[models.Company]("NIP", newNIP))),
+		*u.Build(createCompany(2), withCompanyField(u.WithField[models.Company]("Nip", newNIP))),
 	}
 	body, err := json.Marshal(user.UpdateUserDTO{ID: seedUsers[0].ID, CompanyNIP: &newNIP})
 	assert.NoError(t, err)
@@ -475,7 +476,7 @@ func TestUpdateUser_UpdatePersonNameAsPerson(t *testing.T) {
 	_, receivedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
 	assert.Equal(t, http.StatusOK, receivedStatus)
 	userRepo, _, _ := getRepositories(db)
-	got, err := userRepo.GetById(seedUsers[0].ID)
+	got, err := userRepo.GetByID(seedUsers[0].ID)
 	assert.NoError(t, err)
 	assert.Equal(t, got.Person.Name, newName)
 }
@@ -511,7 +512,7 @@ func TestUpdateUser_UpdatePersonSurnameAsPerson(t *testing.T) {
 	_, receivedStatus := u.PerformRequest(server, http.MethodPut, "/users/", body, &token)
 	assert.Equal(t, http.StatusOK, receivedStatus)
 	userRepo, _, _ := getRepositories(db)
-	got, err := userRepo.GetById(seedUsers[0].ID)
+	got, err := userRepo.GetByID(seedUsers[0].ID)
 	assert.NoError(t, err)
 	assert.Equal(t, got.Person.Surname, newSurname)
 }
@@ -558,7 +559,7 @@ func TestDeleteUser_Forbidden(t *testing.T) {
 	var got custom_errors.HTTPError
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
-	assert.NotEmpty(t, user.ErrForbidden.Error())
+	assert.NotEmpty(t, user.ErrInvalidUserID.Error())
 }
 
 func TestDeleteUser_Person(t *testing.T) {
@@ -570,9 +571,9 @@ func TestDeleteUser_Person(t *testing.T) {
 	_, receivedStatus := u.PerformRequest(server, http.MethodDelete, "/users/id/1", nil, &token)
 	assert.Equal(t, http.StatusNoContent, receivedStatus)
 	userRepo, _, personRepo := getRepositories(db)
-	_, err := userRepo.GetById(seedUsers[0].ID)
+	_, err := userRepo.GetByID(seedUsers[0].ID)
 	assert.Error(t, err, gorm.ErrRecordNotFound)
-	_, err = personRepo.GetById(seedUsers[0].ID)
+	_, err = personRepo.GetByID(seedUsers[0].ID)
 	assert.Error(t, err, gorm.ErrRecordNotFound)
 }
 
@@ -585,8 +586,8 @@ func TestDeleteUser_Company(t *testing.T) {
 	_, receivedStatus := u.PerformRequest(server, http.MethodDelete, "/users/id/1", nil, &token)
 	assert.Equal(t, http.StatusNoContent, receivedStatus)
 	userRepo, _, companyRepo := getRepositories(db)
-	_, err := userRepo.GetById(seedUsers[0].ID)
+	_, err := userRepo.GetByID(seedUsers[0].ID)
 	assert.Error(t, err, gorm.ErrRecordNotFound)
-	_, err = companyRepo.GetById(seedUsers[0].ID)
+	_, err = companyRepo.GetByID(seedUsers[0].ID)
 	assert.Error(t, err, gorm.ErrRecordNotFound)
 }

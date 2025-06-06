@@ -5,17 +5,17 @@ import (
 )
 
 type ReviewServiceInterface interface {
-	Create(userId uint, review *CreateReviewDTO) (*RetrieveReviewDTO, error)
+	Create(userID uint, review *CreateReviewDTO) (*RetrieveReviewDTO, error)
 	GetAll() ([]RetrieveReviewDTO, error)
-	GetById(id uint) (*RetrieveReviewDTO, error)
-	Update(userId uint, review *UpdateReviewDTO) (*RetrieveReviewDTO, error)
-	Delete(userId, id uint) error
-	GetByReviewerId(reviewerId uint) ([]RetrieveReviewDTO, error)
-	GetByRevieweeId(reviewedId uint) ([]RetrieveReviewDTO, error)
-	GetByReviewerIdAndRevieweeId(reviewerId uint, revieweeId uint) (*RetrieveReviewDTO, error)
+	GetByID(id uint) (*RetrieveReviewDTO, error)
+	Update(userID uint, review *UpdateReviewDTO) (*RetrieveReviewDTO, error)
+	Delete(userID, id uint) error
+	GetByReviewerID(reviewerID uint) ([]RetrieveReviewDTO, error)
+	GetByRevieweeID(reviewedID uint) ([]RetrieveReviewDTO, error)
+	GetByReviewerIDAndRevieweeID(reviewerID uint, revieweeID uint) (*RetrieveReviewDTO, error)
 	GetFiltered(filter *ReviewFilter) (*RetrieveReviewsWithPagination, error)
-	GetAverageRatingByRevieweeId(revieweeId uint) (float64, error)
-	GetFrequencyOfRatingByRevieweeId(revieweeId uint) (map[int]int, error)
+	GetAverageRatingByRevieweeID(revieweeID uint) (float64, error)
+	GetFrequencyOfRatingByRevieweeID(revieweeID uint) (map[int]int, error)
 }
 
 type ReviewService struct {
@@ -28,8 +28,8 @@ func NewReviewService(repo ReviewRepositoryInterface) ReviewServiceInterface {
 	}
 }
 
-func (service *ReviewService) Create(userId uint, review *CreateReviewDTO) (*RetrieveReviewDTO, error) {
-	reviewObj, err := review.MapToObject(userId)
+func (service *ReviewService) Create(userID uint, review *CreateReviewDTO) (*RetrieveReviewDTO, error) {
+	reviewObj, err := review.MapToObject(userID)
 	if err != nil {
 		return nil, err
 	}
@@ -50,8 +50,8 @@ func (service *ReviewService) GetAll() ([]RetrieveReviewDTO, error) {
 	return reviewsDTO, nil
 }
 
-func (service *ReviewService) GetById(id uint) (*RetrieveReviewDTO, error) {
-	review, err := service.Repo.GetById(id)
+func (service *ReviewService) GetByID(id uint) (*RetrieveReviewDTO, error) {
+	review, err := service.Repo.GetByID(id)
 	if err != nil {
 		return nil, ErrNoReviewFound
 	}
@@ -71,8 +71,8 @@ func (service *ReviewService) GetFiltered(filter *ReviewFilter) (*RetrieveReview
 	}, nil
 }
 
-func (service *ReviewService) GetAverageRatingByRevieweeId(revieweeId uint) (float64, error) {
-	averageRating, err := service.Repo.GetAverageRatingByRevieweeId(revieweeId)
+func (service *ReviewService) GetAverageRatingByRevieweeID(revieweeID uint) (float64, error) {
+	averageRating, err := service.Repo.GetAverageRatingByRevieweeID(revieweeID)
 	if err != nil {
 		return 0, err
 	}
@@ -82,16 +82,16 @@ func (service *ReviewService) GetAverageRatingByRevieweeId(revieweeId uint) (flo
 	return averageRating, nil
 }
 
-func (service *ReviewService) Update(reviewerId uint, review *UpdateReviewDTO) (*RetrieveReviewDTO, error) {
-	revieweeId, err := service.getRevieweeId(review.ID)
+func (service *ReviewService) Update(reviewerID uint, review *UpdateReviewDTO) (*RetrieveReviewDTO, error) {
+	revieweeID, err := service.getRevieweeID(review.ID)
 	if err != nil {
 		return nil, err
 	}
-	_, err = service.Repo.GetByReviewerIdAndRevieweeId(reviewerId, revieweeId)
+	_, err = service.Repo.GetByReviewerIDAndRevieweeID(reviewerID, revieweeID)
 	if err != nil {
 		return nil, ErrNotReviewer
 	}
-	reviewObj, err := review.MapToObject(reviewerId, revieweeId)
+	reviewObj, err := review.MapToObject(reviewerID, revieweeID)
 	if err != nil {
 		return nil, err
 	}
@@ -103,19 +103,19 @@ func (service *ReviewService) Update(reviewerId uint, review *UpdateReviewDTO) (
 	return reviewDTO, nil
 }
 
-func (service *ReviewService) Delete(userId, id uint) error {
-	review, err := service.Repo.GetById(id)
+func (service *ReviewService) Delete(userID, id uint) error {
+	review, err := service.Repo.GetByID(id)
 	if err != nil {
 		return err
 	}
-	if review.ReviewerID != userId {
+	if review.ReviewerID != userID {
 		return ErrNotReviewer
 	}
 	return service.Repo.Delete(id)
 }
 
-func (service *ReviewService) GetByReviewerId(reviewerId uint) ([]RetrieveReviewDTO, error) {
-	reviews, err := service.Repo.GetByReviewerId(reviewerId)
+func (service *ReviewService) GetByReviewerID(reviewerID uint) ([]RetrieveReviewDTO, error) {
+	reviews, err := service.Repo.GetByReviewerID(reviewerID)
 	if err != nil {
 		return nil, err
 	}
@@ -123,8 +123,8 @@ func (service *ReviewService) GetByReviewerId(reviewerId uint) ([]RetrieveReview
 	return reviewsDTO, nil
 }
 
-func (service *ReviewService) GetByRevieweeId(reviewedId uint) ([]RetrieveReviewDTO, error) {
-	reviews, err := service.Repo.GetByRevieweeId(reviewedId)
+func (service *ReviewService) GetByRevieweeID(reviewedID uint) ([]RetrieveReviewDTO, error) {
+	reviews, err := service.Repo.GetByRevieweeID(reviewedID)
 	if err != nil {
 		return nil, err
 	}
@@ -132,8 +132,8 @@ func (service *ReviewService) GetByRevieweeId(reviewedId uint) ([]RetrieveReview
 	return reviewsDTO, nil
 }
 
-func (service *ReviewService) GetByReviewerIdAndRevieweeId(reviewerId uint, reviewedId uint) (*RetrieveReviewDTO, error) {
-	review, err := service.Repo.GetByReviewerIdAndRevieweeId(reviewerId, reviewedId)
+func (service *ReviewService) GetByReviewerIDAndRevieweeID(reviewerID uint, reviewedID uint) (*RetrieveReviewDTO, error) {
+	review, err := service.Repo.GetByReviewerIDAndRevieweeID(reviewerID, reviewedID)
 	if err != nil {
 		return nil, err
 	}
@@ -141,16 +141,16 @@ func (service *ReviewService) GetByReviewerIdAndRevieweeId(reviewerId uint, revi
 	return reviewDTO, nil
 }
 
-func (service *ReviewService) getRevieweeId(reviewId uint) (uint, error) {
-	review, err := service.Repo.GetById(reviewId)
+func (service *ReviewService) getRevieweeID(reviewID uint) (uint, error) {
+	review, err := service.Repo.GetByID(reviewID)
 	if err != nil {
 		return 0, err
 	}
-	return review.RevieweeId, nil
+	return review.RevieweeID, nil
 }
 
-func (service *ReviewService) GetFrequencyOfRatingByRevieweeId(revieweeId uint) (map[int]int, error) {
-	frequency, err := service.Repo.GetFrequencyOfRatingByRevieweeId(revieweeId)
+func (service *ReviewService) GetFrequencyOfRatingByRevieweeID(revieweeID uint) (map[int]int, error) {
+	frequency, err := service.Repo.GetFrequencyOfRatingByRevieweeID(revieweeID)
 	if err != nil {
 		return nil, err
 	}

@@ -2,18 +2,16 @@ package auction
 
 import (
 	"errors"
+	"log"
 	"time"
 
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
+	"github.com/susek555/BD2/car-dealer-api/internal/models"
+	"github.com/susek555/BD2/car-dealer-api/pkg/formats"
 )
 
 func (dto *CreateAuctionDTO) MapToAuction() (*models.Auction, error) {
 	var auction models.Auction
-	offer, err := dto.MapToSaleOffer()
-	if err != nil {
-		return nil, err
-	}
 	endDate, err := parseDate(dto.DateEnd)
 	if err != nil {
 		return nil, err
@@ -22,36 +20,53 @@ func (dto *CreateAuctionDTO) MapToAuction() (*models.Auction, error) {
 	if err != nil {
 		return nil, err
 	}
-	auction.Offer = offer
 	auction.DateEnd = endDate
 	auction.BuyNowPrice = dto.BuyNowPrice
+	auction.InitialPrice = dto.Price
 	return &auction, nil
 }
 
-func (dto *UpdateAuctionDTO) MapToAuction() (*models.Auction, error) {
-	var auction models.Auction
-	offer, err := dto.MapToSaleOffer()
-	if err != nil {
-		return nil, err
+func (dto *UpdateAuctionDTO) UpdatedAuctionFromDTO(auction *models.Auction) (*models.Auction, error) {
+	if dto.DateEnd != nil {
+		endDate, err := parseDate(*dto.DateEnd)
+		if err != nil {
+			return nil, err
+		}
+		err = validateDateEnd(endDate)
+		if err != nil {
+			return nil, err
+		}
+		auction.DateEnd = endDate
 	}
-	endDate, err := parseDate(dto.DateEnd)
-	if err != nil {
-		return nil, err
+	if dto.BuyNowPrice != nil {
+		if *dto.BuyNowPrice < 1 {
+			return nil, ErrBuyNowPriceLessThan1
+		}
+		if *dto.BuyNowPrice < auction.Offer.Price {
+			return nil, ErrBuyNowPriceLessThanOfferPrice
+		}
+		auction.BuyNowPrice = *dto.BuyNowPrice
 	}
-	err = validateDateEnd(endDate)
-	if err != nil {
-		return nil, err
+	if dto.UpdateSaleOfferDTO != nil {
+		var err error
+		auction.Offer, err = dto.UpdateSaleOfferDTO.UpdatedOfferFromDTO(auction.Offer)
+		if err != nil {
+			return nil, err
+		}
+		if dto.UpdateSaleOfferDTO.Price != nil {
+			auction.InitialPrice = *dto.UpdateSaleOfferDTO.Price
+		}
 	}
-	auction.Offer = offer
-	auction.DateEnd = endDate
-	auction.BuyNowPrice = dto.BuyNowPrice
-	auction.OfferID = dto.Id
-	auction.Offer.ID = dto.Id
-	auction.Offer.Car.OfferID = dto.Id
-	return &auction, nil
+	return auction, nil
 }
 
 func MapToDTO(auction *models.Auction) *RetrieveAuctionDTO {
+	loc, err := time.LoadLocation(formats.DefaultTimezone)
+	if err != nil {
+		log.Println("error loading location:", err)
+	}
+
+	dateEnd := auction.DateEnd.In(loc).Format(formats.DateTimeLayout)
 	offerDTO := sale_offer.MapToDTO(auction.Offer)
 	dateEnd := auction.DateEnd.UTC().Format("15:04 02/01/2006")
 	return &RetrieveAuctionDTO{
@@ -62,12 +77,17 @@ func MapToDTO(auction *models.Auction) *RetrieveAuctionDTO {
 }
 
 func parseDate(date string) (time.Time, error) {
-	layout := "15:04 02/01/2006"
-	t, err := time.Parse(layout, date)
+	loc, err := time.LoadLocation(formats.DefaultTimezone)
 	if err != nil {
 		return time.Time{}, err
 	}
-	return t, nil
+
+	t, err := time.ParseInLocation(formats.DateTimeLayout, date, loc)
+	if err != nil {
+		return time.Time{}, err
+	}
+
+	return t.UTC(), nil
 }
 
 func validateDateEnd(end time.Time) error {

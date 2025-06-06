@@ -15,10 +15,10 @@ var ErrorMap = map[error]int{
 }
 
 type Handler struct {
-	service ModelServiceInterace
+	service ModelServiceInterface
 }
 
-func NewHandler(s ModelServiceInterace) *Handler {
+func NewHandler(s ModelServiceInterface) *Handler {
 	return &Handler{service: s}
 }
 
@@ -31,7 +31,7 @@ func NewHandler(s ModelServiceInterace) *Handler {
 //	@Produce		json
 //	@Param			id	path		int						true	"Manufacturer ID"
 //	@Success		200	{array}		RetrieveModelDTO		"List of models"
-//	@Failure		400	{object}	custom_errors.HTTPError	"Id is not a number"
+//	@Failure		400	{object}	custom_errors.HTTPError	"ID is not a number"
 //	@Failure		404	{object}	custom_errors.HTTPError	"Models not found"
 //	@Failure		500	{object}	custom_errors.HTTPError	"Internal server error"
 //	@Router			/car/models/id/{id} [get]

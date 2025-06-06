@@ -3,11 +3,10 @@ package user_tests
 import (
 	"fmt"
 
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
-
 	"github.com/gin-gonic/gin"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/generic"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
+	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	u "github.com/susek555/BD2/car-dealer-api/internal/test/test_utils"
 	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
 	"github.com/susek555/BD2/car-dealer-api/pkg/middleware"
@@ -26,7 +25,6 @@ func setupDB() (*gorm.DB, error) {
 		return nil, err
 	}
 	db.Exec("TRUNCATE TABLE companies, people, users RESTART IDENTITY CASCADE")
-
 	return db, nil
 }
 
@@ -55,7 +53,7 @@ func newTestServer(db *gorm.DB, seedUsers []models.User) (*gin.Engine, error) {
 	{
 		userRoutes.PUT("/", middleware.Authenticate(verifier), userHandler.UpdateUser)
 		userRoutes.GET("/", userHandler.GetAllUsers)
-		userRoutes.GET("/id/:id", userHandler.GetUserById)
+		userRoutes.GET("/id/:id", userHandler.GetUserByID)
 		userRoutes.GET("/email/:email", userHandler.GetUserByEmail)
 		userRoutes.DELETE("/id/:id", middleware.Authenticate(verifier), userHandler.DeleteUser)
 	}
@@ -85,7 +83,7 @@ func createCompany(id uint) *models.User {
 		Email:    fmt.Sprintf("john%d@gmail.com", id),
 		Password: "hashed_password",
 		Selector: "C",
-		Company:  &models.Company{Name: "john company", NIP: fmt.Sprintf("1234567890-%d", id)},
+		Company:  &models.Company{Name: "john company", Nip: fmt.Sprintf("1234567890-%d", id)},
 	}
 	return &user
 }

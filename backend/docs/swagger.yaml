@@ -1,4 +1,147 @@
 definitions:
+  auction.CreateAuctionDTO:
+    properties:
+      buy_now_price:
+        type: integer
+      color:
+        $ref: '#/definitions/enums.Color'
+      date_end:
+        type: string
+      description:
+        type: string
+      drive:
+        $ref: '#/definitions/enums.Drive'
+      engine_capacity:
+        type: integer
+      engine_power:
+        type: integer
+      fuel_type:
+        $ref: '#/definitions/enums.FuelType'
+      manufacturer:
+        type: string
+      margin:
+        $ref: '#/definitions/enums.MarginValue'
+      mileage:
+        type: integer
+      model:
+        type: string
+      number_of_doors:
+        type: integer
+      number_of_gears:
+        type: integer
+      number_of_seats:
+        type: integer
+      price:
+        type: integer
+      production_year:
+        type: integer
+      registration_date:
+        type: string
+      registration_number:
+        type: string
+      transmission:
+        $ref: '#/definitions/enums.Transmission'
+      vin:
+        type: string
+    required:
+    - color
+    - description
+    - drive
+    - engine_capacity
+    - engine_power
+    - fuel_type
+    - manufacturer
+    - margin
+    - mileage
+    - model
+    - number_of_doors
+    - number_of_gears
+    - number_of_seats
+    - price
+    - production_year
+    - registration_date
+    - registration_number
+    - transmission
+    - vin
+    type: object
+  auction.RetrieveAuctionDTO:
+    properties:
+      buy_now_price:
+        type: integer
+      can_modify:
+        type: boolean
+      color:
+        $ref: '#/definitions/enums.Color'
+      date_end:
+        type: string
+      id:
+        type: integer
+      is_auction:
+        type: boolean
+      is_liked:
+        type: boolean
+      main_url:
+        type: string
+      mileage:
+        type: integer
+      name:
+        type: string
+      price:
+        type: integer
+      production_year:
+        type: integer
+      status:
+        type: string
+      username:
+        type: string
+    type: object
+  auction.UpdateAuctionDTO:
+    properties:
+      buy_now_price:
+        type: integer
+      color:
+        $ref: '#/definitions/enums.Color'
+      date_end:
+        type: string
+      description:
+        type: string
+      drive:
+        $ref: '#/definitions/enums.Drive'
+      engine_capacity:
+        type: integer
+      engine_power:
+        type: integer
+      fuel_type:
+        $ref: '#/definitions/enums.FuelType'
+      id:
+        type: integer
+      manufacturer:
+        type: string
+      margin:
+        $ref: '#/definitions/enums.MarginValue'
+      mileage:
+        type: integer
+      model:
+        type: string
+      number_of_doors:
+        type: integer
+      number_of_gears:
+        type: integer
+      number_of_seats:
+        type: integer
+      price:
+        type: integer
+      production_year:
+        type: integer
+      registration_date:
+        type: string
+      registration_number:
+        type: string
+      transmission:
+        $ref: '#/definitions/enums.Transmission'
+      vin:
+        type: string
+    type: object
   auth.ChangePasswordDTO:
     properties:
       new_password:
@@ -80,6 +223,29 @@ definitions:
           type: array
         type: object
     type: object
+  bid.CreateBidDTO:
+    properties:
+      amount:
+        type: integer
+      auction_id:
+        type: integer
+    required:
+    - amount
+    - auction_id
+    type: object
+  bid.RetrieveBidDTO:
+    properties:
+      amount:
+        type: integer
+      auction_id:
+        type: integer
+      bidder_id:
+        type: integer
+    required:
+    - amount
+    - auction_id
+    - bidder_id
+    type: object
   car.ManufacturerModelMap:
     properties:
       manufacturers:
@@ -93,7 +259,12 @@ definitions:
           type: array
         type: array
     type: object
-  car_params.Color:
+  custom_errors.HTTPError:
+    properties:
+      error_description:
+        type: string
+    type: object
+  enums.Color:
     enum:
     - Red
     - Blue
@@ -137,7 +308,7 @@ definitions:
     - BEIGE
     - GOLD
     - OTHER
-  car_params.Drive:
+  enums.Drive:
     enum:
     - FWD
     - RWD
@@ -147,7 +318,7 @@ definitions:
     - FWD
     - RWD
     - AWD
-  car_params.FuelType:
+  enums.FuelType:
     enum:
     - Diesel
     - Petrol
@@ -167,11 +338,21 @@ definitions:
     - BIOFUEL
     - HYBRID
     - HYDROGEN
-  car_params.Transmission:
+  enums.MarginValue:
+    enum:
+    - 3
+    - 5
+    - 10
+    type: integer
+    x-enum-varnames:
+    - LOW_MARGIN
+    - MEDIUM_MARGIN
+    - HIGH_MARGIN
+  enums.Transmission:
     enum:
     - Manual
     - Automatic
-    - CVT
+    - Cvt
     - Dual clutch
     type: string
     x-enum-varnames:
@@ -179,9 +360,11 @@ definitions:
     - AUTOMATIC
     - CVT
     - DUAL_CLUTCH
-  custom_errors.HTTPError:
+  manufacturer.RetrieveManufacturerDTO:
     properties:
-      error_description:
+      id:
+        type: integer
+      name:
         type: string
     type: object
   model.RetrieveModelDTO:
@@ -298,23 +481,25 @@ definitions:
   sale_offer.CreateSaleOfferDTO:
     properties:
       color:
-        $ref: '#/definitions/car_params.Color'
+        $ref: '#/definitions/enums.Color'
       description:
         type: string
       drive:
-        $ref: '#/definitions/car_params.Drive'
+        $ref: '#/definitions/enums.Drive'
       engine_capacity:
         type: integer
       engine_power:
         type: integer
       fuel_type:
-        $ref: '#/definitions/car_params.FuelType'
+        $ref: '#/definitions/enums.FuelType'
+      manufacturer:
+        type: string
       margin:
-        $ref: '#/definitions/models.MarginValue'
+        $ref: '#/definitions/enums.MarginValue'
       mileage:
         type: integer
-      model_id:
-        type: integer
+      model:
+        type: string
       number_of_doors:
         type: integer
       number_of_gears:
@@ -330,7 +515,7 @@ definitions:
       registration_number:
         type: string
       transmission:
-        $ref: '#/definitions/car_params.Transmission'
+        $ref: '#/definitions/enums.Transmission'
       vin:
         type: string
     required:
@@ -340,9 +525,10 @@ definitions:
     - engine_capacity
     - engine_power
     - fuel_type
+    - manufacturer
     - margin
     - mileage
-    - model_id
+    - model
     - number_of_doors
     - number_of_gears
     - number_of_seats
@@ -373,11 +559,11 @@ definitions:
         $ref: '#/definitions/sale_offer.MinMax-string'
       colors:
         items:
-          $ref: '#/definitions/car_params.Color'
+          $ref: '#/definitions/enums.Color'
         type: array
       drives:
         items:
-          $ref: '#/definitions/car_params.Drive'
+          $ref: '#/definitions/enums.Drive'
         type: array
       engine_capacity_range:
         $ref: '#/definitions/sale_offer.MinMax-uint'
@@ -385,7 +571,7 @@ definitions:
         $ref: '#/definitions/sale_offer.MinMax-uint'
       fuel_types:
         items:
-          $ref: '#/definitions/car_params.FuelType'
+          $ref: '#/definitions/enums.FuelType'
         type: array
       is_order_desc:
         type: boolean
@@ -403,20 +589,25 @@ definitions:
         $ref: '#/definitions/sale_offer.OfferType'
       order_key:
         type: string
-      pagination:
-        $ref: '#/definitions/pagination.PaginationRequest'
       price_range:
         $ref: '#/definitions/sale_offer.MinMax-uint'
       query:
         type: string
       transmissions:
         items:
-          $ref: '#/definitions/car_params.Transmission'
+          $ref: '#/definitions/enums.Transmission'
         type: array
       user_id:
         type: integer
       year_range:
         $ref: '#/definitions/sale_offer.MinMax-uint'
+    type: object
+  sale_offer.OfferFilterRequest:
+    properties:
+      filter:
+        $ref: '#/definitions/sale_offer.OfferFilter'
+      pagination:
+        $ref: '#/definitions/pagination.PaginationRequest'
     type: object
   sale_offer.OfferType:
     enum:
@@ -437,7 +628,7 @@ definitions:
       can_modify:
         type: boolean
       color:
-        $ref: '#/definitions/car_params.Color'
+        $ref: '#/definitions/enums.Color'
       date_end:
         type: string
       date_of_issue:
@@ -445,21 +636,25 @@ definitions:
       description:
         type: string
       drive:
-        $ref: '#/definitions/car_params.Drive'
+        $ref: '#/definitions/enums.Drive'
       engine_capacity:
         type: integer
       engine_power:
         type: integer
       fuel_type:
-        $ref: '#/definitions/car_params.FuelType'
+        $ref: '#/definitions/enums.FuelType'
       id:
         type: integer
+      images_urls:
+        items:
+          type: string
+        type: array
       is_auction:
         type: boolean
       is_liked:
         type: boolean
       margin:
-        $ref: '#/definitions/models.MarginValue'
+        $ref: '#/definitions/enums.MarginValue'
       mileage:
         type: integer
       model:
@@ -478,8 +673,12 @@ definitions:
         type: string
       registration_number:
         type: string
+      status:
+        type: string
       transmission:
-        $ref: '#/definitions/car_params.Transmission'
+        $ref: '#/definitions/enums.Transmission'
+      user_id:
+        type: integer
       username:
         type: string
       vin:
@@ -499,13 +698,15 @@ definitions:
       can_modify:
         type: boolean
       color:
-        $ref: '#/definitions/car_params.Color'
+        $ref: '#/definitions/enums.Color'
       id:
         type: integer
       is_auction:
         type: boolean
       is_liked:
         type: boolean
+      main_url:
+        type: string
       mileage:
         type: integer
       name:
@@ -514,7 +715,52 @@ definitions:
         type: integer
       production_year:
         type: integer
+      status:
+        type: string
       username:
+        type: string
+    type: object
+  sale_offer.UpdateSaleOfferDTO:
+    properties:
+      color:
+        $ref: '#/definitions/enums.Color'
+      description:
+        type: string
+      drive:
+        $ref: '#/definitions/enums.Drive'
+      engine_capacity:
+        type: integer
+      engine_power:
+        type: integer
+      fuel_type:
+        $ref: '#/definitions/enums.FuelType'
+      id:
+        type: integer
+      manufacturer:
+        type: string
+      margin:
+        $ref: '#/definitions/enums.MarginValue'
+      mileage:
+        type: integer
+      model:
+        type: string
+      number_of_doors:
+        type: integer
+      number_of_gears:
+        type: integer
+      number_of_seats:
+        type: integer
+      price:
+        type: integer
+      production_year:
+        type: integer
+      registration_date:
+        type: string
+      registration_number:
+        type: string
+      transmission:
+        $ref: '#/definitions/enums.Transmission'
+      vin:
         type: string
     type: object
   user.CreateUserDTO:
@@ -596,6 +842,172 @@ info:
   title: Car‑Dealer API
   version: "1.0"
 paths:
+  /auction:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves all available auctions from the system
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/auction.RetrieveAuctionDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Get all auctions
+      tags:
+      - auction
+    post:
+      consumes:
+      - application/json
+      description: Creates a new auction with the provided details
+      parameters:
+      - description: Auction details
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/auction.CreateAuctionDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created auction
+          schema:
+            $ref: '#/definitions/auction.RetrieveAuctionDTO'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      security:
+      - BearerAuth: []
+      summary: Create Auction
+      tags:
+      - auction
+    put:
+      consumes:
+      - application/json
+      description: Updates an existing auction with the provided details
+      parameters:
+      - description: Auction details
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/auction.UpdateAuctionDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated auction
+          schema:
+            $ref: '#/definitions/auction.RetrieveAuctionDTO'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      security:
+      - BearerAuth: []
+      summary: Update auction
+      tags:
+      - auction
+  /auction/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a specific auction by its ID
+      parameters:
+      - description: Auction ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      security:
+      - BearerAuth: []
+      summary: Delete auction by ID
+      tags:
+      - auction
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a specific auction by its ID
+      parameters:
+      - description: Auction ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auction.RetrieveAuctionDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Get auction by ID
+      tags:
+      - auction
+  /auction/buy-now/{id}:
+    post:
+      consumes:
+      - application/json
+      description: Allows a user to instantly purchase an auction at its buy now price
+        if available
+      parameters:
+      - description: Auction ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully purchased the auction
+        "400":
+          description: Invalid auction ID or buy now operation failed
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "401":
+          description: Unauthorized - user not logged in
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      security:
+      - BearerAuth: []
+      summary: Buy an auction at its buy now price
+      tags:
+      - auction
   /auth/change-password:
     put:
       consumes:
@@ -735,6 +1147,193 @@ paths:
       summary: Register new user
       tags:
       - auth
+  /bid:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all bids
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of bids
+          schema:
+            items:
+              $ref: '#/definitions/bid.RetrieveBidDTO'
+            type: array
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Get all bids
+      tags:
+      - bid
+    post:
+      consumes:
+      - application/json
+      description: Create a new bid for an auction
+      parameters:
+      - description: Bid details
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/bid.CreateBidDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created bid
+          schema:
+            $ref: '#/definitions/bid.RetrieveBidDTO'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      security:
+      - BearerAuth: []
+      summary: Create a new bid
+      tags:
+      - bid
+  /bid/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a bid by its ID
+      parameters:
+      - description: Bid ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Bid details
+          schema:
+            $ref: '#/definitions/bid.RetrieveBidDTO'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Get bid by ID
+      tags:
+      - bid
+  /bid/auction/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves all bids placed on a specific auction
+      parameters:
+      - description: Auction ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of bids
+          schema:
+            items:
+              $ref: '#/definitions/bid.RetrieveBidDTO'
+            type: array
+        "400":
+          description: Invalid auction ID or retrieval error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Get bids by auction ID
+      tags:
+      - bid
+  /bid/bidder/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves all bids placed by a specific bidder
+      parameters:
+      - description: Bidder ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of bids
+          schema:
+            items:
+              $ref: '#/definitions/bid.RetrieveBidDTO'
+            type: array
+        "400":
+          description: Invalid bidder ID or retrieval error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Get bids by bidder ID
+      tags:
+      - bid
+  /bid/highest/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves the highest bid for a specific auction
+      parameters:
+      - description: Auction ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Highest bid details
+          schema:
+            $ref: '#/definitions/bid.RetrieveBidDTO'
+        "400":
+          description: Invalid auction ID or retrieval error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Get the highest bid for an auction
+      tags:
+      - bid
+  /bid/highest/auction/{auctionID}/bidder/{bidderID}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves the highest bid placed by a specific user on a specific
+        auction
+      parameters:
+      - description: Auction ID
+        in: path
+        name: auctionID
+        required: true
+        type: integer
+      - description: Bidder ID
+        in: path
+        name: bidderID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Highest bid details
+          schema:
+            $ref: '#/definitions/bid.RetrieveBidDTO'
+        "400":
+          description: Invalid auction ID, bidder ID, or retrieval error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      summary: Get the highest bid by a user for a specific auction
+      tags:
+      - bid
   /car/colors:
     get:
       consumes:
@@ -827,7 +1426,7 @@ paths:
           description: List of manufacturers
           schema:
             items:
-              $ref: '#/definitions/models.Manufacturer'
+              $ref: '#/definitions/manufacturer.RetrieveManufacturerDTO'
             type: array
         "500":
           description: Internal server error
@@ -858,7 +1457,7 @@ paths:
               $ref: '#/definitions/model.RetrieveModelDTO'
             type: array
         "400":
-          description: Id is not a number
+          description: ID is not a number
           schema:
             $ref: '#/definitions/custom_errors.HTTPError'
         "404":
@@ -924,6 +1523,219 @@ paths:
       summary: Get all possible transmissions
       tags:
       - car
+  /favourite/dislike/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Dislike offer by giving it's id. You have to be logged in to perform
+        this operation.
+      parameters:
+      - description: Sale offer ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No content
+        "400":
+          description: Invalid input data
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "401":
+          description: Unauthorized - user not logged in
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "404":
+          description: Sale offer not found
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      security:
+      - Bearer: []
+      summary: Dislike offer
+      tags:
+      - favourite
+  /favourite/like/{id}:
+    post:
+      consumes:
+      - application/json
+      description: Like new offer by giving it's id. You have to be logged in to perform
+        this operation.
+      parameters:
+      - description: Sale offer ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Liked offer
+        "400":
+          description: Invalid input data
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "401":
+          description: Unauthorized - user not logged in
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "404":
+          description: Sale offer not found
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      security:
+      - Bearer: []
+      summary: Like new offer
+      tags:
+      - favourite
+  /image:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes an image by its URL. The user must be the owner of the
+        image. Removes image from database and cloud storage - both operations must
+        be successful to proceed.
+      parameters:
+      - description: Image URL
+        in: query
+        name: url
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content - image successfully deleted
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "401":
+          description: Unauthorized - user must be logged in to delete images
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "403":
+          description: Forbidden - usercan only images that refer to his own offers
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "404":
+          description: Image not found
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      security:
+      - Bearer: []
+      summary: Delete image
+      tags:
+      - image
+  /image/{id}:
+    patch:
+      consumes:
+      - multipart/form-data
+      description: Uploads images for a sale offer. You can upload multiple images
+        at once, but 10 is the limit. Only offers with photos can be published later
+        on (sale-offer/publish).
+      parameters:
+      - description: Sale offer ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Images to upload
+        in: formData
+        name: images
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated sale offer with images
+          schema:
+            $ref: '#/definitions/sale_offer.RetrieveDetailedSaleOfferDTO'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "401":
+          description: Unauthorized - user must be logged in to upload images for
+            sale offers
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "403":
+          description: Forbidden - user can only upload images for his own offers
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "404":
+          description: Sale offer not found
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      security:
+      - Bearer: []
+      summary: Upload images for sale offer
+      tags:
+      - image
+  /image/offer/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes all images for a sale offer. The user must be the owner
+        of the given offer. Removes image from database and cloud storage - both operations
+        must be successful to proceed.
+      parameters:
+      - description: Sale offer ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content - images successfully deleted
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "401":
+          description: 'Unauthorized - user must be logged in to delete images '
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "403":
+          description: Forbidden - user can only delete images for his own offers
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "404":
+          description: Sale offer not found
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      security:
+      - Bearer: []
+      summary: Delete all images for a sale offer
+      tags:
+      - image
   /logout:
     post:
       consumes:
@@ -998,7 +1810,7 @@ paths:
           schema:
             $ref: '#/definitions/review.RetrieveReviewDTO'
         "400":
-          description: Bad Request – validation or persistence error
+          description: Bad Request – valIDation or persistence error
           schema:
             $ref: '#/definitions/custom_errors.HTTPError'
       summary: Create a new review
@@ -1024,7 +1836,7 @@ paths:
           schema:
             $ref: '#/definitions/review.RetrieveReviewDTO'
         "400":
-          description: Bad Request – validation or update error
+          description: Bad Request – valIDation or update error
           schema:
             $ref: '#/definitions/custom_errors.HTTPError'
       summary: Update an existing review
@@ -1032,7 +1844,7 @@ paths:
       - reviews
   /review/{id}:
     delete:
-      description: Deletes the review identified by its ID.
+      description: Deletes the review IDentified by its ID.
       operationId: deleteReview
       parameters:
       - description: Review ID
@@ -1046,40 +1858,40 @@ paths:
           schema:
             type: string
         "400":
-          description: Bad Request – invalid ID format or delete failed
+          description: Bad Request – invalID ID format or delete failed
           schema:
             $ref: '#/definitions/custom_errors.HTTPError'
       summary: Delete a review
       tags:
       - reviews
     get:
-      description: Returns review that match given id as an DTO.
-      operationId: getReviewById
+      description: Returns review that match given ID as an DTO.
+      operationId: getReviewByID
       parameters:
-      - description: Review id
+      - description: Review ID
         in: path
-        name: id
+        name: ID
         required: true
         type: integer
       produces:
       - application/json
       responses:
         "200":
-          description: OK – review with given id
+          description: OK – review with given ID
           schema:
             $ref: '#/definitions/review.RetrieveReviewDTO'
         "400":
           description: Bad Request – query failed
           schema:
             $ref: '#/definitions/custom_errors.HTTPError'
-      summary: Get review by id
+      summary: Get review by ID
       tags:
       - reviews
   /review/{id}/average:
     get:
       description: Returns the average rating value calculated over all reviews for
         the given reviewee.
-      operationId: getAverageRatingByRevieweeId
+      operationId: getAverageRatingByRevieweeID
       parameters:
       - description: Reviewee ID
         in: path
@@ -1094,7 +1906,7 @@ paths:
           schema:
             type: number
         "400":
-          description: Bad Request – invalid ID format or query failed
+          description: Bad Request – invalID ID format or query failed
           schema:
             $ref: '#/definitions/custom_errors.HTTPError'
       summary: Get average rating for a reviewee
@@ -1104,7 +1916,7 @@ paths:
     get:
       description: Returns a map from rating value (1–5) to percentage frequency among
         all reviews for the given reviewee.
-      operationId: getFrequencyOfRatingByRevieweeId
+      operationId: getFrequencyOfRatingByRevieweeID
       parameters:
       - description: Reviewee ID
         in: path
@@ -1121,7 +1933,7 @@ paths:
               type: integer
             type: object
         "400":
-          description: Bad Request – invalid ID format or query failed
+          description: Bad Request – invalID ID format or query failed
           schema:
             $ref: '#/definitions/custom_errors.HTTPError'
       summary: Get distribution of ratings for a reviewee
@@ -1149,7 +1961,7 @@ paths:
           schema:
             $ref: '#/definitions/review.RetrieveReviewsWithPagination'
         "400":
-          description: Bad Request – invalid filter or query failed
+          description: Bad Request – invalID filter or query failed
           schema:
             $ref: '#/definitions/custom_errors.HTTPError'
       summary: Filter reviews with pagination
@@ -1158,7 +1970,7 @@ paths:
   /review/reviewee/{id}:
     post:
       description: Returns all reviews where the given user is the reviewee.
-      operationId: getReviewsByRevieweeId
+      operationId: getReviewsByRevieweeID
       parameters:
       - description: Reviewee ID
         in: path
@@ -1175,7 +1987,7 @@ paths:
               $ref: '#/definitions/review.RetrieveReviewDTO'
             type: array
         "400":
-          description: Bad Request – invalid ID format or query failed
+          description: Bad Request – invalID ID format or query failed
           schema:
             $ref: '#/definitions/custom_errors.HTTPError'
       summary: List reviews about a reviewee
@@ -1184,7 +1996,7 @@ paths:
   /review/reviewer/{id}:
     post:
       description: Returns all reviews authored by the reviewer specified by ID.
-      operationId: getReviewsByReviewerId
+      operationId: getReviewsByReviewerID
       parameters:
       - description: Reviewer ID
         in: path
@@ -1201,26 +2013,26 @@ paths:
               $ref: '#/definitions/review.RetrieveReviewDTO'
             type: array
         "400":
-          description: Bad Request – invalid ID format or query failed
+          description: Bad Request – invalID ID format or query failed
           schema:
             $ref: '#/definitions/custom_errors.HTTPError'
       summary: List reviews written by a reviewer
       tags:
       - reviews
-  /review/reviewer/{reviewerId}/reviewee/{revieweeId}:
+  /review/reviewer/{reviewerID}/reviewee/{revieweeID}:
     get:
-      description: Returns the review where <reviewerId> is the author and <revieweeId>
+      description: Returns the review where <reviewerID> is the author and <revieweeID>
         is the subject.
       operationId: getReviewByReviewerAndReviewee
       parameters:
       - description: Reviewer ID
         in: path
-        name: reviewerId
+        name: reviewerID
         required: true
         type: integer
       - description: Reviewee ID
         in: path
-        name: revieweeId
+        name: revieweeID
         required: true
         type: integer
       produces:
@@ -1231,7 +2043,7 @@ paths:
           schema:
             $ref: '#/definitions/review.RetrieveReviewDTO'
         "400":
-          description: Bad Request – invalid ID format or query failed
+          description: Bad Request – invalID ID format or query failed
           schema:
             $ref: '#/definitions/custom_errors.HTTPError'
       summary: Get review written by one user about another
@@ -1284,6 +2096,81 @@ paths:
       summary: Create a new sale offer
       tags:
       - sale-offer
+    put:
+      consumes:
+      - application/json
+      description: Updates an existing sale offer in the database. To update a sale
+        offer, the user must be logged in and must be the owner of the offer. Constraints
+        are the same as when creating a sale offer.
+      parameters:
+      - description: Sale offer form
+        in: body
+        name: offer
+        required: true
+        schema:
+          $ref: '#/definitions/sale_offer.UpdateSaleOfferDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated - returns the updated sale offer
+          schema:
+            $ref: '#/definitions/sale_offer.RetrieveDetailedSaleOfferDTO'
+        "400":
+          description: Invalid input data
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "401":
+          description: Unauthorized - user must be logged in to update his offer
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "403":
+          description: Forbidden - user can only update his own offer
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "404":
+          description: Sale offer not found
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      security:
+      - Bearer: []
+      summary: Update a sale offer
+      tags:
+      - sale-offer
+  /sale-offer/buy/{id}:
+    post:
+      consumes:
+      - application/json
+      description: Allows a user to buy an item from a sale offer
+      parameters:
+      - description: Sale Offer ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully purchased offer
+        "401":
+          description: Unauthorized - user must be logged in to buy an offer
+        "403":
+          description: Forbidden - user cannot buy his own offer
+        "404":
+          description: Not Found - sale offer not found
+        "500":
+          description: Internal Server Error
+      security:
+      - ApiKeyAuth: []
+      - BearerAuth: []
+      summary: Buy a sale offer
+      tags:
+      - sale-offer
   /sale-offer/filtered:
     post:
       consumes:
@@ -1304,7 +2191,7 @@ paths:
         name: filter
         required: true
         schema:
-          $ref: '#/definitions/sale_offer.OfferFilter'
+          $ref: '#/definitions/sale_offer.OfferFilterRequest'
       produces:
       - application/json
       responses:
@@ -1357,84 +2244,6 @@ paths:
       summary: Get sale offer by ID
       tags:
       - sale-offer
-  /sale-offer/id/dislike/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Dislike offer by giving it's id. You have to be logged in to perform
-        this operation.
-      parameters:
-      - description: Sale offer ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "204":
-          description: No content
-        "400":
-          description: Invalid input data
-          schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
-        "401":
-          description: Unauthorized - user not logged in
-          schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
-        "404":
-          description: Sale offer not found
-          schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
-      security:
-      - Bearer: []
-      summary: Dislike offer
-      tags:
-      - sale-offer
-  /sale-offer/id/like/{id}:
-    post:
-      consumes:
-      - application/json
-      description: Like new offer by giving it's id. You have to be logged in to perform
-        this operation.
-      parameters:
-      - description: Sale offer ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Liked offer
-          schema:
-            $ref: '#/definitions/models.LikedOffer'
-        "400":
-          description: Invalid input data
-          schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
-        "401":
-          description: Unauthorized - user not logged in
-          schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
-        "404":
-          description: Sale offer not found
-          schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
-      security:
-      - Bearer: []
-      summary: Like new offer
-      tags:
-      - sale-offer
   /sale-offer/my-offers:
     post:
       consumes:
@@ -1455,7 +2264,7 @@ paths:
           schema:
             $ref: '#/definitions/sale_offer.RetrieveOffersWithPagination'
         "401":
-          description: Unauthorized - user not logged in
+          description: Unauthorized - user must be logged in to retrieve his offers
           schema:
             $ref: '#/definitions/custom_errors.HTTPError'
         "500":
@@ -1553,6 +2362,14 @@ paths:
           description: Invalid input data - email, username or nip taken
           schema:
             $ref: '#/definitions/user.UpdateResponse'
+        "401":
+          description: Unauthorized - user be logged in to update his data
+          schema:
+            $ref: '#/definitions/user.UpdateResponse'
+        "403":
+          description: Forbidden - user can only update his own data
+          schema:
+            $ref: '#/definitions/user.UpdateResponse'
         "404":
           description: User not found
           schema:
@@ -1584,6 +2401,14 @@ paths:
           description: User successfully deleted
         "400":
           description: ID is not a number
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "401":
+          description: Unauthorized - user must be logged in to delete his account
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "403":
+          description: Forbidden - user can only delete his own account
           schema:
             $ref: '#/definitions/custom_errors.HTTPError'
         "404":

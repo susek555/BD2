@@ -9,6 +9,9 @@ import (
 var Sched scheduler.SchedulerInterface
 
 func InitializeScheduler() {
-	Sched = scheduler.NewScheduler(BidRepo, RedisClient, NotificationService, SaleOfferRepo)
+	Sched = scheduler.NewScheduler(BidRepo, RedisClient, NotificationService, SaleOfferRepo, Hub)
+	if err := Sched.LoadAuctions(); err != nil {
+		panic("failed to load auctions: " + err.Error())
+	}
 	go Sched.Run(context.Background())
 }

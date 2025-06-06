@@ -2,7 +2,7 @@ package user
 
 import (
 	"github.com/go-playground/validator/v10"
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/models"
+	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"github.com/susek555/BD2/car-dealer-api/pkg/passwords"
 )
 
@@ -38,7 +38,7 @@ func (dto *CreateUserDTO) MapToUser() (*models.User, error) {
 				Password: hashed,
 				Email:    dto.Email,
 				Selector: dto.Selector,
-				Company:  &models.Company{Name: *dto.CompanyName, NIP: *dto.CompanyNIP},
+				Company:  &models.Company{Name: *dto.CompanyName, Nip: *dto.CompanyNIP},
 			},
 			nil
 	default:
@@ -80,7 +80,7 @@ func MapToDTO(user *models.User) *RetrieveUserDTO {
 		}
 		if user.Company != nil {
 			dto.CompanyName = &user.Company.Name
-			dto.CompanyNIP = &user.Company.NIP
+			dto.CompanyNIP = &user.Company.Nip
 		}
 		return dto
 	}
@@ -144,7 +144,7 @@ func (dto *UpdateUserDTO) updateCompanyFields(user *models.User) error {
 		user.Company.Name = *dto.CompanyName
 	}
 	if dto.CompanyNIP != nil {
-		user.Company.NIP = *dto.CompanyNIP
+		user.Company.Nip = *dto.CompanyNIP
 	}
 	return nil
 }

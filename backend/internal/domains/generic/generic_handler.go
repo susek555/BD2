@@ -10,7 +10,7 @@ func (handler GenericHandler[T, S]) Create(entity T) error {
 }
 
 func (handler GenericHandler[T, S]) GetByID(id uint) (*T, error) {
-	return handler.Service.GetById(id)
+	return handler.Service.GetByID(id)
 }
 
 func (handler GenericHandler[T, S]) GetAll() ([]T, error) {
