@@ -3,10 +3,12 @@ package test_utils
 import (
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"reflect"
 	"strings"
 	"time"
 
+	"github.com/cloudinary/cloudinary-go/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/generic"
 	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
@@ -83,4 +85,11 @@ func CleanDB(db *gorm.DB) error {
 		return err
 	}
 	return nil
+}
+
+func GetTestCloudinary() *cloudinary.Cloudinary {
+	os.Setenv("CLOUDINARY_URL", "cloudinary://232679685254738:xU13-pBToKDG825l_LhM47k8k8o@du9datfva")
+	cloudinaryURL := os.Getenv("CLOUDINARY_URL")
+	cld, _ := cloudinary.NewFromURL(cloudinaryURL)
+	return cld
 }

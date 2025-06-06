@@ -1,10 +1,8 @@
 package sale_offer_tests
 
 import (
-	"os"
 	"time"
 
-	"github.com/cloudinary/cloudinary-go/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/mock"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/bid"
@@ -83,10 +81,6 @@ func getRepositoryWithSaleOffers(db *gorm.DB, offers []models.SaleOffer) sale_of
 }
 
 func newTestServer(db *gorm.DB, seedOffers []models.SaleOffer) (*gin.Engine, sale_offer.SaleOfferServiceInterface, sale_offer.OfferAccessEvaluatorInterface, image.ImageServiceInterface) {
-	os.Setenv("CLOUDINARY_URL", "cloudinary://232679685254738:xU13-pBToKDG825l_LhM47k8k8o@du9datfva")
-
-	cloudinaryURL := os.Getenv("CLOUDINARY_URL")
-	cld, _ := cloudinary.NewFromURL(cloudinaryURL)
 	verifier := jwt.NewJWTVerifier(u.JWTSECRET)
 	saleOfferRepo := getRepositoryWithSaleOffers(db, seedOffers)
 	manufacturerRepo := manufacturer.NewManufacturerRepository(db)
@@ -94,11 +88,12 @@ func newTestServer(db *gorm.DB, seedOffers []models.SaleOffer) (*gin.Engine, sal
 	likedOfferRepository := liked_offer.NewLikedOfferRepository(db)
 	bidRepository := bid.NewBidRepository(db)
 	imageRepo := image.NewImageRepository(db)
+	imageBucket := image.NewImageBucket(u.GetTestCloudinary())
 	accessEvaluator := sale_offer.NewAccessEvaluator(bidRepository, likedOfferRepository)
 	purchaseCreator := purchase.NewPurchaseRepository(db)
-	saleOfferService := sale_offer.NewSaleOfferService(saleOfferRepo, manufacturerRepo, modelRepo, imageRepo, accessEvaluator, purchaseCreator)
+	saleOfferService := sale_offer.NewSaleOfferService(saleOfferRepo, manufacturerRepo, modelRepo, imageRepo, imageBucket, accessEvaluator, purchaseCreator)
 	likedOfferService := liked_offer.NewLikedOfferService(likedOfferRepository, saleOfferRepo)
-	imageService := image.NewImageService(imageRepo, &image.ImageBucket{CloudinaryClient: cld}, saleOfferRepo)
+	imageService := image.NewImageService(imageRepo, imageBucket, saleOfferRepo)
 	imageHandler := image.NewHandler(imageService, saleOfferService)
 	mh := new(mocks.HubInterface)
 	mh.On("SubscribeUser", mock.Anything, mock.Anything).Return()
