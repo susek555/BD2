@@ -9,7 +9,7 @@ import (
 var Sched scheduler.SchedulerInterface
 
 func InitializeScheduler() {
-	Sched = scheduler.NewScheduler(BidRepo, RedisClient, NotificationService, AuctionRepo, SaleOfferRepo, PurchaseRepo, Hub)
+	Sched = scheduler.NewScheduler(BidRepo, RedisClient, NotificationService, SaleOfferRepo, PurchaseRepo, Hub)
 	if err := Sched.LoadAuctions(); err != nil {
 		panic("failed to load auctions: " + err.Error())
 	}
