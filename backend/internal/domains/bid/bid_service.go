@@ -9,10 +9,12 @@ import (
 	"gorm.io/gorm"
 )
 
+//go:generate mockery --name=SaleOfferRetrieverInterface --output=../../test/mocks --case=snake --with-expecter
 type SaleOfferRetrieverInterface interface {
 	GetByID(id uint) (*models.SaleOffer, error)
 }
 
+//go:generate mockery --name=AuctionPriceUpdaterInterface --output=../../test/mocks --case=snake --with-expecter
 type AuctionPriceUpdaterInterface interface {
 	UpdatePrice(auction *models.SaleOffer, newPrice uint) error
 }
