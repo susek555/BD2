@@ -18,6 +18,18 @@ func NewHandler(service NotificationServiceInterface) *Handler {
 	}
 }
 
+// GetFilteredNotifications godoc
+// @Summary Retrieve filtered notifications for authenticated user
+// @Description Gets a list of notifications based on provided filter criteria for the current user
+// @Tags notification
+// @Accept json
+// @Produce json
+// @Body {object} NotificationFilter "Filter criteria for notifications"
+// @Security BearerAuth
+// @Success 200 {array} RetrieveNotificationsWithPagination "List of notifications"
+// @Failure 400 {object} custom_errors.HTTPError "Invalid body or bad request"
+// @Failure 401 {object} custom_errors.HTTPError "Unauthorized"
+// @Router /notification/filter [post]
 func (h *Handler) GetFilteredNotifications(c *gin.Context) {
 	filter := NewNotificationFilter()
 	receiverID, err := auth.GetUserID(c)
