@@ -47,8 +47,8 @@ type UpdateSaleOfferDTO struct {
 	Transmission       *enums.Transmission `json:"transmission"`
 	NumberOfGears      *uint               `json:"number_of_gears"`
 	Drive              *enums.Drive        `json:"drive"`
-	Manufacturer       *string             `json:"manufacturer"`
-	Model              *string             `json:"model"`
+	ManufacturerName   *string             `json:"manufacturer"`
+	ModelName          *string             `json:"model"`
 	Status             *enums.Status       `json:"-"`
 }
 

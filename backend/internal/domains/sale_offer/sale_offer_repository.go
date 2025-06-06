@@ -32,7 +32,7 @@ func (r *SaleOfferRepository) Create(offer *models.SaleOffer) error {
 }
 
 func (r *SaleOfferRepository) Update(offer *models.SaleOffer) error {
-	return r.DB.Save(offer).Error
+	return r.DB.Session(&gorm.Session{FullSaveAssociations: true}).Save(offer).Error
 }
 
 func (r *SaleOfferRepository) UpdateStatus(offer *models.SaleOffer, status enums.Status) error {

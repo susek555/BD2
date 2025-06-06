@@ -6,6 +6,7 @@ import (
 )
 
 type ModelRepositoryInterface interface {
+	GetByID(id uint) (*models.Model, error)
 	GetByManufacturerID(id uint) ([]models.Model, error)
 	GetByManufacturerName(name string) ([]models.Model, error)
 	GetByManufacturerAndModelName(manufacturerName, modelName string) (*models.Model, error)
@@ -17,6 +18,12 @@ type ModelRepository struct {
 
 func NewModelRepository(db *gorm.DB) ModelRepositoryInterface {
 	return &ModelRepository{DB: db}
+}
+
+func (r *ModelRepository) GetByID(id uint) (*models.Model, error) {
+	var model models.Model
+	err := r.DB.Preload("Manufacturer").First(&model, id).Error
+	return &model, err
 }
 
 func (r *ModelRepository) GetByManufacturerID(id uint) ([]models.Model, error) {
