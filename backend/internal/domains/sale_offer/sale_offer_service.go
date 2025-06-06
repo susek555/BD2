@@ -132,11 +132,11 @@ func (s *SaleOfferService) Buy(id uint, userID uint) (*models.SaleOffer, error) 
 	if err != nil {
 		return nil, err
 	}
-	if offer.BelongsToUser(userID) {
-		return nil, ErrOfferOwnedByUser
-	}
 	if offer.IsAuction {
 		return nil, ErrOfferIsAuction
+	}
+	if offer.BelongsToUser(userID) {
+		return nil, ErrOfferOwnedByUser
 	}
 	if offer.Status != enums.PUBLISHED {
 		return nil, ErrOfferNotPublished
@@ -217,7 +217,7 @@ func (s *SaleOfferService) getModelID(manufacturerName, modelName string) (uint,
 
 func (s *SaleOfferService) determineNewModelID(offer *models.SaleOffer, dto *UpdateSaleOfferDTO) (uint, error) {
 	if dto.Model == nil {
-		return 0, nil
+		return offer.Car.ModelID, nil
 	}
 	manufacturerName := offer.Car.Model.Manufacturer.Name
 	if dto.Manufacturer != nil {
