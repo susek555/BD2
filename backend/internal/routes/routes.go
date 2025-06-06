@@ -142,5 +142,7 @@ func registerNotificationRoutes(router *gin.Engine) {
 	notificationRoutes := router.Group("/notification")
 	{
 		notificationRoutes.POST("/filter", middleware.Authenticate(initializers.Verifier), initializers.NotificationHandler.GetFilteredNotifications)
+		notificationRoutes.PUT("/seen/:id", middleware.Authenticate(initializers.Verifier), initializers.NotificationHandler.MarkAsSeen)
+		notificationRoutes.PUT("/unseen/:id", middleware.Authenticate(initializers.Verifier), initializers.NotificationHandler.MarkAsUnseen)
 	}
 }
