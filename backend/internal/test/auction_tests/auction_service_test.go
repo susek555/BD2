@@ -133,18 +133,20 @@ func makeValidUpdateDTO() *auction.UpdateAuctionDTO {
 }
 
 func TestAuctionService_Create_OK(t *testing.T) {
-	repo := new(mocks.AuctionRepositoryInterface)
+	repo := new(mocks.SaleOfferRepositoryInterface)
 	saleOfferSvc := new(mocks.SaleOfferServiceInterface)
-	svc := auction.NewAuctionService(repo, saleOfferSvc)
+	purchaseCreator := new(mocks.PurchaseCreatorInterface)
+	svc := auction.NewAuctionService(repo, saleOfferSvc, purchaseCreator)
 
 	dtoIn := makeValidCreateDTO()
 
-	// Mock the Create call for SaleOffer service
-	saleOfferSvc.On("Create", mock.AnythingOfType("*sale_offer.CreateSaleOfferDTO")).
-		Return(&sale_offer.RetrieveDetailedSaleOfferDTO{ID: 7, Price: dtoIn.Price}, nil)
+	// The mock expects two arguments for PrepareForCreateSaleOffer
+	saleOfferSvc.On("PrepareForCreateSaleOffer", mock.AnythingOfType("*sale_offer.CreateSaleOfferDTO")).
+		Return(&models.SaleOffer{
+			ID:     7,
+			UserID: dtoIn.UserID}, nil)
 
-	// Mock the Create call for Auction repo
-	repo.On("Create", mock.AnythingOfType("*models.Auction")).Return(nil)
+	repo.On("Create", mock.AnythingOfType("*models.SaleOffer")).Return(nil)
 
 	saleOfferSvc.On("GetDetailedByID", uint(7), mock.AnythingOfType("*uint")).
 		Return(&sale_offer.RetrieveDetailedSaleOfferDTO{ID: 7, Price: dtoIn.Price, BuyNowPrice: &dtoIn.BuyNowPrice}, nil)
@@ -160,17 +162,18 @@ func TestAuctionService_Create_OK(t *testing.T) {
 }
 
 func TestAuctionService_Create_Error(t *testing.T) {
-	repo := new(mocks.AuctionRepositoryInterface)
+	repo := new(mocks.SaleOfferRepositoryInterface)
 	saleOfferSvc := new(mocks.SaleOfferServiceInterface)
-	svc := auction.NewAuctionService(repo, saleOfferSvc)
+	purchaseCreator := new(mocks.PurchaseCreatorInterface)
+	svc := auction.NewAuctionService(repo, saleOfferSvc, purchaseCreator)
 
 	dtoIn := makeValidCreateDTO()
 	expected := errors.New("db failure")
 
-	// Mock the GetModelID call that happens before Create
-	saleOfferSvc.On("Create", mock.AnythingOfType("*sale_offer.CreateSaleOfferDTO")).
-		Return(&sale_offer.RetrieveDetailedSaleOfferDTO{ID: 1, Price: dtoIn.Price}, nil)
-	repo.On("Create", mock.Anything).Return(expected)
+	saleOfferSvc.On("PrepareForCreateSaleOffer", mock.AnythingOfType("*sale_offer.CreateSaleOfferDTO")).
+		Return(&models.SaleOffer{
+			ID:     7,
+			UserID: dtoIn.UserID}, expected)
 
 	out, err := svc.Create(dtoIn)
 	assert.Nil(t, out)
@@ -180,51 +183,80 @@ func TestAuctionService_Create_Error(t *testing.T) {
 	saleOfferSvc.AssertExpectations(t)
 }
 func TestAuctionService_Update_OK(t *testing.T) {
-	repo := new(mocks.AuctionRepositoryInterface)
+	repo := new(mocks.SaleOfferRepositoryInterface)
 	saleOfferSvc := new(mocks.SaleOfferServiceInterface)
-	svc := auction.NewAuctionService(repo, saleOfferSvc)
+	purchaseCreator := new(mocks.PurchaseCreatorInterface)
+	svc := auction.NewAuctionService(repo, saleOfferSvc, purchaseCreator)
 	update := makeValidUpdateDTO()
 
 	// Mock GetByID which is called before Update
-	repo.On("GetByID", uint(42)).Return(makeFullAuctionEntity(42, time.Now().Add(time.Hour), 300), nil)
-	saleOfferSvc.On("Update", mock.AnythingOfType("*sale_offer.UpdateSaleOfferDTO"), uint(99)).
-		Return(&sale_offer.RetrieveDetailedSaleOfferDTO{ID: 99}, nil)
-	repo.On("Update", mock.AnythingOfType("*models.Auction")).Run(func(args mock.Arguments) {
-		a := args.Get(0).(*models.Auction)
-		full := makeFullAuctionEntity(5, a.DateEnd, a.BuyNowPrice)
-		*a = *full
-	}).Return(nil)
+	saleOfferSvc.On("PrepareForUpdateSaleOffer", mock.AnythingOfType("*sale_offer.UpdateSaleOfferDTO"), mock.AnythingOfType("uint")).
+		Return(&models.SaleOffer{
+			ID:     7,
+			UserID: update.ID,
+			Auction: &models.Auction{
+				OfferID:      7,
+				DateEnd:      time.Now().Add(time.Hour),
+				BuyNowPrice:  1000,
+				InitialPrice: 500,
+			}}, nil)
+
+	repo.On("Update", mock.AnythingOfType("*models.SaleOffer")).
+		Run(func(args mock.Arguments) {
+		}).
+		Return(nil)
+
+	buyNowPrice := uint(1000)
+	saleOfferSvc.On("GetDetailedByID", uint(7), mock.AnythingOfType("*uint")).
+		Return(&sale_offer.RetrieveDetailedSaleOfferDTO{ID: 7, Price: 500, BuyNowPrice: &buyNowPrice}, nil)
 
 	out, svcErr := svc.Update(update, uint(99))
 	assert.NoError(t, svcErr)
 
-	assert.Equal(t, uint(99), out.ID)
+	assert.Equal(t, uint(7), out.ID)
 	repo.AssertExpectations(t)
 }
 func TestAuctionService_Update_Error(t *testing.T) {
-	repo := new(mocks.AuctionRepositoryInterface)
+	repo := new(mocks.SaleOfferRepositoryInterface)
 	saleOfferSvc := new(mocks.SaleOfferServiceInterface)
-	svc := auction.NewAuctionService(repo, saleOfferSvc)
-
+	purchaseCreator := new(mocks.PurchaseCreatorInterface)
+	svc := auction.NewAuctionService(repo, saleOfferSvc, purchaseCreator)
 	update := makeValidUpdateDTO()
-	expected := errors.New("update failed")
+
+	expected := errors.New("db failure")
 
 	// Mock GetByID which is called before Update
-	repo.On("GetByID", uint(42)).Return(makeFullAuctionEntity(42, time.Now().Add(time.Hour), 300), nil)
+	saleOfferSvc.On("PrepareForUpdateSaleOffer", mock.AnythingOfType("*sale_offer.UpdateSaleOfferDTO"), mock.AnythingOfType("uint")).
+		Return(&models.SaleOffer{
+			ID:     7,
+			UserID: update.ID,
+			Auction: &models.Auction{
+				OfferID:      7,
+				DateEnd:      time.Now().Add(time.Hour),
+				BuyNowPrice:  1000,
+				InitialPrice: 500,
+			}}, nil)
 
-	saleOfferSvc.On("Update", mock.AnythingOfType("*sale_offer.UpdateSaleOfferDTO"), uint(99)).
-		Return(&sale_offer.RetrieveDetailedSaleOfferDTO{ID: 99}, nil)
+	repo.On("Update", mock.AnythingOfType("*models.SaleOffer")).
+		Run(func(args mock.Arguments) {
+		}).
+		Return(nil)
 
-	repo.On("Update", mock.Anything).Return(expected)
+	buyNowPrice := uint(1000)
+	saleOfferSvc.On("GetDetailedByID", uint(7), mock.AnythingOfType("*uint")).
+		Return(&sale_offer.RetrieveDetailedSaleOfferDTO{ID: 7, Price: 500, BuyNowPrice: &buyNowPrice}, expected)
 
-	_, err := svc.Update(update, uint(99))
-	assert.ErrorIs(t, err, expected)
+	out, svcErr := svc.Update(update, uint(99))
+	assert.ErrorIs(t, svcErr, expected)
+
+	assert.Equal(t, uint(7), out.ID)
 	repo.AssertExpectations(t)
 }
 func TestAuctionService_Delete_OK(t *testing.T) {
-	repo := new(mocks.AuctionRepositoryInterface)
+	repo := new(mocks.SaleOfferRepositoryInterface)
 	saleOfferSvc := new(mocks.SaleOfferServiceInterface)
-	svc := auction.NewAuctionService(repo, saleOfferSvc)
+	purchaseCreator := new(mocks.PurchaseCreatorInterface)
+	svc := auction.NewAuctionService(repo, saleOfferSvc, purchaseCreator)
 
 	full := makeFullAuctionEntity(8, time.Now().Add(time.Hour), 400)
 	saleOfferSvc.On("Delete", uint(8), full.Offer.UserID).Return(nil)
@@ -235,9 +267,10 @@ func TestAuctionService_Delete_OK(t *testing.T) {
 }
 
 func TestAuctionService_Delete_Unauthorized(t *testing.T) {
-	repo := new(mocks.AuctionRepositoryInterface)
+	repo := new(mocks.SaleOfferRepositoryInterface)
 	saleOfferSvc := new(mocks.SaleOfferServiceInterface)
-	svc := auction.NewAuctionService(repo, saleOfferSvc)
+	purchaseCreator := new(mocks.PurchaseCreatorInterface)
+	svc := auction.NewAuctionService(repo, saleOfferSvc, purchaseCreator)
 
 	full := makeFullAuctionEntity(8, time.Now().Add(time.Hour), 400)
 
@@ -250,9 +283,10 @@ func TestAuctionService_Delete_Unauthorized(t *testing.T) {
 }
 
 func TestAuctionService_Delete_GetByID_Error(t *testing.T) {
-	repo := new(mocks.AuctionRepositoryInterface)
+	repo := new(mocks.SaleOfferRepositoryInterface)
 	saleOfferSvc := new(mocks.SaleOfferServiceInterface)
-	svc := auction.NewAuctionService(repo, saleOfferSvc)
+	purchaseCreator := new(mocks.PurchaseCreatorInterface)
+	svc := auction.NewAuctionService(repo, saleOfferSvc, purchaseCreator)
 
 	expected := errors.New("auction not found")
 
@@ -266,9 +300,10 @@ func TestAuctionService_Delete_GetByID_Error(t *testing.T) {
 }
 
 func TestAuctionService_Delete_Error(t *testing.T) {
-	repo := new(mocks.AuctionRepositoryInterface)
+	repo := new(mocks.SaleOfferRepositoryInterface)
 	saleOfferSvc := new(mocks.SaleOfferServiceInterface)
-	svc := auction.NewAuctionService(repo, saleOfferSvc)
+	purchaseCreator := new(mocks.PurchaseCreatorInterface)
+	svc := auction.NewAuctionService(repo, saleOfferSvc, purchaseCreator)
 
 	full := makeFullAuctionEntity(8, time.Now().Add(time.Hour), 400)
 	saleOfferSvc.On("Delete", uint(8), full.Offer.UserID).Return(errors.New("delete failed"))
