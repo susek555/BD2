@@ -65,10 +65,9 @@ func MapToDTO(auction *models.Auction) *RetrieveAuctionDTO {
 	if err != nil {
 		log.Println("error loading location:", err)
 	}
-
 	dateEnd := auction.DateEnd.In(loc).Format(formats.DateTimeLayout)
 	offerDTO := sale_offer.MapToDTO(auction.Offer)
-	dateEnd := auction.DateEnd.UTC().Format("15:04 02/01/2006")
+	dateEnd = auction.DateEnd.UTC().Format("15:04 02/01/2006")
 	return &RetrieveAuctionDTO{
 		offerDTO,
 		dateEnd,
