@@ -194,7 +194,7 @@ func TestService_Refresh(t *testing.T) {
 		User:       &models.User{ID: 1, Email: "john@example.com"},
 	}
 
-	t.Run("happy‑path – returns new access", func(t *testing.T) {
+	t.Run("happy‑path - returns new access", func(t *testing.T) {
 		uRepo := mocks.NewUserRepositoryInterface(t)
 		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
 
@@ -261,7 +261,7 @@ func TestService_Logout(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
-	t.Run("single device – valid token", func(t *testing.T) {
+	t.Run("single device - valid token", func(t *testing.T) {
 		uRepo := mocks.NewUserRepositoryInterface(t)
 		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
 
@@ -274,7 +274,7 @@ func TestService_Logout(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
-	t.Run("single device – no token found", func(t *testing.T) {
+	t.Run("single device - no token found", func(t *testing.T) {
 		uRepo := mocks.NewUserRepositoryInterface(t)
 		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
 
@@ -284,7 +284,7 @@ func TestService_Logout(t *testing.T) {
 		assert.EqualError(t, err, "refresh token required")
 	})
 
-	t.Run("single device – FindByToken returns error", func(t *testing.T) {
+	t.Run("single device - FindByToken returns error", func(t *testing.T) {
 		uRepo := mocks.NewUserRepositoryInterface(t)
 		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
 
@@ -298,7 +298,7 @@ func TestService_Logout(t *testing.T) {
 		assert.EqualError(t, err, "refresh token not found")
 	})
 
-	t.Run("allDevices – DeleteByUserID returns error", func(t *testing.T) {
+	t.Run("allDevices - DeleteByUserID returns error", func(t *testing.T) {
 		uRepo := mocks.NewUserRepositoryInterface(t)
 		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
 
