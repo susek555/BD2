@@ -274,7 +274,7 @@ func (h *Handler) Buy(c *gin.Context) {
 	notification := &models.Notification{
 		OfferID: uint(offerID),
 	}
-	err = h.notificationService.CreateBuyNotication(notification, strconv.FormatUint(uint64(userID), 10), offer)
+	err = h.notificationService.CreateBuyNotification(notification, strconv.FormatUint(uint64(userID), 10), offer)
 	if err != nil {
 		log.Printf("Error creating buy notification for offer ID %d: %v", offerID, err)
 		return
