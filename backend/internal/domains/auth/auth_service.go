@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"context"
 	"time"
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/refresh_token"
@@ -12,11 +11,11 @@ import (
 )
 
 type AuthServiceInterface interface {
-	Register(ctx context.Context, in user.CreateUserDTO) map[string][]string
-	Login(ctx context.Context, in LoginInput) (access, refresh string, user *models.User, err error)
-	Refresh(ctx context.Context, refreshToken string) (access string, err error)
-	Logout(ctx context.Context, userID uint, refreshToken string, allDevices bool) error
-	ChangePassword(ctx context.Context, userID uint, oldPassword, newPassword string) map[string][]string
+	Register(in user.CreateUserDTO) map[string][]string
+	Login(in LoginInput) (access, refresh string, user *models.User, err error)
+	Refresh(refreshToken string) (access string, err error)
+	Logout(userID uint, refreshToken string, allDevices bool) error
+	ChangePassword(userID uint, oldPassword, newPassword string) map[string][]string
 }
 
 type AuthService struct {
@@ -33,7 +32,7 @@ func NewAuthService(repo user.UserRepositoryInterface, refreshTokenService refre
 	}
 }
 
-func (s *AuthService) Register(ctx context.Context, in user.CreateUserDTO) map[string][]string {
+func (s *AuthService) Register(in user.CreateUserDTO) map[string][]string {
 	userModel, err := in.MapToUser()
 	var errs = make(map[string][]string)
 	if err != nil {
@@ -62,7 +61,7 @@ func (s *AuthService) Register(ctx context.Context, in user.CreateUserDTO) map[s
 	return errs
 }
 
-func (s *AuthService) Login(ctx context.Context, in LoginInput) (string, string, *models.User, error) {
+func (s *AuthService) Login(in LoginInput) (string, string, *models.User, error) {
 	u, err := s.Repo.GetByEmail(in.Login)
 	if err != nil || u.ID == 0 {
 		return "", "", &models.User{}, ErrInvalidCredentials
@@ -83,7 +82,7 @@ func (s *AuthService) Login(ctx context.Context, in LoginInput) (string, string,
 	return access, refresh, &u, nil
 }
 
-func (s *AuthService) Refresh(ctx context.Context, provided string) (string, error) {
+func (s *AuthService) Refresh(provided string) (string, error) {
 	refresh, err := s.RefreshTokenService.FindByToken(provided)
 	if err != nil {
 		return "", ErrInvalidRefreshToken
@@ -101,7 +100,7 @@ func (s *AuthService) Refresh(ctx context.Context, provided string) (string, err
 	return access, nil
 }
 
-func (s *AuthService) Logout(ctx context.Context, userID uint, provided string, allDevices bool) error {
+func (s *AuthService) Logout(userID uint, provided string, allDevices bool) error {
 	if provided == "" {
 		return ErrRefreshTokenRequired
 	}
@@ -115,12 +114,12 @@ func (s *AuthService) Logout(ctx context.Context, userID uint, provided string, 
 	return s.RefreshTokenService.Delete(refresh.ID)
 }
 
-func (s *AuthService) ChangePassword(ctx context.Context, userID uint, oldPassword, newPassword string) map[string][]string {
-	user, err := s.Repo.GetByID(userID)
+func (s *AuthService) ChangePassword(userID uint, oldPassword, newPassword string) map[string][]string {
+	user_, err := s.Repo.GetByID(userID)
 	if err != nil {
 		return map[string][]string{"other": {ErrUserNotFound.Error()}}
 	}
-	if !passwords.Match(oldPassword, user.Password) {
+	if !passwords.Match(oldPassword, user_.Password) {
 		return map[string][]string{"old_password": {ErrInvalidOldPassword.Error()}}
 	}
 	hashedPassword, err := passwords.Hash(newPassword)

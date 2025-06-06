@@ -49,7 +49,7 @@ func (h *Handler) Register(ctx *gin.Context) {
 		return
 	}
 
-	err := h.Service.Register(ctx, request)
+	err := h.Service.Register(request)
 	if len(err) > 0 {
 		ctx.JSON(http.StatusConflict, RegisterResponse{Errors: err})
 		return
@@ -78,7 +78,7 @@ func (h *Handler) Login(c *gin.Context) {
 		return
 	}
 
-	access, refresh, user_, err := h.Service.Login(c, req)
+	access, refresh, user_, err := h.Service.Login(req)
 	loginResponse := prepareLoginResponse(access, refresh, *user_)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, LoginResponse{Errors: map[string][]string{"credentials": {ErrInvalidCredentials.Error()}}})
@@ -125,7 +125,7 @@ func (h *Handler) Refresh(c *gin.Context) {
 		custom_errors.HandleError(c, ErrInvalidBody, ErrorMap)
 		return
 	}
-	access, err := h.Service.Refresh(c, req.RefreshToken)
+	access, err := h.Service.Refresh(req.RefreshToken)
 	if err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
@@ -160,7 +160,7 @@ func (h *Handler) Logout(c *gin.Context) {
 		return
 	}
 
-	if err := h.Service.Logout(c, userID.(uint), req.RefreshToken, req.AllDevices); err != nil {
+	if err := h.Service.Logout(userID.(uint), req.RefreshToken, req.AllDevices); err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
@@ -194,7 +194,7 @@ func (h *Handler) ChangePassword(c *gin.Context) {
 		return
 	}
 
-	errors := h.Service.ChangePassword(c, userID, req.OldPassword, req.NewPassword)
+	errors := h.Service.ChangePassword(userID, req.OldPassword, req.NewPassword)
 	if len(errors) > 0 {
 		c.JSON(http.StatusBadRequest, ChangePasswordResponse{Errors: errors})
 		return
