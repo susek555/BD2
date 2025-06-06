@@ -1,25 +1,48 @@
+'use client'
+
 import { AuctionData } from "@/app/lib/definitions/sale-offer-details";
 import { BasePriceButton } from "./price-buttons/base-price-button";
 import { CurrencyDollarIcon, ArrowRightIcon } from "@heroicons/react/20/solid";
 import TimeLeft from "./time-left";
 import Link from "next/link";
 import BidForm from "./bid-form";
-import { authConfig } from "@/app/lib/authConfig";
-import { getServerSession } from "next-auth/next";
+import { buyNowAuction, buyRegular } from "@/app/lib/api/offer/buyNow";
+import { useState } from "react";
+import ConfirmationModal from "../../(common)/confirm-modal";
+import { useRouter } from "next/navigation";
 
 type PriceData = {
     id: string;
     price: number;
     isAuction: boolean;
     auction?: AuctionData;
+    myCurrentBid?: number;
     isActive: boolean;
     priceOnly: boolean;
 }
 
-export default async function Price( data : { data : PriceData}) {
-    const session = await getServerSession(authConfig);
-    const loggedIn = !!session;
-    const { id, price, isAuction, auction, isActive, priceOnly } = data.data;
+export default function Price({ data, loggedIn }: { data: PriceData, loggedIn: boolean }) {
+    const router = useRouter();
+    const { id, price, isAuction, auction, myCurrentBid, isActive, priceOnly } = data;
+
+    const [isConfirmationOpen, setConfirmationOpen] = useState(false);
+
+    const handleBuyNow = async () => {
+        try {
+            if (isAuction) {
+                await buyNowAuction(id);
+            } else {
+                await buyRegular(id);
+            }
+            setConfirmationOpen(false);
+            alert('Your purchase was successful! Now you will be redirected to your activity page.');
+            router.replace('/account/activity');
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        } catch (error) {
+            alert('An error occurred while processing your purchase. Please try again.');
+            router.refresh();
+        }
+    };
 
     return (
         <>
@@ -39,11 +62,21 @@ export default async function Price( data : { data : PriceData}) {
                             </div>
                         </div>
                         {loggedIn ? (
-                            !priceOnly ? (
-                                <BidForm currentBid={auction!.currentBid} />
-                            ) : (
-                                <></>
-                            )
+                            <div className="flex flex-col gap-2 justify-center items-center">
+                                { myCurrentBid ? (
+                                    <>
+                                        <p className="text-2xl">Your bid</p>
+                                        <p className="font-bold text-2xl">{myCurrentBid.toString()} PLN</p>
+                                    </>
+                                ) : (
+                                    <p className="font-bold text-2xl">Place your bid</p>
+                                )}
+                                {!priceOnly ? (
+                                    <BidForm currentBid={auction!.currentBid} />
+                                ) : (
+                                    <></>
+                                )}
+                            </div>
                         ) : (
                             <Link href="/login">
                                 <BasePriceButton>
@@ -58,12 +91,10 @@ export default async function Price( data : { data : PriceData}) {
                         <p className="font-bold text-3xl">{price.toString()} PLN</p>
                         {loggedIn ? (
                             !priceOnly ? (
-                                <Link href={`/offer/${id}/buynow`}>
-                                    <BasePriceButton>
-                                        <p className="text-bold text-xl">Buy Now</p>
-                                        <CurrencyDollarIcon className="ml-auto w-5 text-gray-50" />
-                                    </BasePriceButton>
-                                </Link>
+                                <BasePriceButton onClick={() => setConfirmationOpen(true)}>
+                                    <p className="text-bold text-xl">Buy Now</p>
+                                    <CurrencyDollarIcon className="ml-auto w-5 text-gray-50" />
+                                </BasePriceButton>
                             ) : (
                                 <></>
                             )
@@ -92,12 +123,10 @@ export default async function Price( data : { data : PriceData}) {
                             <p className="font-bold text-3xl">{price.toString()} PLN</p>
                             {loggedIn ? (
                                 !priceOnly ? (
-                                    <Link href={`/offer/${id}/buynow`}>
-                                        <BasePriceButton>
-                                            <p className="text-bold text-xl">Buy Now</p>
-                                            <CurrencyDollarIcon className="ml-auto w-5 text-gray-50" />
-                                        </BasePriceButton>
-                                    </Link>
+                                    <BasePriceButton onClick={() => setConfirmationOpen(true)}>
+                                        <p className="text-bold text-xl">Buy Now</p>
+                                        <CurrencyDollarIcon className="ml-auto w-5 text-gray-50" />
+                                    </BasePriceButton>
                                 ) : (
                                     <></>
                                 )
@@ -114,6 +143,16 @@ export default async function Price( data : { data : PriceData}) {
                 </>
             ) : ( <></>
             ) }
+            <ConfirmationModal
+                title='Confirm Buy Now'
+                message='Are you sure you want to buy now this offer? This action cannot be undone.'
+                confirmText='Buy Now'
+                onConfirm={handleBuyNow}
+                onCancel={() => setConfirmationOpen(false)}
+                isOpen={isConfirmationOpen}
+                bg_color='bg-blue-500'
+                bg_color_hover='bg-blue-600'
+            />
         </>
     );
 }

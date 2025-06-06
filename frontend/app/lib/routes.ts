@@ -12,6 +12,8 @@ export const PUBLIC_ROUTES = [
   "/car/transmissions",
   "/sale-offer/order-keys",
   "/sale-offer/filtered",
+  "/sale-offer",
+  "/api/images/upload/[id]",
 ];
 
 export const PROTECTED_ROUTES = [

@@ -13,7 +13,6 @@ export async function fetchWithRefresh(
     ...init,
     headers: {
       ...(init.headers ?? {}),
-      "Content-Type": "application/json",
       Authorization: `Bearer ${accessToken}`,
     },
   });

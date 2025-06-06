@@ -1,12 +1,13 @@
 'use client'
 
+import { updateFavoriteStatus } from '@/app/lib/api/listing/requests';
 import { useState } from 'react';
 
 export default function Favourite({isFavourite, id, describe = true}: {isFavourite: boolean, id: string, describe?: boolean}) {
     const [isFav, setIsFav] = useState(isFavourite);
 
     function handleChangeFavourite(newValue: boolean) {
-        //TODO connect to API request
+        updateFavoriteStatus(id, !newValue);
         console.log("Favourite changed", id);
         setIsFav(newValue);
     }

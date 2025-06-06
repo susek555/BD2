@@ -17,14 +17,14 @@ export default function SaleOfferCard({
   priceLabel,
   className = '',
 }: GenericOfferProps<SaleOffer>) {
-  const [isFavorite, setIsFavorite] = useState(offer.isFavorite);
+  const [isFavorite, setIsFavorite] = useState(offer.is_liked);
   const { status } = useSession();
   const isLoggedIn = status === 'authenticated';
 
   const handleFavoriteToggle = () => {
-    updateFavoriteStatus(offer.id, offer.isFavorite);
+    updateFavoriteStatus(offer.id, offer.is_liked);
     setIsFavorite(!isFavorite);
-    offer.isFavorite = !isFavorite;
+    offer.is_liked = !isFavorite;
   };
 
   const favoriteButton = (
@@ -33,7 +33,7 @@ export default function SaleOfferCard({
       onClick={handleFavoriteToggle}
       className='mr-2 ml-auto rounded-full p-1.5 transition-colors hover:bg-gray-100'
       aria-label={
-        offer.isFavorite ? 'Remove from favorites' : 'Add to favorites'
+        offer.is_liked ? 'Remove from favorites' : 'Add to favorites'
       }
     >
       {isFavorite ? (

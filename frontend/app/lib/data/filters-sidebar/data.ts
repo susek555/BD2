@@ -1,8 +1,8 @@
-import { getColors, getDrives, getFuelTypes, getTransmissions } from "@/app/lib/api/filters";
+import { getColors, getDrives, getFuelTypes, getProducersAndModels, getTransmissions } from "@/app/lib/api/filters";
 import { getOfferTypes } from "@/app/lib//api/offerType";
 import { getOrderKeys } from "@/app/lib//api/orderKeys";
 import { FilterFieldData, ModelFieldData, RangeFieldData } from "@/app/lib//definitions/filters-sidebar";
-import { AddOfferFormData } from "@/app/lib/definitions/offer-form";
+import { OfferFormData } from "@/app/lib/definitions/offer-form";
 
 // Offer types
 
@@ -62,9 +62,9 @@ async function fetchDriveTypes() : Promise<string[]> {
 
 
 export async function fetchProducersAndModels() : Promise<ModelFieldData> {
-    // TODO connect API
+    const receivedData = await getProducersAndModels();
 
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    console.log("Producers and models data: ", receivedData);
 
     type ProducersAndModelsResponse = {
         producers: string[];
@@ -72,12 +72,8 @@ export async function fetchProducersAndModels() : Promise<ModelFieldData> {
     }
 
     const response: ProducersAndModelsResponse = {
-        producers: ["Audi", "Volkswagen", "Porsche"],
-        models: [
-            ["A4", "A5", "A6"],
-            ["Golf", "Passat", "Tiguan"],
-            ["911", "Cayenne"]
-        ]
+        producers: receivedData.producers,
+        models: receivedData.models
     };
 
     const data: ModelFieldData = {
@@ -167,11 +163,7 @@ export function prepareRangeFields() : RangeFieldData[] {
 
 // Add offer
 
-export async function fetchAddOfferFormData() : Promise<AddOfferFormData> {
-
-    // TODO remove delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
+export async function fetchOfferFormData() : Promise<OfferFormData> {
     const producersAndModels = fetchProducersAndModels();
     const colors = fetchColors();
     const fuelTypes = fetchFuelTypes();

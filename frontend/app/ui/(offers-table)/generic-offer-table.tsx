@@ -20,7 +20,7 @@ export default async function GenericOffersTable<T extends BaseOffer>({
           key={offer.id}
           href={`/offer/${offer.id}`}
           className={`block rounded-lg transition-shadow hover:shadow-lg ${
-            offer.isAuction ? 'ring-2 ring-blue-500' : 'ring-2 ring-gray-500'
+            offer.is_auction ? 'ring-2 ring-blue-500' : 'ring-2 ring-gray-500'
           }`}
         >
           <ItemComponent offer={offer} />

@@ -19,57 +19,57 @@ import { getHomePageData } from "@/app/lib/api/(home)/homePageData";
 //   return 100;
 // }
 
-export async function fetchOffers(params: SearchParams): Promise<SaleOffer[]> {
+// export async function fetchOffers(params: SearchParams): Promise<SaleOffer[]> {
 
-    await new Promise(resolve => setTimeout(resolve, 1000));
+//     await new Promise(resolve => setTimeout(resolve, 1000));
 
-  // TODO connect API
+//   // TODO connect API
 
-  const data: SaleOffer[] = [
-    {
-      id: '1',
-      name: 'Audi A4',
-      productionYear: 2000,
-      mileage: 150000,
-      color: 'Green',
-      price: 10000,
-      isAuction: true,
-      isFavorite: true,
-    },
-    {
-      id: '2',
-      name: 'Volkswagen Golf',
-      productionYear: 2005,
-      mileage: 120000,
-      color: 'Blue',
-      price: 15000,
-      isAuction: false,
-      isFavorite: false,
-    },
-    {
-      id: '3',
-      name: 'Porsche 911',
-      productionYear: 2010,
-      mileage: 80000,
-      color: 'Red',
-      price: 50000,
-      isAuction: true,
-      isFavorite: true,
-    },
-  ];
-  return data;
-}
+//   const data: SaleOffer[] = [
+//     {
+//       id: '1',
+//       name: 'Audi A4',
+//       production_year: 2000,
+//       mileage: 150000,
+//       color: 'Green',
+//       price: 10000,
+//       is_auction: true,
+//       is_liked: true,
+//     },
+//     {
+//       id: '2',
+//       name: 'Volkswagen Golf',
+//       production_year: 2005,
+//       mileage: 120000,
+//       color: 'Blue',
+//       price: 15000,
+//       is_auction: false,
+//       is_liked: false,
+//     },
+//     {
+//       id: '3',
+//       name: 'Porsche 911',
+//       production_year: 2010,
+//       mileage: 80000,
+//       color: 'Red',
+//       price: 50000,
+//       is_auction: true,
+//       is_liked: true,
+//     },
+//   ];
+//   return data;
+// }
 
 export async function fetchHomePageData(params: SearchParams) : Promise<{totalPages: number, totalOffers: number, offers: SaleOffer[]}> {
     try{
         const data = await getHomePageData(params);
 
+        console.log("Fetched offers", data.offers);
+
         return {
             totalPages: data.pagination.total_pages,
             totalOffers: data.pagination.total_records,
-            // offers: data.offers
-            //TODO - remove mock data
-            offers: await fetchOffers(params)
+            offers: data.offers
         };
 
     } catch (error) {

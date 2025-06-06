@@ -36,6 +36,7 @@ export default function ProducersAndModels({ producersAndModels }: { producersAn
     // models field  - has to be in this file to ensure syncronization when change in
     //                 producers field clears selected values here
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     function ModelsFilter() {
 
         const toggleDropdown = () => setIsOpen(!isOpen);
@@ -140,7 +141,8 @@ export default function ProducersAndModels({ producersAndModels }: { producersAn
                 onChange={handleProducersChange}
             />
             {showModels && (
-                <ModelsFilter />
+                // <ModelsFilter />
+                <> </>
             )}
         </>
     );
