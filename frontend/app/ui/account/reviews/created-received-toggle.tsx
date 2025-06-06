@@ -4,8 +4,8 @@ import clsx from 'clsx';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 const orderOptions = [
-  { label: 'By you', value: 'for' },
-  { label: 'From you', value: 'by' },
+  { label: 'Received', value: 'for' },
+  { label: 'Given', value: 'by' },
 ];
 
 export function ReviewToggle() {
