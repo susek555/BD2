@@ -1413,7 +1413,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/notifications/seen/{id}": {
+        "/notification/seen/{id}": {
             "put": {
                 "security": [
                     {
@@ -1428,7 +1428,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "notifications"
+                    "notification"
                 ],
                 "summary": "Mark notification as seen",
                 "parameters": [
@@ -1459,7 +1459,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/notifications/{id}/unseen": {
+        "/notification/unseen/{id}": {
             "put": {
                 "security": [
                     {
@@ -1474,7 +1474,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "notifications"
+                    "notification"
                 ],
                 "summary": "Mark notification as unseen",
                 "parameters": [
