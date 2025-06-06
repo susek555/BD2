@@ -101,15 +101,15 @@ func newTestServer(seedManufacturers []models.Manufacturer, seedModels []models.
 	ms := new(mocks.SchedulerInterface)
 	ms.
 		On("AddAuction",
-			mock.AnythingOfType("string"),    // ID aukcji
-			mock.AnythingOfType("time.Time"), // termin zakończenia
+			mock.AnythingOfType("string"),
+			mock.AnythingOfType("time.Time"),
 		).
 		Return(nil)
 	mh := new(mocks.HubInterface)
 	mh.
 		On("SubscribeUser",
-			mock.AnythingOfType("string"), // user ID
-			mock.AnythingOfType("string"), // auction ID
+			mock.AnythingOfType("string"),
+			mock.AnythingOfType("string"),
 		).
 		Return(nil)
 	mn := new(mocks.NotificationServiceInterface)
