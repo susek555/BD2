@@ -14,7 +14,7 @@ export async function editRegularOffer(
   },
 });
 
-  if (response.status === 201) {
+  if (response.status === 201 || response.status === 200) {
     const responseData = await response.json();
     return responseData.id;
   } else {
@@ -37,7 +37,7 @@ export async function editAuction(
   },
 });
 
-  if (response.status === 201) {
+  if (response.status === 201 || response.status === 200) {
     const responseData = await response.json();
     return responseData.id;
   } else {
