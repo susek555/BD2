@@ -20,8 +20,6 @@ export default async function Page(props: { params: Promise<{id: string }> }) {
 
     const formData = await fetchOfferFormData();
 
-    //TODO fetch initial data from the API - probably need a wrapper
-
     const initialData = editFormWrapper(offer);
 
     const imagesURLs = offer.imagesURLs || [];

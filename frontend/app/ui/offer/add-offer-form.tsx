@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client"
 
 import { OfferFormData, OfferFormState, offerActionEnum } from "@/app/lib/definitions/offer-form";
@@ -47,7 +48,13 @@ export function OfferForm(
             if (apiAction === offerActionEnum.ADD_OFFER) {
                 return addOffer(offerFormState);
             } else {
-                return editOffer(offerFormState);
+                const url = window.location.pathname;
+                const pathSegments = url.split('/');
+                const offerId = pathSegments[2];
+                if (!offerId) {
+                    throw new Error('Offer ID is required for editing');
+                }
+                return editOffer(offerId, offerFormState, imagesURLsToBeDeleted);
             }
     };
 
@@ -489,7 +496,7 @@ export function OfferForm(
                             id="images"
                             name="images"
                             className="border rounded p-2"
-                            // multiple required={progressState === OfferFormEnum.imagesPart}
+                            multiple
                         />
                         <div id="username-error" aria-live="polite" aria-atomic="true">
                             {state?.errors?.images &&

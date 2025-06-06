@@ -10,6 +10,7 @@ export async function uploadImages(images: File[], id: number): Promise<number> 
   for (const pair of formData.entries()) {
     console.log(pair[0], pair[1]);
   }
+  console.log("images", images);
   console.log("Uploading images for ID:", id);
 
   const response = await fetch(`/api/images/upload/${id}`, {
@@ -27,3 +28,5 @@ export async function uploadImages(images: File[], id: number): Promise<number> 
     throw new Error(`Failed to upload images: ${response.status} – ${errorText}`);
   }
 }
+
+

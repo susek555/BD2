@@ -7,7 +7,8 @@ import { NextRequest, NextResponse } from "next/server";
 const API_URL = process.env.API_URL;
 
 export async function PUT(
-    req: NextRequest
+    req: NextRequest,
+    { params }: { params: Promise<{ id: string }> }
 ) {
     const session = await getServerSession(authConfig);
     if (!session) {
@@ -15,10 +16,10 @@ export async function PUT(
     }
 
     const data = await req.json();
-    const id = req.nextUrl.pathname.split('/').pop();
+    const { id } = await params;
+    data.id = parseInt(id);
 
-    const response = await fetchWithRefresh(`${API_URL}/sale-offer/${id}`, {
-        // TODO update URL
+    const response = await fetchWithRefresh(`${API_URL}/sale-offer`, {
         method: "PUT",
         body: JSON.stringify(data),
         headers: {

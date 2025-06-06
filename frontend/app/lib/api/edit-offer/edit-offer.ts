@@ -1,18 +1,24 @@
-import { RegularOfferData } from "../../definitions/offer-form";
+import { RegularOfferData, AuctionOfferData } from "../../definitions/offer-form";
 
-export async function editRegularOffer(data: RegularOfferData): Promise<number> {
-    const response = await fetch(`/api/edit-offer`, {
-        method: "PUT",
-        body: JSON.stringify(data),
-        headers: {
-            "Content-Type": "application/json",
-        },
-    });
+export async function editRegularOffer(
+    data: RegularOfferData,
+    id: number
+): Promise<number> {
+  console.log("Editing offer data:", data);
 
-    if (response.status === 201) {
-        return response.status;
-    } else {
-        const errorText = await response.text();
-        throw new Error(`Failed to edit offer: ${response.status} – ${errorText}`);
-    }
+  const response = await fetch(`/api/edit-offer/${id}`, {
+  method: "PUT",
+  body: JSON.stringify(data),
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+  if (response.status === 201) {
+    const responseData = await response.json();
+    return responseData.id;
+  } else {
+    const errorText = await response.text();
+    throw new Error(`Failed to post offer: ${response.status} – ${errorText}`);
+  }
 }
