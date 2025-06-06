@@ -34,17 +34,17 @@ func NewHandler(service AuctionServiceInterface, sched scheduler.SchedulerInterf
 
 // CreateAuction godoc
 //
-// @Summary		Create Auction
-// @Description	Creates a new auction with the provided details
-// @Tags			auction
-// @Accept			json
-// @Produce		json
-// @Param			body	body		CreateAuctionDTO		true	"Auction details"
-// @Success		201		{object}	RetrieveAuctionDTO		"Created auction"
-// @Failure		400		{object}	custom_errors.HTTPError	"Bad request"
-// @Failure		401		{object}	custom_errors.HTTPError	"Unauthorized"
-// @Router			/auction [post]
-// @Security		BearerAuth
+//	@Summary		Create Auction
+//	@Description	Creates a new auction with the provided details
+//	@Tags			auction
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body		CreateAuctionDTO				true	"Auction details"
+//	@Success		201		{object}	sale_offer.RetrieveSaleOfferDTO	"Created auction"
+//	@Failure		400		{object}	custom_errors.HTTPError			"Bad request"
+//	@Failure		401		{object}	custom_errors.HTTPError			"Unauthorized"
+//	@Router			/auction [post]
+//	@Security		BearerAuth
 func (h *Handler) CreateAuction(c *gin.Context) {
 	userID, err := auth.GetUserID(c)
 	if err != nil {
@@ -83,6 +83,38 @@ func (h *Handler) CreateAuction(c *gin.Context) {
 	c.JSON(http.StatusCreated, dto)
 }
 
+// UpdateAuction godoc
+//
+//	@Summary		Update auction
+//	@Description	Updates an existing auction with the provided details
+//	@Tags			auction
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body		UpdateAuctionDTO				true	"Auction details"
+//	@Success		200		{object}	sale_offer.RetrieveSaleOfferDTO	"Updated auction"
+//	@Failure		400		{object}	custom_errors.HTTPError			"Bad request"
+//	@Failure		401		{object}	custom_errors.HTTPError			"Unauthorized"
+//	@Router			/auction [put]
+//	@Security		BearerAuth
+func (h *Handler) UpdateAuction(c *gin.Context) {
+	userID, err := auth.GetUserID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, custom_errors.NewHTTPError(err.Error()))
+		return
+	}
+	var auctionInput UpdateAuctionDTO
+	if err := c.ShouldBindJSON(&auctionInput); err != nil {
+		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+		return
+	}
+	dto, err := h.service.Update(&auctionInput, uint(userID))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+		return
+	}
+	c.JSON(http.StatusOK, dto)
+}
+
 // DeleteAuctionByID godoc
 //
 //	@Summary		Delete auction by ID
@@ -113,38 +145,6 @@ func (h *Handler) DeleteAuctionByID(c *gin.Context) {
 		return
 	}
 	c.Status(http.StatusNoContent)
-}
-
-// UpdateAuction godoc
-//
-//	@Summary		Update auction
-//	@Description	Updates an existing auction with the provided details
-//	@Tags			auction
-//	@Accept			json
-//	@Produce		json
-//	@Param			body	body		UpdateAuctionDTO		true	"Auction details"
-//	@Success		200		{object}	RetrieveAuctionDTO		"Updated auction"
-//	@Failure		400		{object}	custom_errors.HTTPError	"Bad request"
-//	@Failure		401		{object}	custom_errors.HTTPError	"Unauthorized"
-//	@Router			/auction [put]
-//	@Security		BearerAuth
-func (h *Handler) UpdateAuction(c *gin.Context) {
-	userID, err := auth.GetUserID(c)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, custom_errors.NewHTTPError(err.Error()))
-		return
-	}
-	var auctionInput UpdateAuctionDTO
-	if err := c.ShouldBindJSON(&auctionInput); err != nil {
-		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
-		return
-	}
-	dto, err := h.service.Update(&auctionInput, uint(userID))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
-		return
-	}
-	c.JSON(http.StatusOK, dto)
 }
 
 // BuyNow godoc
