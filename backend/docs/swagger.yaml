@@ -1743,6 +1743,30 @@ paths:
       summary: Retrieve filtered notifications for authenticated user
       tags:
       - notification
+  /notification/seen:
+    put:
+      consumes:
+      - application/json
+      description: Updates the seen status of all notifications for the authenticated
+        user to true
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully marked all notifications as seen
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      security:
+      - BearerAuth: []
+      summary: Mark all notifications as seen
+      tags:
+      - notification
   /notification/seen/{id}:
     put:
       consumes:
@@ -1771,6 +1795,30 @@ paths:
       security:
       - BearerAuth: []
       summary: Mark notification as seen
+      tags:
+      - notification
+  /notification/unseen:
+    put:
+      consumes:
+      - application/json
+      description: Updates the seen status of all notifications for the authenticated
+        user to false
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully marked all notifications as unseen
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      security:
+      - BearerAuth: []
+      summary: Mark all notifications as unseen
       tags:
       - notification
   /notification/unseen/{id}:

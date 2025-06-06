@@ -1413,6 +1413,43 @@ const docTemplate = `{
                 }
             }
         },
+        "/notification/seen": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates the seen status of all notifications for the authenticated user to true",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "summary": "Mark all notifications as seen",
+                "responses": {
+                    "200": {
+                        "description": "Successfully marked all notifications as seen"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/notification/seen/{id}": {
             "put": {
                 "security": [
@@ -1452,6 +1489,43 @@ const docTemplate = `{
                     },
                     "401": {
                         "description": "Unauthorized - User authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/notification/unseen": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates the seen status of all notifications for the authenticated user to false",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "summary": "Mark all notifications as unseen",
+                "responses": {
+                    "200": {
+                        "description": "Successfully marked all notifications as unseen"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/custom_errors.HTTPError"
                         }
