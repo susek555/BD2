@@ -20,6 +20,7 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/purchase"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/enums"
+	"github.com/susek555/BD2/car-dealer-api/internal/initializers"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"github.com/susek555/BD2/car-dealer-api/internal/test/mocks"
 	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
@@ -84,6 +85,7 @@ func setupDB(manufacturers []models.Manufacturer, models_ []models.Model, cars [
 		manufacturer.NewManufacturerRepository(db),
 		model.NewModelRepository(db),
 		image.NewImageRepository(db),
+		image.NewImageBucket(initializers.CloudinaryClient),
 		sale_offer.NewAccessEvaluator(bidRepo, likedOfferRepo),
 		purchase.NewPurchaseRepository(db),
 	)

@@ -1,6 +1,7 @@
 package sale_offer
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/manufacturer"
@@ -10,6 +11,10 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/pkg/mapping"
 	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
 )
+
+type ImageRemoverIntreface interface {
+	DeleteByFolderName(folder string) error
+}
 
 type ImageRetrieverInterface interface {
 	GetByOfferID(offerID uint) ([]models.Image, error)
@@ -60,6 +65,7 @@ type SaleOfferService struct {
 	manRetriever    ManufacturerRetrieverInterface
 	modelRetriever  ModelRetrieverInterface
 	imageRetriever  ImageRetrieverInterface
+	imageRemover    ImageRemoverIntreface
 	accessEvaluator OfferAccessEvaluatorInterface
 	purchaseCreator PurchaseCreatorInterface
 }
@@ -69,6 +75,7 @@ func NewSaleOfferService(
 	manufacturerRetriever ManufacturerRetrieverInterface,
 	modelRetriever ModelRetrieverInterface,
 	imageRetriever ImageRetrieverInterface,
+	imageRemover ImageRemoverIntreface,
 	accessEvaluator OfferAccessEvaluatorInterface,
 	purchaseCreator PurchaseCreatorInterface,
 ) SaleOfferServiceInterface {
@@ -147,7 +154,10 @@ func (s *SaleOfferService) Delete(id uint, userID uint) error {
 	if err := s.authorizeModificationByUser(offer, userID); err != nil {
 		return err
 	}
-	return s.saleOfferRepo.Delete(id)
+	if err := s.saleOfferRepo.Delete(id); err != nil {
+		return nil
+	}
+	return s.imageRemover.DeleteByFolderName(fmt.Sprintf("sale-offer-%d", offer.ID))
 }
 
 func (s *SaleOfferService) GetByID(id uint, userID *uint) (*RetrieveSaleOfferDTO, error) {
