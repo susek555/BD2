@@ -8,6 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
+//go:generate mockery --name=SaleOfferRepositoryInterface --output=../../test/mocks --case=snake --with-expecter
 type SaleOfferRepositoryInterface interface {
 	Create(offer *models.SaleOffer) error
 	Update(offer *models.SaleOffer) error
