@@ -22,10 +22,6 @@ type AuctionRepository struct {
 	DB *gorm.DB
 }
 
-func NewAuctionRepository(db *gorm.DB) AuctionRepositoryInterface {
-	return &AuctionRepository{DB: db}
-}
-
 func (a *AuctionRepository) Create(auction *models.Auction) error {
 	return a.DB.Create(auction).Error
 }
