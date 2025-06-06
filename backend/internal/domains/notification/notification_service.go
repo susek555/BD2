@@ -17,6 +17,7 @@ type NotificationServiceInterface interface {
 	CreateBuyNowNotification(notification *models.Notification, buyerID string, offer *models.Auction) error
 	GetNotificationByID(id uint) (*models.Notification, error)
 	GetFilteredNotifications(filter *NotificationFilter) (*RetrieveNotificationsWithPagination, error)
+	UpdateSeenStatus(notificationID, userID uint, seen bool) error
 }
 
 type NotificationService struct {
@@ -80,4 +81,11 @@ func (s *NotificationService) GetFilteredNotifications(filter *NotificationFilte
 		Notifications:      notificationsDTO,
 		PaginationResponse: pagResponse,
 	}, nil
+}
+
+func (s *NotificationService) UpdateSeenStatus(notificationID, userID uint, seen bool) error {
+	if err := s.ClientNotificationRepository.UpdateSeenStatus(notificationID, userID, seen); err != nil {
+		return err
+	}
+	return nil
 }
