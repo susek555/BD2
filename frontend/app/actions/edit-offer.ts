@@ -1,6 +1,6 @@
 import { OfferFormState, RegularOfferData, AuctionOfferData } from "@/app/lib/definitions/offer-form";
 import { permanentRedirect } from "next/navigation";
-import { editRegularOffer } from "../lib/api/edit-offer/edit-offer";
+import { editAuction, editRegularOffer } from "../lib/api/edit-offer/edit-offer";
 import { uploadImages } from "../lib/api/images/upload";
 import { deleteImages } from "../lib/api/images/delete";
 
@@ -22,10 +22,10 @@ export async function editOffer(
     try {
         if (is_auction) {
             const AuctionOfferData: AuctionOfferData = validatedFields as AuctionOfferData;
-            console.log("Editing auction offer");
+            await editAuction(AuctionOfferData, parseInt(id));
         } else {
             const regularOfferData: RegularOfferData = validatedFields as RegularOfferData;
-            await editRegularOffer(regularOfferData, id);
+            await editRegularOffer(regularOfferData, parseInt(id));
         }
         console.log("Edited Offer ID:", id);
         if (imagesToDelete && imagesToDelete.length > 0) {

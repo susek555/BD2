@@ -1,4 +1,4 @@
-// app/api/edit-offer/[id]/route.ts
+// app/api/edit-auction/[id]/route.ts
 import { fetchWithRefresh } from "@/app/lib/api/fetchWithRefresh";
 import { getServerSession } from "next-auth";
 import { authConfig } from "@/app/lib/authConfig";
@@ -19,7 +19,7 @@ export async function PUT(
     const { id } = await params;
     data.id = parseInt(id);
 
-    const response = await fetchWithRefresh(`${API_URL}/sale-offer`, {
+    const response = await fetchWithRefresh(`${API_URL}/auction`, {
         method: "PUT",
         body: JSON.stringify(data),
         headers: {
