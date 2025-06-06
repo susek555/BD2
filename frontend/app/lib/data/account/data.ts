@@ -72,21 +72,36 @@ export async function getListings(
     },
   },
 ): Promise<{
-  offers: HistoryOffer[];
+  offers: SaleOffer[];
   pagination: {
     total_pages: number;
     total_records: number;
   };
 }> {
-  const url = `${process.env.URL}/api/account/listings`;
+  console.log(
+    JSON.stringify({
+      page: 1,
+      page_size: 6,
+    }),
+  );
 
-  const response = await fetch(url, {
-    method: 'POST',
-    body: JSON.stringify(params),
-  });
+  const response = await fetchWithRefresh(
+    `${process.env.API_URL}/sale-offer/my-offers`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      // TODO add all params as body
+      body: JSON.stringify({
+        page: 1,
+        page_size: 6,
+      }),
+    },
+  );
 
   if (!response.ok) {
-    throw new Error('Failed to fetch history offers');
+    throw new Error("Failed to fetch user's listings");
   }
 
   return response.json();
@@ -146,7 +161,7 @@ export async function fetchHistory(params: SearchParams): Promise<{
 export async function fetchListings(params: SearchParams): Promise<{
   totalPages: number;
   totalOffers: number;
-  offers: HistoryOffer[];
+  offers: SaleOffer[];
 }> {
   try {
     const data = await getListings(params);
