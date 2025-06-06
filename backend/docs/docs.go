@@ -21,36 +21,6 @@ const docTemplate = `{
     "basePath": "{{.BasePath}}",
     "paths": {
         "/auction": {
-            "get": {
-                "description": "Retrieves all available auctions from the system",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "auction"
-                ],
-                "summary": "Get all auctions",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/auction.RetrieveAuctionDTO"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/custom_errors.HTTPError"
-                        }
-                    }
-                }
-            },
             "put": {
                 "security": [
                     {
@@ -83,7 +53,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Updated auction",
                         "schema": {
-                            "$ref": "#/definitions/auction.RetrieveAuctionDTO"
+                            "$ref": "#/definitions/sale_offer.RetrieveSaleOfferDTO"
                         }
                     },
                     "400": {
@@ -132,7 +102,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created auction",
                         "schema": {
-                            "$ref": "#/definitions/auction.RetrieveAuctionDTO"
+                            "$ref": "#/definitions/sale_offer.RetrieveSaleOfferDTO"
                         }
                     },
                     "400": {
@@ -197,42 +167,6 @@ const docTemplate = `{
             }
         },
         "/auction/{id}": {
-            "get": {
-                "description": "Retrieves a specific auction by its ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "auction"
-                ],
-                "summary": "Get auction by ID",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Auction ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/auction.RetrieveAuctionDTO"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/custom_errors.HTTPError"
-                        }
-                    }
-                }
-            },
             "delete": {
                 "security": [
                     {
@@ -1965,9 +1899,6 @@ const docTemplate = `{
             "post": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
-                    },
-                    {
                         "BearerAuth": []
                     }
                 ],
@@ -2559,53 +2490,6 @@ const docTemplate = `{
                     "$ref": "#/definitions/enums.Transmission"
                 },
                 "vin": {
-                    "type": "string"
-                }
-            }
-        },
-        "auction.RetrieveAuctionDTO": {
-            "type": "object",
-            "properties": {
-                "buy_now_price": {
-                    "type": "integer"
-                },
-                "can_modify": {
-                    "type": "boolean"
-                },
-                "color": {
-                    "$ref": "#/definitions/enums.Color"
-                },
-                "date_end": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "is_auction": {
-                    "type": "boolean"
-                },
-                "is_liked": {
-                    "type": "boolean"
-                },
-                "main_url": {
-                    "type": "string"
-                },
-                "mileage": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "price": {
-                    "type": "integer"
-                },
-                "production_year": {
-                    "type": "integer"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "username": {
                     "type": "string"
                 }
             }

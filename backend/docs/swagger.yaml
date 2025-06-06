@@ -64,37 +64,6 @@ definitions:
     - transmission
     - vin
     type: object
-  auction.RetrieveAuctionDTO:
-    properties:
-      buy_now_price:
-        type: integer
-      can_modify:
-        type: boolean
-      color:
-        $ref: '#/definitions/enums.Color'
-      date_end:
-        type: string
-      id:
-        type: integer
-      is_auction:
-        type: boolean
-      is_liked:
-        type: boolean
-      main_url:
-        type: string
-      mileage:
-        type: integer
-      name:
-        type: string
-      price:
-        type: integer
-      production_year:
-        type: integer
-      status:
-        type: string
-      username:
-        type: string
-    type: object
   auction.UpdateAuctionDTO:
     properties:
       buy_now_price:
@@ -819,26 +788,6 @@ info:
   version: "1.0"
 paths:
   /auction:
-    get:
-      consumes:
-      - application/json
-      description: Retrieves all available auctions from the system
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/auction.RetrieveAuctionDTO'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
-      summary: Get all auctions
-      tags:
-      - auction
     post:
       consumes:
       - application/json
@@ -856,7 +805,7 @@ paths:
         "201":
           description: Created auction
           schema:
-            $ref: '#/definitions/auction.RetrieveAuctionDTO'
+            $ref: '#/definitions/sale_offer.RetrieveSaleOfferDTO'
         "400":
           description: Bad request
           schema:
@@ -887,7 +836,7 @@ paths:
         "200":
           description: Updated auction
           schema:
-            $ref: '#/definitions/auction.RetrieveAuctionDTO'
+            $ref: '#/definitions/sale_offer.RetrieveSaleOfferDTO'
         "400":
           description: Bad request
           schema:
@@ -928,30 +877,6 @@ paths:
       security:
       - BearerAuth: []
       summary: Delete auction by ID
-      tags:
-      - auction
-    get:
-      consumes:
-      - application/json
-      description: Retrieves a specific auction by its ID
-      parameters:
-      - description: Auction ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/auction.RetrieveAuctionDTO'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
-      summary: Get auction by ID
       tags:
       - auction
   /auction/buy-now/{id}:
@@ -2142,7 +2067,6 @@ paths:
         "500":
           description: Internal Server Error
       security:
-      - ApiKeyAuth: []
       - BearerAuth: []
       summary: Buy a sale offer
       tags:
