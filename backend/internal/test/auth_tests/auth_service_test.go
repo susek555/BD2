@@ -247,7 +247,7 @@ func TestService_Logout(t *testing.T) {
 	userID := uint(8)
 	rt := models.RefreshToken{ID: 42, Token: "r1"}
 
-	t.Run("allDevices=true – deleteByUserID", func(t *testing.T) {
+	t.Run("allDevices=true - deleteByUserID", func(t *testing.T) {
 		uRepo := mocks.NewUserRepositoryInterface(t)
 		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
 
