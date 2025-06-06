@@ -1409,7 +1409,7 @@
                 }
             }
         },
-        "/notifications/seen/{id}": {
+        "/notification/seen/{id}": {
             "put": {
                 "security": [
                     {
@@ -1424,7 +1424,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "notifications"
+                    "notification"
                 ],
                 "summary": "Mark notification as seen",
                 "parameters": [
@@ -1455,7 +1455,7 @@
                 }
             }
         },
-        "/notifications/{id}/unseen": {
+        "/notification/unseen/{id}": {
             "put": {
                 "security": [
                     {
@@ -1470,7 +1470,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "notifications"
+                    "notification"
                 ],
                 "summary": "Mark notification as unseen",
                 "parameters": [

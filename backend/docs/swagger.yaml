@@ -1743,37 +1743,7 @@ paths:
       summary: Retrieve filtered notifications for authenticated user
       tags:
       - notification
-  /notifications/{id}/unseen:
-    put:
-      consumes:
-      - application/json
-      description: Updates the seen status of a notification to unseen for the authenticated
-        user
-      parameters:
-      - description: Notification ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-        "400":
-          description: Bad request
-          schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/custom_errors.HTTPError'
-      security:
-      - BearerAuth: []
-      summary: Mark notification as unseen
-      tags:
-      - notifications
-  /notifications/seen/{id}:
+  /notification/seen/{id}:
     put:
       consumes:
       - application/json
@@ -1802,7 +1772,37 @@ paths:
       - BearerAuth: []
       summary: Mark notification as seen
       tags:
-      - notifications
+      - notification
+  /notification/unseen/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Updates the seen status of a notification to unseen for the authenticated
+        user
+      parameters:
+      - description: Notification ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      security:
+      - BearerAuth: []
+      summary: Mark notification as unseen
+      tags:
+      - notification
   /review:
     get:
       description: Returns every review in the system as an array of DTOs.
