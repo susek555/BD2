@@ -24,7 +24,7 @@ func (dto *CreateAuctionDTO) MapToAuction() (*models.Auction, error) {
 	return &auction, nil
 }
 
-func (dto *UpdateAuctionDTO) UpdatedAuctionFromDTO(auction *models.Auction) (*models.Auction, error) {
+func (dto *UpdateAuctionDTO) UpdatedAuctionFromDTO(offer *models.SaleOffer) (*models.SaleOffer, error) {
 	if dto.DateEnd != nil {
 		endDate, err := parseDate(*dto.DateEnd)
 		if err != nil {
@@ -34,18 +34,18 @@ func (dto *UpdateAuctionDTO) UpdatedAuctionFromDTO(auction *models.Auction) (*mo
 		if err != nil {
 			return nil, err
 		}
-		auction.DateEnd = endDate
+		offer.Auction.DateEnd = endDate
 	}
 	if dto.BuyNowPrice != nil {
 		if *dto.BuyNowPrice < 1 {
 			return nil, ErrBuyNowPriceLessThan1
 		}
-		if *dto.BuyNowPrice < auction.Offer.Price {
+		if *dto.BuyNowPrice < offer.Price {
 			return nil, ErrBuyNowPriceLessThanOfferPrice
 		}
-		auction.BuyNowPrice = *dto.BuyNowPrice
+		offer.Auction.BuyNowPrice = *dto.BuyNowPrice
 	}
-	return auction, nil
+	return offer, nil
 }
 
 func parseDate(date string) (time.Time, error) {
