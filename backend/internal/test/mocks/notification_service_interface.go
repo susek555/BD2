@@ -21,7 +21,7 @@ func (_m *NotificationServiceInterface) EXPECT() *NotificationServiceInterface_E
 	return &NotificationServiceInterface_Expecter{mock: &_m.Mock}
 }
 
-// CreateBuyNotication provides a mock function with given fields: _a0, buyerID, offer
+// CreateBuyNotification provides a mock function with given fields: _a0, buyerID, offer
 func (_m *NotificationServiceInterface) CreateBuyNotification(_a0 *models.Notification, buyerID string, offer *models.SaleOffer) error {
 	ret := _m.Called(_a0, buyerID, offer)
 
@@ -39,32 +39,32 @@ func (_m *NotificationServiceInterface) CreateBuyNotification(_a0 *models.Notifi
 	return r0
 }
 
-// NotificationServiceInterface_CreateBuyNotication_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateBuyNotification'
-type NotificationServiceInterface_CreateBuyNotication_Call struct {
+// NotificationServiceInterface_CreateBuyNotification_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateBuyNotification'
+type NotificationServiceInterface_CreateBuyNotification_Call struct {
 	*mock.Call
 }
 
-// CreateBuyNotication is a helper method to define mock.On call
+// CreateBuyNotification is a helper method to define mock.On call
 //   - _a0 *models.Notification
 //   - buyerID string
 //   - offer *models.SaleOffer
-func (_e *NotificationServiceInterface_Expecter) CreateBuyNotication(_a0 interface{}, buyerID interface{}, offer interface{}) *NotificationServiceInterface_CreateBuyNotication_Call {
-	return &NotificationServiceInterface_CreateBuyNotication_Call{Call: _e.mock.On("CreateBuyNotification", _a0, buyerID, offer)}
+func (_e *NotificationServiceInterface_Expecter) CreateBuyNotification(_a0 interface{}, buyerID interface{}, offer interface{}) *NotificationServiceInterface_CreateBuyNotification_Call {
+	return &NotificationServiceInterface_CreateBuyNotification_Call{Call: _e.mock.On("CreateBuyNotification", _a0, buyerID, offer)}
 }
 
-func (_c *NotificationServiceInterface_CreateBuyNotication_Call) Run(run func(_a0 *models.Notification, buyerID string, offer *models.SaleOffer)) *NotificationServiceInterface_CreateBuyNotication_Call {
+func (_c *NotificationServiceInterface_CreateBuyNotification_Call) Run(run func(_a0 *models.Notification, buyerID string, offer *models.SaleOffer)) *NotificationServiceInterface_CreateBuyNotification_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(*models.Notification), args[1].(string), args[2].(*models.SaleOffer))
 	})
 	return _c
 }
 
-func (_c *NotificationServiceInterface_CreateBuyNotication_Call) Return(_a0 error) *NotificationServiceInterface_CreateBuyNotication_Call {
+func (_c *NotificationServiceInterface_CreateBuyNotification_Call) Return(_a0 error) *NotificationServiceInterface_CreateBuyNotification_Call {
 	_c.Call.Return(_a0)
 	return _c
 }
 
-func (_c *NotificationServiceInterface_CreateBuyNotication_Call) RunAndReturn(run func(*models.Notification, string, *models.SaleOffer) error) *NotificationServiceInterface_CreateBuyNotication_Call {
+func (_c *NotificationServiceInterface_CreateBuyNotification_Call) RunAndReturn(run func(*models.Notification, string, *models.SaleOffer) error) *NotificationServiceInterface_CreateBuyNotification_Call {
 	_c.Call.Return(run)
 	return _c
 }
