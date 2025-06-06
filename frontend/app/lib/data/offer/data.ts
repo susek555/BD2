@@ -94,7 +94,8 @@ export async function fetchOfferDetails(
       auctionData: fetchedData.is_auction ? {
       endDate: new Date(new Date(fetchedData.date_end).getTime() - 2 * 60 * 60 * 1000),
       currentBid: fetchedData.price || 0,
-      } : undefined
+      } : undefined,
+      margin: fetchedData.margin || 0,
     }
     return data;
   }

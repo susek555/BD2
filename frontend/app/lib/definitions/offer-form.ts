@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { SaleOfferDetails } from "./sale-offer-details";
 
 // Add / Edit Offer
 
@@ -238,6 +239,34 @@ export const CombinedImagesOfferFormSchema = z
     }
     return data;
   });
+
+
+export function editFormWrapper(offer: SaleOfferDetails) : Partial<OfferFormState['values']> {
+  return {
+    manufacturer: offer.name.split(' ')[0],
+    model: offer.name,
+    color: offer.details.find(detail => detail.name === 'Color')?.value || '',
+    fuel_type: offer.details.find(detail => detail.name === 'Fuel Type')?.value || '',
+    transmission: offer.details.find(detail => detail.name === 'Transmission')?.value || '',
+    drive: offer.details.find(detail => detail.name === 'Drive')?.value || '',
+    production_year: parseInt(offer.details.find(detail => detail.name === 'Production Year')?.value || '0'),
+    mileage: parseInt(offer.details.find(detail => detail.name === 'Mileage')?.value.replace(' km', '') || '0'),
+    number_of_doors: parseInt(offer.details.find(detail => detail.name === 'Number of doors')?.value || '0'),
+    number_of_seats: parseInt(offer.details.find(detail => detail.name === 'Number of seats')?.value || '0'),
+    number_of_gears: parseInt(offer.details.find(detail => detail.name === 'Number of gears')?.value || '0'),
+    engine_power: parseInt(offer.details.find(detail => detail.name === 'Engine Power')?.value.replace(' HP', '') || '0'),
+    engine_capacity: parseInt(offer.details.find(detail => detail.name === 'Engine Capacity')?.value.replace(' L', '') || '0'),
+    registration_date: offer.details.find(detail => detail.name === 'Date of first registration')?.value || '',
+    registration_number: offer.details.find(detail => detail.name === 'Registration number')?.value || '',
+    vin: offer.details.find(detail => detail.name === 'VIN')?.value || '',
+    description: offer.description || '',
+    price: offer.isAuction ? offer.auctionData?.currentBid || 0 : offer.price || 0,
+    is_auction: offer.isAuction || false,
+    margin: offer.margin || 0,
+    date_end: offer.isAuction ? offer.auctionData?.endDate.toISOString().slice(0, 16).replace('T', ' ') : undefined,
+    buy_now_price: offer.isAuction ? offer.price : undefined,
+  }
+}
 
 
 

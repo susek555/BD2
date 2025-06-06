@@ -14,6 +14,7 @@ export type SaleOfferDetails = {
   is_favourite: boolean;
   can_edit: boolean;
   can_delete: boolean;
+  margin: number;
 };
 
 export type AuctionData = {
