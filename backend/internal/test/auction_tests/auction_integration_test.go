@@ -75,9 +75,9 @@ func setupDB(manufacturers []models.Manufacturer, models_ []models.Model, cars [
 			return nil, err
 		}
 	}
-
-	repo := auction.NewAuctionRepository(db)
+	repo := sale_offer.NewSaleOfferRepository(db)
 	bidRepo := bid.NewBidRepository(db)
+	purchaseRepo := purchase.NewPurchaseRepository(db)
 	likedOfferRepo := liked_offer.NewLikedOfferRepository(db)
 	saleOfferService := sale_offer.NewSaleOfferService(
 		sale_offer.NewSaleOfferRepository(db),
@@ -87,7 +87,7 @@ func setupDB(manufacturers []models.Manufacturer, models_ []models.Model, cars [
 		sale_offer.NewAccessEvaluator(bidRepo, likedOfferRepo),
 		purchase.NewPurchaseRepository(db),
 	)
-	service := auction.NewAuctionService(repo, saleOfferService.(*sale_offer.SaleOfferService))
+	service := auction.NewAuctionService(repo, saleOfferService.(*sale_offer.SaleOfferService), purchaseRepo)
 	return service, nil
 }
 
@@ -117,7 +117,6 @@ func newTestServer(seedManufacturers []models.Manufacturer, seedModels []models.
 	auctionRoutes := r.Group("/auction")
 	auctionRoutes.POST("/", middleware.Authenticate(verifier), auctionHandler.CreateAuction)
 	auctionRoutes.PUT("/", middleware.Authenticate(verifier), auctionHandler.UpdateAuction)
-	auctionRoutes.DELETE("/:id", middleware.Authenticate(verifier), auctionHandler.DeleteAuctionByID)
 	return r, service, nil
 }
 
