@@ -13,7 +13,7 @@ import (
 type NotificationServiceInterface interface {
 	CreateOutbidNotification(notification *models.Notification, amount int64, offer *models.Auction) error
 	CreateEndAuctionNotification(notification *models.Notification, winner string, winningBid int64, offer *models.SaleOffer) error
-	CreateBuyNotication(notification *models.Notification, buyerID string, offer *models.SaleOffer) error
+	CreateBuyNotification(notification *models.Notification, buyerID string, offer *models.SaleOffer) error
 	CreateBuyNowNotification(notification *models.Notification, buyerID string, offer *models.Auction) error
 	GetNotificationByID(id uint) (*models.Notification, error)
 	GetFilteredNotifications(filter *NotificationFilter) (*RetrieveNotificationsWithPagination, error)
@@ -50,7 +50,7 @@ func (s *NotificationService) CreateEndAuctionNotification(notification *models.
 	return s.NotificationRepository.Create(notification)
 }
 
-func (s *NotificationService) CreateBuyNotication(notification *models.Notification, buyerID string, offer *models.SaleOffer) error {
+func (s *NotificationService) CreateBuyNotification(notification *models.Notification, buyerID string, offer *models.SaleOffer) error {
 	notification.CreatedAt = time.Now().UTC()
 	notification.Title = fmt.Sprintf(BuyOfferTitleTemplate, offer.Car.Model.Manufacturer.Name, offer.Car.Model.Name)
 	notification.Description = fmt.Sprintf(BuyOfferDescriptionTemplate, buyerID, offer.Price)
