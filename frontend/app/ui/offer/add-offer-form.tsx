@@ -1,7 +1,7 @@
 "use client"
 
 import { OfferFormData, OfferFormState, offerActionEnum } from "@/app/lib/definitions/offer-form";
-import React, { useActionState, useEffect } from "react";
+import React, { useActionState, useEffect, useState } from "react";
 import { getAvailableModels } from "@/app/ui/(filters-sidebar)/producers-and-models";
 import { addOffer } from "@/app/actions/add-offer";
 import { editOffer } from "@/app/actions/edit-offer";
@@ -19,10 +19,14 @@ export function OfferForm(
     imagesURLs?: string[],
     apiAction?: boolean
 }) {
-
     const initialState: OfferFormState = {
         errors: {},
         values: initialValues as OfferFormState['values'],
+    };
+    const [imagesURLsToBeDeleted, setImagesURLsToBeDeleted] = useState<string[]>([]);
+
+    const handleDelete = (url: string) => {
+        setImagesURLsToBeDeleted(prev => [...prev, url]);
     };
 
     const offerWrapper = (state: OfferFormState, formData: FormData) => {
@@ -458,6 +462,28 @@ export function OfferForm(
                         <label htmlFor="images" className="text-lg font-semibold">
                             Images
                         </label>
+                        {/* If editing, currently uploaded images */}
+                        {imagesURLs.length > 0 && (
+                            <div className="mb-4">
+                                <h3 className="text-md font-semibold mb-2">Currently uploaded images:</h3>
+                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                                    {imagesURLs.map((url, index) => (
+                                        !imagesURLsToBeDeleted.includes(url) && (
+                                            <div key={index} className="relative">
+                                                <img src={url} alt={`Uploaded image ${index + 1}`} className="w-full h-auto rounded" />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleDelete(url)}
+                                                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                                                >
+                                                    &times;
+                                                </button>
+                                            </div>
+                                        )
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                         <input
                             type="file"
                             id="images"
