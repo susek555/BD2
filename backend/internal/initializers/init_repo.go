@@ -1,7 +1,6 @@
 package initializers
 
 import (
-	"github.com/susek555/BD2/car-dealer-api/internal/domains/auction"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/bid"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/image"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/liked_offer"
@@ -15,7 +14,6 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
 )
 
-var AuctionRepo auction.AuctionRepositoryInterface
 var BidRepo bid.BidRepositoryInterface
 var ClientNotificationRepo notification.ClientNotificationRepositoryInterface
 var ImageRepo image.ImageRepositoryInterface
@@ -30,7 +28,6 @@ var SaleOfferRepo sale_offer.SaleOfferRepositoryInterface
 var UserRepo user.UserRepositoryInterface
 
 func InitializeRepos() {
-	AuctionRepo = auction.NewAuctionRepository(DB)
 	BidRepo = bid.NewBidRepository(DB)
 	ClientNotificationRepo = notification.NewClientNotificationRepository(DB)
 	ImageRepo = image.NewImageRepository(DB)
