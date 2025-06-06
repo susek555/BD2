@@ -9,7 +9,14 @@ export const OfferFormEnum = {
   readyToApi: 3,
 } as const;
 
-export const parseOfferForm = (formData: FormData, progressState: number) : {progressState: number, offerFormState: OfferFormState} => {
+export const parseOfferForm = (
+  formData: FormData,
+  progressState: number,
+  requiredImages: number,
+) : {
+  progressState: number,
+  offerFormState: OfferFormState
+} => {
 
     const formDataObj = Object.fromEntries(formData.entries());
 
@@ -50,7 +57,7 @@ export const parseOfferForm = (formData: FormData, progressState: number) : {pro
         validatedFields = CombinedOfferFormSchema.safeParse(normalizedData);
       break;
       case OfferFormEnum.imagesPart:
-        validatedFields = CombinedImagesOfferFormSchema.safeParse(normalizedData);
+        validatedFields = CombinedImagesOfferFormSchema(requiredImages).safeParse(normalizedData);
       break;
       default:
         throw new Error(`Invalid progress state: ${progressState}`);

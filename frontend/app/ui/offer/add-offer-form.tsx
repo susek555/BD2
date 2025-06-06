@@ -1,25 +1,22 @@
 "use client"
 
-import { OfferFormData, OfferFormState } from "@/app/lib/definitions/offer-form";
+import { OfferFormData, OfferFormState, offerActionEnum } from "@/app/lib/definitions/offer-form";
 import React, { useActionState, useEffect } from "react";
 import { getAvailableModels } from "@/app/ui/(filters-sidebar)/producers-and-models";
 import { addOffer } from "@/app/actions/add-offer";
 import { editOffer } from "@/app/actions/edit-offer";
 import { parseOfferForm, OfferFormEnum } from "@/app/lib/utils";
 
-export const offerActionEnum = {
-    ADD_OFFER: true,
-    EDIT_OFFER: false
-}
-
 export function OfferForm(
 {
     inputsData,
     initialValues = {is_auction: false},
+    imagesURLs = [],
     apiAction = offerActionEnum.ADD_OFFER
 } : {
     inputsData : OfferFormData
     initialValues?: Partial<OfferFormState['values']>,
+    imagesURLs?: string[],
     apiAction?: boolean
 }) {
 
@@ -32,13 +29,15 @@ export function OfferForm(
             const progressState = formData.get('progressState') ? parseInt(formData.get('progressState') as string) : parseInt(OfferFormEnum.initialState.toString());
             formData.delete('progressState');
 
-            const { progressState: result, offerFormState } = parseOfferForm(formData, progressState);
+            const requiredImages = imagesURLs.length >= 3 ? 0 : 3 - imagesURLs.length;
+            const { progressState: result, offerFormState } = parseOfferForm(formData, progressState, requiredImages);
 
             setProgressState(result);
 
             if (result !== OfferFormEnum.readyToApi) {
                 return offerFormState;
             }
+
 
             // Otherwise call the API action with validated data
             if (apiAction === offerActionEnum.ADD_OFFER) {
@@ -459,7 +458,13 @@ export function OfferForm(
                         <label htmlFor="images" className="text-lg font-semibold">
                             Images
                         </label>
-                        <input type="file" id="images" name="images" className="border rounded p-2" multiple required={progressState === OfferFormEnum.imagesPart} />
+                        <input
+                            type="file"
+                            id="images"
+                            name="images"
+                            className="border rounded p-2"
+                            // multiple required={progressState === OfferFormEnum.imagesPart}
+                        />
                         <div id="username-error" aria-live="polite" aria-atomic="true">
                             {state?.errors?.images &&
                                 state.errors.images.map((error: string) => (

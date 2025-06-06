@@ -3,6 +3,11 @@ import { SaleOfferDetails } from "./sale-offer-details";
 
 // Add / Edit Offer
 
+export const offerActionEnum = {
+    ADD_OFFER: true,
+    EDIT_OFFER: false
+}
+
 export const OfferDetailsFormSchema = z.object({
   manufacturer: z.string().min(1, { message: 'Producer is required' }),
   model: z.string().min(1, { message: 'Model is required' }),
@@ -137,15 +142,15 @@ export const OfferPricingFormSchema = z.object({
   }
 });
 
-export const OfferImagesFormSchema = z.object({
+export const OfferImagesFormSchema = (minImages: number = 3) => z.object({
   images: z
-    .array(z.instanceof(File))   //TODO remove optional and uncomment code below
-    .min(1, { message: 'At least one image is required' })
+    .array(z.instanceof(File))
+    .min(minImages, { message: `At least ${minImages} image${minImages === 1 ? '' : 's'} required` })
     .max(10, { message: 'A maximum of 10 images is allowed' })
     .refine((files) => files.every(file => file.size <= 5 * 1024 * 1024), {
       message: 'Each image must be less than 5MB',
     }),
-  });
+});
 
 export const CombinedOfferFormSchema = z
   .object({
@@ -193,11 +198,11 @@ export const CombinedOfferFormSchema = z
     return data;
   });
 
-export const CombinedImagesOfferFormSchema = z
+export const CombinedImagesOfferFormSchema = (minImages: number = 3) => z
   .object({
     ...OfferDetailsFormSchema._def.schema.shape,
     ...OfferPricingFormSchema._def.schema.shape,
-    ...OfferImagesFormSchema.shape,
+    ...OfferImagesFormSchema(minImages).shape,
   })
   .superRefine((data, ctx) => {
     if (data.registration_date && data.production_year) {
