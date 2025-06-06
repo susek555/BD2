@@ -248,7 +248,7 @@ func (_c *AuctionServiceInterface_Update_Call) RunAndReturn(run func(*auction.Up
 }
 
 // UpdatePrice provides a mock function with given fields: _a0, newPrice
-func (_m *AuctionServiceInterface) UpdatePrice(_a0 *models.Auction, newPrice uint) error {
+func (_m *AuctionServiceInterface) UpdatePrice(_a0 *models.SaleOffer, newPrice uint) error {
 	ret := _m.Called(_a0, newPrice)
 
 	if len(ret) == 0 {
@@ -256,7 +256,7 @@ func (_m *AuctionServiceInterface) UpdatePrice(_a0 *models.Auction, newPrice uin
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(*models.Auction, uint) error); ok {
+	if rf, ok := ret.Get(0).(func(*models.SaleOffer, uint) error); ok {
 		r0 = rf(_a0, newPrice)
 	} else {
 		r0 = ret.Error(0)
@@ -271,15 +271,15 @@ type AuctionServiceInterface_UpdatePrice_Call struct {
 }
 
 // UpdatePrice is a helper method to define mock.On call
-//   - _a0 *models.Auction
+//   - _a0 *models.SaleOffer
 //   - newPrice uint
 func (_e *AuctionServiceInterface_Expecter) UpdatePrice(_a0 interface{}, newPrice interface{}) *AuctionServiceInterface_UpdatePrice_Call {
 	return &AuctionServiceInterface_UpdatePrice_Call{Call: _e.mock.On("UpdatePrice", _a0, newPrice)}
 }
 
-func (_c *AuctionServiceInterface_UpdatePrice_Call) Run(run func(_a0 *models.Auction, newPrice uint)) *AuctionServiceInterface_UpdatePrice_Call {
+func (_c *AuctionServiceInterface_UpdatePrice_Call) Run(run func(_a0 *models.SaleOffer, newPrice uint)) *AuctionServiceInterface_UpdatePrice_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(*models.Auction), args[1].(uint))
+		run(args[0].(*models.SaleOffer), args[1].(uint))
 	})
 	return _c
 }
@@ -289,7 +289,7 @@ func (_c *AuctionServiceInterface_UpdatePrice_Call) Return(_a0 error) *AuctionSe
 	return _c
 }
 
-func (_c *AuctionServiceInterface_UpdatePrice_Call) RunAndReturn(run func(*models.Auction, uint) error) *AuctionServiceInterface_UpdatePrice_Call {
+func (_c *AuctionServiceInterface_UpdatePrice_Call) RunAndReturn(run func(*models.SaleOffer, uint) error) *AuctionServiceInterface_UpdatePrice_Call {
 	_c.Call.Return(run)
 	return _c
 }
