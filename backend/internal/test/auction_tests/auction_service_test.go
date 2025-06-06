@@ -124,8 +124,8 @@ func makeValidUpdateDTO() *auction.UpdateAuctionDTO {
 			Transmission:       &transmission,
 			NumberOfGears:      &numberOfGears,
 			Drive:              &drive,
-			Manufacturer:       &manufacturerName,
-			Model:              &modelName,
+			ManufacturerName:   &manufacturerName,
+			ModelName:          &modelName,
 		},
 		DateEnd:     &dateEnd,
 		BuyNowPrice: &buyNowPrice,
@@ -195,7 +195,6 @@ func TestAuctionService_Update_OK(t *testing.T) {
 		*a = *full
 	}).Return(nil)
 
-
 	out, svcErr := svc.Update(update, uint(99))
 	assert.NoError(t, svcErr)
 
@@ -239,9 +238,9 @@ func TestAuctionService_Delete_Unauthorized(t *testing.T) {
 	repo := new(mocks.AuctionRepositoryInterface)
 	saleOfferSvc := new(mocks.SaleOfferServiceInterface)
 	svc := auction.NewAuctionService(repo, saleOfferSvc)
-	
+
 	full := makeFullAuctionEntity(8, time.Now().Add(time.Hour), 400)
-	
+
 	saleOfferSvc.On("Delete", uint(8), full.Offer.UserID+1).Return(errors.New("you are not the owner of this auction"))
 
 	err := svc.Delete(8, full.Offer.UserID+1)
@@ -254,14 +253,14 @@ func TestAuctionService_Delete_GetByID_Error(t *testing.T) {
 	repo := new(mocks.AuctionRepositoryInterface)
 	saleOfferSvc := new(mocks.SaleOfferServiceInterface)
 	svc := auction.NewAuctionService(repo, saleOfferSvc)
-	
+
 	expected := errors.New("auction not found")
-	
+
 	saleOfferSvc.On("Delete", uint(8), uint(1)).Return(expected)
-	
+
 	err := svc.Delete(8, 1)
 	assert.ErrorIs(t, err, expected)
-	
+
 	repo.AssertExpectations(t)
 	saleOfferSvc.AssertExpectations(t)
 }

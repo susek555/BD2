@@ -21,6 +21,7 @@ type ManufacturerRetrieverInterface interface {
 
 type ModelRetrieverInterface interface {
 	GetByManufacturerAndModelName(manufacturerName, modelName string) (*models.Model, error)
+	GetByID(id uint) (*models.Model, error)
 }
 
 type PurchaseCreatorInterface interface {
@@ -216,18 +217,24 @@ func (s *SaleOfferService) getModelID(manufacturerName, modelName string) (uint,
 }
 
 func (s *SaleOfferService) determineNewModelID(offer *models.SaleOffer, dto *UpdateSaleOfferDTO) (uint, error) {
-	if dto.Model == nil {
+	if dto.ModelName == nil {
 		return offer.Car.ModelID, nil
 	}
-	manufacturerName := offer.Car.Model.Manufacturer.Name
-	if dto.Manufacturer != nil {
-		manufacturerName = *dto.Manufacturer
+	manufacturerName := ""
+	if dto.ManufacturerName != nil {
+		manufacturerName = *dto.ManufacturerName
+	} else {
+		model, err := s.modelRetriever.GetByID(offer.Car.ModelID)
+		if err != nil {
+			return 0, err
+		}
+		manufacturerName = model.Manufacturer.Name
 	}
-	modelID, err := s.getModelID(manufacturerName, *dto.Model)
+	modelID, err := s.getModelID(manufacturerName, *dto.ModelName)
 	if err != nil {
 		return 0, err
 	}
-	return modelID, err
+	return modelID, nil
 }
 
 func (s *SaleOfferService) mapOfferSliceWithAdditionalFields(offers []views.SaleOfferView, userID *uint) ([]RetrieveSaleOfferDTO, error) {
