@@ -1377,6 +1377,17 @@ const docTemplate = `{
                     "notification"
                 ],
                 "summary": "Retrieve filtered notifications for authenticated user",
+                "parameters": [
+                    {
+                        "description": "Filter criteria for notifications",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/notification.NotificationFilter"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "List of notifications",
@@ -2924,6 +2935,26 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                }
+            }
+        },
+        "notification.NotificationFilter": {
+            "type": "object",
+            "properties": {
+                "is_order_desc": {
+                    "type": "boolean"
+                },
+                "order_key": {
+                    "type": "string"
+                },
+                "pagination": {
+                    "$ref": "#/definitions/pagination.PaginationRequest"
+                },
+                "receiver_id": {
+                    "type": "integer"
+                },
+                "seen": {
+                    "type": "boolean"
                 }
             }
         },

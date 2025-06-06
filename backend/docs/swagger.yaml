@@ -343,6 +343,19 @@ definitions:
       name:
         type: string
     type: object
+  notification.NotificationFilter:
+    properties:
+      is_order_desc:
+        type: boolean
+      order_key:
+        type: string
+      pagination:
+        $ref: '#/definitions/pagination.PaginationRequest'
+      receiver_id:
+        type: integer
+      seen:
+        type: boolean
+    type: object
   notification.RetrieveNotificationDTO:
     properties:
       created_at:
@@ -1701,6 +1714,13 @@ paths:
       - application/json
       description: Gets a list of notifications based on provided filter criteria
         for the current user
+      parameters:
+      - description: Filter criteria for notifications
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/notification.NotificationFilter'
       produces:
       - application/json
       responses:
