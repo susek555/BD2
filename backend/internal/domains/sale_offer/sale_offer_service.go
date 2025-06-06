@@ -28,17 +28,31 @@ type PurchaseCreatorInterface interface {
 	Create(purchase *models.Purchase) error
 }
 
-//go:generate mockery --name=SaleOfferServiceInterface --output=../../test/mocks --case=snake --with-expecter
-type SaleOfferServiceInterface interface {
+type SaleOfferPreparatornterface interface {
+	PrepareForCreateSaleOffer(in *CreateSaleOfferDTO) (*models.SaleOffer, error)
+	PrepareForUpdateSaleOffer(in *UpdateSaleOfferDTO, userID uint) (*models.SaleOffer, error)
+	PrepareForBuySaleOffer(id uint, userID uint) (*models.SaleOffer, error)
+}
+
+type SaleOfferManagerInterface interface {
 	Create(in *CreateSaleOfferDTO) (*RetrieveDetailedSaleOfferDTO, error)
 	Update(in *UpdateSaleOfferDTO, userID uint) (*RetrieveDetailedSaleOfferDTO, error)
 	Publish(id uint, userID uint) (*RetrieveDetailedSaleOfferDTO, error)
 	Buy(id uint, userID uint) (*models.SaleOffer, error)
+	Delete(id uint, userID uint) error
+}
+
+type SaleOfferRetrieverInterface interface {
 	GetByID(id uint, userID *uint) (*RetrieveSaleOfferDTO, error)
 	GetDetailedByID(id uint, userID *uint) (*RetrieveDetailedSaleOfferDTO, error)
 	GetByUserID(id uint, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error)
 	GetFiltered(filter *OfferFilter, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error)
-	Delete(id uint, userID uint) error
+}
+
+type SaleOfferServiceInterface interface {
+	SaleOfferPreparatornterface
+	SaleOfferManagerInterface
+	SaleOfferRetrieverInterface
 }
 
 type SaleOfferService struct {
@@ -69,16 +83,10 @@ func NewSaleOfferService(
 }
 
 func (s *SaleOfferService) Create(in *CreateSaleOfferDTO) (*RetrieveDetailedSaleOfferDTO, error) {
-	offer, err := in.MapToSaleOffer()
+	offer, err := s.PrepareForCreateSaleOffer(in)
 	if err != nil {
 		return nil, err
 	}
-	modelID, err := s.getModelID(in.ManufacturerName, in.ModelName)
-	if err != nil {
-		return nil, err
-	}
-	offer.Car.ModelID = modelID
-	offer.Status = enums.PENDING
 	if err := s.saleOfferRepo.Create(offer); err != nil {
 		return nil, err
 	}
@@ -86,29 +94,14 @@ func (s *SaleOfferService) Create(in *CreateSaleOfferDTO) (*RetrieveDetailedSale
 }
 
 func (s *SaleOfferService) Update(in *UpdateSaleOfferDTO, userID uint) (*RetrieveDetailedSaleOfferDTO, error) {
-	offer, err := s.saleOfferRepo.GetByID(in.ID)
+	updatedOffer, err := s.PrepareForUpdateSaleOffer(in, userID)
 	if err != nil {
 		return nil, err
 	}
-	if !offer.BelongsToUser(userID) {
-		return nil, ErrOfferNotOwned
-	}
-	if err := s.authorizeModificationByUser(offer, userID); err != nil {
-		return nil, err
-	}
-	modelID, err := s.determineNewModelID(offer, in)
-	if err != nil {
-		return nil, err
-	}
-	updatedOffer, err := in.UpdatedOfferFromDTO(offer)
-	if err != nil {
-		return nil, err
-	}
-	updatedOffer.Car.ModelID = modelID
 	if err = s.saleOfferRepo.Update(updatedOffer); err != nil {
 		return nil, err
 	}
-	return s.GetDetailedByID(offer.ID, &offer.UserID)
+	return s.GetDetailedByID(updatedOffer.ID, &updatedOffer.UserID)
 }
 
 func (s *SaleOfferService) Publish(id uint, userID uint) (*RetrieveDetailedSaleOfferDTO, error) {
@@ -129,18 +122,12 @@ func (s *SaleOfferService) Publish(id uint, userID uint) (*RetrieveDetailedSaleO
 }
 
 func (s *SaleOfferService) Buy(id uint, userID uint) (*models.SaleOffer, error) {
-	offer, err := s.saleOfferRepo.GetByID(id)
+	offer, err := s.PrepareForBuySaleOffer(id, userID)
 	if err != nil {
 		return nil, err
 	}
 	if offer.IsAuction {
 		return nil, ErrOfferIsAuction
-	}
-	if offer.BelongsToUser(userID) {
-		return nil, ErrOfferOwnedByUser
-	}
-	if offer.Status != enums.PUBLISHED {
-		return nil, ErrOfferNotPublished
 	}
 	if err := s.saleOfferRepo.UpdateStatus(offer, enums.SOLD); err != nil {
 		return nil, err
@@ -150,6 +137,17 @@ func (s *SaleOfferService) Buy(id uint, userID uint) (*models.SaleOffer, error) 
 		return nil, err
 	}
 	return s.saleOfferRepo.GetByID(id)
+}
+
+func (s *SaleOfferService) Delete(id uint, userID uint) error {
+	offer, err := s.saleOfferRepo.GetByID(id)
+	if err != nil {
+		return err
+	}
+	if err := s.authorizeModificationByUser(offer, userID); err != nil {
+		return err
+	}
+	return s.saleOfferRepo.Delete(id)
 }
 
 func (s *SaleOfferService) GetByID(id uint, userID *uint) (*RetrieveSaleOfferDTO, error) {
@@ -197,15 +195,55 @@ func (s *SaleOfferService) GetFiltered(filter *OfferFilter, pagRequest *paginati
 	return &RetrieveOffersWithPagination{Offers: offerDTOs, PaginationResponse: pagResponse}, nil
 }
 
-func (s *SaleOfferService) Delete(id uint, userID uint) error {
-	offer, err := s.saleOfferRepo.GetByID(id)
+func (s *SaleOfferService) PrepareForCreateSaleOffer(in *CreateSaleOfferDTO) (*models.SaleOffer, error) {
+	offer, err := in.MapToSaleOffer()
 	if err != nil {
-		return err
+		return nil, err
+	}
+	modelID, err := s.getModelID(in.ManufacturerName, in.ModelName)
+	if err != nil {
+		return nil, err
+	}
+	offer.Car.ModelID = modelID
+	offer.Status = enums.PENDING
+	return offer, nil
+}
+
+func (s *SaleOfferService) PrepareForUpdateSaleOffer(in *UpdateSaleOfferDTO, userID uint) (*models.SaleOffer, error) {
+	offer, err := s.saleOfferRepo.GetByID(in.ID)
+	if err != nil {
+		return nil, err
+	}
+	if !offer.BelongsToUser(userID) {
+		return nil, ErrOfferNotOwned
 	}
 	if err := s.authorizeModificationByUser(offer, userID); err != nil {
-		return err
+		return nil, err
 	}
-	return s.saleOfferRepo.Delete(id)
+	modelID, err := s.determineNewModelID(offer, in)
+	if err != nil {
+		return nil, err
+	}
+	updatedOffer, err := in.UpdateOfferFromDTO(offer)
+	if err != nil {
+		return nil, err
+	}
+	updatedOffer.Car.ModelID = modelID
+	return updatedOffer, nil
+}
+
+func (s *SaleOfferService) PrepareForBuySaleOffer(id uint, userID uint) (*models.SaleOffer, error) {
+	offer, err := s.saleOfferRepo.GetByID(id)
+	if err != nil {
+		return nil, err
+	}
+	if offer.BelongsToUser(userID) {
+		return nil, ErrOfferOwnedByUser
+	}
+	if offer.Status != enums.PUBLISHED {
+		return nil, ErrOfferNotPublished
+	}
+	return offer, nil
 }
 
 func (s *SaleOfferService) getModelID(manufacturerName, modelName string) (uint, error) {

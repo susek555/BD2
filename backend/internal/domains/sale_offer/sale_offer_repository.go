@@ -16,6 +16,7 @@ type SaleOfferRepositoryInterface interface {
 	GetViewByID(id uint) (*views.SaleOfferView, error)
 	GetByUserID(id uint, pagRequest *pagination.PaginationRequest) ([]views.SaleOfferView, *pagination.PaginationResponse, error)
 	GetFiltered(filter *OfferFilter, pagRequest *pagination.PaginationRequest) ([]views.SaleOfferView, *pagination.PaginationResponse, error)
+	GetAllActiveAuctions() ([]views.SaleOfferView, error)
 	Delete(id uint) error
 }
 
@@ -42,7 +43,7 @@ func (r *SaleOfferRepository) UpdateStatus(offer *models.SaleOffer, status enums
 
 func (r *SaleOfferRepository) GetByID(id uint) (*models.SaleOffer, error) {
 	var offer models.SaleOffer
-	err := r.DB.Preload("Car").First(&offer, id).Error
+	err := r.DB.Preload("Car").Preload("Auction").First(&offer, id).Error
 	return &offer, err
 }
 
@@ -71,6 +72,15 @@ func (r *SaleOfferRepository) GetFiltered(filter *OfferFilter, pagRequest *pagin
 		return nil, nil, err
 	}
 	return saleOffers, paginationResponse, nil
+}
+
+func (r *SaleOfferRepository) GetAllActiveAuctions() ([]views.SaleOfferView, error) {
+	var auctions []views.SaleOfferView
+	err := r.DB.Table("sale_offer_view").Where("is_auction IS TRUE").Find(&auctions).Error
+	if err != nil {
+		return nil, err
+	}
+	return auctions, nil
 }
 
 func (r *SaleOfferRepository) Delete(id uint) error {
