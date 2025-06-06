@@ -9,6 +9,7 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/ws"
 	"github.com/susek555/BD2/car-dealer-api/internal/enums"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
+	"github.com/susek555/BD2/car-dealer-api/internal/views"
 	"gorm.io/gorm"
 )
 
@@ -27,6 +28,7 @@ type BidRetrieverInterface interface {
 type SaleOfferRepositoryInterface interface {
 	UpdateStatus(offer *models.SaleOffer, status enums.Status) error
 	GetByID(id uint) (*models.SaleOffer, error)
+	GetAllActiveAuctions() ([]views.SaleOfferView, error)
 }
 
 type PurchaseCreatorInterface interface {

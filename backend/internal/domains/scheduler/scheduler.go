@@ -11,19 +11,14 @@ import (
 	"github.com/redis/go-redis/v9"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/notification"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/ws"
-	"github.com/susek555/BD2/car-dealer-api/internal/views"
 )
 
-type AuctionRetriverInterface interface {
-	GetAllActiveAuctions() ([]views.SaleOfferView, error)
-}
-
 type Scheduler struct {
-	mu               sync.Mutex
-	heap             timerHeap
-	eventsCh         chan AuctionEvent
-	closer           AuctionCloserInterface
-	auctionRetriever AuctionRetriverInterface
+	mu            sync.Mutex
+	heap          timerHeap
+	eventsCh      chan AuctionEvent
+	closer        AuctionCloserInterface
+	saleOfferRepo SaleOfferRepositoryInterface
 }
 
 //go:generate mockery --name=SchedulerInterface --output=../../test/mocks --case=snake --with-expecter
@@ -38,22 +33,21 @@ func NewScheduler(
 	repo BidRetrieverInterface,
 	redisClient *redis.Client,
 	notificationService notification.NotificationServiceInterface,
-	auctionRetriever AuctionRetriverInterface,
 	saleOfferRepo SaleOfferRepositoryInterface,
 	purchaseCreator PurchaseCreatorInterface,
 	hub ws.HubInterface,
 ) SchedulerInterface {
 	closer := NewAuctionCloser(repo, saleOfferRepo, purchaseCreator, notificationService, hub)
 	return &Scheduler{
-		heap:             make(timerHeap, 0),
-		eventsCh:         make(chan AuctionEvent, 1024),
-		closer:           closer,
-		auctionRetriever: auctionRetriever,
+		heap:          make(timerHeap, 0),
+		eventsCh:      make(chan AuctionEvent, 1024),
+		closer:        closer,
+		saleOfferRepo: saleOfferRepo,
 	}
 }
 
 func (s *Scheduler) LoadAuctions() error {
-	offers, err := s.auctionRetriever.GetAllActiveAuctions()
+	offers, err := s.saleOfferRepo.GetAllActiveAuctions()
 	if err != nil {
 		log.Println("scheduler: error loading auctions:", err)
 		return err
