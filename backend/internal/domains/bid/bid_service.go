@@ -9,12 +9,12 @@ import (
 	"gorm.io/gorm"
 )
 
-type AuctionRetrieverInterface interface {
-	GetByID(id uint) (*models.Auction, error)
+type SaleOfferRetrieverInterface interface {
+	GetByID(id uint) (*models.SaleOffer, error)
 }
 
 type AuctionPriceUpdaterInterface interface {
-	UpdatePrice(auction *models.Auction, newPrice uint) error
+	UpdatePrice(auction *models.SaleOffer, newPrice uint) error
 }
 
 type BidServiceInterface interface {
@@ -29,11 +29,11 @@ type BidServiceInterface interface {
 
 type BidService struct {
 	Repo                BidRepositoryInterface
-	AuctionRetriever    AuctionRetrieverInterface
+	AuctionRetriever    SaleOfferRetrieverInterface
 	AuctionPriceUpdater AuctionPriceUpdaterInterface
 }
 
-func NewBidService(repo BidRepositoryInterface, auctionRetriever AuctionRetrieverInterface, auctionPriceUpdater AuctionPriceUpdaterInterface) BidServiceInterface {
+func NewBidService(repo BidRepositoryInterface, auctionRetriever SaleOfferRetrieverInterface, auctionPriceUpdater AuctionPriceUpdaterInterface) BidServiceInterface {
 	return &BidService{
 		Repo:                repo,
 		AuctionRetriever:    auctionRetriever,
@@ -47,11 +47,11 @@ func (service *BidService) Create(bidDTO *CreateBidDTO, bidderID uint) (*Process
 	bid := bidDTO.MapToBid(bidderID)
 	l, _ := auctionLocks.LoadOrStore(bid.AuctionID, &sync.Mutex{})
 	m := l.(*sync.Mutex)
-	auction, err := service.AuctionRetriever.GetByID(bid.AuctionID)
+	offer, err := service.AuctionRetriever.GetByID(bid.AuctionID)
 	if err != nil {
 		return nil, err
 	}
-	if auction.Offer.Status != enums.PUBLISHED {
+	if offer.Status != enums.PUBLISHED {
 		return nil, ErrAuctionNotPublished
 	}
 	m.Lock()
@@ -60,7 +60,7 @@ func (service *BidService) Create(bidDTO *CreateBidDTO, bidderID uint) (*Process
 	if err != nil {
 		return nil, err
 	}
-	err = service.AuctionPriceUpdater.UpdatePrice(auction, bid.Amount)
+	err = service.AuctionPriceUpdater.UpdatePrice(offer, bid.Amount)
 	if err != nil {
 		return nil, err
 	}
