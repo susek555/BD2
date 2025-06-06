@@ -37,6 +37,14 @@ export const parseOfferForm = (formData: FormData, progressState: number) : {pro
     switch (progressState) {
       case OfferFormEnum.initialState:
         validatedFields = OfferDetailsFormSchema.safeParse(normalizedData);
+        if (validatedFields.success) {
+          // FALSE POSITIVES: adding this fields to validatedFields.data here
+          validatedFields.data.price = normalizedData.price ? normalizedData.price : undefined;
+          validatedFields.data.margin = normalizedData.margin ? normalizedData.margin : undefined;
+          validatedFields.data.is_auction = normalizedData.is_auction ? normalizedData.is_auction : undefined;
+          validatedFields.data.buy_now_price = normalizedData.buy_now_price ? normalizedData.buy_now_price : undefined;
+          validatedFields.data.date_end = normalizedData.date_end ? normalizedData.date_end : undefined;
+        }
       break;
       case OfferFormEnum.pricingPart:
         validatedFields = CombinedOfferFormSchema.safeParse(normalizedData);

@@ -263,7 +263,10 @@ export function editFormWrapper(offer: SaleOfferDetails) : Partial<OfferFormStat
     price: offer.isAuction ? offer.auctionData?.currentBid || 0 : offer.price || 0,
     is_auction: offer.isAuction || false,
     margin: offer.margin || 0,
-    date_end: offer.isAuction ? offer.auctionData?.endDate.toISOString().slice(0, 16).replace('T', ' ') : undefined,
+    date_end: offer.isAuction ?
+      offer.auctionData?.endDate.toLocaleTimeString('en-GB', {hour: '2-digit', minute:'2-digit', hour12: false}) + ' ' +
+      offer.auctionData?.endDate.toISOString().split('T')[0] :
+      undefined,
     buy_now_price: offer.isAuction ? offer.price : undefined,
   }
 }

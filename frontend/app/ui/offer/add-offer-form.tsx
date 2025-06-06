@@ -22,11 +22,6 @@ export function OfferForm(
     initialValues?: Partial<OfferFormState['values']>,
     apiAction?: boolean
 }) {
-    // Validate that ID is provided when edit mode is active
-    // if (apiAction === offerActionEnum.EDIT_OFFER && id === undefined) {
-    //     throw new Error("ID is required when editing an offer");
-    // }
-
 
     const initialState: OfferFormState = {
         errors: {},
@@ -38,7 +33,6 @@ export function OfferForm(
             formData.delete('progressState');
 
             const { progressState: result, offerFormState } = parseOfferForm(formData, progressState);
-
 
             setProgressState(result);
 
@@ -107,7 +101,7 @@ export function OfferForm(
         }
         // Process auction date only when is_auction is true
         const is_auction_value = formData.get("is_auction") === "true";
-        if (is_auction_value) {
+        if (is_auction_value && progressState >= OfferFormEnum.pricingPart) {
             const auction_day = formData.get("date_end-day");
             const auction_month = formData.get("date_end-month");
             const auction_year = formData.get("date_end-year");
@@ -124,6 +118,8 @@ export function OfferForm(
                 formData.delete("date_end-hour");
                 formData.delete("date_end-minute");
             }
+        } else if (state.values?.date_end) {
+            formData.set("date_end", state.values?.date_end);
         }
 
         formData.append('progressState', progressState.toString());
@@ -207,8 +203,9 @@ export function OfferForm(
         )
     }
 
-    function DateSelectionField({ id, name, hasHour = false }: { id: string, name: string, hasHour?: boolean }) {
+    function DateSelectionField({ id, name, hasHour = false, requiredPart = OfferFormEnum.initialState }: { id: string, name: string, hasHour?: boolean, requiredPart?: number }) {
         const initialDate = state.values?.[id]?.toString() ?? "";
+        console.log("Initial date for", id, ":", initialDate);
         const dateTimePattern = /^(\d{2}):(\d{2}) (\d{4})-(\d{2})-(\d{2})$/; // Pattern for "11:45 2026-12-21"
         const dateOnlyPattern = /^(\d{4})-(\d{2})-(\d{2})$/; // Pattern for "2026-12-21"
 
@@ -238,7 +235,7 @@ export function OfferForm(
                         max={31}
                         className="border rounded p-2 w-20"
                         defaultValue={initialDay}
-                        required
+                        required = {progressState >= requiredPart}
                         placeholder="Day"
                     />
                     <input
@@ -249,7 +246,7 @@ export function OfferForm(
                         max={12}
                         className="border rounded p-2 w-20"
                         defaultValue={initialMonth}
-                        required
+                        required = {progressState >= requiredPart}
                         placeholder="Month"
                     />
                     <input
@@ -260,7 +257,7 @@ export function OfferForm(
                         max={2100}
                         className="border rounded p-2 w-28"
                         defaultValue={initialYear}
-                        required
+                        required = {progressState >= requiredPart}
                         placeholder="Year"
                     />
                     {hasHour && (
@@ -274,7 +271,7 @@ export function OfferForm(
                                 max={23}
                                 className="border rounded p-2 w-20"
                                 defaultValue={initialHour}
-                                required
+                                required={hasHour && progressState >= requiredPart}
                                 placeholder="Hour"
                             />
                             <input
@@ -285,7 +282,7 @@ export function OfferForm(
                                 max={59}
                                 className="border rounded p-2 w-20"
                                 defaultValue={initialMinute}
-                                required
+                                required={hasHour && progressState >= requiredPart}
                                 placeholder="Min"
                             />
                         </>
@@ -446,7 +443,7 @@ export function OfferForm(
 
                         {is_auction && (
                             <>
-                                <DateSelectionField id="date_end" name="Auction end date" hasHour={true} />
+                                <DateSelectionField id="date_end" name="Auction end date" hasHour={true} requiredPart={OfferFormEnum.pricingPart}/>
                                 <NumberInputField id="buy_now_price" name="Buy now price [ optional ]" />
                             </>
                         )}
