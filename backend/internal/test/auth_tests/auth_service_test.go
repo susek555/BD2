@@ -1,7 +1,6 @@
 package auth_tests
 
 import (
-	"context"
 	"errors"
 	"testing"
 	"time"
@@ -29,7 +28,6 @@ func hashPass(t *testing.T, raw string) string {
 
 func TestService_Register_Person(t *testing.T) {
 	t.Run("email not taken - should return access and refresh tokens", func(t *testing.T) {
-		ctx := context.Background()
 		uRepo := mocks.NewUserRepositoryInterface(t)
 		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
 		person := models.Person{Name: "John", Surname: "Doe"}
@@ -42,7 +40,7 @@ func TestService_Register_Person(t *testing.T) {
 
 		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
 
-		err := svc.Register(ctx, in)
+		err := svc.Register(in)
 
 		assert.Empty(t, err)
 
@@ -51,7 +49,6 @@ func TestService_Register_Person(t *testing.T) {
 	})
 
 	t.Run("when email taken it should return ErrEmailTaken", func(t *testing.T) {
-		ctx := context.Background()
 		uRepo := mocks.NewUserRepositoryInterface(t)
 		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
 
@@ -61,7 +58,7 @@ func TestService_Register_Person(t *testing.T) {
 
 		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
 
-		err := svc.Register(ctx, user.CreateUserDTO{Email: existing.Email})
+		err := svc.Register(user.CreateUserDTO{Email: existing.Email})
 
 		assert.NotEmpty(t, err, auth.ErrEmailTaken)
 		uRepo.AssertExpectations(t)
@@ -70,7 +67,6 @@ func TestService_Register_Person(t *testing.T) {
 
 func TestService_Register_Company(t *testing.T) {
 	t.Run("email not taken - should return access and refresh tokens", func(t *testing.T) {
-		ctx := context.Background()
 		uRepo := mocks.NewUserRepositoryInterface(t)
 		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
 		company := models.Company{Name: "Awesome Name", Nip: "123233234234"}
@@ -91,7 +87,7 @@ func TestService_Register_Company(t *testing.T) {
 
 		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
 
-		err := svc.Register(ctx, in)
+		err := svc.Register(in)
 
 		assert.Empty(t, err)
 
@@ -100,7 +96,6 @@ func TestService_Register_Company(t *testing.T) {
 	})
 
 	t.Run("when email taken it should return ErrEmailTaken", func(t *testing.T) {
-		ctx := context.Background()
 		uRepo := mocks.NewUserRepositoryInterface(t)
 		rtSvc := mocks.NewRefreshTokenServiceInterface(t)
 
@@ -110,7 +105,7 @@ func TestService_Register_Company(t *testing.T) {
 
 		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
 
-		err := svc.Register(ctx, user.CreateUserDTO{Email: existing.Email})
+		err := svc.Register(user.CreateUserDTO{Email: existing.Email})
 
 		assert.NotEmpty(t, err, auth.ErrEmailTaken)
 		uRepo.AssertExpectations(t)
@@ -118,7 +113,6 @@ func TestService_Register_Company(t *testing.T) {
 }
 
 func TestService_Login(t *testing.T) {
-	ctx := context.Background()
 	validIn := auth.LoginInput{Login: "john@example.com", Password: "secret"}
 
 	t.Run("valid credentials - returns access & refresh", func(t *testing.T) {
@@ -132,7 +126,7 @@ func TestService_Login(t *testing.T) {
 
 		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
 
-		access, refresh, user_, err := svc.Login(ctx, validIn)
+		access, refresh, user_, err := svc.Login(validIn)
 		assert.NoError(t, err)
 		assert.NotEmpty(t, access)
 		assert.NotEmpty(t, refresh)
@@ -153,7 +147,7 @@ func TestService_Login(t *testing.T) {
 
 		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
 
-		_, _, _, err := svc.Login(ctx, validIn)
+		_, _, _, err := svc.Login(validIn)
 		assert.ErrorIs(t, err, auth.ErrInvalidCredentials)
 	})
 
@@ -166,7 +160,7 @@ func TestService_Login(t *testing.T) {
 
 		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
 
-		_, _, _, err := svc.Login(ctx, validIn)
+		_, _, _, err := svc.Login(validIn)
 		assert.ErrorIs(t, err, auth.ErrInvalidCredentials)
 	})
 
@@ -184,13 +178,12 @@ func TestService_Login(t *testing.T) {
 
 		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
 
-		_, _, _, err := svc.Login(ctx, validIn)
+		_, _, _, err := svc.Login(validIn)
 		assert.EqualError(t, err, "error - create refresh token")
 	})
 }
 
 func TestService_Refresh(t *testing.T) {
-	ctx := context.Background()
 	oldToken := "old_refresh"
 
 	baseRT := models.RefreshToken{
@@ -210,7 +203,7 @@ func TestService_Refresh(t *testing.T) {
 
 		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
 
-		access, err := svc.Refresh(ctx, oldToken)
+		access, err := svc.Refresh(oldToken)
 
 		assert.NoError(t, err)
 		assert.NotEmpty(t, access)
@@ -230,7 +223,7 @@ func TestService_Refresh(t *testing.T) {
 
 		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
 
-		_, err := svc.Refresh(ctx, oldToken)
+		_, err := svc.Refresh(oldToken)
 		assert.EqualError(t, err, "invalid refresh token")
 	})
 
@@ -245,13 +238,12 @@ func TestService_Refresh(t *testing.T) {
 
 		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
 
-		_, err := svc.Refresh(ctx, oldToken)
+		_, err := svc.Refresh(oldToken)
 		assert.EqualError(t, err, expired.Error())
 	})
 }
 
 func TestService_Logout(t *testing.T) {
-	ctx := context.Background()
 	userID := uint(8)
 	rt := models.RefreshToken{ID: 42, Token: "r1"}
 
@@ -265,7 +257,7 @@ func TestService_Logout(t *testing.T) {
 
 		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
 		rtSvc.EXPECT().FindByToken("gy").Return(&rt, nil)
-		err := svc.Logout(ctx, userID, "gy", true)
+		err := svc.Logout(userID, "gy", true)
 		assert.NoError(t, err)
 	})
 
@@ -278,7 +270,7 @@ func TestService_Logout(t *testing.T) {
 
 		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
 
-		err := svc.Logout(ctx, userID, rt.Token, false)
+		err := svc.Logout(userID, rt.Token, false)
 		assert.NoError(t, err)
 	})
 
@@ -288,7 +280,7 @@ func TestService_Logout(t *testing.T) {
 
 		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
 
-		err := svc.Logout(ctx, userID, "", false)
+		err := svc.Logout(userID, "", false)
 		assert.EqualError(t, err, "refresh token required")
 	})
 
@@ -302,7 +294,7 @@ func TestService_Logout(t *testing.T) {
 
 		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
 
-		err := svc.Logout(ctx, userID, rt.Token, false)
+		err := svc.Logout(userID, rt.Token, false)
 		assert.EqualError(t, err, "refresh token not found")
 	})
 
@@ -317,7 +309,7 @@ func TestService_Logout(t *testing.T) {
 
 		svc := &auth.AuthService{Repo: uRepo, RefreshTokenService: rtSvc, JwtKey: jwtKey}
 
-		err := svc.Logout(ctx, userID, rt.Token, true)
+		err := svc.Logout(userID, rt.Token, true)
 		assert.EqualError(t, err, "db down")
 	})
 }

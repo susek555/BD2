@@ -13,13 +13,6 @@ func MapToClientNotification(not *models.Notification, userID uint) *models.Clie
 	}
 }
 
-func MapToNotification(clientNotification *models.ClientNotification) *models.Notification {
-	if clientNotification.Notification == nil {
-		return nil
-	}
-	return clientNotification.Notification
-}
-
 func MapNotificationToDTO(notification *models.Notification, seen bool) *RetrieveNotificationDTO {
 	if notification == nil {
 		return nil
