@@ -1,8 +1,10 @@
 package sale_offer_tests
 
 import (
+	"os"
 	"time"
 
+	"github.com/cloudinary/cloudinary-go/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/mock"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/bid"
@@ -80,7 +82,11 @@ func getRepositoryWithSaleOffers(db *gorm.DB, offers []models.SaleOffer) sale_of
 	return repo
 }
 
-func newTestServer(db *gorm.DB, seedOffers []models.SaleOffer) (*gin.Engine, sale_offer.SaleOfferServiceInterface, sale_offer.OfferAccessEvaluatorInterface) {
+func newTestServer(db *gorm.DB, seedOffers []models.SaleOffer) (*gin.Engine, sale_offer.SaleOfferServiceInterface, sale_offer.OfferAccessEvaluatorInterface, image.ImageServiceInterface) {
+	os.Setenv("CLOUDINARY_URL", "cloudinary://1234567890:abcdefghijklmnopqrstuvwxyz@my‐cloud")
+
+	cloudinaryURL := os.Getenv("CLOUDINARY_URL")
+	cld, _ := cloudinary.NewFromURL(cloudinaryURL)
 	verifier := jwt.NewJWTVerifier(u.JWTSECRET)
 	saleOfferRepo := getRepositoryWithSaleOffers(db, seedOffers)
 	manufacturerRepo := manufacturer.NewManufacturerRepository(db)
@@ -92,6 +98,8 @@ func newTestServer(db *gorm.DB, seedOffers []models.SaleOffer) (*gin.Engine, sal
 	purchaseCreator := purchase.NewPurchaseRepository(db)
 	saleOfferService := sale_offer.NewSaleOfferService(saleOfferRepo, manufacturerRepo, modelRepo, imageRepo, accessEvaluator, purchaseCreator)
 	likedOfferService := liked_offer.NewLikedOfferService(likedOfferRepository, saleOfferRepo)
+	imageService := image.NewImageService(imageRepo, &image.ImageBucket{CloudinaryClient: cld}, saleOfferRepo)
+	imageHandler := image.NewHandler(imageService, saleOfferService)
 	mh := new(mocks.HubInterface)
 	mh.On("SubscribeUser", mock.Anything, mock.Anything).Return()
 	mh.On("UnsubscribeUser", mock.Anything, mock.Anything).Return()
@@ -108,13 +116,19 @@ func newTestServer(db *gorm.DB, seedOffers []models.SaleOffer) (*gin.Engine, sal
 		saleOfferRoutes.GET("/id/:id", middleware.OptionalAuthenticate(verifier), saleOfferHandler.GetDetailedSaleOfferByID)
 		saleOfferRoutes.GET("/offer-types", saleOfferHandler.GetSaleOfferTypes)
 		saleOfferRoutes.GET("/order-keys", saleOfferHandler.GetOrderKeys)
+		saleOfferRoutes.PUT("/publish/:id", middleware.Authenticate(verifier), saleOfferHandler.PublishSaleOffer)
 	}
 	favourtieRoutes := r.Group("/favourite")
 	{
 		favourtieRoutes.POST("/like/:id", middleware.Authenticate(verifier), likedOfferHandler.LikeOffer)
 		favourtieRoutes.DELETE("/dislike/:id", middleware.Authenticate(verifier), likedOfferHandler.DislikeOffer)
 	}
-	return r, saleOfferService, accessEvaluator
+	imageRoutes := r.Group("/image")
+	{
+		imageRoutes.PATCH("/:id", middleware.Authenticate(verifier), imageHandler.UploadImages)
+		imageRoutes.DELETE("/", middleware.Authenticate(verifier), imageHandler.DeleteImage)
+	}
+	return r, saleOfferService, accessEvaluator, imageService
 }
 
 // ------------
