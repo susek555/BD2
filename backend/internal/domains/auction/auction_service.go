@@ -1,14 +1,21 @@
 package auction
 
 import (
+	"time"
+
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/enums"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
 )
 
+type PurchaseCreatorInterface interface {
+	Create(purchase *models.Purchase) error
+}
+
 type SaleOfferServiceInterface interface {
-	Create(in *sale_offer.CreateSaleOfferDTO) (*sale_offer.RetrieveDetailedSaleOfferDTO, error)
-	Update(in *sale_offer.UpdateSaleOfferDTO, userID uint) (*sale_offer.RetrieveDetailedSaleOfferDTO, error)
+	PrepareForCreateSaleOffer(in *sale_offer.CreateSaleOfferDTO) (*models.SaleOffer, error)
+	PrepareForUpdateSaleOffer(in *sale_offer.UpdateSaleOfferDTO, userID uint) (*models.SaleOffer, error)
+	PrepareForBuySaleOffer(id uint, userID uint) (*models.SaleOffer, error)
 	GetDetailedByID(id uint, userID *uint) (*sale_offer.RetrieveDetailedSaleOfferDTO, error)
 	Delete(id uint, userID uint) error
 }
@@ -18,84 +25,79 @@ type AuctionServiceInterface interface {
 	Create(auction *CreateAuctionDTO) (*sale_offer.RetrieveDetailedSaleOfferDTO, error)
 	Update(auction *UpdateAuctionDTO, userID uint) (*sale_offer.RetrieveDetailedSaleOfferDTO, error)
 	BuyNow(auctionID, userID uint) (*models.Auction, error)
-	UpdatePrice(auction *models.Auction, newPrice uint) error
+	UpdatePrice(auction *models.SaleOffer, newPrice uint) error
 	Delete(id, userID uint) error
 }
 
 type AuctionService struct {
-	auctionRepo      AuctionRepositoryInterface
+	saleOfferRepo    sale_offer.SaleOfferRepositoryInterface
 	saleOfferService SaleOfferServiceInterface
+	purchaseCreator  PurchaseCreatorInterface
 }
 
-func NewAuctionService(repo AuctionRepositoryInterface, service SaleOfferServiceInterface) AuctionServiceInterface {
+func NewAuctionService(repo sale_offer.SaleOfferRepositoryInterface, service SaleOfferServiceInterface, purchaseCreator PurchaseCreatorInterface) AuctionServiceInterface {
 	return &AuctionService{
-		auctionRepo:      repo,
+		saleOfferRepo:    repo,
 		saleOfferService: service,
+		purchaseCreator:  purchaseCreator,
 	}
 }
 
-func (s *AuctionService) Create(auction *CreateAuctionDTO) (*sale_offer.RetrieveDetailedSaleOfferDTO, error) {
-	offer, err := s.saleOfferService.Create(&auction.CreateSaleOfferDTO)
+func (s *AuctionService) Create(in *CreateAuctionDTO) (*sale_offer.RetrieveDetailedSaleOfferDTO, error) {
+	offer, err := s.saleOfferService.PrepareForCreateSaleOffer(&in.CreateSaleOfferDTO)
 	if err != nil {
 		return nil, err
 	}
-	auctionEntity, err := auction.MapToAuction()
+	auction, err := s.PrepareForCreateAuction(in)
 	if err != nil {
 		return nil, err
 	}
-	if auctionEntity.BuyNowPrice < 1 {
-		return nil, ErrBuyNowPriceLessThan1
-	}
-	if auctionEntity.BuyNowPrice < offer.Price {
-		return nil, ErrBuyNowPriceLessThanOfferPrice
-	}
-	auctionEntity.OfferID = offer.ID
-	if err := s.auctionRepo.Create(auctionEntity); err != nil {
+	offer.Auction = auction
+	if err := s.saleOfferRepo.Create(offer); err != nil {
 		return nil, err
 	}
 	return s.saleOfferService.GetDetailedByID(offer.ID, &offer.UserID)
 }
 
-func (s *AuctionService) Update(auction *UpdateAuctionDTO, userID uint) (*sale_offer.RetrieveDetailedSaleOfferDTO, error) {
-	auctionEntity, err := s.auctionRepo.GetByID(auction.ID)
+func (s *AuctionService) Update(in *UpdateAuctionDTO, userID uint) (*sale_offer.RetrieveDetailedSaleOfferDTO, error) {
+	updatedOffer, err := s.saleOfferService.PrepareForUpdateSaleOffer(&in.UpdateSaleOfferDTO, userID)
 	if err != nil {
 		return nil, err
 	}
-	updatedAuction, err := auction.UpdatedAuctionFromDTO(auctionEntity)
+	updatedAuction, err := s.PrepareForUpdateAuction(in, updatedOffer.Auction)
 	if err != nil {
 		return nil, err
 	}
-	err = s.auctionRepo.Update(updatedAuction)
-	if err != nil {
+	updatedOffer.Auction = updatedAuction
+	if err := s.saleOfferRepo.Update(updatedOffer); err != nil {
 		return nil, err
 	}
-	return s.saleOfferService.Update(&auction.UpdateSaleOfferDTO, userID)
+	return s.saleOfferService.GetDetailedByID(updatedOffer.ID, &updatedOffer.UserID)
 }
 
-func (s *AuctionService) BuyNow(auctionID, userID uint) (*models.Auction, error) {
-	auction, err := s.auctionRepo.GetByID(auctionID)
+func (s *AuctionService) BuyNow(id uint, userID uint) (*models.Auction, error) {
+	offer, err := s.saleOfferService.PrepareForBuySaleOffer(id, userID)
 	if err != nil {
 		return nil, err
 	}
-	if auction.Offer.BelongsToUser(userID) {
-		return nil, ErrAuctionOwnedByUser
-	}
-	if auction.Offer.Status != enums.PUBLISHED {
-		return nil, ErrAuctionNotPublished
-	}
-	if err := s.auctionRepo.BuyNow(auction, userID); err != nil {
+	offer.Status = enums.SOLD
+	offer.Price = offer.Auction.BuyNowPrice
+	if err := s.saleOfferRepo.Update(offer); err != nil {
 		return nil, err
 	}
-	_ = s.UpdatePrice(auction, auction.BuyNowPrice)
-	return auction, err
+	purchaseModel := &models.Purchase{ID: offer.ID, BuyerID: userID, FinalPrice: offer.Auction.BuyNowPrice, IssueDate: time.Now()}
+	if err := s.purchaseCreator.Create(purchaseModel); err != nil {
+		return nil, err
+	}
+	return offer.Auction, err
 }
 
-func (s *AuctionService) UpdatePrice(auction *models.Auction, newPrice uint) error {
-	if newPrice < auction.Offer.Price || newPrice < auction.InitialPrice {
+func (s *AuctionService) UpdatePrice(offer *models.SaleOffer, newPrice uint) error {
+	if newPrice < offer.Price || newPrice < offer.Auction.InitialPrice {
 		return ErrNewPriceLessThanOfferPrice
 	}
-	auction.Offer.Price = newPrice
-	if err := s.auctionRepo.Update(auction); err != nil {
+	offer.Price = newPrice
+	if err := s.saleOfferRepo.Update(offer); err != nil {
 		return err
 	}
 	return nil
@@ -103,4 +105,26 @@ func (s *AuctionService) UpdatePrice(auction *models.Auction, newPrice uint) err
 
 func (s *AuctionService) Delete(id uint, userID uint) error {
 	return s.saleOfferService.Delete(id, userID)
+}
+
+func (s *AuctionService) PrepareForCreateAuction(in *CreateAuctionDTO) (*models.Auction, error) {
+	auction, err := in.MapToAuction()
+	if err != nil {
+		return nil, err
+	}
+	if auction.BuyNowPrice < 1 {
+		return nil, ErrBuyNowPriceLessThan1
+	}
+	if auction.BuyNowPrice < in.CreateSaleOfferDTO.Price {
+		return nil, ErrBuyNowPriceLessThanOfferPrice
+	}
+	return auction, nil
+}
+
+func (s *AuctionService) PrepareForUpdateAuction(in *UpdateAuctionDTO, auction *models.Auction) (*models.Auction, error) {
+	updatedAuction, err := in.UpdatedAuctionFromDTO(auction)
+	if err != nil {
+		return nil, err
+	}
+	return updatedAuction, nil
 }
