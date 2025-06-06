@@ -83,7 +83,7 @@ func getRepositoryWithSaleOffers(db *gorm.DB, offers []models.SaleOffer) sale_of
 }
 
 func newTestServer(db *gorm.DB, seedOffers []models.SaleOffer) (*gin.Engine, sale_offer.SaleOfferServiceInterface, sale_offer.OfferAccessEvaluatorInterface, image.ImageServiceInterface) {
-	os.Setenv("CLOUDINARY_URL", "cloudinary://1234567890:abcdefghijklmnopqrstuvwxyz@my‐cloud")
+	os.Setenv("CLOUDINARY_URL", "cloudinary://232679685254738:xU13-pBToKDG825l_LhM47k8k8o@du9datfva")
 
 	cloudinaryURL := os.Getenv("CLOUDINARY_URL")
 	cld, _ := cloudinary.NewFromURL(cloudinaryURL)
