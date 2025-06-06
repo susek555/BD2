@@ -10,7 +10,7 @@ import (
 
 type OfferRepositoryInterface interface {
 	GetByID(offerID uint) (*models.SaleOffer, error)
-	Update(offer *models.SaleOffer) error
+	UpdateStatus(offer *models.SaleOffer, status enums.Status) error
 }
 
 type ImageServiceInterface interface {
@@ -138,13 +138,14 @@ func (s *ImageService) setOfferStatus(offer *models.SaleOffer) error {
 	if err != nil {
 		return err
 	}
+	var status enums.Status
 	switch {
 	case len(images) < 3:
-		offer.Status = enums.PENDING
+		status = enums.PENDING
 	case len(images) >= 3:
-		offer.Status = enums.READY
+		status = enums.READY
 	}
-	return s.offerRepo.Update(offer)
+	return s.offerRepo.UpdateStatus(offer, status)
 }
 
 func (s *ImageService) partialCleanup(publicIDs []string, images []models.Image) {
