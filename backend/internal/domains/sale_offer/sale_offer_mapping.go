@@ -37,7 +37,7 @@ func (dto *CreateSaleOfferDTO) MapToSaleOffer() (*models.SaleOffer, error) {
 	return offer, nil
 }
 
-func (dto *UpdateSaleOfferDTO) UpdatedOfferFromDTO(offer *models.SaleOffer) (*models.SaleOffer, error) {
+func (dto *UpdateSaleOfferDTO) UpdateOfferFromDTO(offer *models.SaleOffer) (*models.SaleOffer, error) {
 	if err := dto.validateParams(); err != nil {
 		return nil, err
 	}
