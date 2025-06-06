@@ -330,6 +330,101 @@ func (_c *NotificationServiceInterface_GetNotificationByID_Call) RunAndReturn(ru
 	return _c
 }
 
+// UpdateSeenStatus provides a mock function with given fields: notificationID, userID, seen
+func (_m *NotificationServiceInterface) UpdateSeenStatus(notificationID uint, userID uint, seen bool) error {
+	ret := _m.Called(notificationID, userID, seen)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateSeenStatus")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(uint, uint, bool) error); ok {
+		r0 = rf(notificationID, userID, seen)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// NotificationServiceInterface_UpdateSeenStatus_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateSeenStatus'
+type NotificationServiceInterface_UpdateSeenStatus_Call struct {
+	*mock.Call
+}
+
+// UpdateSeenStatus is a helper method to define mock.On call
+//   - notificationID uint
+//   - userID uint
+//   - seen bool
+func (_e *NotificationServiceInterface_Expecter) UpdateSeenStatus(notificationID interface{}, userID interface{}, seen interface{}) *NotificationServiceInterface_UpdateSeenStatus_Call {
+	return &NotificationServiceInterface_UpdateSeenStatus_Call{Call: _e.mock.On("UpdateSeenStatus", notificationID, userID, seen)}
+}
+
+func (_c *NotificationServiceInterface_UpdateSeenStatus_Call) Run(run func(notificationID uint, userID uint, seen bool)) *NotificationServiceInterface_UpdateSeenStatus_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(uint), args[1].(uint), args[2].(bool))
+	})
+	return _c
+}
+
+func (_c *NotificationServiceInterface_UpdateSeenStatus_Call) Return(_a0 error) *NotificationServiceInterface_UpdateSeenStatus_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *NotificationServiceInterface_UpdateSeenStatus_Call) RunAndReturn(run func(uint, uint, bool) error) *NotificationServiceInterface_UpdateSeenStatus_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UpdateSeenStatusForAll provides a mock function with given fields: userID, seen
+func (_m *NotificationServiceInterface) UpdateSeenStatusForAll(userID uint, seen bool) error {
+	ret := _m.Called(userID, seen)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateSeenStatusForAll")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(uint, bool) error); ok {
+		r0 = rf(userID, seen)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// NotificationServiceInterface_UpdateSeenStatusForAll_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateSeenStatusForAll'
+type NotificationServiceInterface_UpdateSeenStatusForAll_Call struct {
+	*mock.Call
+}
+
+// UpdateSeenStatusForAll is a helper method to define mock.On call
+//   - userID uint
+//   - seen bool
+func (_e *NotificationServiceInterface_Expecter) UpdateSeenStatusForAll(userID interface{}, seen interface{}) *NotificationServiceInterface_UpdateSeenStatusForAll_Call {
+	return &NotificationServiceInterface_UpdateSeenStatusForAll_Call{Call: _e.mock.On("UpdateSeenStatusForAll", userID, seen)}
+}
+
+func (_c *NotificationServiceInterface_UpdateSeenStatusForAll_Call) Run(run func(userID uint, seen bool)) *NotificationServiceInterface_UpdateSeenStatusForAll_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(uint), args[1].(bool))
+	})
+	return _c
+}
+
+func (_c *NotificationServiceInterface_UpdateSeenStatusForAll_Call) Return(_a0 error) *NotificationServiceInterface_UpdateSeenStatusForAll_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *NotificationServiceInterface_UpdateSeenStatusForAll_Call) RunAndReturn(run func(uint, bool) error) *NotificationServiceInterface_UpdateSeenStatusForAll_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // NewNotificationServiceInterface creates a new instance of NotificationServiceInterface. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewNotificationServiceInterface(t interface {
