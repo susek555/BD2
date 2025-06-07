@@ -19,6 +19,8 @@ type NotificationServiceInterface interface {
 	GetFilteredNotifications(filter *NotificationFilter) (*RetrieveNotificationsWithPagination, error)
 	UpdateSeenStatus(notificationID, userID uint, seen bool) error
 	UpdateSeenStatusForAll(userID uint, seen bool) error
+	GetLatestNotificationsByUserID(userID uint, count uint) (*NotificationsDTO, error)
+	SaveNotificationToClient(notification *models.Notification, userID uint) error
 }
 
 type NotificationService struct {
@@ -93,6 +95,30 @@ func (s *NotificationService) UpdateSeenStatus(notificationID, userID uint, seen
 
 func (s *NotificationService) UpdateSeenStatusForAll(userID uint, seen bool) error {
 	if err := s.ClientNotificationRepository.UpdateSeenStatusForAll(userID, seen); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *NotificationService) GetLatestNotificationsByUserID(userID uint, count uint) (*NotificationsDTO, error) {
+	notifications, err := s.ClientNotificationRepository.GetLatestByUserID(userID, 4)
+	if err != nil {
+		return nil, err
+	}
+	unseenCount, err := s.ClientNotificationRepository.GetUnseenCountByUserId(userID)
+	if err != nil {
+		return nil, err
+	}
+	allCount, err := s.ClientNotificationRepository.GetAllCountByUserId(userID)
+	if err != nil {
+		return nil, err
+	}
+	return MapToNotificationsDTO(notifications, unseenCount, allCount), nil
+}
+
+func (s *NotificationService) SaveNotificationToClient(notification *models.Notification, userID uint) error {
+	clientNotification := MapToClientNotification(notification, userID)
+	if err := s.ClientNotificationRepository.Create(clientNotification); err != nil {
 		return err
 	}
 	return nil

@@ -9,7 +9,7 @@ import (
 var Hub ws.HubInterface
 
 func InitializeHub() {
-	Hub = ws.NewHub(ClientNotificationRepo, DB)
+	Hub = ws.NewHub(NotificationService, UserOfferRepo)
 	go Hub.Run()
 	ctx := context.Background()
 	Hub.StartRedisFanIn(ctx, RedisClient)

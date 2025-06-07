@@ -56,6 +56,8 @@ func (c *Client) readPump() {
 			for _, id := range p.Offers {
 				c.hub.unsubscribe <- subscription{id, c}
 			}
+		case MsgGetNotifications:
+
 		}
 	}
 }

@@ -272,6 +272,65 @@ func (_c *NotificationServiceInterface_GetFilteredNotifications_Call) RunAndRetu
 	return _c
 }
 
+// GetLatestNotificationsByUserID provides a mock function with given fields: userID, count
+func (_m *NotificationServiceInterface) GetLatestNotificationsByUserID(userID uint, count uint) (*notification.NotificationsDTO, error) {
+	ret := _m.Called(userID, count)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetLatestNotificationsByUserID")
+	}
+
+	var r0 *notification.NotificationsDTO
+	var r1 error
+	if rf, ok := ret.Get(0).(func(uint, uint) (*notification.NotificationsDTO, error)); ok {
+		return rf(userID, count)
+	}
+	if rf, ok := ret.Get(0).(func(uint, uint) *notification.NotificationsDTO); ok {
+		r0 = rf(userID, count)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*notification.NotificationsDTO)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(uint, uint) error); ok {
+		r1 = rf(userID, count)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// NotificationServiceInterface_GetLatestNotificationsByUserID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetLatestNotificationsByUserID'
+type NotificationServiceInterface_GetLatestNotificationsByUserID_Call struct {
+	*mock.Call
+}
+
+// GetLatestNotificationsByUserID is a helper method to define mock.On call
+//   - userID uint
+//   - count uint
+func (_e *NotificationServiceInterface_Expecter) GetLatestNotificationsByUserID(userID interface{}, count interface{}) *NotificationServiceInterface_GetLatestNotificationsByUserID_Call {
+	return &NotificationServiceInterface_GetLatestNotificationsByUserID_Call{Call: _e.mock.On("GetLatestNotificationsByUserID", userID, count)}
+}
+
+func (_c *NotificationServiceInterface_GetLatestNotificationsByUserID_Call) Run(run func(userID uint, count uint)) *NotificationServiceInterface_GetLatestNotificationsByUserID_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(uint), args[1].(uint))
+	})
+	return _c
+}
+
+func (_c *NotificationServiceInterface_GetLatestNotificationsByUserID_Call) Return(_a0 *notification.NotificationsDTO, _a1 error) *NotificationServiceInterface_GetLatestNotificationsByUserID_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *NotificationServiceInterface_GetLatestNotificationsByUserID_Call) RunAndReturn(run func(uint, uint) (*notification.NotificationsDTO, error)) *NotificationServiceInterface_GetLatestNotificationsByUserID_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // GetNotificationByID provides a mock function with given fields: id
 func (_m *NotificationServiceInterface) GetNotificationByID(id uint) (*models.Notification, error) {
 	ret := _m.Called(id)
@@ -326,6 +385,53 @@ func (_c *NotificationServiceInterface_GetNotificationByID_Call) Return(_a0 *mod
 }
 
 func (_c *NotificationServiceInterface_GetNotificationByID_Call) RunAndReturn(run func(uint) (*models.Notification, error)) *NotificationServiceInterface_GetNotificationByID_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// SaveNotificationToClient provides a mock function with given fields: _a0, userID
+func (_m *NotificationServiceInterface) SaveNotificationToClient(_a0 *models.Notification, userID uint) error {
+	ret := _m.Called(_a0, userID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for SaveNotificationToClient")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(*models.Notification, uint) error); ok {
+		r0 = rf(_a0, userID)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// NotificationServiceInterface_SaveNotificationToClient_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'SaveNotificationToClient'
+type NotificationServiceInterface_SaveNotificationToClient_Call struct {
+	*mock.Call
+}
+
+// SaveNotificationToClient is a helper method to define mock.On call
+//   - _a0 *models.Notification
+//   - userID uint
+func (_e *NotificationServiceInterface_Expecter) SaveNotificationToClient(_a0 interface{}, userID interface{}) *NotificationServiceInterface_SaveNotificationToClient_Call {
+	return &NotificationServiceInterface_SaveNotificationToClient_Call{Call: _e.mock.On("SaveNotificationToClient", _a0, userID)}
+}
+
+func (_c *NotificationServiceInterface_SaveNotificationToClient_Call) Run(run func(_a0 *models.Notification, userID uint)) *NotificationServiceInterface_SaveNotificationToClient_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(*models.Notification), args[1].(uint))
+	})
+	return _c
+}
+
+func (_c *NotificationServiceInterface_SaveNotificationToClient_Call) Return(_a0 error) *NotificationServiceInterface_SaveNotificationToClient_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *NotificationServiceInterface_SaveNotificationToClient_Call) RunAndReturn(run func(*models.Notification, uint) error) *NotificationServiceInterface_SaveNotificationToClient_Call {
 	_c.Call.Return(run)
 	return _c
 }

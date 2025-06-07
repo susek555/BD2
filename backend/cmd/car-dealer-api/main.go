@@ -25,8 +25,8 @@ func init() {
 	initializers.ConnectToCloudinary()
 	initializers.InitializeVerifier()
 	initializers.InitializeRepos()
-	initializers.InitializeHub()
 	initializers.InitializeServices()
+	initializers.InitializeHub()
 	initializers.InitializeScheduler()
 	initializers.InitializeHandlers()
 }

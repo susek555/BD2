@@ -12,6 +12,7 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/review"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/user"
+	"github.com/susek555/BD2/car-dealer-api/internal/views"
 )
 
 var BidRepo bid.BidRepositoryInterface
@@ -26,6 +27,7 @@ var RefreshTokenRepo refresh_token.RefreshTokenRepositoryInterface
 var ReviewRepo review.ReviewRepositoryInterface
 var SaleOfferRepo sale_offer.SaleOfferRepositoryInterface
 var UserRepo user.UserRepositoryInterface
+var UserOfferRepo views.UserOfferRepositoryInterface
 
 func InitializeRepos() {
 	BidRepo = bid.NewBidRepository(DB)
@@ -40,4 +42,5 @@ func InitializeRepos() {
 	ReviewRepo = review.NewReviewRepository(DB)
 	SaleOfferRepo = sale_offer.NewSaleOfferRepository(DB)
 	UserRepo = user.NewUserRepository(DB)
+	UserOfferRepo = views.NewUserOfferRepository(DB)
 }

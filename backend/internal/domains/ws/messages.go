@@ -9,10 +9,11 @@ import (
 type MsgType string
 
 const (
-	MsgNotification MsgType = "notification"
-	MsgError        MsgType = "error"
-	MsgSubscribe    MsgType = "subscribe"
-	MsgUnsubscribe  MsgType = "unsubscribe"
+	MsgNotification     MsgType = "notification"
+	MsgError            MsgType = "error"
+	MsgSubscribe        MsgType = "subscribe"
+	MsgUnsubscribe      MsgType = "unsubscribe"
+	MsgGetNotifications MsgType = "get_notifications"
 )
 
 type Envelope struct {
