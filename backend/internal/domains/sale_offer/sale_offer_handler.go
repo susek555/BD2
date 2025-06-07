@@ -118,6 +118,33 @@ func (h *Handler) PublishSaleOffer(c *gin.Context) {
 	c.JSON(http.StatusOK, retrieveDTO)
 }
 
+// GetDetailedSaleOfferByID godoc
+//
+//	@Summary		Get sale offer by ID
+//	@Description	Returns a sale offer by its ID. Can be used to retrieve detailed information about sale offer.
+//	@Tags			sale-offer
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		uint							true	"Sale offer ID"
+//	@Success		200	{object}	RetrieveDetailedSaleOfferDTO	"Sale offer details"
+//	@Failure		400	{object}	custom_errors.HTTPError			"Invalid input data"
+//	@Failure		404	{object}	custom_errors.HTTPError			"Sale offer not found"
+//	@Failure		500	{object}	custom_errors.HTTPError			"Internal server error"
+//	@Router			/sale-offer/id/{id} [get]
+func (h *Handler) GetDetailedSaleOfferByID(c *gin.Context) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		custom_errors.HandleError(c, err, ErrorMap)
+		return
+	}
+	offerDTO, err := h.service.GetDetailedByID(uint(id), getOptionalUserID(c))
+	if err != nil {
+		custom_errors.HandleError(c, err, ErrorMap)
+		return
+	}
+	c.JSON(http.StatusOK, offerDTO)
+}
+
 // GetFilteredSaleOffers godoc
 //
 //	@Summary		Get filtered sale offers
@@ -153,49 +180,24 @@ func (h *Handler) GetFilteredSaleOffers(c *gin.Context) {
 	c.JSON(http.StatusOK, saleOffers)
 }
 
-// GetDetailedSaleOfferByID godoc
-//
-//	@Summary		Get sale offer by ID
-//	@Description	Returns a sale offer by its ID. Can be used to retrieve detailed information about sale offer.
-//	@Tags			sale-offer
-//	@Accept			json
-//	@Produce		json
-//	@Param			id	path		uint							true	"Sale offer ID"
-//	@Success		200	{object}	RetrieveDetailedSaleOfferDTO	"Sale offer details"
-//	@Failure		400	{object}	custom_errors.HTTPError			"Invalid input data"
-//	@Failure		404	{object}	custom_errors.HTTPError			"Sale offer not found"
-//	@Failure		500	{object}	custom_errors.HTTPError			"Internal server error"
-//	@Router			/sale-offer/id/{id} [get]
-func (h *Handler) GetDetailedSaleOfferByID(c *gin.Context) {
-	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
-	if err != nil {
-		custom_errors.HandleError(c, err, ErrorMap)
-		return
-	}
-	offerDTO, err := h.service.GetDetailedByID(uint(id), getOptionalUserID(c))
-	if err != nil {
-		custom_errors.HandleError(c, err, ErrorMap)
-		return
-	}
-	c.JSON(http.StatusOK, offerDTO)
-}
-
 // GetMySaleOffers godoc
 //
 //	@Summary		Get my sale offers
-//	@Description	Returns a list of all sale offers created by the logged-in user.
+//	@Description	Returns a list of all sale offers created by the logged-in user. The results are filtered based on request's body. To check how filter should be set look at /filtered endpoint.
 //	@Tags			sale-offer
 //	@Accept			json
 //	@Produce		json
 //	@Param			filter	body		pagination.PaginationRequest	true	"Pagination request"
 //	@Success		200		{object}	RetrieveOffersWithPagination	"List of sale offers"
+//	@Failure		400		{object}	custom_errors.HTTPError			"Invalid input data - filter is invalid"
+//	@Failure		403		{object}	custom_errors.HTTPError			"Forbidden - token has expired or is invalid"
 //	@Failure		401		{object}	custom_errors.HTTPError			"Unauthorized - user must be logged in to retrieve his offers"
 //	@Failure		500		{object}	custom_errors.HTTPError			"Internal server error"
 //	@Router			/sale-offer/my-offers [post]
 //	@Security		Bearer
 func (h *Handler) GetMySaleOffers(c *gin.Context) {
 	userID, _ := c.Get("userID")
-	var filterRequest OfferFilterRequest
+	filterRequest := NewOfferFilterRequest()
 	if err := c.ShouldBindJSON(&filterRequest); err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
@@ -204,6 +206,39 @@ func (h *Handler) GetMySaleOffers(c *gin.Context) {
 	filterRequest.Filter.UserID = &id
 	saleOffers, err := h.service.GetUsersOffers(
 		&UsersOffersOnlyFilter{BaseOfferFilter: filterRequest.Filter}, &filterRequest.PagRequest)
+	if err != nil {
+		custom_errors.HandleError(c, err, ErrorMap)
+		return
+	}
+	c.JSON(http.StatusOK, saleOffers)
+}
+
+// GetLikedOnlySaleOffers godoc
+//
+//	@Summary		Get liked only sale offers
+//	@Description	Returns a list of sale offers that the logged-in user has liked. The results are filtered based on request's body. To check how filter should be set look at /filtered endpoint.
+//	@Tags			sale-offer
+//	@Accept			json
+//	@Produce		json
+//	@Param			filter	body		OfferFilterRequest				true	"Sale offer filter"
+//	@Success		200		{object}	RetrieveOffersWithPagination	"List of sale offers"
+//	@Failure		400		{object}	custom_errors.HTTPError			"Invalid input data"
+//	@Failure		401		{object}	custom_errors.HTTPError			"Unauthorized - user must be logged in to retrieve his offers"
+//	@Failure		403		{object}	custom_errors.HTTPError			"Forbidden - token is invalid or expired"
+//	@Failure		500		{object}	custom_errors.HTTPError			"Internal server error"
+//	@Router			/sale-offer/liked-offers [post]
+//	@Security		Bearer
+func (h *Handler) GetLikedOnlySaleOffers(c *gin.Context) {
+	userID, _ := c.Get("userID")
+	filterRequest := NewOfferFilterRequest()
+	if err := c.ShouldBindJSON(&filterRequest); err != nil {
+		custom_errors.HandleError(c, err, ErrorMap)
+		return
+	}
+	id := userID.(uint)
+	filterRequest.Filter.UserID = &id
+	saleOffers, err := h.service.GetLikedOnly(
+		&LikedOffersOnlyFilter{BaseOfferFilter: filterRequest.Filter}, &filterRequest.PagRequest)
 	if err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
