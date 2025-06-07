@@ -187,7 +187,7 @@ func (h *Handler) GetFilteredSaleOffers(c *gin.Context) {
 //	@Tags			sale-offer
 //	@Accept			json
 //	@Produce		json
-//	@Param			filter	body		pagination.PaginationRequest	true	"Pagination request"
+//	@Param			filter	body		OfferFilterRequest				true	"Pagination request"
 //	@Success		200		{object}	RetrieveOffersWithPagination	"List of sale offers"
 //	@Failure		400		{object}	custom_errors.HTTPError			"Invalid input data - filter is invalid"
 //	@Failure		403		{object}	custom_errors.HTTPError			"Forbidden - token has expired or is invalid"

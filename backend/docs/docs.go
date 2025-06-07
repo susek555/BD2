@@ -2257,6 +2257,69 @@ const docTemplate = `{
                 }
             }
         },
+        "/sale-offer/liked-offers": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Returns a list of sale offers that the logged-in user has liked. The results are filtered based on request's body. To check how filter should be set look at /filtered endpoint.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sale-offer"
+                ],
+                "summary": "Get liked only sale offers",
+                "parameters": [
+                    {
+                        "description": "Sale offer filter",
+                        "name": "filter",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sale_offer.OfferFilterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of sale offers",
+                        "schema": {
+                            "$ref": "#/definitions/sale_offer.RetrieveOffersWithPagination"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input data",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - user must be logged in to retrieve his offers",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - token is invalid or expired",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/sale-offer/my-offers": {
             "post": {
                 "security": [
@@ -2264,7 +2327,7 @@ const docTemplate = `{
                         "Bearer": []
                     }
                 ],
-                "description": "Returns a list of all sale offers created by the logged-in user.",
+                "description": "Returns a list of all sale offers created by the logged-in user. The results are filtered based on request's body. To check how filter should be set look at /filtered endpoint.",
                 "consumes": [
                     "application/json"
                 ],
@@ -2282,7 +2345,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pagination.PaginationRequest"
+                            "$ref": "#/definitions/sale_offer.OfferFilterRequest"
                         }
                     }
                 ],
@@ -2293,8 +2356,20 @@ const docTemplate = `{
                             "$ref": "#/definitions/sale_offer.RetrieveOffersWithPagination"
                         }
                     },
+                    "400": {
+                        "description": "Invalid input data - filter is invalid",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
                     "401": {
                         "description": "Unauthorized - user must be logged in to retrieve his offers",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - token has expired or is invalid",
                         "schema": {
                             "$ref": "#/definitions/custom_errors.HTTPError"
                         }
@@ -3285,6 +3360,77 @@ const docTemplate = `{
                 }
             }
         },
+        "sale_offer.BaseOfferFilter": {
+            "type": "object",
+            "properties": {
+                "car_registration_date_range": {
+                    "$ref": "#/definitions/sale_offer.MinMax-string"
+                },
+                "colors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/enums.Color"
+                    }
+                },
+                "drives": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/enums.Drive"
+                    }
+                },
+                "engine_capacity_range": {
+                    "$ref": "#/definitions/sale_offer.MinMax-uint"
+                },
+                "engine_power_range": {
+                    "$ref": "#/definitions/sale_offer.MinMax-uint"
+                },
+                "fuel_types": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/enums.FuelType"
+                    }
+                },
+                "is_order_desc": {
+                    "type": "boolean"
+                },
+                "manufacturers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "mileage_range": {
+                    "$ref": "#/definitions/sale_offer.MinMax-uint"
+                },
+                "offer_creation_date_range": {
+                    "$ref": "#/definitions/sale_offer.MinMax-string"
+                },
+                "offer_type": {
+                    "$ref": "#/definitions/sale_offer.OfferType"
+                },
+                "order_key": {
+                    "type": "string"
+                },
+                "price_range": {
+                    "$ref": "#/definitions/sale_offer.MinMax-uint"
+                },
+                "query": {
+                    "type": "string"
+                },
+                "transmissions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/enums.Transmission"
+                    }
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "year_range": {
+                    "$ref": "#/definitions/sale_offer.MinMax-uint"
+                }
+            }
+        },
         "sale_offer.CreateSaleOfferDTO": {
             "type": "object",
             "required": [
@@ -3390,85 +3536,11 @@ const docTemplate = `{
                 }
             }
         },
-        "sale_offer.OfferFilter": {
-            "type": "object",
-            "properties": {
-                "car_registration_date_range": {
-                    "$ref": "#/definitions/sale_offer.MinMax-string"
-                },
-                "colors": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/enums.Color"
-                    }
-                },
-                "drives": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/enums.Drive"
-                    }
-                },
-                "engine_capacity_range": {
-                    "$ref": "#/definitions/sale_offer.MinMax-uint"
-                },
-                "engine_power_range": {
-                    "$ref": "#/definitions/sale_offer.MinMax-uint"
-                },
-                "fuel_types": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/enums.FuelType"
-                    }
-                },
-                "is_order_desc": {
-                    "type": "boolean"
-                },
-                "liked_only": {
-                    "type": "boolean"
-                },
-                "manufacturers": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "mileage_range": {
-                    "$ref": "#/definitions/sale_offer.MinMax-uint"
-                },
-                "offer_creation_date_range": {
-                    "$ref": "#/definitions/sale_offer.MinMax-string"
-                },
-                "offer_type": {
-                    "$ref": "#/definitions/sale_offer.OfferType"
-                },
-                "order_key": {
-                    "type": "string"
-                },
-                "price_range": {
-                    "$ref": "#/definitions/sale_offer.MinMax-uint"
-                },
-                "query": {
-                    "type": "string"
-                },
-                "transmissions": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/enums.Transmission"
-                    }
-                },
-                "user_id": {
-                    "type": "integer"
-                },
-                "year_range": {
-                    "$ref": "#/definitions/sale_offer.MinMax-uint"
-                }
-            }
-        },
         "sale_offer.OfferFilterRequest": {
             "type": "object",
             "properties": {
                 "filter": {
-                    "$ref": "#/definitions/sale_offer.OfferFilter"
+                    "$ref": "#/definitions/sale_offer.BaseOfferFilter"
                 },
                 "pagination": {
                     "$ref": "#/definitions/pagination.PaginationRequest"
