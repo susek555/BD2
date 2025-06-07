@@ -57,7 +57,7 @@ func (c *Client) readPump() {
 				c.hub.unsubscribe <- subscription{id, c}
 			}
 		case MsgGetNotifications:
-
+			c.hub.SendFourLatestNotificationsToClient(c)
 		}
 	}
 }
