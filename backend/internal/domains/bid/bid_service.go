@@ -56,6 +56,9 @@ func (service *BidService) Create(bidDTO *CreateBidDTO, bidderID uint) (*Process
 	if offer.Status != enums.PUBLISHED {
 		return nil, ErrAuctionNotPublished
 	}
+	if offer.BelongsToUser(bidderID) {
+		return nil, ErrBidderIsAuctionOwner
+	}
 	m.Lock()
 	defer m.Unlock()
 	err = service.Repo.Create(bid)
