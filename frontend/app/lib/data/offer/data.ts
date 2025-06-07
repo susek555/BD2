@@ -19,7 +19,7 @@ export async function fetchOfferDetails(
       name: `${fetchedData.brand} ${fetchedData.model}`,
       price: fetchedData.is_auction ? fetchedData.buy_now_price || null : fetchedData.price,
       isAuction: fetchedData.is_auction,
-      isActive: fetchedData.status === 'published' ? true : false,
+      isActive: fetchedData.status === 'Published' ? true : false,
       imagesURLs: fetchedData.images_urls,
       description: fetchedData.description,
       details: [
