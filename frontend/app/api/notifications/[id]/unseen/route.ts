@@ -25,6 +25,5 @@ export async function PUT(
     method: "PUT",
   });
 
-  const result = await response.json();
-  return NextResponse.json(result, { status: response.status });
+  return NextResponse.json({ status: response.status });
 }

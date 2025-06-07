@@ -12,6 +12,10 @@ export default function NotificationsButton() {
     const [newNotifications, setNewNotifications] = useState(0);
     const [notifications, setNotificationsData] = useState<Notification[]>([]);
 
+    function changeNumberOfUnread(delta: number) {
+        setNewNotifications(prev => prev + delta);
+    }
+
     const { messages } = useNotificationsSocket()
 
     // Update notifications when new messages are received
@@ -47,7 +51,7 @@ export default function NotificationsButton() {
                     </div>
                 )}
             </BaseAccountButton>
-            <NotificationModal open={isDialogOpen} onOpenChange={setIsDialogOpen} notifications={notifications}/>
+            <NotificationModal open={isDialogOpen} onOpenChange={setIsDialogOpen} notifications={notifications} changeNumberOfUnread={changeNumberOfUnread}/>
         </>
     )
 }

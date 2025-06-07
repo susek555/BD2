@@ -1,20 +1,31 @@
 'use client'
 
+import { markNotificationAs } from "@/app/lib/api/notifications/requests";
 import { Notification } from "@/app/lib/definitions/notification";
 import { EnvelopeIcon, EnvelopeOpenIcon } from "@heroicons/react/20/solid";
 import { useState } from "react";
 
 export default function NotificationCard({
   notification,
+  changeNumberOfUnread
 }: {
   notification: Notification
+  changeNumberOfUnread?: (count: number) => void
 }) {
   const [isRead, setIsRead] = useState(notification.is_read);
 
-  const handleReadChange = async (newValue?: boolean) => {
+  const handleReadChange = async (input?: boolean) => {
+    const newValue = input !== undefined ? input : !isRead;
     setIsRead(newValue !== undefined ? newValue : !isRead);
 
-    // TODO send API request to update notification status
+    try {
+      markNotificationAs(notification.id, newValue !== undefined ? newValue : !isRead)
+      changeNumberOfUnread?.(newValue ? -1 : 1);
+    }
+    catch (error) {
+      alert(`Failed to update notification status ${error}`);
+      setIsRead(!isRead);
+    }
   }
 
   const handleClick = () => {
