@@ -1,4 +1,4 @@
-package ws
+package views
 
 type UserOfferRecord struct {
 	OfferID uint `json:"offer_id" gorm:"column:offer_id"`

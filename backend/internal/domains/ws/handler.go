@@ -51,11 +51,12 @@ func ServeWS(hub *Hub) gin.HandlerFunc {
 }
 
 func (h *Hub) LoadClientToRooms(userID string) {
-	var records []UserOfferRecord
-	err := h.db.
-		Table("user_offer_interactions").
-		Where("user_id = ?", userID).
-		Find(&records).Error
+	userIDUint, err := strconv.ParseUint(userID, 10, 64)
+	if err != nil {
+		log.Printf("Error parsing userID %s: %v", userID, err)
+		return
+	}
+	records, err := h.userOfferRepository.GetUserInteractionsByUserID(uint(userIDUint))
 	if err != nil {
 		log.Println("Error loading client rooms:", err)
 		return
