@@ -19,15 +19,19 @@ func (f *PublishedOffersOnlyFilter) ApplyOfferFilters(query *gorm.DB) (*gorm.DB,
 	if err != nil {
 		return nil, err
 	}
-	return applyPublishedOffersOnly(query), nil
+	return applyPublishedOffersOnly(query, f.UserID), nil
 }
 
 func (f *PublishedOffersOnlyFilter) GetBase() *BaseOfferFilter {
 	return &f.BaseOfferFilter
 }
 
-func applyPublishedOffersOnly(query *gorm.DB) *gorm.DB {
-	return query.Where("sale_offer_view.status = ?", enums.PUBLISHED)
+func applyPublishedOffersOnly(query *gorm.DB, userID *uint) *gorm.DB {
+	query = query.Where("sale_offer_view.status = ?", enums.PUBLISHED)
+	if userID != nil {
+		query = query.Where("sale_offer_view.user_id = ?", *userID)
+	}
+	return query
 }
 
 type LikedOffersOnlyFilter struct {
