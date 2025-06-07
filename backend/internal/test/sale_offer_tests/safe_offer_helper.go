@@ -188,10 +188,11 @@ func withAuctionField(opt u.Option[models.Auction]) u.Option[models.SaleOffer] {
 }
 
 func createAuctionSaleOffer(id uint) *models.SaleOffer {
+	buyNowPrice := uint(0)
 	offer := *u.Build(createOffer(id),
 		withAuctionField(u.WithField[models.Auction]("OfferID", id)),
 		withAuctionField(u.WithField[models.Auction]("DateEnd", time.Now())),
-		withAuctionField(u.WithField[models.Auction]("BuyNowPrice", uint(0))))
+		withAuctionField(u.WithField[models.Auction]("BuyNowPrice", &buyNowPrice)))
 	return &offer
 }
 

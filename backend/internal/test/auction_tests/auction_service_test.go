@@ -39,7 +39,7 @@ func makeFullAuctionEntity(id uint, end time.Time, buyNow uint) *models.Auction 
 	auc := &models.Auction{
 		OfferID:     id,
 		DateEnd:     end,
-		BuyNowPrice: buyNow,
+		BuyNowPrice: &buyNow,
 		Offer:       so,
 	}
 	user := &models.User{
@@ -53,6 +53,7 @@ func makeFullAuctionEntity(id uint, end time.Time, buyNow uint) *models.Auction 
 
 func makeValidCreateDTO() *auction.CreateAuctionDTO {
 	future := time.Date(2100, 1, 1, 12, 0, 0, 0, time.UTC)
+	buyNowPrice := uint(5000)
 	return &auction.CreateAuctionDTO{
 		CreateSaleOfferDTO: sale_offer.CreateSaleOfferDTO{
 			UserID:             42,
@@ -77,7 +78,7 @@ func makeValidCreateDTO() *auction.CreateAuctionDTO {
 			ModelName:          "ModelS",
 		},
 		DateEnd:     future.Format(formats.DateTimeLayout),
-		BuyNowPrice: 5000,
+		BuyNowPrice: &buyNowPrice,
 	}
 }
 
@@ -149,13 +150,13 @@ func TestAuctionService_Create_OK(t *testing.T) {
 	repo.On("Create", mock.AnythingOfType("*models.SaleOffer")).Return(nil)
 
 	saleOfferSvc.On("GetDetailedByID", uint(7), mock.AnythingOfType("*uint")).
-		Return(&sale_offer.RetrieveDetailedSaleOfferDTO{ID: 7, Price: dtoIn.Price, BuyNowPrice: &dtoIn.BuyNowPrice}, nil)
+		Return(&sale_offer.RetrieveDetailedSaleOfferDTO{ID: 7, Price: dtoIn.Price, BuyNowPrice: dtoIn.BuyNowPrice}, nil)
 
 	out, err := svc.Create(dtoIn)
 	assert.NoError(t, err)
 
 	assert.Equal(t, uint(7), out.ID)
-	assert.Equal(t, dtoIn.BuyNowPrice, *out.BuyNowPrice)
+	assert.Equal(t, *dtoIn.BuyNowPrice, *out.BuyNowPrice)
 
 	repo.AssertExpectations(t)
 	saleOfferSvc.AssertExpectations(t)
@@ -190,6 +191,7 @@ func TestAuctionService_Update_OK(t *testing.T) {
 	update := makeValidUpdateDTO()
 
 	// Mock GetByID which is called before Update
+	buyNowPrice := uint(1000)
 	saleOfferSvc.On("PrepareForUpdateSaleOffer", mock.AnythingOfType("*sale_offer.UpdateSaleOfferDTO"), mock.AnythingOfType("uint")).
 		Return(&models.SaleOffer{
 			ID:     7,
@@ -197,7 +199,7 @@ func TestAuctionService_Update_OK(t *testing.T) {
 			Auction: &models.Auction{
 				OfferID:      7,
 				DateEnd:      time.Now().Add(time.Hour),
-				BuyNowPrice:  1000,
+				BuyNowPrice:  &buyNowPrice,
 				InitialPrice: 500,
 			}}, nil)
 
@@ -206,7 +208,7 @@ func TestAuctionService_Update_OK(t *testing.T) {
 		}).
 		Return(nil)
 
-	buyNowPrice := uint(1000)
+	buyNowPrice = uint(1000)
 	saleOfferSvc.On("GetDetailedByID", uint(7), mock.AnythingOfType("*uint")).
 		Return(&sale_offer.RetrieveDetailedSaleOfferDTO{ID: 7, Price: 500, BuyNowPrice: &buyNowPrice}, nil)
 
@@ -226,6 +228,7 @@ func TestAuctionService_Update_Error(t *testing.T) {
 	expected := errors.New("db failure")
 
 	// Mock GetByID which is called before Update
+	buyNowPrice := uint(1000)
 	saleOfferSvc.On("PrepareForUpdateSaleOffer", mock.AnythingOfType("*sale_offer.UpdateSaleOfferDTO"), mock.AnythingOfType("uint")).
 		Return(&models.SaleOffer{
 			ID:     7,
@@ -233,7 +236,7 @@ func TestAuctionService_Update_Error(t *testing.T) {
 			Auction: &models.Auction{
 				OfferID:      7,
 				DateEnd:      time.Now().Add(time.Hour),
-				BuyNowPrice:  1000,
+				BuyNowPrice:  &buyNowPrice,
 				InitialPrice: 500,
 			}}, nil)
 
@@ -242,7 +245,7 @@ func TestAuctionService_Update_Error(t *testing.T) {
 		}).
 		Return(nil)
 
-	buyNowPrice := uint(1000)
+	buyNowPrice = uint(1000)
 	saleOfferSvc.On("GetDetailedByID", uint(7), mock.AnythingOfType("*uint")).
 		Return(&sale_offer.RetrieveDetailedSaleOfferDTO{ID: 7, Price: 500, BuyNowPrice: &buyNowPrice}, expected)
 
