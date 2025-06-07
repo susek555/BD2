@@ -12,6 +12,7 @@ interface NotificationsDialogProps {
   onOpenChange?: (open: boolean) => void;
   notifications?: Notification[];
   changeNumberOfUnread: (count: number) => void;
+  updateNotificationSeenStatus: (id: string, seen: boolean) => void;
 }
 
 export default function NotificationsModal({
@@ -19,6 +20,7 @@ export default function NotificationsModal({
   onOpenChange,
   notifications,
   changeNumberOfUnread,
+  updateNotificationSeenStatus
 }: NotificationsDialogProps) {
   const [dialogOpen, setDialogOpen] = useState(open || false);
 
@@ -43,7 +45,7 @@ export default function NotificationsModal({
             <div>
               <p className='p-4 text-lg font-bold'>Notifications</p>
               {notifications && notifications.length > 0 ? (
-                <NotificationsTable notifications={notifications} changeNumberOfUnread={changeNumberOfUnread}/>
+                <NotificationsTable notifications={notifications} changeNumberOfUnread={changeNumberOfUnread} updateNotificationSeenStatus={updateNotificationSeenStatus}/>
               ) : (
                 <div className="p-4 text-center text-gray-500">
                   You don&apos;t have any notifications

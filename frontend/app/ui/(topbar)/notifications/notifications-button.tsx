@@ -16,6 +16,18 @@ export default function NotificationsButton() {
         setNewNotifications(prev => prev + delta);
     }
 
+    function updateNotificationSeenStatus(id: string, seen: boolean) {
+        setNotificationsData(prev => {
+            return prev.map(notification => {
+                if (notification.id === id) {
+                    return { ...notification, seen };
+                }
+                return notification;
+            })
+        })
+    };
+
+
     const { messages } = useNotificationsSocket()
 
     // Update notifications when new messages are received
@@ -38,7 +50,6 @@ export default function NotificationsButton() {
         setIsDialogOpen(true);
     }
 
-
     return (
         <>
             <BaseAccountButton
@@ -52,7 +63,13 @@ export default function NotificationsButton() {
                     </div>
                 )}
             </BaseAccountButton>
-            <NotificationModal open={isDialogOpen} onOpenChange={setIsDialogOpen} notifications={notifications} changeNumberOfUnread={changeNumberOfUnread}/>
+            <NotificationModal
+                open={isDialogOpen}
+                onOpenChange={setIsDialogOpen}
+                notifications={notifications}
+                changeNumberOfUnread={changeNumberOfUnread}
+                updateNotificationSeenStatus={updateNotificationSeenStatus}
+            />
         </>
     )
 }

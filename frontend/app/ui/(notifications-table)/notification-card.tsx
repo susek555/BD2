@@ -7,10 +7,12 @@ import { useState } from "react";
 
 export default function NotificationCard({
   notification,
-  changeNumberOfUnread
+  changeNumberOfUnread,
+  updateNotificationSeenStatus
 }: {
   notification: Notification
   changeNumberOfUnread?: (count: number) => void
+  updateNotificationSeenStatus?: (id: string, seen: boolean) => void
 }) {
   const [isRead, setIsRead] = useState(notification.seen);
 
@@ -22,6 +24,7 @@ export default function NotificationCard({
     try {
       markNotificationAs(notification.id, newValue !== undefined ? newValue : !isRead)
       changeNumberOfUnread?.(newValue ? -1 : 1);
+      updateNotificationSeenStatus?.(notification.id, newValue);
     }
     catch (error) {
       alert(`Failed to update notification status ${error}`);
