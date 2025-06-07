@@ -10,16 +10,16 @@ export default async function Page({
     searchParams,
 }: {
     searchParams?: Promise<{
-        orderKey?: 'newest' | 'unread';
+        orderKey?: 'newest' | 'unseen';
         page?: string;
     }>
 }) {
   const params = (await searchParams) || {};
-  const orderKey = params.orderKey || 'unread';
+  const orderKey = params.orderKey || 'unseen';
   const page = Number(params.page || 1);
 
   const notificationsSearchParams: NotificationSearchParams = {
-    order_key: orderKey,
+    order_key: orderKey === 'newest' ? 'created_at' : 'seen',
     pagination: {
       page: page,
       page_size: 8,

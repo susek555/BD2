@@ -2,13 +2,11 @@
 import { fetchWithRefresh } from "@/app/lib/api/fetchWithRefresh";
 import { getServerSession } from "next-auth";
 import { authConfig } from "@/app/lib/authConfig";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 const API_URL = process.env.API_URL;
 
-export async function PUT(
-  req: NextRequest,
-) {
+export async function PUT() {
   const session = await getServerSession(authConfig);
   if (!session) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });

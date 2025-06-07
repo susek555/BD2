@@ -8,7 +8,7 @@ export interface Notification {
 }
 
 export interface NotificationSearchParams {
-    order_key?: string;
+    order_key?: "seen" | "created_at";
     pagination?: {
         page: number;
         page_size: number;

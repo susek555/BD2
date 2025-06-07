@@ -34,7 +34,9 @@ export default function NotificationCard({
   }
 
   const handleClick = () => {
-    handleReadChange(true);
+    if (!isRead) {
+      handleReadChange(true);
+    }
     window.location.href = `/offer/${notification.offer_id}`
   }
 

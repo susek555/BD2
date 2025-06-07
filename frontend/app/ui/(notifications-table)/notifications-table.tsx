@@ -7,8 +7,8 @@ export default function NotificationsTable({
   updateNotificationSeenStatus
 }: {
   notifications: Notification[],
-  changeNumberOfUnread: (count: number) => void,
-  updateNotificationSeenStatus: (id: string, seen: boolean) => void
+  changeNumberOfUnread?: (count: number) => void,
+  updateNotificationSeenStatus?: (id: string, seen: boolean) => void
 }) {
   return (
     <div className="flex flex-col gap-2 px-5">
