@@ -26,7 +26,7 @@ type SaleOfferServiceInterface interface {
 type AuctionServiceInterface interface {
 	Create(auction *CreateAuctionDTO) (*sale_offer.RetrieveDetailedSaleOfferDTO, error)
 	Update(auction *UpdateAuctionDTO, userID uint) (*sale_offer.RetrieveDetailedSaleOfferDTO, error)
-	BuyNow(auctionID, userID uint) (*models.Auction, error)
+	BuyNow(auctionID, userID uint) (*models.SaleOffer, error)
 	UpdatePrice(auction *models.SaleOffer, newPrice uint) error
 	Delete(id, userID uint) error
 }
@@ -77,7 +77,7 @@ func (s *AuctionService) Update(in *UpdateAuctionDTO, userID uint) (*sale_offer.
 	return s.saleOfferService.GetDetailedByID(updatedOffer.ID, &updatedOffer.UserID)
 }
 
-func (s *AuctionService) BuyNow(id uint, userID uint) (*models.Auction, error) {
+func (s *AuctionService) BuyNow(id uint, userID uint) (*models.SaleOffer, error) {
 	offer, err := s.saleOfferService.PrepareForBuySaleOffer(id, userID)
 	if err != nil {
 		return nil, err
@@ -87,11 +87,11 @@ func (s *AuctionService) BuyNow(id uint, userID uint) (*models.Auction, error) {
 	if err := s.saleOfferRepo.Update(offer); err != nil {
 		return nil, err
 	}
-	purchaseModel := &models.Purchase{ID: offer.ID, BuyerID: userID, FinalPrice: offer.Auction.BuyNowPrice, IssueDate: time.Now()}
+	purchaseModel := &models.Purchase{OfferID: offer.ID, BuyerID: userID, FinalPrice: offer.Auction.BuyNowPrice, IssueDate: time.Now()}
 	if err := s.purchaseCreator.Create(purchaseModel); err != nil {
 		return nil, err
 	}
-	return offer.Auction, err
+	return offer, err
 }
 
 func (s *AuctionService) UpdatePrice(offer *models.SaleOffer, newPrice uint) error {
