@@ -37,7 +37,7 @@ export default async function Page({
       <div className="my-4" />
       <div className='flex flex-grow flex-row'>
         <div className='h-full w-80 flex-none'>
-          <NotificationsFilterBox />
+          <NotificationsFilterBox/>
         </div>
 
         <div className='flex flex-1 flex-col'>
