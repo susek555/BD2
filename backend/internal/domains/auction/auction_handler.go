@@ -186,7 +186,7 @@ func (h *Handler) BuyNow(c *gin.Context) {
 		return
 	}
 	h.hub.SaveNotificationForClients(strconv.FormatUint(id, 10), userID, notification)
-	h.hub.SendFourLatestNotificationsToClient(strconv.FormatUint(id, 10), strconv.FormatUint(uint64(userID), 10))
+	h.hub.SendFourLatestNotificationsToClients(strconv.FormatUint(id, 10), strconv.FormatUint(uint64(userID), 10))
 	h.sched.ForceCloseAuction(strconv.FormatUint(id, 10), userID, offer.Auction.BuyNowPrice)
 	h.hub.RemoveRoom(strconv.FormatUint(id, 10))
 }
