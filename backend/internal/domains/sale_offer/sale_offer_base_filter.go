@@ -31,11 +31,6 @@ type FieldsConstraints struct {
 	Transmissions []enums.Transmission
 }
 
-type OfferFilterIntreface interface {
-	ApplyOfferFilters(*gorm.DB) (*gorm.DB, error)
-	GetBase() *BaseOfferFilter
-}
-
 type BaseOfferFilter struct {
 	UserID                   *uint                 `json:"user_id"`
 	Query                    *string               `json:"query"`
@@ -57,11 +52,6 @@ type BaseOfferFilter struct {
 	Constraints              FieldsConstraints     `json:"-"`
 }
 
-type OfferFilterRequest struct {
-	PagRequest pagination.PaginationRequest `json:"pagination"`
-	Filter     BaseOfferFilter              `json:"filter"`
-}
-
 func NewOfferFilter() *BaseOfferFilter {
 	return &BaseOfferFilter{Constraints: FieldsConstraints{
 		OfferTypes:    OfferTypes,
@@ -70,6 +60,11 @@ func NewOfferFilter() *BaseOfferFilter {
 		FuelTypes:     enums.Types,
 		Transmissions: enums.Transmissions,
 	}}
+}
+
+type OfferFilterRequest struct {
+	Filter     BaseOfferFilter              `json:"filter"`
+	PagRequest pagination.PaginationRequest `json:"pagination"`
 }
 
 func NewOfferFilterRequest() *OfferFilterRequest {
@@ -95,57 +90,6 @@ func (of *BaseOfferFilter) ApplyOfferFilters(query *gorm.DB) (*gorm.DB, error) {
 	query = applyDateInRangeFilter(query, "date_of_issue", of.OfferCreationDateRange)
 	query = applyOrderFilter(query, of.OrderKey, of.IsOrderDesc)
 	return query, nil
-}
-
-type PublishedOffersOnlyFilter struct {
-	BaseOfferFilter
-}
-
-func (f *PublishedOffersOnlyFilter) ApplyOfferFilters(query *gorm.DB) (*gorm.DB, error) {
-	query, err := f.BaseOfferFilter.ApplyOfferFilters(query)
-	if err != nil {
-		return nil, err
-	}
-	query = applyPublishedOffersOnly(query)
-	return query, nil
-}
-
-func (f *PublishedOffersOnlyFilter) GetBase() *BaseOfferFilter {
-	return &f.BaseOfferFilter
-}
-
-type LikedOffersOnlyFilter struct {
-	BaseOfferFilter
-}
-
-func (f *LikedOffersOnlyFilter) ApplyOfferFilters(query *gorm.DB) (*gorm.DB, error) {
-	query, err := f.BaseOfferFilter.ApplyOfferFilters(query)
-	if err != nil {
-		return nil, err
-	}
-	query = applyLikedOffersOnlyFilter(query, *f.UserID)
-	return query, nil
-}
-
-func (f *LikedOffersOnlyFilter) GetBase() *BaseOfferFilter {
-	return &f.BaseOfferFilter
-}
-
-type UsersOffersOnlyFilter struct {
-	BaseOfferFilter
-}
-
-func (f *UsersOffersOnlyFilter) ApplyOfferFilters(query *gorm.DB) (*gorm.DB, error) {
-	query, err := f.BaseOfferFilter.ApplyOfferFilters(query)
-	if err != nil {
-		return nil, err
-	}
-	query = applyUsersOffersOnly(query, *f.UserID)
-	return query, nil
-}
-
-func (f *UsersOffersOnlyFilter) GetBase() *BaseOfferFilter {
-	return &f.BaseOfferFilter
 }
 
 func applyOfferTypeFilter(query *gorm.DB, offerType *OfferType) *gorm.DB {
@@ -201,24 +145,6 @@ func applyOrderFilter(query *gorm.DB, orderKey *string, isOrderDesc *bool) *gorm
 		return query.Order(OrderKeysMap[*orderKey] + " " + orderDirection + ", margin " + orderDirection)
 	}
 	return query.Order("margin " + orderDirection)
-}
-
-// TODO write tests
-func applyLikedOffersOnlyFilter(query *gorm.DB, userID uint) *gorm.DB {
-	query = query.
-		Joins("JOIN liked_offers ON liked_offers.offer_id = sale_offer_view.id").
-		Where("liked_offers.user_id = ?", userID)
-	return query
-}
-
-func applyUsersOffersOnly(query *gorm.DB, userID uint) *gorm.DB {
-	query = query.Where("sale_offer_view.user_id = ?", userID)
-	return query
-}
-
-func applyPublishedOffersOnly(query *gorm.DB) *gorm.DB {
-	query = query.Where("sale_offer_view.status = ?", enums.PUBLISHED)
-	return query
 }
 
 func (of *BaseOfferFilter) validateParams() error {

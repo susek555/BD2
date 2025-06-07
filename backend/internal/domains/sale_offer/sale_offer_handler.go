@@ -11,7 +11,6 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/ws"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"github.com/susek555/BD2/car-dealer-api/pkg/custom_errors"
-	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
 )
 
 type Handler struct {
@@ -145,8 +144,8 @@ func (h *Handler) GetFilteredSaleOffers(c *gin.Context) {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
-	filterRequest.Filter.UserID = getOptionalUserID(c)
-	saleOffers, err := h.service.GetFiltered(&filterRequest.Filter, &filterRequest.PagRequest)
+	saleOffers, err := h.service.GetFiltered(
+		&PublishedOffersOnlyFilter{BaseOfferFilter: filterRequest.Filter}, &filterRequest.PagRequest)
 	if err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
@@ -196,12 +195,15 @@ func (h *Handler) GetDetailedSaleOfferByID(c *gin.Context) {
 //	@Security		Bearer
 func (h *Handler) GetMySaleOffers(c *gin.Context) {
 	userID, _ := c.Get("userID")
-	var pagRequest pagination.PaginationRequest
-	if err := c.ShouldBindJSON(&pagRequest); err != nil {
+	var filterRequest OfferFilterRequest
+	if err := c.ShouldBindJSON(&filterRequest); err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
-	saleOffers, err := h.service.GetByUserID(userID.(uint), &pagRequest)
+	id := userID.(uint)
+	filterRequest.Filter.UserID = &id
+	saleOffers, err := h.service.GetUsersOffers(
+		&UsersOffersOnlyFilter{BaseOfferFilter: filterRequest.Filter}, &filterRequest.PagRequest)
 	if err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
