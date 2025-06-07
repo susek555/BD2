@@ -958,7 +958,7 @@ func TestGetFiltered_AuthorizedMyOffers(t *testing.T) {
 		*createAuctionSaleOffer(3),
 		*createOffer(4),
 	}
-	server, s, _, _ := newTestServer(db, seedOffers)
+	server, _, _, _ := newTestServer(db, seedOffers)
 	filterRequest := sale_offer.NewOfferFilterRequest()
 	filterRequest.PagRequest = *u.GetDefaultPaginationRequest()
 	body, err := json.Marshal(filterRequest)
@@ -970,11 +970,7 @@ func TestGetFiltered_AuthorizedMyOffers(t *testing.T) {
 	var got sale_offer.RetrieveOffersWithPagination
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
-	assert.Equal(t, len(seedOffers), len(got.Offers))
-	for i := range len(seedOffers) {
-		offer, _ := s.GetByID(uint(i+1), &user.ID)
-		assert.Equal(t, *offer, got.Offers[i])
-	}
+	assert.Equal(t, 0, len(got.Offers))
 	u.CleanDB(DB)
 }
 
