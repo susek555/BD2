@@ -118,5 +118,5 @@ func (c *auctionCloser) CloseAuction(cmd CloseCmd) {
 	}
 	idStr := strconv.FormatUint(uint64(auctionID), 10)
 	c.hub.SaveNotificationForClients(idStr, 0, &n)
-	c.hub.SendFourLatestNotificationsToClient(idStr, "0")
+	c.hub.SendFourLatestNotificationsToClients(idStr, "0")
 }
