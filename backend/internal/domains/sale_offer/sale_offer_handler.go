@@ -171,6 +171,7 @@ func (h *Handler) GetFilteredSaleOffers(c *gin.Context) {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
+	filterRequest.Filter.UserID = getOptionalUserID(c)
 	saleOffers, err := h.service.GetFiltered(
 		&PublishedOffersOnlyFilter{BaseOfferFilter: filterRequest.Filter}, &filterRequest.PagRequest)
 	if err != nil {
