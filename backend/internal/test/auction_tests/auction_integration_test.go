@@ -206,6 +206,7 @@ func TestCreateAuctionSuccess(t *testing.T) {
 	token, err := getValidToken(uint(1), seedUsers[0].Email)
 	assert.NoError(t, err)
 	wantStatus := http.StatusCreated
+	buyNowPrice := uint(12000)
 	auctionInput := auction.CreateAuctionDTO{
 		CreateSaleOfferDTO: sale_offer.CreateSaleOfferDTO{
 			UserID:             1,
@@ -230,7 +231,7 @@ func TestCreateAuctionSuccess(t *testing.T) {
 			ModelName:          "Corolla",
 		},
 		DateEnd:     "15:04 2026-02-01",
-		BuyNowPrice: 12000,
+		BuyNowPrice: &buyNowPrice,
 	}
 	auctionInputJSON, err := json.Marshal(auctionInput)
 	assert.NoError(t, err)
@@ -244,7 +245,7 @@ func TestCreateAuctionSuccess(t *testing.T) {
 	var got sale_offer.RetrieveDetailedSaleOfferDTO
 	err = json.Unmarshal(w.Body.Bytes(), &got)
 	assert.NoError(t, err)
-	assert.Equal(t, auctionInput.BuyNowPrice, *got.BuyNowPrice)
+	assert.Equal(t, *auctionInput.BuyNowPrice, *got.BuyNowPrice)
 	assert.Equal(t, auctionInput.DateEnd, *got.DateEnd)
 	assert.Equal(t, "herakles", got.Username)
 	assert.Equal(t, auctionInput.CreateSaleOfferDTO.ProductionYear, got.ProductionYear)
@@ -289,6 +290,7 @@ func TestCreateAuctionInvalidDate(t *testing.T) {
 	token, err := getValidToken(uint(1), seedUsers[0].Email)
 	assert.NoError(t, err)
 	wantStatus := http.StatusBadRequest
+	buyNowPrice := uint(12000)
 	auctionInput := auction.CreateAuctionDTO{
 		CreateSaleOfferDTO: sale_offer.CreateSaleOfferDTO{
 			UserID:             1,
@@ -313,7 +315,7 @@ func TestCreateAuctionInvalidDate(t *testing.T) {
 			ModelName:          "Corolla",
 		},
 		DateEnd:     "15:04 2023-01-01",
-		BuyNowPrice: 12000,
+		BuyNowPrice: &buyNowPrice,
 	}
 	auctionInputJSON, err := json.Marshal(auctionInput)
 	assert.NoError(t, err)
@@ -365,6 +367,7 @@ func TestCreateAuctionInvalidDateFormat(t *testing.T) {
 	token, err := getValidToken(uint(1), seedUsers[0].Email)
 	assert.NoError(t, err)
 	wantStatus := http.StatusBadRequest
+	buyNowPrice := uint(12000)
 	auctionInput := auction.CreateAuctionDTO{
 		CreateSaleOfferDTO: sale_offer.CreateSaleOfferDTO{
 			UserID:             1,
@@ -389,7 +392,7 @@ func TestCreateAuctionInvalidDateFormat(t *testing.T) {
 			ModelName:          "Corolla",
 		},
 		DateEnd:     "25:04 02/01/2025",
-		BuyNowPrice: 12000,
+		BuyNowPrice: &buyNowPrice,
 	}
 	auctionInputJSON, err := json.Marshal(auctionInput)
 	assert.NoError(t, err)

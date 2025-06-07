@@ -43,7 +43,7 @@ func (dto *UpdateAuctionDTO) UpdatedAuctionFromDTO(offer *models.SaleOffer) (*mo
 		if *dto.BuyNowPrice < offer.Price {
 			return nil, ErrBuyNowPriceLessThanOfferPrice
 		}
-		offer.Auction.BuyNowPrice = *dto.BuyNowPrice
+		offer.Auction.BuyNowPrice = dto.BuyNowPrice
 	}
 	return offer, nil
 }

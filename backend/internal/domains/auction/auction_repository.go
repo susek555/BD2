@@ -37,7 +37,7 @@ func (a *AuctionRepository) BuyNow(auction *models.Auction, userID uint) error {
 	if err := a.Update(auction); err != nil {
 		return err
 	}
-	return a.SaveToPurchases(auction.OfferID, userID, auction.BuyNowPrice)
+	return a.SaveToPurchases(auction.OfferID, userID, *auction.BuyNowPrice)
 }
 
 func (a *AuctionRepository) GetAllActiveAuctions() ([]views.SaleOfferView, error) {

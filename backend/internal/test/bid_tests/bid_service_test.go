@@ -27,12 +27,13 @@ func TestBidService_Create_OK(t *testing.T) {
 		return b.AuctionID == 1 && b.BidderID == 1
 	})).Return(nil)
 
+	buyNowPrice := uint(100)
 	saleOfferRetriever.On("GetByID", uint(1)).Return(&models.SaleOffer{
 		ID:     1,
 		Status: enums.PUBLISHED,
 		Auction: &models.Auction{
 			DateEnd:      time.Now().Add(24 * time.Hour),
-			BuyNowPrice:  100,
+			BuyNowPrice:  &buyNowPrice,
 			InitialPrice: 50,
 		}}, nil)
 
@@ -56,13 +57,13 @@ func TestBidService_Create_Error(t *testing.T) {
 	repo.On("Create", mock.MatchedBy(func(b *models.Bid) bool {
 		return b.AuctionID == 1
 	})).Return(expectedErr)
-
+	buyNowPrice := uint(100)
 	saleOfferRetriever.On("GetByID", uint(1)).Return(&models.SaleOffer{
 		ID:     1,
 		Status: enums.PUBLISHED,
 		Auction: &models.Auction{
 			DateEnd:      time.Now().Add(24 * time.Hour),
-			BuyNowPrice:  100,
+			BuyNowPrice:  &buyNowPrice,
 			InitialPrice: 50,
 		}}, nil)
 
@@ -94,12 +95,13 @@ func TestBidService_Create_SerializesPerAuction(t *testing.T) {
 		atomic.AddInt32(&running, -1)
 	}).Return(nil).Times(calls)
 
+	buyNowPrice := uint(100)
 	saleOfferRetriever.On("GetByID", uint(777)).Return(&models.SaleOffer{
 		ID:     777,
 		Status: enums.PUBLISHED,
 		Auction: &models.Auction{
 			DateEnd:      time.Now().Add(24 * time.Hour),
-			BuyNowPrice:  100,
+			BuyNowPrice:  &buyNowPrice,
 			InitialPrice: 50,
 		}}, nil)
 

@@ -79,15 +79,18 @@ func (s *AuctionService) Update(in *UpdateAuctionDTO, userID uint) (*sale_offer.
 
 func (s *AuctionService) BuyNow(id uint, userID uint) (*models.SaleOffer, error) {
 	offer, err := s.saleOfferService.PrepareForBuySaleOffer(id, userID)
+	if offer.Auction.BuyNowPrice == nil {
+		return nil, ErrBuyNowNotAvailable
+	}
 	if err != nil {
 		return nil, err
 	}
 	offer.Status = enums.SOLD
-	offer.Price = offer.Auction.BuyNowPrice
+	offer.Price = *offer.Auction.BuyNowPrice
 	if err := s.saleOfferRepo.Update(offer); err != nil {
 		return nil, err
 	}
-	purchaseModel := &models.Purchase{OfferID: offer.ID, BuyerID: userID, FinalPrice: offer.Auction.BuyNowPrice, IssueDate: time.Now()}
+	purchaseModel := &models.Purchase{OfferID: offer.ID, BuyerID: userID, FinalPrice: *offer.Auction.BuyNowPrice, IssueDate: time.Now()}
 	if err := s.purchaseCreator.Create(purchaseModel); err != nil {
 		return nil, err
 	}
@@ -114,11 +117,13 @@ func (s *AuctionService) PrepareForCreateAuction(in *CreateAuctionDTO) (*models.
 	if err != nil {
 		return nil, err
 	}
-	if auction.BuyNowPrice < 1 {
-		return nil, ErrBuyNowPriceLessThan1
-	}
-	if auction.BuyNowPrice < in.CreateSaleOfferDTO.Price {
-		return nil, ErrBuyNowPriceLessThanOfferPrice
+	if auction.BuyNowPrice != nil {
+		if *auction.BuyNowPrice < 1 {
+			return nil, ErrBuyNowPriceLessThan1
+		}
+		if *auction.BuyNowPrice < in.CreateSaleOfferDTO.Price {
+			return nil, ErrBuyNowPriceLessThanOfferPrice
+		}
 	}
 	return auction, nil
 }

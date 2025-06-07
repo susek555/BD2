@@ -7,7 +7,7 @@ import (
 type CreateAuctionDTO struct {
 	sale_offer.CreateSaleOfferDTO
 	DateEnd     string `json:"date_end"`
-	BuyNowPrice uint   `json:"buy_now_price"`
+	BuyNowPrice *uint  `json:"buy_now_price,omitempty"`
 }
 
 type UpdateAuctionDTO struct {
