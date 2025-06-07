@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { sendNotification } from '@/app/lib/notifications-socket'
+import { NOTIFICATIONS_SOCKET_URL } from '@/app/lib/constants'
 
 export async function POST(request: NextRequest) {
   try {
@@ -9,10 +9,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid message' }, { status: 400 })
     }
 
-    sendNotification(msg)
+    const response = await fetch(`${NOTIFICATIONS_SOCKET_URL}/send`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ msg }),
+    });
 
-    return NextResponse.json({ success: true })
+    return response.json()
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to send message' }, { status: 500 })
+    return NextResponse.json({ error: 'Failed to send message' }, { status: 444 })
   }
 }

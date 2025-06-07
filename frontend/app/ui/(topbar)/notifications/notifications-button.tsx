@@ -8,18 +8,9 @@ import { Notification } from "@/app/lib/definitions/notification"
 import useNotificationsSocket from "./notifications-socket"
 import { useEffect } from "react"
 
-interface NotificationsButtonProps {
-    newNotificationsData: number;
-    notificationsData?: Notification[];
-}
-
-export default function NotificationsButton({
-    newNotificationsData: newNotificationsData = 0,
-    notificationsData: notificationsData,
-}: NotificationsButtonProps = { newNotificationsData: 0
-}) {
-    const [newNotifications, setNewNotifications] = useState(newNotificationsData);
-    const [notifications, setNotificationsData] = useState<Notification[]>(notificationsData || []);
+export default function NotificationsButton() {
+    const [newNotifications, setNewNotifications] = useState(0);
+    const [notifications, setNotificationsData] = useState<Notification[]>([]);
 
     const { messages } = useNotificationsSocket()
 

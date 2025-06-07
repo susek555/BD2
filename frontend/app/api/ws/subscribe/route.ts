@@ -22,6 +22,7 @@ export async function GET(request: NextRequest) {
 
       socket.on('open', () => {
         console.log('✅ WS connected for user:', session?.user?.email)
+        socket?.send(JSON.stringify({ type: 'get_notifications' }))
       })
 
       socket.on('message', (data) => {

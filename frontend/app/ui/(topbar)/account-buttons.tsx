@@ -4,7 +4,7 @@ import { ClientLogoutButton } from "@/app/ui/(topbar)/client-logout-button";
 import { ArrowRightIcon, UserCircleIcon } from '@heroicons/react/20/solid';
 import { getServerSession } from "next-auth/next";
 import Link from "next/link";
-import NotificationsHandler from "./notifications/notifications-handler";
+import NotificationsButton from "@/app/ui/(topbar)/notifications/notifications-button";
 import { Suspense } from "react";
 import { NotificationsButtonSkeleton } from "../skeletons";
 
@@ -23,7 +23,7 @@ export default async function LoginButtons() {
             </BaseAccountButton>
           </Link>
           <Suspense fallback={<NotificationsButtonSkeleton />}>
-            <NotificationsHandler />
+            <NotificationsButton/>
           </Suspense>
         </>
       ) : (
