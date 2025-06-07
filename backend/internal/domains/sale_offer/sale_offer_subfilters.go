@@ -5,7 +5,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type OfferFilterIntreface interface {
+type OfferFilterInterface interface {
 	ApplyOfferFilters(*gorm.DB) (*gorm.DB, error)
 	GetBase() *BaseOfferFilter
 }

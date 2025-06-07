@@ -348,7 +348,7 @@ func (s *SaleOfferService) authorizeModificationByUser(offer SaleOfferEntityInte
 	return nil
 }
 
-func (s *SaleOfferService) getOffersWithFilter(filter OfferFilterIntreface, userID *uint, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error) {
+func (s *SaleOfferService) getOffersWithFilter(filter OfferFilterInterface, userID *uint, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error) {
 	baseFilter := filter.GetBase()
 	newBaseFilter, err := s.setupBaseFilter(baseFilter)
 	if err != nil {
