@@ -85,6 +85,7 @@ func NewSaleOfferService(
 		manRetriever:    manufacturerRetriever,
 		modelRetriever:  modelRetriever,
 		imageRetriever:  imageRetriever,
+		imageRemover:    imageRemover,
 		accessEvaluator: accessEvaluator,
 		purchaseCreator: purchaseCreator,
 	}
