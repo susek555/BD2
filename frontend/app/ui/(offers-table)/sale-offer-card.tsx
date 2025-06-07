@@ -22,9 +22,14 @@ export default function SaleOfferCard({
   const isLoggedIn = status === 'authenticated';
 
   const handleFavoriteToggle = () => {
-    updateFavoriteStatus(offer.id, offer.is_liked);
-    setIsFavorite(!isFavorite);
-    offer.is_liked = !isFavorite;
+    try{
+      updateFavoriteStatus(offer.id, offer.is_liked);
+      setIsFavorite(!isFavorite);
+      offer.is_liked = !isFavorite;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      alert('Failed to update favorite status. Please try again later.');
+    }
   };
 
   const favoriteButton = (
