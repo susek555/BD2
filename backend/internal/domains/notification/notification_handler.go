@@ -20,17 +20,17 @@ func NewHandler(service NotificationServiceInterface) *Handler {
 }
 
 // GetFilteredNotifications godoc
-// @Summary Retrieve filtered notifications for authenticated user
-// @Description Gets a list of notifications based on provided filter criteria for the current user
-// @Tags notification
-// @Accept json
-// @Produce json
-// @Param body body NotificationFilter true "Filter criteria for notifications"
-// @Security BearerAuth
-// @Success 200 {array} RetrieveNotificationsWithPagination "List of notifications"
-// @Failure 400 {object} custom_errors.HTTPError "Invalid body or bad request"
-// @Failure 401 {object} custom_errors.HTTPError "Unauthorized"
-// @Router /notification/filter [post]
+//	@Summary		Retrieve filtered notifications for authenticated user
+//	@Description	Gets a list of notifications based on provided filter criteria for the current user
+//	@Tags			notification
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body	NotificationFilter	true	"Filter criteria for notifications"
+//	@Security		BearerAuth
+//	@Success		200	{array}		RetrieveNotificationsWithPagination	"List of notifications"
+//	@Failure		400	{object}	custom_errors.HTTPError				"Invalid body or bad request"
+//	@Failure		401	{object}	custom_errors.HTTPError				"Unauthorized"
+//	@Router			/notification/filter [post]
 func (h *Handler) GetFilteredNotifications(c *gin.Context) {
 	filter := NewNotificationFilter()
 	receiverID, err := auth.GetUserID(c)
@@ -54,17 +54,17 @@ func (h *Handler) GetFilteredNotifications(c *gin.Context) {
 }
 
 // MarkAsSeen godoc
-// @Summary Mark notification as seen
-// @Description Updates the seen status of a specific notification to true for the authenticated user
-// @Tags notification
-// @Accept json
-// @Produce json
-// @Param id path int true "Notification ID"
-// @Success 200 "Status OK"
-// @Failure 400 {object} custom_errors.HTTPError "Bad Request - Invalid notification ID or update failed"
-// @Failure 401 {object} custom_errors.HTTPError "Unauthorized - User authentication required"
-// @Router /notification/seen/{id} [put]
-// @Security BearerAuth
+//	@Summary		Mark notification as seen
+//	@Description	Updates the seen status of a specific notification to true for the authenticated user
+//	@Tags			notification
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path	int	true	"Notification ID"
+//	@Success		200	"Status OK"
+//	@Failure		400	{object}	custom_errors.HTTPError	"Bad Request - Invalid notification ID or update failed"
+//	@Failure		401	{object}	custom_errors.HTTPError	"Unauthorized - User authentication required"
+//	@Router			/notification/seen/{id} [put]
+//	@Security		BearerAuth
 func (h *Handler) MarkAsSeen(c *gin.Context) {
 	notificationID, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
@@ -88,17 +88,17 @@ func (h *Handler) MarkAsSeen(c *gin.Context) {
 }
 
 // MarkAsUnseen godoc
-// @Summary Mark notification as unseen
-// @Description Updates the seen status of a notification to unseen for the authenticated user
-// @Tags notification
-// @Accept json
-// @Produce json
-// @Param id path int true "Notification ID"
-// @Success 200 "OK"
-// @Failure 400 {object} custom_errors.HTTPError "Bad request"
-// @Failure 401 {object} custom_errors.HTTPError "Unauthorized"
-// @Router /notification/unseen/{id} [put]
-// @Security BearerAuth
+//	@Summary		Mark notification as unseen
+//	@Description	Updates the seen status of a notification to unseen for the authenticated user
+//	@Tags			notification
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path	int	true	"Notification ID"
+//	@Success		200	"OK"
+//	@Failure		400	{object}	custom_errors.HTTPError	"Bad request"
+//	@Failure		401	{object}	custom_errors.HTTPError	"Unauthorized"
+//	@Router			/notification/unseen/{id} [put]
+//	@Security		BearerAuth
 func (h *Handler) MarkAsUnseen(c *gin.Context) {
 	notificationID, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
@@ -122,16 +122,16 @@ func (h *Handler) MarkAsUnseen(c *gin.Context) {
 }
 
 // MarkAllAsSeen godoc
-// @Summary Mark all notifications as seen
-// @Description Updates the seen status of all notifications for the authenticated user to true
-// @Tags notification
-// @Accept json
-// @Produce json
-// @Security BearerAuth
-// @Success 200 "Successfully marked all notifications as seen"
-// @Failure 400 {object} custom_errors.HTTPError "Bad request"
-// @Failure 401 {object} custom_errors.HTTPError "Unauthorized"
-// @Router /notification/seen [put]
+//	@Summary		Mark all notifications as seen
+//	@Description	Updates the seen status of all notifications for the authenticated user to true
+//	@Tags			notification
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Success		200	"Successfully marked all notifications as seen"
+//	@Failure		400	{object}	custom_errors.HTTPError	"Bad request"
+//	@Failure		401	{object}	custom_errors.HTTPError	"Unauthorized"
+//	@Router			/notification/seen [put]
 func (h *Handler) MarkAllAsSeen(c *gin.Context) {
 	userID, err := auth.GetUserID(c)
 	if err != nil {
@@ -149,16 +149,16 @@ func (h *Handler) MarkAllAsSeen(c *gin.Context) {
 }
 
 // MarkAllAsUnseen godoc
-// @Summary Mark all notifications as unseen
-// @Description Updates the seen status of all notifications for the authenticated user to false
-// @Tags notification
-// @Accept json
-// @Produce json
-// @Security BearerAuth
-// @Success 200 "Successfully marked all notifications as unseen"
-// @Failure 400 {object} custom_errors.HTTPError "Bad request"
-// @Failure 401 {object} custom_errors.HTTPError "Unauthorized"
-// @Router /notification/unseen [put]
+//	@Summary		Mark all notifications as unseen
+//	@Description	Updates the seen status of all notifications for the authenticated user to false
+//	@Tags			notification
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Success		200	"Successfully marked all notifications as unseen"
+//	@Failure		400	{object}	custom_errors.HTTPError	"Bad request"
+//	@Failure		401	{object}	custom_errors.HTTPError	"Unauthorized"
+//	@Router			/notification/unseen [put]
 func (h *Handler) MarkAllAsUnseen(c *gin.Context) {
 	userID, err := auth.GetUserID(c)
 	if err != nil {
