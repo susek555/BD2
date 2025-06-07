@@ -13,7 +13,7 @@ export async function fetchNotificationsTopbar() {
             title: "New offer",
             description: "You have a new offer",
             date: "2023-10-01",
-            is_read: false,
+            seen: false,
         },
         {
             id: "2",
@@ -21,7 +21,7 @@ export async function fetchNotificationsTopbar() {
             title: "Offer accepted",
             description: "Your offer has been accepted",
             date: "2023-10-02",
-            is_read: false,
+            seen: false,
         },
         {
             id: "3",
@@ -29,7 +29,7 @@ export async function fetchNotificationsTopbar() {
             title: "Offer declined",
             description: "Your offer has been declined",
             date: "2023-10-03",
-            is_read: true,
+            seen: true,
         },
         {
             id: "4",
@@ -37,7 +37,7 @@ export async function fetchNotificationsTopbar() {
             title: "New message",
             description: "You have a new message",
             date: "2023-10-04",
-            is_read: false,
+            seen: false,
         }
     ]
 
@@ -59,7 +59,7 @@ export async function fetchNotifications(params: NotificationSearchParams)  {
             title: "New offer",
             description: "You have a new offer",
             date: "2023-10-01",
-            is_read: false,
+            seen: false,
         },
         {
             id: "2",
@@ -67,7 +67,7 @@ export async function fetchNotifications(params: NotificationSearchParams)  {
             title: "Offer accepted",
             description: "Your offer has been accepted",
             date: "2023-10-02",
-            is_read: false,
+            seen: false,
         },
         {
             id: "3",
@@ -75,7 +75,7 @@ export async function fetchNotifications(params: NotificationSearchParams)  {
             title: "Offer declined",
             description: "Your offer has been declined",
             date: "2023-10-03",
-            is_read: true,
+            seen: true,
         },
         {
             id: "4",
@@ -83,7 +83,7 @@ export async function fetchNotifications(params: NotificationSearchParams)  {
             title: "New message",
             description: "You have a new message",
             date: "2023-10-04",
-            is_read: false,
+            seen: false,
         }
     ]
 

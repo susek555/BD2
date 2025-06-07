@@ -4,7 +4,7 @@ export interface Notification {
     title: string;
     description: string;
     date: string;
-    is_read: boolean;
+    seen: boolean;
 }
 
 export interface NotificationSearchParams {

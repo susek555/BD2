@@ -12,11 +12,12 @@ export default function NotificationCard({
   notification: Notification
   changeNumberOfUnread?: (count: number) => void
 }) {
-  const [isRead, setIsRead] = useState(notification.is_read);
+  const [isRead, setIsRead] = useState(notification.seen);
 
   const handleReadChange = async (input?: boolean) => {
     const newValue = input !== undefined ? input : !isRead;
     setIsRead(newValue !== undefined ? newValue : !isRead);
+    notification.seen = isRead;
 
     try {
       markNotificationAs(notification.id, newValue !== undefined ? newValue : !isRead)
@@ -25,6 +26,7 @@ export default function NotificationCard({
     catch (error) {
       alert(`Failed to update notification status ${error}`);
       setIsRead(!isRead);
+      notification.seen = !isRead;
     }
   }
 

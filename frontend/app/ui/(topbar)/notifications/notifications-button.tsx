@@ -38,6 +38,7 @@ export default function NotificationsButton() {
         setIsDialogOpen(true);
     }
 
+
     return (
         <>
             <BaseAccountButton
