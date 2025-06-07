@@ -22,7 +22,8 @@ type HubInterface interface {
 	SubscribeUser(uid, offerID string)
 	BroadcastLocal(offerID string, data []byte, excludeID string)
 	SaveNotificationForClients(offerID string, userID uint, n *models.Notification) error
-	SendFourLatestNotificationsToClient(offerID, userID string)
+	SendFourLatestNotificationsToClient(client *Client)
+	SendFourLatestNotificationsToClients(offerID, userID string)
 	LoadClientToRooms(userID string)
 	UnsubscribeUser(userID, offerID string)
 	RemoveRoom(offerID string)
@@ -227,7 +228,7 @@ func (h *Hub) prepareUniqueUserMap(interactions []views.UserOfferRecord, offerID
 	return unique
 }
 
-func (h *Hub) SendFourLatestNotificationsToClient(offerID, userID string) {
+func (h *Hub) SendFourLatestNotificationsToClients(offerID, userID string) {
 	room, ok := h.getRoom(offerID)
 	if !ok {
 		return
@@ -237,29 +238,33 @@ func (h *Hub) SendFourLatestNotificationsToClient(offerID, userID string) {
 		if client.userID == userID {
 			continue
 		}
-
-		uid, err := strconv.ParseUint(client.userID, 10, 64)
-		if err != nil {
-			log.Printf("hub: invalid userID %q: %v", client.userID, err)
-			continue
-		}
-		bare, err := h.notificationService.GetLatestNotificationsByUserID(uint(uid), 4)
-		if err != nil {
-			log.Printf("hub: cannot get latest notifications for userID %q: %v", client.userID, err)
-			continue
-		}
-		payload, err := json.Marshal(bare)
-		if err != nil {
-			log.Printf("hub: cannot marshal notifications for userID %q: %v", client.userID, err)
-			continue
-		}
-		select {
-		case client.send <- payload:
-		default:
-			log.Printf("hub: dropping notifications for userID %q - channel full", client.userID)
-			go client.conn.Close()
-		}
+		h.SendFourLatestNotificationsToClient(client)
 	}
+}
+
+func (h *Hub) SendFourLatestNotificationsToClient(client *Client) {
+	uid, err := strconv.ParseUint(client.userID, 10, 64)
+	if err != nil {
+		log.Printf("hub: invalid userID %q: %v", client.userID, err)
+		return
+	}
+	bare, err := h.notificationService.GetLatestNotificationsByUserID(uint(uid), 4)
+	if err != nil {
+		log.Printf("hub: cannot get latest notifications for userID %q: %v", client.userID, err)
+		return
+	}
+	payload, err := json.Marshal(bare)
+	if err != nil {
+		log.Printf("hub: cannot marshal notifications for userID %q: %v", client.userID, err)
+		return
+	}
+	select {
+	case client.send <- payload:
+	default:
+		log.Printf("hub: dropping notifications for userID %q - channel full", client.userID)
+		go client.conn.Close()
+	}
+
 }
 
 func (h *Hub) UnsubscribeUser(userID, offerID string) {
