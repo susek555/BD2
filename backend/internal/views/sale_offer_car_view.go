@@ -33,7 +33,7 @@ type SaleOfferView struct {
 	Brand              string
 	Model              string
 	DateEnd            time.Time
-	BuyNowPrice        uint
+	BuyNowPrice        *uint
 }
 
 func (v *SaleOfferView) GetID() uint {
