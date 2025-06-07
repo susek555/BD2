@@ -172,3 +172,215 @@ func TestBidService_GetHighestBid_Error(t *testing.T) {
 	assert.Nil(t, got)
 	repo.AssertExpectations(t)
 }
+
+func TestBidService_GetAll_OK(t *testing.T) {
+	repo := new(mocks.BidRepositoryInterface)
+	saleOfferRetriever := new(mocks.SaleOfferRetrieverInterface)
+	auctionPriceUpdater := new(mocks.AuctionPriceUpdaterInterface)
+	svc := bid.NewBidService(repo, saleOfferRetriever, auctionPriceUpdater)
+
+	modelsBids := []models.Bid{
+		{ID: 1, AuctionID: 10, BidderID: 1, Amount: 100},
+		{ID: 2, AuctionID: 11, BidderID: 2, Amount: 200},
+	}
+	expected := []bid.RetrieveBidDTO{
+		{AuctionID: 10, BidderID: 1, Amount: 100},
+		{AuctionID: 11, BidderID: 2, Amount: 200},
+	}
+
+	repo.On("GetAll").Return(modelsBids, nil)
+
+	got, err := svc.GetAll()
+
+	assert.NoError(t, err)
+	assert.Equal(t, expected, got)
+	repo.AssertExpectations(t)
+}
+
+func TestBidService_GetAll_Error(t *testing.T) {
+	repo := new(mocks.BidRepositoryInterface)
+	saleOfferRetriever := new(mocks.SaleOfferRetrieverInterface)
+	auctionPriceUpdater := new(mocks.AuctionPriceUpdaterInterface)
+	svc := bid.NewBidService(repo, saleOfferRetriever, auctionPriceUpdater)
+
+	expectedErr := errors.New("db error")
+
+	repo.On("GetAll").Return(nil, expectedErr)
+
+	got, err := svc.GetAll()
+
+	assert.ErrorIs(t, err, expectedErr)
+	assert.Nil(t, got)
+	repo.AssertExpectations(t)
+}
+
+func TestBidService_GetByID_OK(t *testing.T) {
+	repo := new(mocks.BidRepositoryInterface)
+	saleOfferRetriever := new(mocks.SaleOfferRetrieverInterface)
+	auctionPriceUpdater := new(mocks.AuctionPriceUpdaterInterface)
+	svc := bid.NewBidService(repo, saleOfferRetriever, auctionPriceUpdater)
+
+	modelsBid := &models.Bid{
+		ID:        1,
+		AuctionID: 10,
+		BidderID:  1,
+		Amount:    100,
+	}
+
+	expected := &bid.RetrieveBidDTO{
+		AuctionID: 10,
+		BidderID:  1,
+		Amount:    100,
+	}
+
+	repo.On("GetByID", uint(1)).Return(modelsBid, nil)
+
+	got, err := svc.GetByID(1)
+
+	assert.NoError(t, err)
+	assert.Equal(t, expected, got)
+	repo.AssertExpectations(t)
+}
+
+func TestBidService_GetByID_NotFound(t *testing.T) {
+	repo := new(mocks.BidRepositoryInterface)
+	saleOfferRetriever := new(mocks.SaleOfferRetrieverInterface)
+	auctionPriceUpdater := new(mocks.AuctionPriceUpdaterInterface)
+	svc := bid.NewBidService(repo, saleOfferRetriever, auctionPriceUpdater)
+
+	expectedErr := errors.New("bid not found")
+
+	repo.On("GetByID", uint(999)).Return(nil, expectedErr)
+
+	got, err := svc.GetByID(999)
+
+	assert.ErrorIs(t, err, expectedErr)
+	assert.Nil(t, got)
+	repo.AssertExpectations(t)
+}
+
+func TestBidService_GetByBidderID_OK(t *testing.T) {
+	repo := new(mocks.BidRepositoryInterface)
+	saleOfferRetriever := new(mocks.SaleOfferRetrieverInterface)
+	auctionPriceUpdater := new(mocks.AuctionPriceUpdaterInterface)
+	svc := bid.NewBidService(repo, saleOfferRetriever, auctionPriceUpdater)
+
+	modelsBids := []models.Bid{
+		{ID: 1, AuctionID: 10, BidderID: 1, Amount: 100},
+		{ID: 2, AuctionID: 11, BidderID: 1, Amount: 150},
+	}
+	expected := []bid.RetrieveBidDTO{
+		{AuctionID: 10, BidderID: 1, Amount: 100},
+		{AuctionID: 11, BidderID: 1, Amount: 150},
+	}
+
+	repo.On("GetByBidderID", uint(1)).Return(modelsBids, nil)
+
+	got, err := svc.GetByBidderID(1)
+
+	assert.NoError(t, err)
+	assert.Equal(t, expected, got)
+	repo.AssertExpectations(t)
+}
+
+func TestBidService_GetByBidderID_Error(t *testing.T) {
+	repo := new(mocks.BidRepositoryInterface)
+	saleOfferRetriever := new(mocks.SaleOfferRetrieverInterface)
+	auctionPriceUpdater := new(mocks.AuctionPriceUpdaterInterface)
+	svc := bid.NewBidService(repo, saleOfferRetriever, auctionPriceUpdater)
+
+	expectedErr := errors.New("db error")
+
+	repo.On("GetByBidderID", uint(1)).Return(nil, expectedErr)
+
+	got, err := svc.GetByBidderID(1)
+
+	assert.ErrorIs(t, err, expectedErr)
+	assert.Nil(t, got)
+	repo.AssertExpectations(t)
+}
+
+func TestBidService_GetByAuctionID_OK(t *testing.T) {
+	repo := new(mocks.BidRepositoryInterface)
+	saleOfferRetriever := new(mocks.SaleOfferRetrieverInterface)
+	auctionPriceUpdater := new(mocks.AuctionPriceUpdaterInterface)
+	svc := bid.NewBidService(repo, saleOfferRetriever, auctionPriceUpdater)
+
+	modelsBids := []models.Bid{
+		{ID: 1, AuctionID: 10, BidderID: 1, Amount: 100},
+		{ID: 2, AuctionID: 10, BidderID: 2, Amount: 120},
+	}
+	expected := []bid.RetrieveBidDTO{
+		{AuctionID: 10, BidderID: 1, Amount: 100},
+		{AuctionID: 10, BidderID: 2, Amount: 120},
+	}
+
+	repo.On("GetByAuctionID", uint(10)).Return(modelsBids, nil)
+
+	got, err := svc.GetByAuctionID(10)
+
+	assert.NoError(t, err)
+	assert.Equal(t, expected, got)
+	repo.AssertExpectations(t)
+}
+
+func TestBidService_GetByAuctionID_Error(t *testing.T) {
+	repo := new(mocks.BidRepositoryInterface)
+	saleOfferRetriever := new(mocks.SaleOfferRetrieverInterface)
+	auctionPriceUpdater := new(mocks.AuctionPriceUpdaterInterface)
+	svc := bid.NewBidService(repo, saleOfferRetriever, auctionPriceUpdater)
+
+	expectedErr := errors.New("db error")
+
+	repo.On("GetByAuctionID", uint(10)).Return(nil, expectedErr)
+
+	got, err := svc.GetByAuctionID(10)
+
+	assert.ErrorIs(t, err, expectedErr)
+	assert.Nil(t, got)
+	repo.AssertExpectations(t)
+}
+
+func TestBidService_GetHighestBidByUserID_OK(t *testing.T) {
+	repo := new(mocks.BidRepositoryInterface)
+	saleOfferRetriever := new(mocks.SaleOfferRetrieverInterface)
+	auctionPriceUpdater := new(mocks.AuctionPriceUpdaterInterface)
+	svc := bid.NewBidService(repo, saleOfferRetriever, auctionPriceUpdater)
+
+	modelsBid := &models.Bid{
+		ID:        1,
+		AuctionID: 10,
+		BidderID:  1,
+		Amount:    100,
+	}
+	expected := &bid.RetrieveBidDTO{
+		AuctionID: 10,
+		BidderID:  1,
+		Amount:    100,
+	}
+
+	repo.On("GetHighestBidByUserID", uint(10), uint(1)).Return(modelsBid, nil)
+
+	got, err := svc.GetHighestBidByUserID(10, 1)
+
+	assert.NoError(t, err)
+	assert.Equal(t, expected, got)
+	repo.AssertExpectations(t)
+}
+
+func TestBidService_GetHighestBidByUserID_NotFound(t *testing.T) {
+	repo := new(mocks.BidRepositoryInterface)
+	saleOfferRetriever := new(mocks.SaleOfferRetrieverInterface)
+	auctionPriceUpdater := new(mocks.AuctionPriceUpdaterInterface)
+	svc := bid.NewBidService(repo, saleOfferRetriever, auctionPriceUpdater)
+
+	expectedErr := errors.New("no bid found for user")
+
+	repo.On("GetHighestBidByUserID", uint(10), uint(999)).Return(nil, expectedErr)
+
+	got, err := svc.GetHighestBidByUserID(10, 999)
+
+	assert.ErrorIs(t, err, expectedErr)
+	assert.Nil(t, got)
+	repo.AssertExpectations(t)
+}
