@@ -19,9 +19,7 @@ export async function fetchOfferDetails(
       name: `${fetchedData.brand} ${fetchedData.model}`,
       price: fetchedData.is_auction ? fetchedData.buy_now_price || null : fetchedData.price,
       isAuction: fetchedData.is_auction,
-      // isActive: fetchedData.is_active,
-      // TODO include handling it
-      isActive: true, // Temporary fix until backend is ready
+      isActive: fetchedData.status === 'published' ? true : false,
       imagesURLs: fetchedData.images_urls,
       description: fetchedData.description,
       details: [
