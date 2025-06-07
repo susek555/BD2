@@ -29,6 +29,7 @@ func init() {
 	initializers.InitializeHub()
 	initializers.InitializeScheduler()
 	initializers.InitializeHandlers()
+	// initializers.LoadUsers() // Uncomment to load sample users
 }
 
 // @title			Car‑Dealer API
