@@ -171,7 +171,7 @@ func (h *Handler) BuyNow(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
-	auction, err := h.service.BuyNow(uint(id), uint(userID))
+	offer, err := h.service.BuyNow(uint(id), uint(userID))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
@@ -180,13 +180,13 @@ func (h *Handler) BuyNow(c *gin.Context) {
 	notification := &models.Notification{
 		OfferID: uint(id),
 	}
-	err = h.notificationService.CreateBuyNowNotification(notification, strconv.FormatUint(uint64(userID), 10), auction)
+	err = h.notificationService.CreateBuyNowNotification(notification, strconv.FormatUint(uint64(userID), 10), offer)
 	if err != nil {
 		log.Printf("Error creating buy now notification for auction ID %d: %v", id, err)
 		return
 	}
 	h.hub.SaveNotificationForClients(strconv.FormatUint(id, 10), userID, notification)
 	h.hub.SendFourLatestNotificationsToClient(strconv.FormatUint(id, 10), strconv.FormatUint(uint64(userID), 10))
-	h.sched.ForceCloseAuction(strconv.FormatUint(id, 10), userID, auction.BuyNowPrice)
+	h.sched.ForceCloseAuction(strconv.FormatUint(id, 10), userID, offer.Auction.BuyNowPrice)
 	h.hub.RemoveRoom(strconv.FormatUint(id, 10))
 }
