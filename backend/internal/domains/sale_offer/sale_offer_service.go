@@ -349,7 +349,7 @@ func (s *SaleOfferService) authorizeModificationByUser(offer SaleOfferEntityInte
 
 func (s *SaleOfferService) getOffersWithFilter(filter OfferFilterIntreface, userID *uint, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error) {
 	baseFilter := filter.GetBase()
-	newBaseFilter, err := s.setupFilterFields(baseFilter)
+	newBaseFilter, err := s.setupBaseFilter(baseFilter)
 	if err != nil {
 		return nil, err
 	}
@@ -365,7 +365,7 @@ func (s *SaleOfferService) getOffersWithFilter(filter OfferFilterIntreface, user
 	return &RetrieveOffersWithPagination{Offers: offerDTOs, PaginationResponse: pagResponse}, nil
 }
 
-func (s *SaleOfferService) setupFilterFields(filter *BaseOfferFilter) (*BaseOfferFilter, error) {
+func (s *SaleOfferService) setupBaseFilter(filter *BaseOfferFilter) (*BaseOfferFilter, error) {
 	manufacturers, err := s.manRetriever.GetAll()
 	if err != nil {
 		return nil, err
