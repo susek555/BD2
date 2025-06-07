@@ -15,7 +15,7 @@ type SaleOfferRepositoryInterface interface {
 	UpdateStatus(offer *models.SaleOffer, status enums.Status) error
 	GetByID(id uint) (*models.SaleOffer, error)
 	GetViewByID(id uint) (*views.SaleOfferView, error)
-	GetFiltered(filter OfferFilterIntreface, pagRequest *pagination.PaginationRequest) ([]views.SaleOfferView, *pagination.PaginationResponse, error)
+	GetFiltered(filter OfferFilterInterface, pagRequest *pagination.PaginationRequest) ([]views.SaleOfferView, *pagination.PaginationResponse, error)
 	GetAllActiveAuctions() ([]views.SaleOfferView, error)
 	Delete(id uint) error
 }
@@ -64,7 +64,7 @@ func (r *SaleOfferRepository) GetByUserID(id uint, pagRequest *pagination.Pagina
 	return saleOffers, paginationResponse, nil
 }
 
-func (r *SaleOfferRepository) GetFiltered(filter OfferFilterIntreface, pagRequest *pagination.PaginationRequest) ([]views.SaleOfferView, *pagination.PaginationResponse, error) {
+func (r *SaleOfferRepository) GetFiltered(filter OfferFilterInterface, pagRequest *pagination.PaginationRequest) ([]views.SaleOfferView, *pagination.PaginationResponse, error) {
 	query := r.DB.Table("sale_offer_view")
 	query, err := filter.ApplyOfferFilters(query)
 	if err != nil {

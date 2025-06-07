@@ -236,7 +236,7 @@ func (_c *SaleOfferRepositoryInterface_GetByID_Call) RunAndReturn(run func(uint)
 }
 
 // GetFiltered provides a mock function with given fields: filter, pagRequest
-func (_m *SaleOfferRepositoryInterface) GetFiltered(filter sale_offer.OfferFilterIntreface, pagRequest *pagination.PaginationRequest) ([]views.SaleOfferView, *pagination.PaginationResponse, error) {
+func (_m *SaleOfferRepositoryInterface) GetFiltered(filter sale_offer.OfferFilterInterface, pagRequest *pagination.PaginationRequest) ([]views.SaleOfferView, *pagination.PaginationResponse, error) {
 	ret := _m.Called(filter, pagRequest)
 
 	if len(ret) == 0 {
@@ -246,10 +246,10 @@ func (_m *SaleOfferRepositoryInterface) GetFiltered(filter sale_offer.OfferFilte
 	var r0 []views.SaleOfferView
 	var r1 *pagination.PaginationResponse
 	var r2 error
-	if rf, ok := ret.Get(0).(func(sale_offer.OfferFilterIntreface, *pagination.PaginationRequest) ([]views.SaleOfferView, *pagination.PaginationResponse, error)); ok {
+	if rf, ok := ret.Get(0).(func(sale_offer.OfferFilterInterface, *pagination.PaginationRequest) ([]views.SaleOfferView, *pagination.PaginationResponse, error)); ok {
 		return rf(filter, pagRequest)
 	}
-	if rf, ok := ret.Get(0).(func(sale_offer.OfferFilterIntreface, *pagination.PaginationRequest) []views.SaleOfferView); ok {
+	if rf, ok := ret.Get(0).(func(sale_offer.OfferFilterInterface, *pagination.PaginationRequest) []views.SaleOfferView); ok {
 		r0 = rf(filter, pagRequest)
 	} else {
 		if ret.Get(0) != nil {
@@ -257,7 +257,7 @@ func (_m *SaleOfferRepositoryInterface) GetFiltered(filter sale_offer.OfferFilte
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(sale_offer.OfferFilterIntreface, *pagination.PaginationRequest) *pagination.PaginationResponse); ok {
+	if rf, ok := ret.Get(1).(func(sale_offer.OfferFilterInterface, *pagination.PaginationRequest) *pagination.PaginationResponse); ok {
 		r1 = rf(filter, pagRequest)
 	} else {
 		if ret.Get(1) != nil {
@@ -265,7 +265,7 @@ func (_m *SaleOfferRepositoryInterface) GetFiltered(filter sale_offer.OfferFilte
 		}
 	}
 
-	if rf, ok := ret.Get(2).(func(sale_offer.OfferFilterIntreface, *pagination.PaginationRequest) error); ok {
+	if rf, ok := ret.Get(2).(func(sale_offer.OfferFilterInterface, *pagination.PaginationRequest) error); ok {
 		r2 = rf(filter, pagRequest)
 	} else {
 		r2 = ret.Error(2)
@@ -286,9 +286,9 @@ func (_e *SaleOfferRepositoryInterface_Expecter) GetFiltered(filter interface{},
 	return &SaleOfferRepositoryInterface_GetFiltered_Call{Call: _e.mock.On("GetFiltered", filter, pagRequest)}
 }
 
-func (_c *SaleOfferRepositoryInterface_GetFiltered_Call) Run(run func(filter sale_offer.OfferFilterIntreface, pagRequest *pagination.PaginationRequest)) *SaleOfferRepositoryInterface_GetFiltered_Call {
+func (_c *SaleOfferRepositoryInterface_GetFiltered_Call) Run(run func(filter sale_offer.OfferFilterInterface, pagRequest *pagination.PaginationRequest)) *SaleOfferRepositoryInterface_GetFiltered_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(sale_offer.OfferFilterIntreface), args[1].(*pagination.PaginationRequest))
+		run(args[0].(sale_offer.OfferFilterInterface), args[1].(*pagination.PaginationRequest))
 	})
 	return _c
 }
@@ -298,7 +298,7 @@ func (_c *SaleOfferRepositoryInterface_GetFiltered_Call) Return(_a0 []views.Sale
 	return _c
 }
 
-func (_c *SaleOfferRepositoryInterface_GetFiltered_Call) RunAndReturn(run func(sale_offer.OfferFilterIntreface, *pagination.PaginationRequest) ([]views.SaleOfferView, *pagination.PaginationResponse, error)) *SaleOfferRepositoryInterface_GetFiltered_Call {
+func (_c *SaleOfferRepositoryInterface_GetFiltered_Call) RunAndReturn(run func(sale_offer.OfferFilterInterface, *pagination.PaginationRequest) ([]views.SaleOfferView, *pagination.PaginationResponse, error)) *SaleOfferRepositoryInterface_GetFiltered_Call {
 	_c.Call.Return(run)
 	return _c
 }
