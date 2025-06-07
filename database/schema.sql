@@ -133,8 +133,7 @@ CREATE TABLE refresh_tokens (
 );
 
 CREATE TABLE purchases (
-    id SERIAL PRIMARY KEY,
-    offer_id INTEGER REFERENCES sale_offers(id),
+    offer_id INTEGER PRIMARY KEY REFERENCES sale_offers(id) ON DELETE CASCADE,
     buyer_id INTEGER REFERENCES users(id),
     final_price INTEGER NOT NULL,
     issue_date DATE NOT NULL
