@@ -104,7 +104,7 @@ func (c *auctionCloser) CloseAuction(cmd CloseCmd) {
 			log.Printf("closer: invalid winnerID %q: %v", winnerID, err)
 			return
 		}
-		purchaseModel := &models.Purchase{ID: auctionID, BuyerID: uint(winnerIDint), FinalPrice: uint(amount), IssueDate: time.Now()}
+		purchaseModel := &models.Purchase{OfferID: auctionID, BuyerID: uint(winnerIDint), FinalPrice: uint(amount), IssueDate: time.Now()}
 		_ = c.purchaseCreator.Create(purchaseModel)
 	}
 
