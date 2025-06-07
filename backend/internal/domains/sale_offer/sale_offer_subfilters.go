@@ -29,7 +29,7 @@ func (f *PublishedOffersOnlyFilter) GetBase() *BaseOfferFilter {
 func applyPublishedOffersOnly(query *gorm.DB, userID *uint) *gorm.DB {
 	query = query.Where("sale_offer_view.status = ?", enums.PUBLISHED)
 	if userID != nil {
-		query = query.Where("sale_offer_view.user_id = ?", *userID)
+		query = query.Where("sale_offer_view.user_id != ?", *userID)
 	}
 	return query
 }
