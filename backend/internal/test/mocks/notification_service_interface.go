@@ -70,7 +70,7 @@ func (_c *NotificationServiceInterface_CreateBuyNotification_Call) RunAndReturn(
 }
 
 // CreateBuyNowNotification provides a mock function with given fields: _a0, buyerID, offer
-func (_m *NotificationServiceInterface) CreateBuyNowNotification(_a0 *models.Notification, buyerID string, offer *models.Auction) error {
+func (_m *NotificationServiceInterface) CreateBuyNowNotification(_a0 *models.Notification, buyerID string, offer *models.SaleOffer) error {
 	ret := _m.Called(_a0, buyerID, offer)
 
 	if len(ret) == 0 {
@@ -78,7 +78,7 @@ func (_m *NotificationServiceInterface) CreateBuyNowNotification(_a0 *models.Not
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(*models.Notification, string, *models.Auction) error); ok {
+	if rf, ok := ret.Get(0).(func(*models.Notification, string, *models.SaleOffer) error); ok {
 		r0 = rf(_a0, buyerID, offer)
 	} else {
 		r0 = ret.Error(0)
@@ -95,14 +95,14 @@ type NotificationServiceInterface_CreateBuyNowNotification_Call struct {
 // CreateBuyNowNotification is a helper method to define mock.On call
 //   - _a0 *models.Notification
 //   - buyerID string
-//   - offer *models.Auction
+//   - offer *models.SaleOffer
 func (_e *NotificationServiceInterface_Expecter) CreateBuyNowNotification(_a0 interface{}, buyerID interface{}, offer interface{}) *NotificationServiceInterface_CreateBuyNowNotification_Call {
 	return &NotificationServiceInterface_CreateBuyNowNotification_Call{Call: _e.mock.On("CreateBuyNowNotification", _a0, buyerID, offer)}
 }
 
-func (_c *NotificationServiceInterface_CreateBuyNowNotification_Call) Run(run func(_a0 *models.Notification, buyerID string, offer *models.Auction)) *NotificationServiceInterface_CreateBuyNowNotification_Call {
+func (_c *NotificationServiceInterface_CreateBuyNowNotification_Call) Run(run func(_a0 *models.Notification, buyerID string, offer *models.SaleOffer)) *NotificationServiceInterface_CreateBuyNowNotification_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(*models.Notification), args[1].(string), args[2].(*models.Auction))
+		run(args[0].(*models.Notification), args[1].(string), args[2].(*models.SaleOffer))
 	})
 	return _c
 }
@@ -112,7 +112,7 @@ func (_c *NotificationServiceInterface_CreateBuyNowNotification_Call) Return(_a0
 	return _c
 }
 
-func (_c *NotificationServiceInterface_CreateBuyNowNotification_Call) RunAndReturn(run func(*models.Notification, string, *models.Auction) error) *NotificationServiceInterface_CreateBuyNowNotification_Call {
+func (_c *NotificationServiceInterface_CreateBuyNowNotification_Call) RunAndReturn(run func(*models.Notification, string, *models.SaleOffer) error) *NotificationServiceInterface_CreateBuyNowNotification_Call {
 	_c.Call.Return(run)
 	return _c
 }
