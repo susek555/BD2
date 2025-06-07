@@ -132,7 +132,7 @@ func (s *SaleOfferService) Buy(id uint, userID uint) (*models.SaleOffer, error) 
 	if err := s.saleOfferRepo.UpdateStatus(offer, enums.SOLD); err != nil {
 		return nil, err
 	}
-	purchaseModel := &models.Purchase{ID: offer.ID, BuyerID: userID, FinalPrice: offer.Price, IssueDate: time.Now()}
+	purchaseModel := &models.Purchase{OfferID: offer.ID, BuyerID: userID, FinalPrice: offer.Price, IssueDate: time.Now()}
 	if err := s.purchaseCreator.Create(purchaseModel); err != nil {
 		return nil, err
 	}
