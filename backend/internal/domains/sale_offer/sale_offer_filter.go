@@ -9,8 +9,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// Constants
-
 var OrderKeysMap = map[string]string{
 	"Price":           "price",
 	"Mileage":         "mileage",
@@ -33,12 +31,16 @@ type FieldsConstraints struct {
 	Transmissions []enums.Transmission
 }
 
-type OfferFilter struct {
+type OfferFilterIntreface interface {
+	ApplyOfferFilters(*gorm.DB) (*gorm.DB, error)
+	GetBase() *BaseOfferFilter
+}
+
+type BaseOfferFilter struct {
 	UserID                   *uint                 `json:"user_id"`
 	Query                    *string               `json:"query"`
 	OrderKey                 *string               `json:"order_key"`
 	IsOrderDesc              *bool                 `json:"is_order_desc"`
-	LikedOnly                *bool                 `json:"liked_only"`
 	OfferType                *OfferType            `json:"offer_type"`
 	Manufacturers            *[]string             `json:"manufacturers"`
 	Colors                   *[]enums.Color        `json:"colors"`
@@ -57,11 +59,11 @@ type OfferFilter struct {
 
 type OfferFilterRequest struct {
 	PagRequest pagination.PaginationRequest `json:"pagination"`
-	Filter     OfferFilter                  `json:"filter"`
+	Filter     BaseOfferFilter              `json:"filter"`
 }
 
-func NewOfferFilter() *OfferFilter {
-	return &OfferFilter{Constraints: FieldsConstraints{
+func NewOfferFilter() *BaseOfferFilter {
+	return &BaseOfferFilter{Constraints: FieldsConstraints{
 		OfferTypes:    OfferTypes,
 		Colors:        enums.Colors,
 		Drives:        enums.Drives,
@@ -74,13 +76,11 @@ func NewOfferFilterRequest() *OfferFilterRequest {
 	return &OfferFilterRequest{Filter: *NewOfferFilter()}
 }
 
-func (of *OfferFilter) ApplyOfferFilters(query *gorm.DB) (*gorm.DB, error) {
+func (of *BaseOfferFilter) ApplyOfferFilters(query *gorm.DB) (*gorm.DB, error) {
 	if err := of.validateParams(); err != nil {
 		return nil, err
 	}
-	query = applyUserFilter(query, of.UserID)
 	query = applyOfferTypeFilter(query, of.OfferType)
-	query = applyLikedOnlyFilter(query, of.LikedOnly, of.UserID)
 	query = applyInSliceFilter(query, "brand", of.Manufacturers)
 	query = applyInSliceFilter(query, "color", of.Colors)
 	query = applyInSliceFilter(query, "drive", of.Drives)
@@ -97,11 +97,55 @@ func (of *OfferFilter) ApplyOfferFilters(query *gorm.DB) (*gorm.DB, error) {
 	return query, nil
 }
 
-func applyUserFilter(query *gorm.DB, userID *uint) *gorm.DB {
-	if userID != nil {
-		query = query.Where("user_id != ?", *userID)
+type PublishedOffersOnlyFilter struct {
+	BaseOfferFilter
+}
+
+func (f *PublishedOffersOnlyFilter) ApplyOfferFilters(query *gorm.DB) (*gorm.DB, error) {
+	query, err := f.BaseOfferFilter.ApplyOfferFilters(query)
+	if err != nil {
+		return nil, err
 	}
-	return query
+	query = applyPublishedOffersOnly(query)
+	return query, nil
+}
+
+func (f *PublishedOffersOnlyFilter) GetBase() *BaseOfferFilter {
+	return &f.BaseOfferFilter
+}
+
+type LikedOffersOnlyFilter struct {
+	BaseOfferFilter
+}
+
+func (f *LikedOffersOnlyFilter) ApplyOfferFilters(query *gorm.DB) (*gorm.DB, error) {
+	query, err := f.BaseOfferFilter.ApplyOfferFilters(query)
+	if err != nil {
+		return nil, err
+	}
+	query = applyLikedOffersOnlyFilter(query, *f.UserID)
+	return query, nil
+}
+
+func (f *LikedOffersOnlyFilter) GetBase() *BaseOfferFilter {
+	return &f.BaseOfferFilter
+}
+
+type UsersOffersOnlyFilter struct {
+	BaseOfferFilter
+}
+
+func (f *UsersOffersOnlyFilter) ApplyOfferFilters(query *gorm.DB) (*gorm.DB, error) {
+	query, err := f.BaseOfferFilter.ApplyOfferFilters(query)
+	if err != nil {
+		return nil, err
+	}
+	query = applyUsersOffersOnly(query, *f.UserID)
+	return query, nil
+}
+
+func (f *UsersOffersOnlyFilter) GetBase() *BaseOfferFilter {
+	return &f.BaseOfferFilter
 }
 
 func applyOfferTypeFilter(query *gorm.DB, offerType *OfferType) *gorm.DB {
@@ -116,16 +160,6 @@ func applyOfferTypeFilter(query *gorm.DB, offerType *OfferType) *gorm.DB {
 	default:
 		return query
 	}
-}
-
-// TODO write tests
-func applyLikedOnlyFilter(query *gorm.DB, likedOnly *bool, userID *uint) *gorm.DB {
-	if likedOnly != nil && userID != nil {
-		query = query.
-			Joins("JOIN liked_offers ON liked_offers.offer_id = sale_offer_view.id").
-			Where("liked_offers.user_id = ?", *userID)
-	}
-	return query
 }
 
 func applyInSliceFilter[T any](query *gorm.DB, column string, values *[]T) *gorm.DB {
@@ -169,7 +203,25 @@ func applyOrderFilter(query *gorm.DB, orderKey *string, isOrderDesc *bool) *gorm
 	return query.Order("margin " + orderDirection)
 }
 
-func (of *OfferFilter) validateParams() error {
+// TODO write tests
+func applyLikedOffersOnlyFilter(query *gorm.DB, userID uint) *gorm.DB {
+	query = query.
+		Joins("JOIN liked_offers ON liked_offers.offer_id = sale_offer_view.id").
+		Where("liked_offers.user_id = ?", userID)
+	return query
+}
+
+func applyUsersOffersOnly(query *gorm.DB, userID uint) *gorm.DB {
+	query = query.Where("sale_offer_view.user_id = ?", userID)
+	return query
+}
+
+func applyPublishedOffersOnly(query *gorm.DB) *gorm.DB {
+	query = query.Where("sale_offer_view.status = ?", enums.PUBLISHED)
+	return query
+}
+
+func (of *BaseOfferFilter) validateParams() error {
 	validators := []func() error{of.validateEnums, of.validateRanges, of.validateDates, of.validateOrderKey}
 	for _, validate := range validators {
 		if err := validate(); err != nil {
@@ -178,7 +230,7 @@ func (of *OfferFilter) validateParams() error {
 	}
 	return nil
 }
-func (of *OfferFilter) validateEnums() error {
+func (of *BaseOfferFilter) validateEnums() error {
 	if of.OfferType != nil && !IsParamValid(*of.OfferType, OfferTypes) {
 		return ErrInvalidSaleOfferType
 	}
@@ -200,7 +252,7 @@ func (of *OfferFilter) validateEnums() error {
 	return nil
 }
 
-func (of *OfferFilter) validateRanges() error {
+func (of *BaseOfferFilter) validateRanges() error {
 	ranges := []*MinMax[uint]{of.PriceRange, of.YearRange, of.MileageRange, of.EnginePowerRange, of.EngineCapacityRange}
 	for _, r := range ranges {
 		if r != nil && !isMinMaxValidNumbers(*r) {
@@ -210,7 +262,7 @@ func (of *OfferFilter) validateRanges() error {
 	return nil
 }
 
-func (of *OfferFilter) validateDates() error {
+func (of *BaseOfferFilter) validateDates() error {
 	datesRanges := []*MinMax[string]{of.CarRegistrationDateRange, of.OfferCreationDateRange}
 	for _, r := range datesRanges {
 		if err := validateDateRange(r); err != nil {
@@ -220,7 +272,7 @@ func (of *OfferFilter) validateDates() error {
 	return nil
 }
 
-func (of *OfferFilter) validateOrderKey() error {
+func (of *BaseOfferFilter) validateOrderKey() error {
 	if of.OrderKey != nil && !slices.Contains(GetKeysFromMap(OrderKeysMap), *of.OrderKey) {
 		return ErrInvalidOrderKey
 	}

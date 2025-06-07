@@ -50,8 +50,9 @@ type SaleOfferManagerInterface interface {
 type SaleOfferRetrieverInterface interface {
 	GetByID(id uint, userID *uint) (*RetrieveSaleOfferDTO, error)
 	GetDetailedByID(id uint, userID *uint) (*RetrieveDetailedSaleOfferDTO, error)
-	GetByUserID(id uint, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error)
-	GetFiltered(filter *OfferFilter, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error)
+	GetFiltered(filter *PublishedOffersOnlyFilter, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error)
+	GetUsersOffers(filter *UsersOffersOnlyFilter, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error)
+	GetLikedOnly(filter *LikedOffersOnlyFilter, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error)
 }
 
 type SaleOfferServiceInterface interface {
@@ -176,33 +177,16 @@ func (s *SaleOfferService) GetDetailedByID(id uint, userID *uint) (*RetrieveDeta
 	return s.mapOfferWithAdditionalFieldsDetailed(offer, userID)
 }
 
-func (s *SaleOfferService) GetByUserID(id uint, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error) {
-	offers, pagResponse, err := s.saleOfferRepo.GetByUserID(id, pagRequest)
-	if err != nil {
-		return nil, err
-	}
-	offerDTOs, err := s.mapOfferSliceWithAdditionalFields(offers, &id)
-	if err != nil {
-		return nil, err
-	}
-	return &RetrieveOffersWithPagination{Offers: offerDTOs, PaginationResponse: pagResponse}, nil
+func (s *SaleOfferService) GetFiltered(filter *PublishedOffersOnlyFilter, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error) {
+	return s.getOffersWithFilter(filter, filter.UserID, pagRequest)
 }
 
-func (s *SaleOfferService) GetFiltered(filter *OfferFilter, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error) {
-	manufacturers, err := s.manRetriever.GetAll()
-	if err != nil {
-		return nil, err
-	}
-	filter.Constraints.Manufacturers = mapping.MapSliceToDTOs(manufacturers, manufacturer.MapToName)
-	offers, pagResponse, err := s.saleOfferRepo.GetFiltered(filter, pagRequest)
-	if err != nil {
-		return nil, err
-	}
-	offerDTOs, err := s.mapOfferSliceWithAdditionalFields(offers, filter.UserID)
-	if err != nil {
-		return nil, err
-	}
-	return &RetrieveOffersWithPagination{Offers: offerDTOs, PaginationResponse: pagResponse}, nil
+func (s *SaleOfferService) GetUsersOffers(filter *UsersOffersOnlyFilter, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error) {
+	return s.getOffersWithFilter(filter, filter.UserID, pagRequest)
+}
+
+func (s *SaleOfferService) GetLikedOnly(filter *LikedOffersOnlyFilter, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error) {
+	return s.getOffersWithFilter(filter, filter.UserID, pagRequest)
 }
 
 func (s *SaleOfferService) PrepareForCreateSaleOffer(in *CreateSaleOfferDTO) (*models.SaleOffer, error) {
@@ -361,4 +345,31 @@ func (s *SaleOfferService) authorizeModificationByUser(offer SaleOfferEntityInte
 		return ErrOfferModification
 	}
 	return nil
+}
+
+func (s *SaleOfferService) getOffersWithFilter(filter OfferFilterIntreface, userID *uint, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error) {
+	baseFilter := filter.GetBase()
+	newBaseFilter, err := s.setupFilterFields(baseFilter)
+	if err != nil {
+		return nil, err
+	}
+	*filter.GetBase() = *newBaseFilter
+	offers, pagResponse, err := s.saleOfferRepo.GetFiltered(filter, pagRequest)
+	if err != nil {
+		return nil, err
+	}
+	offerDTOs, err := s.mapOfferSliceWithAdditionalFields(offers, userID)
+	if err != nil {
+		return nil, err
+	}
+	return &RetrieveOffersWithPagination{Offers: offerDTOs, PaginationResponse: pagResponse}, nil
+}
+
+func (s *SaleOfferService) setupFilterFields(filter *BaseOfferFilter) (*BaseOfferFilter, error) {
+	manufacturers, err := s.manRetriever.GetAll()
+	if err != nil {
+		return nil, err
+	}
+	filter.Constraints.Manufacturers = mapping.MapSliceToDTOs(manufacturers, manufacturer.MapToName)
+	return filter, nil
 }
