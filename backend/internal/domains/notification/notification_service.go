@@ -14,7 +14,7 @@ type NotificationServiceInterface interface {
 	CreateOutbidNotification(notification *models.Notification, amount int64, offer *models.Auction) error
 	CreateEndAuctionNotification(notification *models.Notification, winner string, winningBid int64, offer *models.SaleOffer) error
 	CreateBuyNotification(notification *models.Notification, buyerID string, offer *models.SaleOffer) error
-	CreateBuyNowNotification(notification *models.Notification, buyerID string, offer *models.Auction) error
+	CreateBuyNowNotification(notification *models.Notification, buyerID string, offer *models.SaleOffer) error
 	GetNotificationByID(id uint) (*models.Notification, error)
 	GetFilteredNotifications(filter *NotificationFilter) (*RetrieveNotificationsWithPagination, error)
 	UpdateSeenStatus(notificationID, userID uint, seen bool) error
@@ -57,10 +57,10 @@ func (s *NotificationService) CreateBuyNotification(notification *models.Notific
 	return s.NotificationRepository.Create(notification)
 }
 
-func (s *NotificationService) CreateBuyNowNotification(notification *models.Notification, buyerID string, offer *models.Auction) error {
+func (s *NotificationService) CreateBuyNowNotification(notification *models.Notification, buyerID string, offer *models.SaleOffer) error {
 	notification.CreatedAt = time.Now().UTC()
-	notification.Title = fmt.Sprintf(BuyNowTitleTemplate, offer.Offer.Car.Model.Manufacturer.Name, offer.Offer.Car.Model.Name)
-	notification.Description = fmt.Sprintf(BuyNowDescriptionTemplate, buyerID, offer.BuyNowPrice)
+	notification.Title = fmt.Sprintf(BuyNowTitleTemplate, offer.Car.Model.Manufacturer.Name, offer.Car.Model.Name)
+	notification.Description = fmt.Sprintf(BuyNowDescriptionTemplate, buyerID, offer.Auction.BuyNowPrice)
 	return s.NotificationRepository.Create(notification)
 }
 
