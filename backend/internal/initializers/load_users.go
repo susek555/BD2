@@ -8,14 +8,14 @@ import (
 func LoadUsers() {
 	passwordHash, _ := passwords.Hash("PolskaGurom")
 
-	userCount := 10
+	userCount := 9
 	users := make([]models.User, userCount)
 
 	for i := 1; i <= userCount; i++ {
 		username := "Herakles" + string(rune('0'+i))
 		email := "herakles" + string(rune('0'+i)) + "@gmail.com"
-		
-		if i%2 == 1 { 
+
+		if i%2 == 1 {
 			users[i-1] = models.User{
 				Username: username,
 				Email:    email,
@@ -26,7 +26,7 @@ func LoadUsers() {
 					Surname: "Wielki",
 				},
 			}
-		} else { 
+		} else {
 			nip := "123456789" + string(rune('0'+(i/2)-1))
 			users[i-1] = models.User{
 				Username: username,
