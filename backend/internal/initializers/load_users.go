@@ -8,7 +8,7 @@ import (
 func LoadUsers() {
 	passwordHash, _ := passwords.Hash("PolskaGurom")
 
-	userCount := 9
+	userCount := 10
 	users := make([]models.User, userCount)
 
 	for i := 1; i <= userCount; i++ {
