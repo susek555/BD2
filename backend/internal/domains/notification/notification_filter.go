@@ -8,9 +8,9 @@ import (
 type NotificationFilter struct {
 	Pagination  pagination.PaginationRequest `json:"pagination"`
 	OrderKey    *string                      `json:"order_key"`
-	IsOrderDesc *bool                        `json:"is_order_desc"`
-	ReceiverID  *uint                        `json:"receiver_id"`
-	Seen        *bool                        `json:"seen"`
+	IsOrderDesc *bool                        `json:"is_order_desc,omitempty"`
+	ReceiverID  *uint                        `json:"receiver_id,omitempty"`
+	Seen        *bool                        `json:"seen,omitempty"`
 }
 
 func NewNotificationFilter() *NotificationFilter {
