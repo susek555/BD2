@@ -38,11 +38,11 @@ func (h *Handler) GetFilteredNotifications(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
-	filter.ReceiverID = &receiverID
-	if err := c.ShouldBindQuery(&filter); err != nil {
-		c.JSON(400, gin.H{"error": "Invalid query parameters"})
+	if err := c.ShouldBindJSON(filter); err != nil {
+		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
+	filter.ReceiverID = &receiverID
 
 	notifications, err := h.service.GetFilteredNotifications(filter)
 	if err != nil {
