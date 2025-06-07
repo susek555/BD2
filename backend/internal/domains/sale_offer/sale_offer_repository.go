@@ -44,7 +44,10 @@ func (r *SaleOfferRepository) UpdateStatus(offer *models.SaleOffer, status enums
 
 func (r *SaleOfferRepository) GetByID(id uint) (*models.SaleOffer, error) {
 	var offer models.SaleOffer
-	err := r.DB.Preload("Car").Preload("Auction").First(&offer, id).Error
+	err := r.DB.
+		Preload("Car.Model.Manufacturer").
+		Preload("Auction").
+		First(&offer, id).Error
 	return &offer, err
 }
 
