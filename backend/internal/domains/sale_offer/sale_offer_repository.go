@@ -65,7 +65,7 @@ func (r *SaleOfferRepository) GetByUserID(id uint, pagRequest *pagination.Pagina
 }
 
 func (r *SaleOfferRepository) GetFiltered(filter OfferFilterIntreface, pagRequest *pagination.PaginationRequest) ([]views.SaleOfferView, *pagination.PaginationResponse, error) {
-	query := r.DB.Table("sale_offer_view").Where("status = ?", enums.PUBLISHED)
+	query := r.DB.Table("sale_offer_view")
 	query, err := filter.ApplyOfferFilters(query)
 	if err != nil {
 		return nil, nil, err
