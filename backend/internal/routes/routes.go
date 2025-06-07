@@ -144,5 +144,7 @@ func registerNotificationRoutes(router *gin.Engine) {
 		notificationRoutes.POST("/filter", middleware.Authenticate(initializers.Verifier), initializers.NotificationHandler.GetFilteredNotifications)
 		notificationRoutes.PUT("/seen/:id", middleware.Authenticate(initializers.Verifier), initializers.NotificationHandler.MarkAsSeen)
 		notificationRoutes.PUT("/unseen/:id", middleware.Authenticate(initializers.Verifier), initializers.NotificationHandler.MarkAsUnseen)
+		notificationRoutes.PUT("/seen", middleware.Authenticate(initializers.Verifier), initializers.NotificationHandler.MarkAllAsSeen)
+		notificationRoutes.PUT("/unseen", middleware.Authenticate(initializers.Verifier), initializers.NotificationHandler.MarkAllAsUnseen)
 	}
 }
