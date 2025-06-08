@@ -62,7 +62,7 @@ func (s *NotificationService) CreateBuyNotification(notification *models.Notific
 func (s *NotificationService) CreateBuyNowNotification(notification *models.Notification, buyerID string, offer *models.SaleOffer) error {
 	notification.CreatedAt = time.Now().UTC()
 	notification.Title = fmt.Sprintf(BuyNowTitleTemplate, offer.Car.Model.Manufacturer.Name, offer.Car.Model.Name)
-	notification.Description = fmt.Sprintf(BuyNowDescriptionTemplate, buyerID, offer.Auction.BuyNowPrice)
+	notification.Description = fmt.Sprintf(BuyNowDescriptionTemplate, buyerID, *offer.Auction.BuyNowPrice)
 	return s.NotificationRepository.Create(notification)
 }
 
