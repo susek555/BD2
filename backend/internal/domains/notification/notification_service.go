@@ -11,8 +11,8 @@ import (
 //go:generate mockery --name=NotificationServiceInterface --output=../../test/mocks --case=snake --with-expecter
 
 type NotificationServiceInterface interface {
-	CreateOutbidNotification(notification *models.Notification, amount int64, offer *models.Auction) error
-	CreateEndAuctionNotification(notification *models.Notification, winner string, winningBid int64, offer *models.SaleOffer) error
+	CreateOutbidNotification(notification *models.Notification, amount uint, offer *models.Auction) error
+	CreateEndAuctionNotification(notification *models.Notification, winner string, winningBid uint, offer *models.SaleOffer) error
 	CreateBuyNotification(notification *models.Notification, buyerID string, offer *models.SaleOffer) error
 	CreateBuyNowNotification(notification *models.Notification, buyerID string, offer *models.SaleOffer) error
 	GetNotificationByID(id uint) (*models.Notification, error)
@@ -35,14 +35,14 @@ func NewNotificationService(notificationRepository NotificationRepositoryInterfa
 	}
 }
 
-func (s *NotificationService) CreateOutbidNotification(notification *models.Notification, amount int64, offer *models.Auction) error {
+func (s *NotificationService) CreateOutbidNotification(notification *models.Notification, amount uint, offer *models.Auction) error {
 	notification.CreatedAt = time.Now().UTC()
 	notification.Title = fmt.Sprintf(OutbidTitleTemplate, offer.Offer.Car.Model.Manufacturer.Name, offer.Offer.Car.Model.Name)
 	notification.Description = fmt.Sprintf(OutbidDescriptionTemplate, amount)
 	return s.NotificationRepository.Create(notification)
 }
 
-func (s *NotificationService) CreateEndAuctionNotification(notification *models.Notification, winner string, winningBid int64, offer *models.SaleOffer) error {
+func (s *NotificationService) CreateEndAuctionNotification(notification *models.Notification, winner string, winningBid uint, offer *models.SaleOffer) error {
 	if winningBid == 0 && winner == "" {
 		return ErrNoBids
 	}
