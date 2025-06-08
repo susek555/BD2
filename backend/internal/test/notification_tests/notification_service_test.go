@@ -137,6 +137,7 @@ func createSampleNotification() *models.Notification {
 }
 
 func createSampleSaleOffer() *models.SaleOffer {
+	buyNowPrice := uint(30000)
 	return &models.SaleOffer{
 		ID:     1,
 		Price:  25000,
@@ -150,15 +151,16 @@ func createSampleSaleOffer() *models.SaleOffer {
 			},
 		},
 		Auction: &models.Auction{
-			BuyNowPrice: 30000,
+			BuyNowPrice: &buyNowPrice,
 		},
 	}
 }
 
 func createSampleAuction() *models.Auction {
+	buyNowPrice := uint(30000)
 	return &models.Auction{
 		OfferID:     1,
-		BuyNowPrice: 30000,
+		BuyNowPrice: &buyNowPrice,
 		Offer: &models.SaleOffer{
 			Car: &models.Car{
 				Model: &models.Model{
