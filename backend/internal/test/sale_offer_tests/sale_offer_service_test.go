@@ -22,7 +22,7 @@ type mockSaleOfferRepository struct {
 	updateFunc       func(offer *models.SaleOffer) error
 	updateStatusFunc func(offer *models.SaleOffer, status enums.Status) error
 	deleteFunc       func(id uint) error
-	getFilteredFunc  func(filter sale_offer.OfferFilterIntreface, pagination *pagination.PaginationRequest) ([]views.SaleOfferView, *pagination.PaginationResponse, error)
+	getFilteredFunc  func(filter sale_offer.OfferFilterInterface, pagination *pagination.PaginationRequest) ([]views.SaleOfferView, *pagination.PaginationResponse, error)
 }
 
 func (m *mockSaleOfferRepository) Create(offer *models.SaleOffer) error {
@@ -67,7 +67,7 @@ func (m *mockSaleOfferRepository) Delete(id uint) error {
 	return nil
 }
 
-func (m *mockSaleOfferRepository) GetFiltered(filter sale_offer.OfferFilterIntreface, pagination *pagination.PaginationRequest) ([]views.SaleOfferView, *pagination.PaginationResponse, error) {
+func (m *mockSaleOfferRepository) GetFiltered(filter sale_offer.OfferFilterInterface, pagination *pagination.PaginationRequest) ([]views.SaleOfferView, *pagination.PaginationResponse, error) {
 	if m.getFilteredFunc != nil {
 		return m.getFilteredFunc(filter, pagination)
 	}
@@ -714,7 +714,7 @@ func TestSaleOfferService_GetFiltered_Success(t *testing.T) {
 	mockManufacturerRetriever.getAllFunc = func() ([]models.Manufacturer, error) {
 		return []models.Manufacturer{{ID: 1, Name: "Toyota"}}, nil
 	}
-	mockRepo.getFilteredFunc = func(filter sale_offer.OfferFilterIntreface, pagination *pagination.PaginationRequest) ([]views.SaleOfferView, *pagination.PaginationResponse, error) {
+	mockRepo.getFilteredFunc = func(filter sale_offer.OfferFilterInterface, pagination *pagination.PaginationRequest) ([]views.SaleOfferView, *pagination.PaginationResponse, error) {
 		return []views.SaleOfferView{*sampleView}, nil, nil
 	}
 
