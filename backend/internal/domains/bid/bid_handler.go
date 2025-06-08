@@ -66,12 +66,11 @@ func (h *Handler) CreateBid(c *gin.Context) {
 	c.JSON(http.StatusCreated, retrieveDTO)
 	auctionIDStr := strconv.FormatUint(uint64(dto.AuctionID), 10)
 	userIDStr := strconv.FormatUint(uint64(userID), 10)
-	amountInt64 := int64(dto.Amount)
 	notification := &models.Notification{
 		OfferID: dto.AuctionID,
 	}
 
-	err = h.notificationService.CreateOutbidNotification(notification, amountInt64, dto.Auction)
+	err = h.notificationService.CreateOutbidNotification(notification, dto.Amount, dto.Auction)
 	if err != nil {
 		log.Println("Error creating notification:", err)
 		return
