@@ -77,13 +77,12 @@ func (c *auctionCloser) CloseAuction(cmd CloseCmd) {
 		log.Printf("closer: auction %d already %s — skip", auctionID, offer.Status)
 		return
 	}
-
 	var winnerID string
-	var amount int64
+	var amount uint
 
 	if cmd.WinnerID != nil && cmd.Amount != nil {
 		winnerID = strconv.FormatUint(uint64(*cmd.WinnerID), 10)
-		amount = int64(*cmd.Amount)
+		amount = *cmd.Amount
 	} else {
 		highest, err := c.bidRepo.GetHighestBid(auctionID)
 		if err != nil {
@@ -95,7 +94,7 @@ func (c *auctionCloser) CloseAuction(cmd CloseCmd) {
 			return
 		}
 		winnerID = strconv.FormatUint(uint64(highest.BidderID), 10)
-		amount = int64(highest.Amount)
+		amount = highest.Amount
 	}
 
 	if winnerID != "" {
@@ -104,7 +103,7 @@ func (c *auctionCloser) CloseAuction(cmd CloseCmd) {
 			log.Printf("closer: invalid winnerID %q: %v", winnerID, err)
 			return
 		}
-		purchaseModel := &models.Purchase{OfferID: auctionID, BuyerID: uint(winnerIDint), FinalPrice: uint(amount), IssueDate: time.Now()}
+		purchaseModel := &models.Purchase{OfferID: auctionID, BuyerID: uint(winnerIDint), FinalPrice: amount, IssueDate: time.Now()}
 		_ = c.purchaseCreator.Create(purchaseModel)
 	}
 
