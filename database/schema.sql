@@ -155,7 +155,7 @@ CREATE TABLE reviews (
     CHECK (reviewer_id <> reviewee_id)
 );
 
-CREATE UNIQUE INDEX uq_reviews_pair_active 
+CREATE UNIQUE INDEX uq_reviews_pair_active
     ON reviews(reviewer_id, reviewee_id)
     WHERE reviewer_id <> 1
     AND reviewee_id <> 1;
@@ -166,37 +166,3 @@ CREATE TABLE images (
     url VARCHAR(200) NOT NULL UNIQUE,
     public_id VARCHAR(200) NOT NULL UNIQUE
 );
-
-INSERT INTO manufacturers (name) VALUES
-('Toyota'),
-('Volkswagen'),
-('Ford'),
-('BMW'),
-('Mercedes-Benz'),
-('Audi'),
-('Honda'),
-('Nissan'),
-('Hyundai'),
-('Kia');
-
-INSERT INTO models (manufacturer_id, name) VALUES
-(1, 'Corolla'),
-(1, 'Camry'),
-(2, 'Golf'),
-(2, 'Passat'),
-(3, 'Focus'),
-(3, 'Fiesta'),
-(4, '3 Series'),
-(4, '5 Series'),
-(5, 'C-Class'),
-(5, 'E-Class'),
-(6, 'A4'),
-(6, 'A6'),
-(7, 'Civic'),
-(7, 'Accord'),
-(8, 'Altima'),
-(8, 'Sentra'),
-(9, 'Elantra'),
-(9, 'Sonata'),
-(10, 'Sportage'),
-(10, 'Seltos');
