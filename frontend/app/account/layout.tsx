@@ -7,13 +7,14 @@ import {
 import StickyTabBar from '@/app/ui/account/sticky-tab-bar';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
+import { Toaster } from 'react-hot-toast';
 import { OfferTopBar } from '../ui/(topbar)/topbar';
 
 async function ProfileInfoWrapper() {
   try {
     const user = await cachedSessionData();
     return <ProfileInfo user={user} />;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     redirect('/login');
   }
@@ -41,6 +42,7 @@ export default function AccountLayout({
       </div>
 
       {children}
+      <Toaster />
     </main>
   );
 }
