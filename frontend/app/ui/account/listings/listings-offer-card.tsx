@@ -6,15 +6,25 @@ import ConfirmationModal from '@/app/ui/(common)/confirm-modal';
 import GenericOfferCard from '@/app/ui/(offers-table)/generic-offer-card';
 import { PencilIcon, TrashIcon } from '@heroicons/react/20/solid';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 
 export default function SingleListingsOffer({ offer }: { offer: BaseOffer }) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  const handleDelete = () => {
-    deleteListing(offer.id);
-    setShowDeleteConfirm(false);
+  const handleDelete = async () => {
+    setIsDeleting(true);
+
+    try {
+      await deleteListing(offer.id);
+      setShowDeleteConfirm(false);
+      toast.success('Offer deleted successfully');
+    } catch (error) {
+      toast.error('Failed to delete offer. Please try again.');
+    } finally {
+      setIsDeleting(false);
+    }
   };
-
   const headerContent = (
     <div className='flex space-x-2 pr-4'>
       <button
@@ -22,7 +32,7 @@ export default function SingleListingsOffer({ offer }: { offer: BaseOffer }) {
         onClick={(e) => {
           e.stopPropagation();
           e.preventDefault();
-          console.log('Edit offer:', offer.id); // Todo implement redirect to edit offer page
+          window.location.href = `/offer/${offer.id}/edit`;
         }}
       >
         <PencilIcon className='h-5 w-5' />
@@ -43,15 +53,15 @@ export default function SingleListingsOffer({ offer }: { offer: BaseOffer }) {
   return (
     <>
       <GenericOfferCard offer={offer} headerContent={headerContent} />
-
       <ConfirmationModal
         title='Confirm Delete'
         message='Are you sure you want to delete this offer? This action cannot be undone.'
-        confirmText='Delete'
+        confirmText={isDeleting ? 'Deleting...' : 'Delete'}
         onConfirm={handleDelete}
         onCancel={() => setShowDeleteConfirm(false)}
         isOpen={showDeleteConfirm}
-      />
+        disabled={isDeleting}
+      />{' '}
     </>
   );
 }
