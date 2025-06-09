@@ -35,9 +35,10 @@ func NewScheduler(
 	notificationService notification.NotificationServiceInterface,
 	saleOfferRepo SaleOfferRepositoryInterface,
 	purchaseCreator PurchaseCreatorInterface,
+	saleOfferService SaleOfferRetrieverInterface,
 	hub ws.HubInterface,
 ) SchedulerInterface {
-	closer := NewAuctionCloser(repo, saleOfferRepo, purchaseCreator, notificationService, hub)
+	closer := NewAuctionCloser(repo, saleOfferRepo, purchaseCreator, notificationService, hub, saleOfferService)
 	return &Scheduler{
 		heap:          make(timerHeap, 0),
 		eventsCh:      make(chan AuctionEvent, 1024),
