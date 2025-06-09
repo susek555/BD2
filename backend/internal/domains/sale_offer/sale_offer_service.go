@@ -363,7 +363,7 @@ func (s *SaleOfferService) getOffersWithFilter(filter OfferFilterInterface, user
 	if err != nil {
 		return nil, err
 	}
-	return &RetrieveOffersWithPagination{Offers: offerDTOs, PaginationResponse: pagResponse}, nil
+	return &RetrieveOffersWithPagination{Offers: offerDTOs, PaginationResponse: *pagResponse}, nil
 }
 
 func (s *SaleOfferService) setupBaseFilter(filter *BaseOfferFilter) (*BaseOfferFilter, error) {
