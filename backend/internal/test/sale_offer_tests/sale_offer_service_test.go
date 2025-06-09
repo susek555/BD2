@@ -714,8 +714,8 @@ func TestSaleOfferService_GetFiltered_Success(t *testing.T) {
 	mockManufacturerRetriever.getAllFunc = func() ([]models.Manufacturer, error) {
 		return []models.Manufacturer{{ID: 1, Name: "Toyota"}}, nil
 	}
-	mockRepo.getFilteredFunc = func(filter sale_offer.OfferFilterInterface, pagination *pagination.PaginationRequest) ([]views.SaleOfferView, *pagination.PaginationResponse, error) {
-		return []views.SaleOfferView{*sampleView}, nil, nil
+	mockRepo.getFilteredFunc = func(filter sale_offer.OfferFilterInterface, pagRequest *pagination.PaginationRequest) ([]views.SaleOfferView, *pagination.PaginationResponse, error) {
+		return []views.SaleOfferView{*sampleView}, &pagination.PaginationResponse{TotalPages: 1, TotalRecords: 0}, nil
 	}
 
 	mockAccessEvaluator.isOfferLikedByUserFunc = func(offer sale_offer.SaleOfferEntityInterface, userID *uint) bool {
