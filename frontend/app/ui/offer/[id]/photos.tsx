@@ -2,34 +2,45 @@
 
 // To mock images via url, run http-server . --cors in public/offer
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Photos({ imagesURLs }: { imagesURLs: string[] }) {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [imageSrc, setImageSrc] = useState<string[]>([...imagesURLs]);
     const [loading, setLoading] = useState(true);
 
+    useEffect(() => {
+        setLoading(true);
+
+        const img = new Image();
+        img.src = imageSrc[currentIndex];
+
+        img.onload = () => {
+            setLoading(false);
+        };
+
+        img.onerror = () => {
+            const fallbackImage = "/(home)/car_placeholder.png";
+            setImageSrc((prev) => {
+                const newSrc = [...prev];
+                newSrc[currentIndex] = fallbackImage;
+                return newSrc;
+            });
+            console.log(`Failed to load image: ${imagesURLs[currentIndex]}. Placeholder was loaded.`);
+            setLoading(false);
+        };
+    }, [currentIndex, imagesURLs, imageSrc]);
+
     const handlePrev = () => {
-        setCurrentIndex((prevIndex) => (prevIndex === 0 ? imagesURLs.length - 1 : prevIndex - 1));
+        setCurrentIndex((prevIndex) =>
+            prevIndex === 0 ? imagesURLs.length - 1 : prevIndex - 1
+        );
     };
 
     const handleNext = () => {
-        setCurrentIndex((prevIndex) => (prevIndex === imagesURLs.length - 1 ? 0 : prevIndex + 1));
-    };
-
-    const handleError = (index: number) => {
-        const fallbackImage = "/(home)/car_placeholder.png";
-        setImageSrc((prev) => {
-            const newSrc = [...prev];
-            newSrc[index] = fallbackImage;
-            return newSrc;
-        });
-        console.log(`Failed to load image: ${imagesURLs[index]}. Placeholder was loaded.`);
-        setLoading(false); // Błąd ładowania kończy stan ładowania
-    };
-
-    const handleLoad = () => {
-        setLoading(false); // Zdjęcie zostało załadowane
+        setCurrentIndex((prevIndex) =>
+            prevIndex === imagesURLs.length - 1 ? 0 : prevIndex + 1
+        );
     };
 
     return (
@@ -40,13 +51,13 @@ export default function Photos({ imagesURLs }: { imagesURLs: string[] }) {
                         <div className="loader animate-spin rounded-full border-4 border-gray-300 border-t-gray-600 w-12 h-12"></div>
                     </div>
                 )}
-                <img
-                    src={imageSrc[currentIndex]}
-                    alt={`Image ${currentIndex + 1}`}
-                    onLoad={handleLoad}
-                    onError={() => handleError(currentIndex)}
-                    className={`max-w-full max-h-full ${loading ? "hidden" : "block"}`}
-                />
+                {!loading && (
+                    <img
+                        src={imageSrc[currentIndex]}
+                        alt={`Image ${currentIndex + 1}`}
+                        className="max-w-full max-h-full"
+                    />
+                )}
             </div>
             <div className="flex items-center gap-2">
                 <button
