@@ -58,13 +58,14 @@ type auctionCloser struct {
 	saleOfferService    SaleOfferRetrieverInterface
 }
 
-func NewAuctionCloser(bidRepo BidRetrieverInterface, saleRepo SaleOfferRepositoryInterface, purchaseCreator PurchaseCreatorInterface, notificationService notification.NotificationServiceInterface, hub ws.HubInterface) AuctionCloserInterface {
+func NewAuctionCloser(bidRepo BidRetrieverInterface, saleRepo SaleOfferRepositoryInterface, purchaseCreator PurchaseCreatorInterface, notificationService notification.NotificationServiceInterface, hub ws.HubInterface, saleOfferService SaleOfferRetrieverInterface) AuctionCloserInterface {
 	return &auctionCloser{
 		bidRepo:             bidRepo,
 		saleRepo:            saleRepo,
 		purchaseCreator:     purchaseCreator,
 		notificationService: notificationService,
 		hub:                 hub,
+		saleOfferService:    saleOfferService,
 	}
 }
 
