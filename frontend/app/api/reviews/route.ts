@@ -1,34 +1,24 @@
-import { NewReview, UpdatedReview } from '@/app/lib/definitions/reviews';
-import { NextRequest, NextResponse } from 'next/server';
+import { fetchWithRefresh } from '@/app/lib/api/fetchWithRefresh';
+import { NextRequest } from 'next/server';
 
 export async function POST(request: NextRequest) {
-  try {
-    const body: NewReview = await request.json();
-
-    return NextResponse.json(
-      { message: 'Created successfully' },
-      { status: 201 },
-    );
-  } catch (error) {
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 },
-    );
-  }
+  const body = await request.text();
+  const response = fetchWithRefresh(`${process.env.API_URL}/review`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: body,
+  });
 }
 
 export async function PUT(request: NextRequest) {
-  try {
-    const body: UpdatedReview = await request.json();
-
-    return NextResponse.json(
-      { message: 'Updated successfully' },
-      { status: 200 },
-    );
-  } catch (error) {
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 },
-    );
-  }
+  const body = await request.text();
+  const response = fetchWithRefresh(`${process.env.API_URL}/review`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: body,
+  });
 }

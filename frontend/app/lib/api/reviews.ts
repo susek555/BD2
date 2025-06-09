@@ -1,35 +1,50 @@
 import { NewReview, Review, UpdatedReview } from '../definitions/reviews';
 
-export async function updateReview(review: UpdatedReview): Promise<Response> {
-  console.log('Update review');
-
-  return fetch(`/api/reviews`, {
+export async function updateReview(review: UpdatedReview) {
+  const response = await fetch(`/api/reviews`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(review),
   });
+
+  if (!response.ok) {
+    throw new Error('Falied to update review');
+  }
+
+  return response.json();
 }
 
 export async function deleteReview(id: number) {
-  console.log('Delete review');
-
-  return fetch(`/api/reviews/${id}`, {
+  const response = await fetch(`/api/reviews/${id}`, {
     method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
   });
+
+  if (!response.ok) {
+    throw new Error('Falied to delete review');
+  }
+
+  return response.json();
 }
 
 export async function addReview(review: NewReview) {
-  console.log('Add review');
-
-  return fetch(`/api/reviews`, {
+  const response = await fetch(`/api/reviews`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(review),
   });
+
+  if (!response.ok) {
+    throw new Error('Falied to create review');
+  }
+
+  return response.json();
 }
 
 export async function getReviewByRevieweeReviewer(

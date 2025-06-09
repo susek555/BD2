@@ -8,7 +8,6 @@ export async function POST(
   { params }: { params: Promise<{ reviewerId: string }> },
 ) {
   const { reviewerId } = await params;
-  console.log('reviewer id', reviewerId);
 
   const body = await request.text();
   const response = await fetch(
@@ -25,4 +24,20 @@ export async function POST(
   const data = await response.json();
 
   return NextResponse.json(data);
+  // return NextResponse.json({
+  //   reviews: [
+  //     {
+  //       id: 1,
+  //       rating: 4,
+  //       description: 'good',
+  //       date: '2025-3-15',
+  //       reviewer: { id: 1, username: 'damian' },
+  //       reviewee: { id: 2, username: 'ggg' },
+  //     },
+  //   ],
+  //   pagination: {
+  //     total_pages: 1,
+  //     total_records: 1,
+  //   },
+  // });
 }
