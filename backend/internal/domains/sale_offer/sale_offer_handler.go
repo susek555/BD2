@@ -118,6 +118,83 @@ func (h *Handler) PublishSaleOffer(c *gin.Context) {
 	c.JSON(http.StatusOK, retrieveDTO)
 }
 
+// Buy godoc
+//
+//	@Summary		Buy a sale offer
+//	@Description	Allows a user to buy an item from a sale offer
+//	@Tags			sale-offer
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path	uint	true	"Sale Offer ID"
+//	@Success		200	"Successfully purchased offer"
+//	@Failure		403	"Forbidden - user cannot buy his own offer"
+//	@Failure		404	"Not Found - sale offer not found"
+//	@Failure		500	"Internal Server Error"
+//	@Failure		401	"Unauthorized - user must be logged in to buy an offer"
+//	@Router			/sale-offer/buy/{id} [post]
+//	@Security		BearerAuth
+func (h *Handler) Buy(c *gin.Context) {
+	offerID, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		custom_errors.HandleError(c, err, ErrorMap)
+		return
+	}
+	userID, err := auth.GetUserID(c)
+	if err != nil {
+		custom_errors.HandleError(c, err, ErrorMap)
+		return
+	}
+	offer, err := h.service.Buy(uint(offerID), userID)
+	if err != nil {
+		custom_errors.HandleError(c, err, ErrorMap)
+		return
+	}
+	c.Status(http.StatusOK)
+	notification := &models.Notification{
+		OfferID: uint(offerID),
+	}
+	err = h.notificationService.CreateBuyNotification(notification, strconv.FormatUint(uint64(userID), 10), offer)
+	if err != nil {
+		log.Printf("Error creating buy notification for offer ID %d: %v", offerID, err)
+		return
+	}
+	h.hub.SaveNotificationForClients(strconv.FormatUint(offerID, 10), userID, notification)
+	h.hub.SendFourLatestNotificationsToClients(strconv.FormatUint(offerID, 10), strconv.FormatUint(uint64(userID), 10))
+	h.hub.RemoveRoom(strconv.FormatUint(offerID, 10))
+}
+
+// DeleteSaleOffer godoc
+//
+//	@Summary		Delete a sale offer
+//
+//	@Description	Deletes a sale offer from the database. To delete a sale offer, the user must be logged in and must be the owner of the offer.
+//
+//	@Tags			sale-offer
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path	uint	true	"Sale offer ID"
+//	@Success		204	"No Content - sale offer deleted successfully"
+//	@Failure		400	{object}	custom_errors.HTTPError	"Invalid input data"
+//	@Failure		401	{object}	custom_errors.HTTPError	"Unauthorized - user must be logged in to delete his offer"
+//	@Failure		403	{object}	custom_errors.HTTPError	"Forbidden - user can delete only his own offer. If the auction has any bids, the user cannot delete it."
+//	@Failure		404	{object}	custom_errors.HTTPError	"Sale offer not found"
+//	@Failure		500	{object}	custom_errors.HTTPError	"Internal server error"
+//	@Router			/sale-offer/id/{id} [delete]
+//	@Security		Bearer
+func (h *Handler) DeleteSaleOffer(c *gin.Context) {
+	userID, _ := c.Get("userID")
+	offerID, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		custom_errors.HandleError(c, err, ErrorMap)
+		return
+	}
+	if err := h.service.Delete(uint(offerID), userID.(uint)); err != nil {
+		custom_errors.HandleError(c, err, ErrorMap)
+		return
+	}
+	c.Status(http.StatusNoContent)
+}
+
 // GetDetailedSaleOfferByID godoc
 //
 //	@Summary		Get sale offer by ID
@@ -308,51 +385,6 @@ func (h *Handler) GetOrderKeys(c *gin.Context) {
 		keys = append(keys, k)
 	}
 	c.JSON(http.StatusOK, gin.H{"order_keys": keys})
-}
-
-// Buy godoc
-//
-//	@Summary		Buy a sale offer
-//	@Description	Allows a user to buy an item from a sale offer
-//	@Tags			sale-offer
-//	@Accept			json
-//	@Produce		json
-//	@Param			id	path	uint	true	"Sale Offer ID"
-//	@Success		200	"Successfully purchased offer"
-//	@Failure		403	"Forbidden - user cannot buy his own offer"
-//	@Failure		404	"Not Found - sale offer not found"
-//	@Failure		500	"Internal Server Error"
-//	@Failure		401	"Unauthorized - user must be logged in to buy an offer"
-//	@Router			/sale-offer/buy/{id} [post]
-//	@Security		BearerAuth
-func (h *Handler) Buy(c *gin.Context) {
-	offerID, err := strconv.ParseUint(c.Param("id"), 10, 32)
-	if err != nil {
-		custom_errors.HandleError(c, err, ErrorMap)
-		return
-	}
-	userID, err := auth.GetUserID(c)
-	if err != nil {
-		custom_errors.HandleError(c, err, ErrorMap)
-		return
-	}
-	offer, err := h.service.Buy(uint(offerID), userID)
-	if err != nil {
-		custom_errors.HandleError(c, err, ErrorMap)
-		return
-	}
-	c.Status(http.StatusOK)
-	notification := &models.Notification{
-		OfferID: uint(offerID),
-	}
-	err = h.notificationService.CreateBuyNotification(notification, strconv.FormatUint(uint64(userID), 10), offer)
-	if err != nil {
-		log.Printf("Error creating buy notification for offer ID %d: %v", offerID, err)
-		return
-	}
-	h.hub.SaveNotificationForClients(strconv.FormatUint(offerID, 10), userID, notification)
-	h.hub.SendFourLatestNotificationsToClients(strconv.FormatUint(offerID, 10), strconv.FormatUint(uint64(userID), 10))
-	h.hub.RemoveRoom(strconv.FormatUint(offerID, 10))
 }
 
 func getOptionalUserID(c *gin.Context) *uint {

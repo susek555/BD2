@@ -43,6 +43,7 @@ var ErrorMap = map[error]int{
 	ErrInvalidManufacturer:          http.StatusBadRequest,
 	ErrInvalidManufacturerModelPair: http.StatusBadRequest,
 	ErrOfferNotOwned:                http.StatusForbidden,
+	ErrOfferModification:            http.StatusForbidden,
 	gorm.ErrRecordNotFound:          http.StatusNotFound,
 	ErrOfferOwnedByUser:             http.StatusForbidden,
 	ErrOfferAlreadySold:             http.StatusConflict,

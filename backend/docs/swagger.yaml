@@ -633,6 +633,8 @@ definitions:
         type: boolean
       is_liked:
         type: boolean
+      issue_date:
+        type: string
       margin:
         $ref: '#/definitions/enums.MarginValue'
       mileage:
@@ -685,6 +687,8 @@ definitions:
         type: boolean
       is_liked:
         type: boolean
+      issue_date:
+        type: string
       main_url:
         type: string
       mileage:
@@ -697,6 +701,8 @@ definitions:
         type: integer
       status:
         type: string
+      user_id:
+        type: integer
       username:
         type: string
     type: object
@@ -2289,6 +2295,48 @@ paths:
       tags:
       - sale-offer
   /sale-offer/id/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a sale offer from the database. To delete a sale offer,
+        the user must be logged in and must be the owner of the offer.
+      parameters:
+      - description: Sale offer ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content - sale offer deleted successfully
+        "400":
+          description: Invalid input data
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "401":
+          description: Unauthorized - user must be logged in to delete his offer
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "403":
+          description: Forbidden - user can delete only his own offer. If the auction
+            has any bids, the user cannot delete it.
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "404":
+          description: Sale offer not found
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      security:
+      - Bearer: []
+      summary: Delete a sale offer
+      tags:
+      - sale-offer
     get:
       consumes:
       - application/json
@@ -2445,6 +2493,49 @@ paths:
               type: array
             type: object
       summary: Get order keys
+      tags:
+      - sale-offer
+  /sale-offer/purchased-offers:
+    post:
+      consumes:
+      - application/json
+      description: Returns a list of offers that the logged-in user has purchased.
+        The results are filtered based on request's body. To check how filter should
+        be set look at /filtered endpoint.
+      parameters:
+      - description: Sale offer filter
+        in: body
+        name: filter
+        required: true
+        schema:
+          $ref: '#/definitions/sale_offer.OfferFilterRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of sale offers
+          schema:
+            $ref: '#/definitions/sale_offer.RetrieveOffersWithPagination'
+        "400":
+          description: Invalid input data
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "401":
+          description: Unauthorized - user must be logged in to retrieve purchased
+            offers
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "403":
+          description: Forbidden - token is invalid or expired
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/custom_errors.HTTPError'
+      security:
+      - Bearer: []
+      summary: Get purchased offers
       tags:
       - sale-offer
   /users:
