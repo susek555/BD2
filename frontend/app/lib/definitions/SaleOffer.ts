@@ -18,8 +18,7 @@ export interface SaleOffer extends BaseOffer {
 }
 
 export interface HistoryOffer extends BaseOffer {
-  dateEnd: string;
-  sellerRating?: number;
-  sellerId: number;
-  sellerName: string;
+  date_end: string;
+  seller_id: number;
+  seller_name: string;
 }
