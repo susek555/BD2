@@ -42,7 +42,6 @@ export default async function FavoritesPage(props: {
 
   params = {
     ...params,
-    liked_only: true,
   };
 
   console.log('Search Params:', params);
