@@ -4,6 +4,7 @@ import {
   SignupFormState,
 } from '@/app/lib/definitions/signup';
 import { permanentRedirect } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 export async function signup(
   state: SignupFormState,
@@ -44,6 +45,7 @@ export async function signup(
       ) as SignupFormState['values'],
     };
   } else {
-    permanentRedirect('/');
+    toast.success('Account created successfully');
+    permanentRedirect('/login');
   }
 }
