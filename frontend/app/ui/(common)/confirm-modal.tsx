@@ -7,6 +7,7 @@ interface ConfirmationModalProps {
   cancelText?: string;
   onConfirm: () => void;
   onCancel: () => void;
+  disabled?: boolean;
   isOpen: boolean;
   bg_color?: string;
   bg_color_hover?: string;
@@ -20,6 +21,7 @@ export default function ConfirmationModal({
   onConfirm,
   onCancel,
   isOpen,
+  disabled,
   bg_color = 'bg-red-600',
   bg_color_hover = 'bg-red-700',
 }: ConfirmationModalProps) {
@@ -61,15 +63,16 @@ export default function ConfirmationModal({
               </button>
             </AlertDialog.Cancel>
             <AlertDialog.Action asChild>
-                <button
+              <button
+                disabled={disabled || false}
                 className={`rounded-md ${bg_color} px-4 py-2 text-white hover:${bg_color_hover}`}
                 onClick={(e) => {
                   e.stopPropagation();
                   onConfirm();
                 }}
-                >
+              >
                 {confirmText}
-                </button>
+              </button>
             </AlertDialog.Action>
           </div>
         </AlertDialog.Content>
