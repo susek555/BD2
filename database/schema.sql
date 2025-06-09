@@ -38,6 +38,11 @@ CREATE TABLE users (
 INSERT INTO users (id, username, email, password, selector) VALUES
 (1, 'deleted_user', 'deleted@mail.com', 'deleted_password', 'P');
 
+SELECT setval(
+        pg_get_serial_sequence('users', 'id'),
+        (SELECT MAX(id) FROM users)   -- = 1
+      );
+
 CREATE TABLE people (
     user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
     name VARCHAR(20) NOT NULL,
