@@ -52,57 +52,46 @@ export const parseArrayOrUndefined = (
 ): string[] | undefined => {
   if (!value) return undefined;
   if (Array.isArray(value)) {
-    return value.flatMap((v) =>
-      v
-        .split(',')
-        .map((s) => s.trim())
-        .filter(Boolean),
-    );
+    return value.flatMap((v) => v.split(',').map(s => s.trim()).filter(Boolean));
   }
-  return value
-    .split(',')
-    .map((s) => s.trim())
-    .filter(Boolean);
+  return value.split(',').map(s => s.trim()).filter(Boolean);
 };
 
 export const trimAllAfterFirstSpace = (
   values: string[] | undefined,
 ): string[] | undefined => {
   if (!values) return undefined;
-  return values.map((value) => {
+  return values.map(value => {
     const spaceIndex = value.indexOf(' ');
     if (spaceIndex === -1) return value;
     return value.substring(spaceIndex + 1);
   });
 };
 
-export function parseFiltersParams(
-  searchParams:
-    | {
-        query?: string;
-        page?: string;
-        sortKey?: string;
-        isSortDesc?: string;
-        offerType?: string;
-        Producers?: string[];
-        Models?: string[];
-        Colors?: string[];
-        Drivetypes?: string[];
-        Gearboxes?: string[];
-        Fueltypes?: string[];
-        Price_min?: string;
-        Price_max?: string;
-        Mileage_min?: string;
-        Mileage_max?: string;
-        Productionyear_min?: string;
-        Productionyear_max?: string;
-        Enginecapacity_min?: string;
-        Enginecapacity_max?: string;
-        Enginepower_min?: string;
-        Enginepower_max?: string;
-      }
-    | undefined,
-): SearchParams {
+
+export function parseFiltersParams(searchParams: {
+  query?: string;
+  page?: string;
+  sortKey?: string;
+  isSortDesc?: string;
+  offerType?: string;
+  Producers?: string[];
+  Models?: string[];
+  Colors?: string[];
+  Drivetypes?: string[];
+  Gearboxes?: string[];
+  Fueltypes?: string[];
+  Price_min?: string;
+  Price_max?: string;
+  Mileage_min?: string;
+  Mileage_max?: string;
+  Productionyear_min?: string;
+  Productionyear_max?: string;
+  Enginecapacity_min?: string;
+  Enginecapacity_max?: string;
+  Enginepower_min?: string;
+  Enginepower_max?: string;
+} | undefined) : SearchParams {
   return {
       pagination: {
           page: searchParams?.page ? parseInt(searchParams.page, 10) : 1,
@@ -141,4 +130,4 @@ export function parseFiltersParams(
         } : undefined,
       },
     };
-}
+  };
