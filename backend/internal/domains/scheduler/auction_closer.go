@@ -31,6 +31,9 @@ type SaleOfferRepositoryInterface interface {
 	GetAllActiveAuctions() ([]views.SaleOfferView, error)
 }
 
+type SaleOfferRetrieverInterface interface {
+	GetDetailedByID(id uint, userID *uint) (notification.SaleOfferInterface, error)
+}
 type PurchaseCreatorInterface interface {
 	Create(purchase *models.Purchase) error
 }
@@ -52,6 +55,7 @@ type auctionCloser struct {
 	purchaseCreator     PurchaseCreatorInterface
 	notificationService notification.NotificationServiceInterface
 	hub                 ws.HubInterface
+	saleOfferService    SaleOfferRetrieverInterface
 }
 
 func NewAuctionCloser(bidRepo BidRetrieverInterface, saleRepo SaleOfferRepositoryInterface, purchaseCreator PurchaseCreatorInterface, notificationService notification.NotificationServiceInterface, hub ws.HubInterface) AuctionCloserInterface {
@@ -110,7 +114,13 @@ func (c *auctionCloser) CloseAuction(cmd CloseCmd) {
 	_ = c.saleRepo.UpdateStatus(offer, enums.SOLD)
 
 	n := models.Notification{OfferID: auctionID}
-	if err := c.notificationService.CreateEndAuctionNotification(&n, winnerID, amount, offer); err != nil {
+	offerDTO, err := c.saleOfferService.GetDetailedByID(auctionID, nil)
+	if err != nil {
+		log.Printf("closer: GetDetailedByID err: %v", err)
+		_ = c.saleRepo.UpdateStatus(offer, enums.EXPIRED)
+		return
+	}
+	if err := c.notificationService.CreateEndAuctionNotification(&n, winnerID, amount, offerDTO); err != nil {
 		log.Printf("closer: notif err: %v", err)
 		_ = c.saleRepo.UpdateStatus(offer, enums.EXPIRED)
 		return
