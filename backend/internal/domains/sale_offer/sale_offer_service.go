@@ -8,6 +8,7 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/internal/enums"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"github.com/susek555/BD2/car-dealer-api/internal/views"
+	"github.com/susek555/BD2/car-dealer-api/pkg/formats"
 	"github.com/susek555/BD2/car-dealer-api/pkg/mapping"
 	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
 )
@@ -29,8 +30,9 @@ type ModelRetrieverInterface interface {
 	GetByID(id uint) (*models.Model, error)
 }
 
-type PurchaseCreatorInterface interface {
+type PurchaseRepositoryInterface interface {
 	Create(purchase *models.Purchase) error
+	GetByID(id uint) (*models.Purchase, error)
 }
 
 type SaleOfferPreparatorInterface interface {
@@ -69,7 +71,7 @@ type SaleOfferService struct {
 	imageRetriever  ImageRetrieverInterface
 	imageRemover    ImageRemoverIntreface
 	accessEvaluator OfferAccessEvaluatorInterface
-	purchaseCreator PurchaseCreatorInterface
+	purchaseRepo    PurchaseRepositoryInterface
 }
 
 func NewSaleOfferService(
@@ -79,7 +81,7 @@ func NewSaleOfferService(
 	imageRetriever ImageRetrieverInterface,
 	imageRemover ImageRemoverIntreface,
 	accessEvaluator OfferAccessEvaluatorInterface,
-	purchaseCreator PurchaseCreatorInterface,
+	purchaseRepo PurchaseRepositoryInterface,
 ) SaleOfferServiceInterface {
 	return &SaleOfferService{
 		saleOfferRepo:   saleOfferRepository,
@@ -88,7 +90,7 @@ func NewSaleOfferService(
 		imageRetriever:  imageRetriever,
 		imageRemover:    imageRemover,
 		accessEvaluator: accessEvaluator,
-		purchaseCreator: purchaseCreator,
+		purchaseRepo:    purchaseRepo,
 	}
 }
 
@@ -143,7 +145,7 @@ func (s *SaleOfferService) Buy(id uint, userID uint) (*models.SaleOffer, error) 
 		return nil, err
 	}
 	purchaseModel := &models.Purchase{OfferID: offer.ID, BuyerID: userID, FinalPrice: offer.Price, IssueDate: time.Now()}
-	if err := s.purchaseCreator.Create(purchaseModel); err != nil {
+	if err := s.purchaseRepo.Create(purchaseModel); err != nil {
 		return nil, err
 	}
 	return s.saleOfferRepo.GetByID(id)
@@ -301,6 +303,7 @@ func (s *SaleOfferService) mapOfferWithAdditionalFields(offer *views.SaleOfferVi
 	if len(urls) > 0 {
 		offerDTO.MainURL = urls[0]
 	}
+	offerDTO.IssueDate = s.getIssueDate(offer, userID)
 	return offerDTO, nil
 }
 
@@ -316,9 +319,7 @@ func (s *SaleOfferService) mapOfferWithAdditionalFieldsDetailed(offer *views.Sal
 		return nil, err
 	}
 	offerDTO.ImagesUrls = urls
-	if userID != nil && offer.BelongsToUser(*userID) {
-		offerDTO.Status = offer.Status
-	}
+	offerDTO.IssueDate = s.getIssueDate(offer, userID)
 	return offerDTO, nil
 }
 
@@ -337,6 +338,18 @@ func (s *SaleOfferService) getOfferImagesURLs(offer *views.SaleOfferView) ([]str
 		return nil, err
 	}
 	return mapping.MapSliceToDTOs(images, func(m *models.Image) *string { return &m.Url }), nil
+}
+
+func (s *SaleOfferService) getIssueDate(offer *views.SaleOfferView, userID *uint) *string {
+	if offer.Status == enums.SOLD && userID != nil {
+		purchase, _ := s.purchaseRepo.GetByID(offer.ID)
+		if purchase.BuyerID != *userID {
+			return nil
+		}
+		date := purchase.IssueDate.Format(formats.DateTimeLayout)
+		return &date
+	}
+	return nil
 }
 
 func (s *SaleOfferService) authorizeModificationByUser(offer SaleOfferEntityInterface, userID uint) error {

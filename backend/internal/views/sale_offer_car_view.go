@@ -34,7 +34,6 @@ type SaleOfferView struct {
 	Model              string
 	DateEnd            *time.Time
 	BuyNowPrice        *uint
-	IssueDate          *time.Time
 }
 
 func (v *SaleOfferView) GetID() uint {
