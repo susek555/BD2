@@ -15,6 +15,7 @@ RETURNS TRIGGER AS $$
 BEGIN
     DELETE FROM sale_offers so 
     WHERE so.user_id = OLD.id
+    AND so.status != 'sold'
     AND NOT EXISTS (
         SELECT 1 FROM purchases p 
         WHERE p.offer_id = so.id
