@@ -28,7 +28,7 @@ export default function SingleListingsOffer({ offer }: { offer: BaseOffer }) {
   const headerContent = (
     <div className='flex space-x-2 pr-4'>
       <button
-        disabled={!offer.can_edit}
+        disabled={!offer.can_modify}
         className='rounded-md bg-blue-600 px-3 py-1 text-sm font-medium text-white transition-colors hover:bg-blue-700'
         onClick={(e) => {
           e.stopPropagation();

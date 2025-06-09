@@ -10,7 +10,7 @@ export interface BaseOffer {
   price: number;
   is_auction: boolean;
   main_url: string;
-  can_edit: boolean;
+  can_modify: boolean;
 }
 
 export interface SaleOffer extends BaseOffer {
