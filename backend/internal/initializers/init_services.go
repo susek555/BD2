@@ -50,7 +50,7 @@ func InitializeServices() {
 	AccessEvaluator = sale_offer.NewAccessEvaluator(BidRepo, LikedOfferRepo)
 	SaleOfferService = sale_offer.NewSaleOfferService(SaleOfferRepo, ManufacturerRepo, ModelRepo, ImageRepo, ImageBucket, AccessEvaluator, PurchaseRepo)
 	AuctionService = auction.NewAuctionService(SaleOfferRepo, SaleOfferService, PurchaseRepo)
-	BidService = bid.NewBidService(BidRepo, SaleOfferRepo, AuctionService)
+	BidService = bid.NewBidService(BidRepo, bid.SaleOfferAdapter{Svc: SaleOfferService}, AuctionService)
 	LikedOfferService = liked_offer.NewLikedOfferService(LikedOfferRepo, SaleOfferRepo)
 	UserService = user.NewUserService(UserRepo)
 }
