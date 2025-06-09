@@ -70,14 +70,14 @@ func (h *Handler) CreateBid(c *gin.Context) {
 		OfferID: dto.AuctionID,
 	}
 
-	err = h.notificationService.CreateOutbidNotification(notification, dto.Amount, dto.Auction)
+	err = h.notificationService.CreateOutbidNotification(notification, dto.Amount, dto.Offer)
 	if err != nil {
 		log.Println("Error creating notification:", err)
 		return
 	}
 	h.hub.SaveNotificationForClients(auctionIDStr, userID, notification)
-	if dto.Auction.BuyNowPrice != nil {
-		if in.Amount >= *dto.Auction.BuyNowPrice {
+	if dto.Offer.HasBuyNowPrice() {
+		if in.Amount >= dto.Offer.GetPrice() {
 			h.sched.ForceCloseAuction(auctionIDStr, userID, in.Amount)
 		}
 	}
