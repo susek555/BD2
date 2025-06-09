@@ -1,12 +1,14 @@
 import { fetchHistory } from '@/app/lib/data/account/data';
-import {
-  parseFiltersParams,
-} from '@/app/lib/definitions/SearchParams';
-import OffersHistory from '@/app/ui/account/activity/user-history-table';
+import { parseFiltersParams } from '@/app/lib/definitions/SearchParams';
 import FoundInfo from '@/app/ui/(common)/found-info';
-import Pagination from '@/app/ui/(offers-table)/pagination';
 import SideBar from '@/app/ui/(filters-sidebar)/sidebar';
-import { OffersFoundSkeleton, OffersTableSkeleton, SideBarSkeleton } from '@/app/ui/skeletons';
+import Pagination from '@/app/ui/(offers-table)/pagination';
+import OffersHistory from '@/app/ui/account/activity/user-history-table';
+import {
+  OffersFoundSkeleton,
+  OffersTableSkeleton,
+  SideBarSkeleton,
+} from '@/app/ui/skeletons';
 import { Suspense } from 'react';
 
 export default async function ActivityPage(props: {
@@ -53,16 +55,18 @@ export default async function ActivityPage(props: {
       </div>
       <div className='flex-grow p-6 md:px-12 md:py-8'>
         <Suspense fallback={<OffersFoundSkeleton />}>
-          <FoundInfo title={"Offers found"} totalOffers={totalOffers} />
+          <FoundInfo title={'Offers found'} totalOffers={totalOffers} />
         </Suspense>
         <div className='my-4' />
         <Suspense fallback={<OffersTableSkeleton />}>
           <OffersHistory offers={offers} />
         </Suspense>
         <div className='mt-5 flex w-full justify-center'>
-          <Suspense>
-            <Pagination totalPages={totalPages} />
-          </Suspense>
+          {totalOffers !== 0 && (
+            <Suspense>
+              <Pagination totalPages={totalPages} />
+            </Suspense>
+          )}
         </div>
       </div>
     </div>
