@@ -1,3 +1,5 @@
+import { getApiUrl } from '../../get-api-url';
+
 export const fetchListing = async (id: string) => {
   const response = await fetch(`/api/listing/${id}`, {
     method: 'GET',
@@ -44,8 +46,14 @@ export const createListing = async (listingData: any) => {
 };
 
 export const deleteListing = async (id: string) => {
-  const response = await fetch(`/api/listing/${id}`, {
+  const url = getApiUrl(`/api/listing/${id}`);
+  console.log(url);
+
+  const response = await fetch(url, {
     method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
   });
 
   if (!response.ok) {
