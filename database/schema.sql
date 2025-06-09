@@ -35,6 +35,9 @@ CREATE TABLE users (
     selector SELECTOR NOT NULL
 );
 
+INSERT INTO users (id, username, email, password, selector) VALUES
+(1, 'deleted_user', 'deleted@mail.com', 'deleted_password', 'P');
+
 CREATE TABLE people (
     user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
     name VARCHAR(20) NOT NULL,
@@ -61,7 +64,7 @@ CREATE TABLE models (
 
 CREATE TABLE sale_offers (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL REFERENCES users(id),
+    user_id INTEGER NOT NULL DEFAULT 1 REFERENCES users(id) ON DELETE SET DEFAULT DEFERRABLE,
     description VARCHAR(2000) NOT NULL,
     price INTEGER NOT NULL,
     date_of_issue TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -69,6 +72,9 @@ CREATE TABLE sale_offers (
     status OFFER_STATUS NOT NULL,
     is_auction BOOLEAN DEFAULT FALSE
 );
+
+CREATE INDEX IF NOT EXISTS idx_sale_offers_user_id
+  ON sale_offers (user_id);
 
 CREATE TABLE auctions (
     offer_id INTEGER PRIMARY KEY REFERENCES sale_offers(id) ON DELETE CASCADE,
@@ -79,8 +85,8 @@ CREATE TABLE auctions (
 
 CREATE TABLE bids (
     id SERIAL PRIMARY KEY,
-    auction_id INTEGER NOT NULL REFERENCES auctions(offer_id),
-    bidder_id INTEGER NOT NULL REFERENCES users(id),
+    auction_id INTEGER NOT NULL REFERENCES auctions(offer_id) ON DELETE CASCADE,
+    bidder_id INTEGER NOT NULL DEFAULT 1 REFERENCES users(id) ON DELETE SET DEFAULT DEFERRABLE,
     amount INTEGER NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -106,7 +112,7 @@ CREATE TABLE cars (
 
 CREATE TABLE notifications (
     id SERIAL PRIMARY KEY,
-    offer_id INTEGER REFERENCES sale_offers(id),
+    offer_id INTEGER REFERENCES sale_offers(id) ON DELETE SET NULL,
     title VARCHAR(100) NOT NULL,
     description VARCHAR(200) NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -114,41 +120,45 @@ CREATE TABLE notifications (
 
 CREATE TABLE client_notifications (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id),
-    notification_id INTEGER REFERENCES notifications(id),
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    notification_id INTEGER REFERENCES notifications(id) ON DELETE CASCADE,
     seen BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE liked_offers (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id),
-    offer_id INTEGER REFERENCES sale_offers(id)
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    offer_id INTEGER REFERENCES sale_offers(id) ON DELETE CASCADE
 );
 
 CREATE TABLE refresh_tokens (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id),
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     token VARCHAR(500) NOT NULL,
     expiry_date TIMESTAMP NOT NULL
 );
 
 CREATE TABLE purchases (
-    offer_id INTEGER PRIMARY KEY REFERENCES sale_offers(id) ON DELETE CASCADE,
-    buyer_id INTEGER REFERENCES users(id),
+    offer_id INTEGER PRIMARY KEY REFERENCES sale_offers(id),
+    buyer_id INTEGER DEFAULT 1 REFERENCES users(id) ON DELETE SET DEFAULT DEFERRABLE,
     final_price INTEGER NOT NULL,
     issue_date DATE NOT NULL
 );
 
 CREATE TABLE reviews (
     id SERIAL PRIMARY KEY,
-    reviewer_id INTEGER REFERENCES users(id),
-    reviewee_id INTEGER REFERENCES users(id),
+    reviewer_id INTEGER DEFAULT 1 REFERENCES users(id) ON DELETE SET DEFAULT DEFERRABLE,
+    reviewee_id INTEGER DEFAULT 1 REFERENCES users(id) ON DELETE SET DEFAULT DEFERRABLE,
     description VARCHAR(200) NOT NULL,
     rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
     review_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CHECK (reviewer_id <> reviewee_id),
-    UNIQUE (reviewer_id, reviewee_id)
+    CHECK (reviewer_id <> reviewee_id)
 );
+
+CREATE UNIQUE INDEX uq_reviews_pair_active 
+    ON reviews(reviewer_id, reviewee_id)
+    WHERE reviewer_id <> 1
+    AND reviewee_id <> 1;
 
 CREATE TABLE images (
     id SERIAL PRIMARY KEY,
