@@ -42,6 +42,7 @@ export async function getHistory(
       page: 1,
       page_size: 6,
     },
+    filter: {},
   },
 ): Promise<{
   offers: HistoryOffer[];
@@ -64,27 +65,13 @@ export async function getHistory(
   return response.json();
 }
 
-export async function getListings(
-  params: SearchParams = {
-    pagination: {
-      page: 1,
-      page_size: 6,
-    },
-  },
-): Promise<{
+export async function getListings(params: SearchParams): Promise<{
   offers: SaleOffer[];
   pagination: {
     total_pages: number;
     total_records: number;
   };
 }> {
-  console.log(
-    JSON.stringify({
-      page: 1,
-      page_size: 6,
-    }),
-  );
-
   const response = await fetchWithRefresh(
     `${process.env.API_URL}/sale-offer/my-offers`,
     {
@@ -92,11 +79,7 @@ export async function getListings(
       headers: {
         'Content-Type': 'application/json',
       },
-      // TODO add all params as body
-      body: JSON.stringify({
-        page: 1,
-        page_size: 6,
-      }),
+      body: JSON.stringify(params),
     },
   );
 
@@ -113,6 +96,7 @@ export async function getFavorites(
       page: 1,
       page_size: 6,
     },
+    filter: {},
   },
 ): Promise<{
   offers: SaleOffer[];
