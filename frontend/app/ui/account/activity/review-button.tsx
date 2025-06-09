@@ -5,6 +5,7 @@ import { Review } from '@/app/lib/definitions/reviews';
 import { MouseEvent, useState } from 'react';
 import { AverageRatingCard } from '../../review/average-rating-card';
 import ReviewModal from '../../review/review-modal';
+import toast from 'react-hot-toast';
 
 interface ReviewButtonProps {
   sellerRating?: number;
@@ -30,7 +31,7 @@ export default function ReviewButton({
         setReview(review);
       }
     } catch {
-      // TODO display error message when failed to fetch review
+      toast.error("Something went wrong fetching review")
       return;
     }
     setDialogOpen(true);
