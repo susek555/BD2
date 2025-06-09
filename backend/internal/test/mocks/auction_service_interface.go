@@ -6,7 +6,7 @@ import (
 	mock "github.com/stretchr/testify/mock"
 	auction "github.com/susek555/BD2/car-dealer-api/internal/domains/auction"
 
-	models "github.com/susek555/BD2/car-dealer-api/internal/models"
+	notification "github.com/susek555/BD2/car-dealer-api/internal/domains/notification"
 
 	sale_offer "github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 )
@@ -25,23 +25,23 @@ func (_m *AuctionServiceInterface) EXPECT() *AuctionServiceInterface_Expecter {
 }
 
 // BuyNow provides a mock function with given fields: auctionID, userID
-func (_m *AuctionServiceInterface) BuyNow(auctionID uint, userID uint) (*models.Auction, error) {
+func (_m *AuctionServiceInterface) BuyNow(auctionID uint, userID uint) (notification.SaleOfferInterface, error) {
 	ret := _m.Called(auctionID, userID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for BuyNow")
 	}
 
-	var r0 *models.Auction
+	var r0 notification.SaleOfferInterface
 	var r1 error
-	if rf, ok := ret.Get(0).(func(uint, uint) (*models.Auction, error)); ok {
+	if rf, ok := ret.Get(0).(func(uint, uint) (notification.SaleOfferInterface, error)); ok {
 		return rf(auctionID, userID)
 	}
-	if rf, ok := ret.Get(0).(func(uint, uint) *models.Auction); ok {
+	if rf, ok := ret.Get(0).(func(uint, uint) notification.SaleOfferInterface); ok {
 		r0 = rf(auctionID, userID)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*models.Auction)
+			r0 = ret.Get(0).(notification.SaleOfferInterface)
 		}
 	}
 
@@ -73,12 +73,12 @@ func (_c *AuctionServiceInterface_BuyNow_Call) Run(run func(auctionID uint, user
 	return _c
 }
 
-func (_c *AuctionServiceInterface_BuyNow_Call) Return(_a0 *models.Auction, _a1 error) *AuctionServiceInterface_BuyNow_Call {
+func (_c *AuctionServiceInterface_BuyNow_Call) Return(_a0 notification.SaleOfferInterface, _a1 error) *AuctionServiceInterface_BuyNow_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *AuctionServiceInterface_BuyNow_Call) RunAndReturn(run func(uint, uint) (*models.Auction, error)) *AuctionServiceInterface_BuyNow_Call {
+func (_c *AuctionServiceInterface_BuyNow_Call) RunAndReturn(run func(uint, uint) (notification.SaleOfferInterface, error)) *AuctionServiceInterface_BuyNow_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -247,17 +247,17 @@ func (_c *AuctionServiceInterface_Update_Call) RunAndReturn(run func(*auction.Up
 	return _c
 }
 
-// UpdatePrice provides a mock function with given fields: _a0, newPrice
-func (_m *AuctionServiceInterface) UpdatePrice(_a0 *models.SaleOffer, newPrice uint) error {
-	ret := _m.Called(_a0, newPrice)
+// UpdatePrice provides a mock function with given fields: offerID, newPrice
+func (_m *AuctionServiceInterface) UpdatePrice(offerID uint, newPrice uint) error {
+	ret := _m.Called(offerID, newPrice)
 
 	if len(ret) == 0 {
 		panic("no return value specified for UpdatePrice")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(*models.SaleOffer, uint) error); ok {
-		r0 = rf(_a0, newPrice)
+	if rf, ok := ret.Get(0).(func(uint, uint) error); ok {
+		r0 = rf(offerID, newPrice)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -271,15 +271,15 @@ type AuctionServiceInterface_UpdatePrice_Call struct {
 }
 
 // UpdatePrice is a helper method to define mock.On call
-//   - _a0 *models.SaleOffer
+//   - offerID uint
 //   - newPrice uint
-func (_e *AuctionServiceInterface_Expecter) UpdatePrice(_a0 interface{}, newPrice interface{}) *AuctionServiceInterface_UpdatePrice_Call {
-	return &AuctionServiceInterface_UpdatePrice_Call{Call: _e.mock.On("UpdatePrice", _a0, newPrice)}
+func (_e *AuctionServiceInterface_Expecter) UpdatePrice(offerID interface{}, newPrice interface{}) *AuctionServiceInterface_UpdatePrice_Call {
+	return &AuctionServiceInterface_UpdatePrice_Call{Call: _e.mock.On("UpdatePrice", offerID, newPrice)}
 }
 
-func (_c *AuctionServiceInterface_UpdatePrice_Call) Run(run func(_a0 *models.SaleOffer, newPrice uint)) *AuctionServiceInterface_UpdatePrice_Call {
+func (_c *AuctionServiceInterface_UpdatePrice_Call) Run(run func(offerID uint, newPrice uint)) *AuctionServiceInterface_UpdatePrice_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(*models.SaleOffer), args[1].(uint))
+		run(args[0].(uint), args[1].(uint))
 	})
 	return _c
 }
@@ -289,7 +289,7 @@ func (_c *AuctionServiceInterface_UpdatePrice_Call) Return(_a0 error) *AuctionSe
 	return _c
 }
 
-func (_c *AuctionServiceInterface_UpdatePrice_Call) RunAndReturn(run func(*models.SaleOffer, uint) error) *AuctionServiceInterface_UpdatePrice_Call {
+func (_c *AuctionServiceInterface_UpdatePrice_Call) RunAndReturn(run func(uint, uint) error) *AuctionServiceInterface_UpdatePrice_Call {
 	_c.Call.Return(run)
 	return _c
 }
