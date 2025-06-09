@@ -11,10 +11,10 @@ import (
 //go:generate mockery --name=NotificationServiceInterface --output=../../test/mocks --case=snake --with-expecter
 
 type NotificationServiceInterface interface {
-	CreateOutbidNotification(notification *models.Notification, amount uint, offer *models.Auction) error
-	CreateEndAuctionNotification(notification *models.Notification, winner string, winningBid uint, offer *models.SaleOffer) error
-	CreateBuyNotification(notification *models.Notification, buyerID string, offer *models.SaleOffer) error
-	CreateBuyNowNotification(notification *models.Notification, buyerID string, offer *models.SaleOffer) error
+	CreateOutbidNotification(notification *models.Notification, amount uint, offer SaleOfferInterface) error
+	CreateEndAuctionNotification(notification *models.Notification, winner string, winningBid uint, offer SaleOfferInterface) error
+	CreateBuyNotification(notification *models.Notification, buyerID string, offer SaleOfferInterface) error
+	CreateBuyNowNotification(notification *models.Notification, buyerID string, offer SaleOfferInterface) error
 	GetNotificationByID(id uint) (*models.Notification, error)
 	GetFilteredNotifications(filter *NotificationFilter) (*RetrieveNotificationsWithPagination, error)
 	UpdateSeenStatus(notificationID, userID uint, seen bool) error
@@ -35,34 +35,34 @@ func NewNotificationService(notificationRepository NotificationRepositoryInterfa
 	}
 }
 
-func (s *NotificationService) CreateOutbidNotification(notification *models.Notification, amount uint, offer *models.Auction) error {
+func (s *NotificationService) CreateOutbidNotification(notification *models.Notification, amount uint, offer SaleOfferInterface) error {
 	notification.CreatedAt = time.Now().UTC()
-	notification.Title = fmt.Sprintf(OutbidTitleTemplate, offer.Offer.Car.Model.Manufacturer.Name, offer.Offer.Car.Model.Name)
+	notification.Title = fmt.Sprintf(OutbidTitleTemplate, offer.GetBrand(), offer.GetModel())
 	notification.Description = fmt.Sprintf(OutbidDescriptionTemplate, amount)
 	return s.NotificationRepository.Create(notification)
 }
 
-func (s *NotificationService) CreateEndAuctionNotification(notification *models.Notification, winner string, winningBid uint, offer *models.SaleOffer) error {
+func (s *NotificationService) CreateEndAuctionNotification(notification *models.Notification, winner string, winningBid uint, offer SaleOfferInterface) error {
 	if winningBid == 0 && winner == "" {
 		return ErrNoBids
 	}
 	notification.CreatedAt = time.Now().UTC()
-	notification.Title = fmt.Sprintf(EndAuctionTitleTemplate, offer.Car.Model.Manufacturer.Name, offer.Car.Model.Name)
-	notification.Description = fmt.Sprintf(EndAuctionDescriptionTemplate, offer.Car.Model.Manufacturer.Name, offer.Car.Model.Name, winner, winningBid)
+	notification.Title = fmt.Sprintf(EndAuctionTitleTemplate, offer.GetBrand(), offer.GetModel())
+	notification.Description = fmt.Sprintf(EndAuctionDescriptionTemplate, offer.GetBrand(), offer.GetModel(), winner, winningBid)
 	return s.NotificationRepository.Create(notification)
 }
 
-func (s *NotificationService) CreateBuyNotification(notification *models.Notification, buyerID string, offer *models.SaleOffer) error {
+func (s *NotificationService) CreateBuyNotification(notification *models.Notification, buyerID string, offer SaleOfferInterface) error {
 	notification.CreatedAt = time.Now().UTC()
-	notification.Title = fmt.Sprintf(BuyOfferTitleTemplate, offer.Car.Model.Manufacturer.Name, offer.Car.Model.Name)
-	notification.Description = fmt.Sprintf(BuyOfferDescriptionTemplate, buyerID, offer.Price)
+	notification.Title = fmt.Sprintf(BuyOfferTitleTemplate, offer.GetBrand(), offer.GetModel())
+	notification.Description = fmt.Sprintf(BuyOfferDescriptionTemplate, buyerID, offer.GetPrice())
 	return s.NotificationRepository.Create(notification)
 }
 
-func (s *NotificationService) CreateBuyNowNotification(notification *models.Notification, buyerID string, offer *models.SaleOffer) error {
+func (s *NotificationService) CreateBuyNowNotification(notification *models.Notification, buyerID string, offer SaleOfferInterface) error {
 	notification.CreatedAt = time.Now().UTC()
-	notification.Title = fmt.Sprintf(BuyNowTitleTemplate, offer.Car.Model.Manufacturer.Name, offer.Car.Model.Name)
-	notification.Description = fmt.Sprintf(BuyNowDescriptionTemplate, buyerID, *offer.Auction.BuyNowPrice)
+	notification.Title = fmt.Sprintf(BuyNowTitleTemplate, offer.GetBrand(), offer.GetModel())
+	notification.Description = fmt.Sprintf(BuyNowDescriptionTemplate, buyerID, offer.GetPrice())
 	return s.NotificationRepository.Create(notification)
 }
 
