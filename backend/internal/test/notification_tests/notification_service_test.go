@@ -7,7 +7,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/notification"
-	"github.com/susek555/BD2/car-dealer-api/internal/enums"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
 	"gorm.io/gorm"
@@ -136,41 +136,41 @@ func createSampleNotification() *models.Notification {
 	}
 }
 
-func createSampleSaleOffer() *models.SaleOffer {
+func createSampleSaleOffer_With_BuyNowPrice() notification.SaleOfferInterface {
 	buyNowPrice := uint(30000)
-	return &models.SaleOffer{
-		ID:     1,
-		Price:  25000,
-		Status: enums.PUBLISHED,
-		Car: &models.Car{
-			Model: &models.Model{
-				Name: "Test Model",
-				Manufacturer: &models.Manufacturer{
-					Name: "Test Manufacturer",
-				},
-			},
-		},
-		Auction: &models.Auction{
-			BuyNowPrice: &buyNowPrice,
-		},
+	return &sale_offer.RetrieveDetailedSaleOfferDTO{
+		ID:          1,
+		UserID:      1,
+		Username:    "testuser",
+		Brand:       "Test Manufacturer",
+		Model:       "Test Model",
+		BuyNowPrice: &buyNowPrice,
+		Price:       25000,
+		IsAuction:   true,
 	}
 }
 
-func createSampleAuction() *models.Auction {
+func createSampleSaleOffer_Without_BuyNowPrice() notification.SaleOfferInterface {
+	return &sale_offer.RetrieveDetailedSaleOfferDTO{
+		ID:        1,
+		UserID:    1,
+		Username:  "testuser",
+		Brand:     "Test Manufacturer",
+		Model:     "Test Model",
+		Price:     25000,
+		IsAuction: true,
+	}
+}
+
+func createSampleAuction() *sale_offer.RetrieveDetailedSaleOfferDTO {
 	buyNowPrice := uint(30000)
-	return &models.Auction{
-		OfferID:     1,
+	return &sale_offer.RetrieveDetailedSaleOfferDTO{
+		ID:          1,
+		UserID:      1,
+		Username:    "testuser",
+		Brand:       "Test Manufacturer",
+		Model:       "Test Model",
 		BuyNowPrice: &buyNowPrice,
-		Offer: &models.SaleOffer{
-			Car: &models.Car{
-				Model: &models.Model{
-					Name: "Test Model",
-					Manufacturer: &models.Manufacturer{
-						Name: "Test Manufacturer",
-					},
-				},
-			},
-		},
 	}
 }
 
@@ -230,7 +230,7 @@ func TestNotificationService_CreateEndAuctionNotification_Success(t *testing.T) 
 	service := notification.NewNotificationService(notificationRepo, clientNotificationRepo)
 
 	testNotification := createSampleNotification()
-	testSaleOffer := createSampleSaleOffer()
+	testSaleOffer := createSampleSaleOffer_With_BuyNowPrice()
 	winner := "testuser123"
 	winningBid := uint(28000)
 
@@ -252,7 +252,7 @@ func TestNotificationService_CreateEndAuctionNotification_NoBidsError(t *testing
 	service := notification.NewNotificationService(notificationRepo, clientNotificationRepo)
 
 	testNotification := createSampleNotification()
-	testSaleOffer := createSampleSaleOffer()
+	testSaleOffer := createSampleSaleOffer_With_BuyNowPrice()
 	winner := ""
 	winningBid := uint(0)
 
@@ -267,7 +267,7 @@ func TestNotificationService_CreateEndAuctionNotification_RepositoryError(t *tes
 	service := notification.NewNotificationService(notificationRepo, clientNotificationRepo)
 
 	testNotification := createSampleNotification()
-	testSaleOffer := createSampleSaleOffer()
+	testSaleOffer := createSampleSaleOffer_Without_BuyNowPrice()
 	winner := "testuser123"
 	winningBid := uint(28000)
 	expectedError := errors.New("repository error")
@@ -287,7 +287,7 @@ func TestNotificationService_CreateBuyNotification_Success(t *testing.T) {
 	service := notification.NewNotificationService(notificationRepo, clientNotificationRepo)
 
 	testNotification := createSampleNotification()
-	testSaleOffer := createSampleSaleOffer()
+	testSaleOffer := createSampleSaleOffer_Without_BuyNowPrice()
 	buyerID := "buyer123"
 
 	notificationRepo.createFunc = func(notif *models.Notification) error {
@@ -308,7 +308,7 @@ func TestNotificationService_CreateBuyNowNotification_Success(t *testing.T) {
 	service := notification.NewNotificationService(notificationRepo, clientNotificationRepo)
 
 	testNotification := createSampleNotification()
-	testSaleOffer := createSampleSaleOffer()
+	testSaleOffer := createSampleSaleOffer_With_BuyNowPrice()
 	buyerID := "buyer123"
 
 	notificationRepo.createFunc = func(notif *models.Notification) error {
