@@ -59,7 +59,7 @@ export default async function ListingsPage(props: {
             <FoundInfo title={'Offers found'} totalOffers={totalOffers} />
           </Suspense>
           <Link
-            href='/listing/create' // TODO add actual creeate redirect
+            href='/offer/add'
             className='flex items-center rounded-md bg-green-500 px-4 py-2 text-white hover:bg-green-600'
           >
             Add listing <PlusIcon className='ml-2 h-5 w-5' />
