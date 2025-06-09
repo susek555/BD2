@@ -13,7 +13,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
-      - ./database/init-pg-ivm.sql:/docker-entrypoint-initdb.d/02-insert-manufacturers-and-models.sql
+      - ./database/insert-manufacturers-and-models.sql:/docker-entrypoint-initdb.d/02-insert-manufacturers-and-models.sql
       - ./database/triggers.sql:/docker-entrypoint-initdb.d/03-triggers.sql
       - ./database/init-test-db.sql:/docker-entrypoint-initdb.d/04-init-test-db.sql
       - ./database/init-pg-ivm.sql:/docker-entrypoint-initdb.d/05-init-pg-ivm.sql
