@@ -58,6 +58,7 @@ type UserContext struct {
 
 type RetrieveSaleOfferDTO struct {
 	ID             uint         `json:"id"`
+	UserID         uint         `json:"user_id"`
 	Username       string       `json:"username"`
 	Name           string       `json:"name"`
 	Price          uint         `json:"price"`
@@ -103,6 +104,6 @@ type RetrieveDetailedSaleOfferDTO struct {
 }
 
 type RetrieveOffersWithPagination struct {
-	PaginationResponse *pagination.PaginationResponse `json:"pagination"`
-	Offers             []RetrieveSaleOfferDTO         `json:"offers"`
+	PaginationResponse pagination.PaginationResponse `json:"pagination"`
+	Offers             []RetrieveSaleOfferDTO        `json:"offers"`
 }
