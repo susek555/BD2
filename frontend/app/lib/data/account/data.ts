@@ -51,15 +51,19 @@ export async function getHistory(
     total_records: number;
   };
 }> {
-  const url = `${process.env.URL}/api/account/history`;
-
-  const response = await fetch(url, {
-    method: 'POST',
-    body: JSON.stringify(params),
-  });
+  const response = await fetchWithRefresh(
+    `${process.env.API_URL}/sale-offer/purchased-offers`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(params),
+    },
+  );
 
   if (!response.ok) {
-    throw new Error('Failed to fetch history offers');
+    throw new Error("Failed to fetch user's listings");
   }
 
   return response.json();
@@ -131,11 +135,30 @@ export async function fetchHistory(params: SearchParams): Promise<{
   try {
     const data = await getHistory(params);
 
-    return {
+    const mappedResponse: {
+      totalPages: number;
+      totalOffers: number;
+      offers: HistoryOffer[];
+    } = {
+      offers: data.offers.map((offer: any) => ({
+        id: offer.id,
+        name: offer.name,
+        production_year: offer.production_year,
+        mileage: offer.mileage,
+        color: offer.color,
+        price: offer.price,
+        is_auction: offer.is_auction,
+        main_url: offer.main_url,
+        can_modify: offer.can_modify,
+        date_end: offer.issue_date,
+        seller_id: offer.seller_id,
+        seller_name: offer.username,
+      })),
       totalPages: data.pagination.total_pages,
       totalOffers: data.pagination.total_records,
-      offers: data.offers,
     };
+
+    return mappedResponse;
   } catch (error) {
     console.error('Api error:', error);
     throw new Error("Failed to fetch user's history.");
