@@ -1,5 +1,4 @@
 import { TopBar } from '@/app/ui/(topbar)/topbar';
-import { Toaster } from 'react-hot-toast';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -7,7 +6,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <div className='h-full flex-none md:h-10'>
         <TopBar />
       </div>
-      <Toaster />
 
       {children}
     </div>
