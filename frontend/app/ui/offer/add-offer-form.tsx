@@ -34,7 +34,8 @@ export function OfferForm(
             const progressState = formData.get('progressState') ? parseInt(formData.get('progressState') as string) : parseInt(OfferFormEnum.initialState.toString());
             formData.delete('progressState');
 
-            const requiredImages = imagesURLs.length >= 3 ? 0 : 3 - imagesURLs.length;
+            const requiredImages = imagesURLs.length - imagesURLsToBeDeleted.length >= 3 ? 0 : 3 - imagesURLs.length + imagesURLsToBeDeleted.length;
+            console.log("Required images:", requiredImages);
             const { progressState: result, offerFormState } = parseOfferForm(formData, progressState, requiredImages);
 
             setProgressState(result);

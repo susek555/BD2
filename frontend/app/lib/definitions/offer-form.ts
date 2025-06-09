@@ -145,10 +145,17 @@ export const OfferPricingFormSchema = z.object({
 export const OfferImagesFormSchema = (minImages: number = 3) => z.object({
   images: z
     .array(z.instanceof(File))
-    .min(minImages, { message: `At least ${minImages} image${minImages === 1 ? '' : 's'} required` })
+    // .min(minImages, { message: `At least ${minImages} image${minImages === 1 ? '' : 's'} required` })
     .max(10, { message: 'A maximum of 10 images is allowed' })
     .refine((files) => files.every(file => file.size <= 5 * 1024 * 1024), {
       message: 'Each image must be less than 5MB',
+    })
+    .refine((files) => {
+      // Filter out ghost files with empty names
+      const validFiles = files.filter(file => file.name.trim() !== "");
+      return minImages === 0 || validFiles.length >= minImages;
+    }, {
+      message: `At least ${minImages} image${minImages === 1 ? '' : 's'} required`,
     }),
 });
 
