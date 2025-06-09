@@ -45,7 +45,7 @@ type SaleOfferManagerInterface interface {
 	Create(in *CreateSaleOfferDTO) (*RetrieveDetailedSaleOfferDTO, error)
 	Update(in *UpdateSaleOfferDTO, userID uint) (*RetrieveDetailedSaleOfferDTO, error)
 	Publish(id uint, userID uint) (*RetrieveDetailedSaleOfferDTO, error)
-	Buy(id uint, userID uint) (*models.SaleOffer, error)
+	Buy(id uint, userID uint) (*RetrieveDetailedSaleOfferDTO, error)
 	Delete(id uint, userID uint) error
 }
 
@@ -133,7 +133,7 @@ func (s *SaleOfferService) Publish(id uint, userID uint) (*RetrieveDetailedSaleO
 	return s.GetDetailedByID(id, &userID)
 }
 
-func (s *SaleOfferService) Buy(id uint, userID uint) (*models.SaleOffer, error) {
+func (s *SaleOfferService) Buy(id uint, userID uint) (*RetrieveDetailedSaleOfferDTO, error) {
 	offer, err := s.PrepareForBuySaleOffer(id, userID)
 	if err != nil {
 		return nil, err
@@ -148,7 +148,7 @@ func (s *SaleOfferService) Buy(id uint, userID uint) (*models.SaleOffer, error) 
 	if err := s.purchaseRepo.Create(purchaseModel); err != nil {
 		return nil, err
 	}
-	return s.saleOfferRepo.GetByID(id)
+	return s.GetDetailedByID(offer.ID, &userID)
 }
 
 func (s *SaleOfferService) Delete(id uint, userID uint) error {
