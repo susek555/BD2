@@ -49,7 +49,6 @@ type UpdateSaleOfferDTO struct {
 	Drive              *enums.Drive        `json:"drive"`
 	ManufacturerName   *string             `json:"manufacturer"`
 	ModelName          *string             `json:"model"`
-	Status             *enums.Status       `json:"-"`
 }
 
 type UserContext struct {
