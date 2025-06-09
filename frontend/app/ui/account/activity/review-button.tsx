@@ -3,20 +3,20 @@
 import { getReviewByRevieweeReviewer } from '@/app/lib/api/reviews';
 import { Review } from '@/app/lib/definitions/reviews';
 import { MouseEvent, useState } from 'react';
+import toast from 'react-hot-toast';
 import { AverageRatingCard } from '../../review/average-rating-card';
 import ReviewModal from '../../review/review-modal';
-import toast from 'react-hot-toast';
 
 interface ReviewButtonProps {
-  sellerRating?: number;
   sellerId: number;
   userId: number;
+  reivew?: Review;
 }
 
 export default function ReviewButton({
-  sellerRating,
   sellerId,
   userId,
+  reivew,
 }: ReviewButtonProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [review, setReview] = useState<Review | undefined>(undefined);
@@ -26,12 +26,12 @@ export default function ReviewButton({
     e.stopPropagation();
     e.preventDefault();
     try {
-      if (sellerRating) {
+      if (!review) {
         const review = await getReviewByRevieweeReviewer(sellerId, userId);
         setReview(review);
       }
     } catch {
-      toast.error("Something went wrong fetching review")
+      toast.error('Something went wrong fetching review');
       return;
     }
     setDialogOpen(true);
@@ -39,12 +39,12 @@ export default function ReviewButton({
 
   return (
     <>
-      {sellerRating ? (
+      {review?.rating ? (
         <button
           onClick={onClick}
           className='focus:ring-opacity-50 rounded-md transition-transform duration-200 hover:scale-105 focus:ring-2 focus:ring-blue-500 focus:outline-none'
         >
-          <AverageRatingCard rating={sellerRating} />
+          <AverageRatingCard rating={review.rating} />
         </button>
       ) : (
         <button
