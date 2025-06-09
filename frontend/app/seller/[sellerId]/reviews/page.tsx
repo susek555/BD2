@@ -107,11 +107,13 @@ export default async function ReviewsPage({ params, searchParams }: PageProps) {
               </Suspense>
             </div>
 
-            <div className='mt-5 flex w-full justify-center pb-4'>
-              <Suspense>
-                <Pagination totalPages={reviewPage.pagination.totalPages} />
-              </Suspense>
-            </div>
+            {reviewPage.pagination.totalRecords !== 0 && (
+              <div className='mt-5 flex w-full justify-center'>
+                <Suspense>
+                  <Pagination totalPages={reviewPage.pagination.totalPages} />
+                </Suspense>
+              </div>
+            )}
           </div>
 
           <div className='lg:col-span-3'>

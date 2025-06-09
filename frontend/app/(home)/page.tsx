@@ -1,13 +1,15 @@
+import { fetchHomePageData } from '@/app/lib/data/(home)/data';
 import SideBar from '@/app/ui/(filters-sidebar)/sidebar';
 import { Suspense } from 'react';
-import { fetchHomePageData } from "@/app/lib/data/(home)/data";
-import {
-  parseFiltersParams,
-} from '../lib/definitions/SearchParams';
+import { parseFiltersParams } from '../lib/definitions/SearchParams';
 import FoundInfo from '../ui/(common)/found-info';
 import OffersTable from '../ui/(offers-table)/offers-table';
 import Pagination from '../ui/(offers-table)/pagination';
-import { OffersFoundSkeleton, OffersTableSkeleton, SideBarSkeleton } from '../ui/skeletons';
+import {
+  OffersFoundSkeleton,
+  OffersTableSkeleton,
+  SideBarSkeleton,
+} from '../ui/skeletons';
 
 //TODO fix bug with filters not syncing when Home button clicked
 //TODO handle loading errors
@@ -55,17 +57,19 @@ export default async function Home(props: {
         </div>
         <div className='flex-grow p-6 md:overflow-y-auto md:px-12 md:py-8'>
           <Suspense fallback={<OffersFoundSkeleton />}>
-            <FoundInfo title={"Offers found"} totalOffers={totalOffers} />
+            <FoundInfo title={'Offers found'} totalOffers={totalOffers} />
           </Suspense>
           <div className='my-4' />
           <Suspense fallback={<OffersTableSkeleton />}>
             <OffersTable offers={offers} />
           </Suspense>
-          <div className='mt-5 flex w-full justify-center pr-20'>
-            <Suspense>
-              <Pagination totalPages={totalPages} />
-            </Suspense>
-          </div>
+          {totalOffers !== 0 && (
+            <div className='mt-5 flex w-full justify-center'>
+              <Suspense>
+                <Pagination totalPages={totalPages} />
+              </Suspense>
+            </div>
+          )}
         </div>
       </div>
     </main>
