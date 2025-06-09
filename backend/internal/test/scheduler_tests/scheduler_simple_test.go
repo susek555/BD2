@@ -14,6 +14,7 @@ func TestScheduler_Creation(t *testing.T) {
 		nil, // notification service
 		nil, // sale offer repo
 		nil, // purchase creator
+		nil, // sale offer service
 		nil, // hub
 	)
 
@@ -23,17 +24,17 @@ func TestScheduler_Creation(t *testing.T) {
 }
 
 func TestScheduler_AddAuction(t *testing.T) {
-	scheduler := scheduler.NewScheduler(nil, nil, nil, nil, nil, nil)
+	scheduler := scheduler.NewScheduler(nil, nil, nil, nil, nil, nil, nil)
 	scheduler.AddAuction("123", time.Now().Add(1*time.Hour))
 }
 
 func TestScheduler_ForceCloseAuction(t *testing.T) {
-	scheduler := scheduler.NewScheduler(nil, nil, nil, nil, nil, nil)
+	scheduler := scheduler.NewScheduler(nil, nil, nil, nil, nil, nil, nil)
 	scheduler.ForceCloseAuction("123", 456, 1000)
 }
 
 func TestScheduler_LoadAuctions_NilDependency(t *testing.T) {
-	scheduler := scheduler.NewScheduler(nil, nil, nil, nil, nil, nil)
+	scheduler := scheduler.NewScheduler(nil, nil, nil, nil, nil, nil, nil)
 
 	defer func() {
 		if r := recover(); r == nil {
@@ -45,12 +46,12 @@ func TestScheduler_LoadAuctions_NilDependency(t *testing.T) {
 }
 
 func TestScheduler_AddAuctionPastTime(t *testing.T) {
-	scheduler := scheduler.NewScheduler(nil, nil, nil, nil, nil, nil)
+	scheduler := scheduler.NewScheduler(nil, nil, nil, nil, nil, nil, nil)
 	scheduler.AddAuction("123", time.Now().Add(-1*time.Hour))
 }
 
 func TestScheduler_AddAuctionMultiple(t *testing.T) {
-	scheduler := scheduler.NewScheduler(nil, nil, nil, nil, nil, nil)
+	scheduler := scheduler.NewScheduler(nil, nil, nil, nil, nil, nil, nil)
 
 	scheduler.AddAuction("auction1", time.Now().Add(1*time.Hour))
 	scheduler.AddAuction("auction2", time.Now().Add(2*time.Hour))
