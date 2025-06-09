@@ -61,6 +61,10 @@ func MapViewToDTO(offerView *views.SaleOfferView) *RetrieveSaleOfferDTO {
 	dto := &RetrieveSaleOfferDTO{}
 	_ = copier.Copy(dto, offerView)
 	dto.Name = offerView.Brand + " " + offerView.Model
+	if dto.IssueDate != nil {
+		date := offerView.IssueDate.Format(formats.DateTimeLayout)
+		dto.IssueDate = &date
+	}
 	return dto
 }
 
@@ -72,6 +76,10 @@ func MapViewToDetailedDTO(offerView *views.SaleOfferView) *RetrieveDetailedSaleO
 	if dto.DateEnd != nil {
 		date := offerView.DateEnd.Format(formats.DateTimeLayout)
 		dto.DateEnd = &date
+	}
+	if dto.IssueDate != nil {
+		date := offerView.IssueDate.Format(formats.DateTimeLayout)
+		dto.IssueDate = &date
 	}
 	return dto
 }

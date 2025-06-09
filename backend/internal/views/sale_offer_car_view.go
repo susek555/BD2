@@ -32,8 +32,9 @@ type SaleOfferView struct {
 	Drive              enums.Drive
 	Brand              string
 	Model              string
-	DateEnd            time.Time
+	DateEnd            *time.Time
 	BuyNowPrice        *uint
+	IssueDate          *time.Time
 }
 
 func (v *SaleOfferView) GetID() uint {

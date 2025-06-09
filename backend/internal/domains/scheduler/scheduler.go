@@ -60,7 +60,7 @@ func (s *Scheduler) LoadAuctions() error {
 		}
 		item := &Item{
 			AuctionID: auctionID,
-			EndAt:     offer.DateEnd,
+			EndAt:     *offer.DateEnd,
 		}
 		s.mu.Lock()
 		heap.Push(&s.heap, item)

@@ -33,7 +33,7 @@ type PurchaseCreatorInterface interface {
 	Create(purchase *models.Purchase) error
 }
 
-type SaleOfferPreparatornterface interface {
+type SaleOfferPreparatorInterface interface {
 	PrepareForCreateSaleOffer(in *CreateSaleOfferDTO) (*models.SaleOffer, error)
 	PrepareForUpdateSaleOffer(in *UpdateSaleOfferDTO, userID uint) (*models.SaleOffer, error)
 	PrepareForBuySaleOffer(id uint, userID uint) (*models.SaleOffer, error)
@@ -52,11 +52,12 @@ type SaleOfferRetrieverInterface interface {
 	GetDetailedByID(id uint, userID *uint) (*RetrieveDetailedSaleOfferDTO, error)
 	GetFiltered(filter *PublishedOffersOnlyFilter, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error)
 	GetUsersOffers(filter *UsersOffersOnlyFilter, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error)
-	GetLikedOnly(filter *LikedOffersOnlyFilter, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error)
+	GetLikedOffers(filter *LikedOffersOnlyFilter, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error)
+	GetPurchasedOffers(filter *PurchasedOffersOnlyFilter, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error)
 }
 
 type SaleOfferServiceInterface interface {
-	SaleOfferPreparatornterface
+	SaleOfferPreparatorInterface
 	SaleOfferManagerInterface
 	SaleOfferRetrieverInterface
 }
@@ -186,7 +187,11 @@ func (s *SaleOfferService) GetUsersOffers(filter *UsersOffersOnlyFilter, pagRequ
 	return s.getOffersWithFilter(filter, filter.UserID, pagRequest)
 }
 
-func (s *SaleOfferService) GetLikedOnly(filter *LikedOffersOnlyFilter, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error) {
+func (s *SaleOfferService) GetLikedOffers(filter *LikedOffersOnlyFilter, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error) {
+	return s.getOffersWithFilter(filter, filter.UserID, pagRequest)
+}
+
+func (s *SaleOfferService) GetPurchasedOffers(filter *PurchasedOffersOnlyFilter, pagRequest *pagination.PaginationRequest) (*RetrieveOffersWithPagination, error) {
 	return s.getOffersWithFilter(filter, filter.UserID, pagRequest)
 }
 
