@@ -80,11 +80,11 @@ func (s *AuctionService) Update(in *UpdateAuctionDTO, userID uint) (*sale_offer.
 
 func (s *AuctionService) BuyNow(id uint, userID uint) (notification.SaleOfferInterface, error) {
 	offer, err := s.saleOfferService.PrepareForBuySaleOffer(id, userID)
-	if offer.Auction.BuyNowPrice == nil {
-		return nil, ErrBuyNowNotAvailable
-	}
 	if err != nil {
 		return nil, err
+	}
+	if offer.Auction.BuyNowPrice == nil {
+		return nil, ErrBuyNowNotAvailable
 	}
 	offer.Status = enums.SOLD
 	offer.Price = *offer.Auction.BuyNowPrice
