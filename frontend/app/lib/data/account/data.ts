@@ -106,7 +106,7 @@ export async function getFavorites(
   };
 }> {
   const response = await fetchWithRefresh(
-    `${process.env.API_URL}/sale-offer/filtered`,
+    `${process.env.API_URL}/sale-offer/liked-offers`,
     {
       method: 'POST',
       headers: {
