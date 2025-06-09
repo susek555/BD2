@@ -13,9 +13,10 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
-      - ./database/triggers.sql:/docker-entrypoint-initdb.d/02-triggers.sql
-      - ./database/init-test-db.sql:/docker-entrypoint-initdb.d/03-init-test-db.sql
-      - ./database/init-pg-ivm.sql:/docker-entrypoint-initdb.d/04-init-pg-ivm.sql
+      - ./database/init-pg-ivm.sql:/docker-entrypoint-initdb.d/02-insert-manufacturers-and-models.sql
+      - ./database/triggers.sql:/docker-entrypoint-initdb.d/03-triggers.sql
+      - ./database/init-test-db.sql:/docker-entrypoint-initdb.d/04-init-test-db.sql
+      - ./database/init-pg-ivm.sql:/docker-entrypoint-initdb.d/05-init-pg-ivm.sql
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U bd2_user -d bd2_database" ]
       interval: 10s
