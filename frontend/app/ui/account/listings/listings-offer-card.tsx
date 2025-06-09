@@ -1,6 +1,9 @@
 'use client';
 
-import { deleteListing } from '@/app/lib/api/listing/requests';
+import {
+  deleteListingAction,
+  revalidateListingsAction,
+} from '@/app/actions/listing-actions';
 import { BaseOffer } from '@/app/lib/definitions/SaleOffer';
 import ConfirmationModal from '@/app/ui/(common)/confirm-modal';
 import GenericOfferCard from '@/app/ui/(offers-table)/generic-offer-card';
@@ -16,9 +19,14 @@ export default function SingleListingsOffer({ offer }: { offer: BaseOffer }) {
     setIsDeleting(true);
 
     try {
-      await deleteListing(offer.id);
-      setShowDeleteConfirm(false);
-      toast.success('Offer deleted successfully');
+      const result = await deleteListingAction(offer.id);
+
+      if (result.success) {
+        setShowDeleteConfirm(false);
+        revalidateListingsAction();
+      } else {
+        toast.error('Failed to delete offer. Please try again');
+      }
     } catch (error) {
       toast.error('Failed to delete offer. Please try again.');
     } finally {
