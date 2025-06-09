@@ -79,7 +79,8 @@ func (m *mockSaleOfferRepository) GetAllActiveAuctions() ([]views.SaleOfferView,
 }
 
 type mockPurchaseCreator struct {
-	createFunc func(purchase *models.Purchase) error
+	createFunc  func(purchase *models.Purchase) error
+	getByIDFunc func(id uint) (*models.Purchase, error)
 }
 
 func (m *mockPurchaseCreator) Create(purchase *models.Purchase) error {
@@ -87,6 +88,13 @@ func (m *mockPurchaseCreator) Create(purchase *models.Purchase) error {
 		return m.createFunc(purchase)
 	}
 	return nil
+}
+
+func (m *mockPurchaseCreator) GetByID(id uint) (*models.Purchase, error) {
+	if m.createFunc != nil {
+		return m.getByIDFunc(id)
+	}
+	return nil, nil
 }
 
 type MockManufacturerRetrieverInterface struct {
