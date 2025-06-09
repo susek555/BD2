@@ -17,6 +17,7 @@ export async function editOffer(
 
     console.log("Is auction:", is_auction);
     console.log("Edit Offer validated fields:", validatedFields.data);
+    console.log("Images to delete:", imagesToDelete);
 
 
     try {
@@ -28,14 +29,13 @@ export async function editOffer(
             await editRegularOffer(regularOfferData, parseInt(id));
         }
         console.log("Edited Offer ID:", id);
-        if (imagesToDelete && imagesToDelete.length > 0) {
+        if (imagesToDelete && imagesToDelete.length > 0 ) {
             await deleteImages(imagesToDelete);
         }
-        if (images && images.length > 0) {
+        if (images && images.length > 0 && images[0].name !== "") {
             await uploadImages(images, parseInt(id));
         }
 
-        permanentRedirect("/account/listings");
     } catch (error) {
         if (typeof window !== 'undefined') {
             alert(`Error editing offer: ${error instanceof Error ? error.message : String(error)}`);
@@ -47,4 +47,6 @@ export async function editOffer(
             values: { ...validatedFields, is_auction } as OfferFormState['values']
         }
     }
+
+    permanentRedirect("/account/listings");
 }
