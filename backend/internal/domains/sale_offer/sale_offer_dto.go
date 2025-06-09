@@ -58,7 +58,7 @@ type UserContext struct {
 
 type RetrieveSaleOfferDTO struct {
 	ID             uint         `json:"id"`
-	UserID         uint         `json:"user_id"`
+	UserID         uint         `json:"seller_id"`
 	Username       string       `json:"username"`
 	Name           string       `json:"name"`
 	Price          uint         `json:"price"`
@@ -74,7 +74,7 @@ type RetrieveSaleOfferDTO struct {
 
 type RetrieveDetailedSaleOfferDTO struct {
 	ID                 uint               `json:"id"`
-	UserID             uint               `json:"user_id"`
+	UserID             uint               `json:"seller_id"`
 	Username           string             `json:"username"`
 	Description        string             `json:"description"`
 	Price              uint               `json:"price"`
