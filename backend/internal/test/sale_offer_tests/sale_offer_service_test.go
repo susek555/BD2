@@ -492,7 +492,14 @@ func TestSaleOfferService_Buy_Success(t *testing.T) {
 	sampleOffer.UserID = 2 // Different user
 	sampleOffer.Status = enums.PUBLISHED
 	sampleOffer.IsAuction = false
-
+	mockRepo.getViewByIDFunc = func(id uint) (*views.SaleOfferView, error) {
+		return &views.SaleOfferView{
+			ID:          1,
+			UserID:      2,
+			Username:    "testuser",
+			
+		}, nil
+	}
 	mockRepo.getByIDFunc = func(id uint) (*models.SaleOffer, error) {
 		return sampleOffer, nil
 	}
