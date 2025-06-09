@@ -3,20 +3,20 @@ package bid
 import (
 	"sync"
 
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/notification"
 	"github.com/susek555/BD2/car-dealer-api/internal/enums"
-	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"github.com/susek555/BD2/car-dealer-api/pkg/mapping"
 	"gorm.io/gorm"
 )
 
 //go:generate mockery --name=SaleOfferRetrieverInterface --output=../../test/mocks --case=snake --with-expecter
 type SaleOfferRetrieverInterface interface {
-	GetByID(id uint) (*models.SaleOffer, error)
+	GetDetailedByID(id uint, userID *uint) (notification.SaleOfferInterface, error)
 }
 
 //go:generate mockery --name=AuctionPriceUpdaterInterface --output=../../test/mocks --case=snake --with-expecter
 type AuctionPriceUpdaterInterface interface {
-	UpdatePrice(auction *models.SaleOffer, newPrice uint) error
+	UpdatePrice(auctionID uint, newPrice uint) error
 }
 
 type BidServiceInterface interface {
@@ -49,11 +49,11 @@ func (service *BidService) Create(bidDTO *CreateBidDTO, bidderID uint) (*Process
 	bid := bidDTO.MapToBid(bidderID)
 	l, _ := auctionLocks.LoadOrStore(bid.AuctionID, &sync.Mutex{})
 	m := l.(*sync.Mutex)
-	offer, err := service.AuctionRetriever.GetByID(bid.AuctionID)
+	offer, err := service.AuctionRetriever.GetDetailedByID(bid.AuctionID, nil)
 	if err != nil {
 		return nil, err
 	}
-	if offer.Status != enums.PUBLISHED {
+	if offer.GetStatus() != enums.PUBLISHED {
 		return nil, ErrAuctionNotPublished
 	}
 	if offer.BelongsToUser(bidderID) {
@@ -65,11 +65,15 @@ func (service *BidService) Create(bidDTO *CreateBidDTO, bidderID uint) (*Process
 	if err != nil {
 		return nil, err
 	}
-	err = service.AuctionPriceUpdater.UpdatePrice(offer, bid.Amount)
+	err = service.AuctionPriceUpdater.UpdatePrice(offer.GetID(), bid.Amount)
 	if err != nil {
 		return nil, err
 	}
-	return MapToProcessingDTO(bid), nil
+	offer, err = service.AuctionRetriever.GetDetailedByID(bid.AuctionID, nil)
+	if err != nil {
+		return nil, err
+	}
+	return MapToProcessingDTO(bid, offer), nil
 }
 
 func (service *BidService) GetAll() ([]RetrieveBidDTO, error) {
