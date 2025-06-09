@@ -75,3 +75,25 @@ func (f *UsersOffersOnlyFilter) GetBase() *BaseOfferFilter {
 func applyUsersOffersOnly(query *gorm.DB, userID uint) *gorm.DB {
 	return query.Where("sale_offer_view.user_id = ?", userID)
 }
+
+type PurchasedOffersOnlyFilter struct {
+	BaseOfferFilter
+}
+
+func (f *PurchasedOffersOnlyFilter) ApplyOfferFilters(query *gorm.DB) (*gorm.DB, error) {
+	query, err := f.BaseOfferFilter.ApplyOfferFilters(query)
+	if err != nil {
+		return nil, err
+	}
+	return f.applyPurchasedOffersOnly(query, *f.UserID), nil
+}
+
+func (f *PurchasedOffersOnlyFilter) GetBase() *BaseOfferFilter {
+	return &f.BaseOfferFilter
+}
+
+func (f *PurchasedOffersOnlyFilter) applyPurchasedOffersOnly(query *gorm.DB, userID uint) *gorm.DB {
+	return query.Joins("JOIN purchases ON purchases.offer_id = sale_offer_view.id").
+		Where("purchases.buyer_id = ?", userID).
+		Where("sale_offer_view.status = ?", enums.SOLD)
+}

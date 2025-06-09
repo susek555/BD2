@@ -67,7 +67,8 @@ type RetrieveSaleOfferDTO struct {
 	Color          enums.Color  `json:"color"`
 	MainURL        string       `json:"main_url"`
 	IsAuction      bool         `json:"is_auction"`
-	Status         enums.Status `json:"status,omitempty"`
+	Status         enums.Status `json:"status"`
+	IssueDate      *string      `json:"issue_date,omitempty"`
 	UserContext
 }
 
@@ -100,6 +101,7 @@ type RetrieveDetailedSaleOfferDTO struct {
 	IsAuction          bool               `json:"is_auction"`
 	DateEnd            *string            `json:"date_end,omitempty"`
 	BuyNowPrice        *uint              `json:"buy_now_price,omitempty"`
+	IssueDate          *string            `json:"issue_date,omitempty"`
 	UserContext
 }
 

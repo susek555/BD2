@@ -238,8 +238,41 @@ func (h *Handler) GetLikedOnlySaleOffers(c *gin.Context) {
 	}
 	id := userID.(uint)
 	filterRequest.Filter.UserID = &id
-	saleOffers, err := h.service.GetLikedOnly(
+	saleOffers, err := h.service.GetLikedOffers(
 		&LikedOffersOnlyFilter{BaseOfferFilter: filterRequest.Filter}, &filterRequest.PagRequest)
+	if err != nil {
+		custom_errors.HandleError(c, err, ErrorMap)
+		return
+	}
+	c.JSON(http.StatusOK, saleOffers)
+}
+
+// GetPurchasedOffers godoc
+//
+//	@Summary		Get purchased offers
+//	@Description	Returns a list of offers that the logged-in user has purchased. The results are filtered based on request's body. To check how filter should be set look at /filtered endpoint.
+//	@Tags			sale-offer
+//	@Accept			json
+//	@Produce		json
+//	@Param			filter	body		OfferFilterRequest				true	"Sale offer filter"
+//	@Success		200		{object}	RetrieveOffersWithPagination	"List of sale offers"
+//	@Failure		400		{object}	custom_errors.HTTPError			"Invalid input data"
+//	@Failure		401		{object}	custom_errors.HTTPError			"Unauthorized - user must be logged in to retrieve purchased offers"
+//	@Failure		403		{object}	custom_errors.HTTPError			"Forbidden - token is invalid or expired"
+//	@Failure		500		{object}	custom_errors.HTTPError			"Internal server error"
+//	@Router			/sale-offer/purchased-offers [post]
+//	@Security		Bearer
+func (h *Handler) GetPurchasedOffers(c *gin.Context) {
+	userID, _ := c.Get("userID")
+	filterRequest := NewOfferFilterRequest()
+	if err := c.ShouldBindJSON(&filterRequest); err != nil {
+		custom_errors.HandleError(c, err, ErrorMap)
+		return
+	}
+	id := userID.(uint)
+	filterRequest.Filter.UserID = &id
+	saleOffers, err := h.service.GetPurchasedOffers(
+		&PurchasedOffersOnlyFilter{BaseOfferFilter: filterRequest.Filter}, &filterRequest.PagRequest)
 	if err != nil {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
