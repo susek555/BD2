@@ -105,6 +105,37 @@ type RetrieveDetailedSaleOfferDTO struct {
 	UserContext
 }
 
+func (dto *RetrieveDetailedSaleOfferDTO) GetBrand() string {
+	return dto.Brand
+}
+
+func (dto *RetrieveDetailedSaleOfferDTO) GetModel() string {
+	return dto.Model
+}
+
+func (dto *RetrieveDetailedSaleOfferDTO) GetPrice() uint {
+	if dto.IsAuction && dto.BuyNowPrice != nil {
+		return *dto.BuyNowPrice
+	}
+	return dto.Price
+}
+
+func (dto *RetrieveDetailedSaleOfferDTO) HasBuyNowPrice() bool {
+	return dto.IsAuction && dto.BuyNowPrice != nil
+}
+
+func (dto *RetrieveDetailedSaleOfferDTO) GetStatus() enums.Status {
+	return dto.Status
+}
+
+func (dto *RetrieveDetailedSaleOfferDTO) BelongsToUser(userID uint) bool {
+	return dto.UserID == userID
+}
+
+func (dto *RetrieveDetailedSaleOfferDTO) GetID() uint {
+	return dto.ID
+}
+
 type RetrieveOffersWithPagination struct {
 	PaginationResponse pagination.PaginationResponse `json:"pagination"`
 	Offers             []RetrieveSaleOfferDTO        `json:"offers"`
