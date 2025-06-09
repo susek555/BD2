@@ -7,6 +7,7 @@ import (
 
 type PurchaseRepositoryInterface interface {
 	Create(purchase *models.Purchase) error
+	GetByID(id uint) (*models.Purchase, error)
 }
 
 type PurchaseRepository struct {
@@ -19,4 +20,12 @@ func NewPurchaseRepository(db *gorm.DB) PurchaseRepositoryInterface {
 
 func (r *PurchaseRepository) Create(purchase *models.Purchase) error {
 	return r.DB.Create(&purchase).Error
+}
+
+func (r *PurchaseRepository) GetByID(id uint) (*models.Purchase, error) {
+	var purchase models.Purchase
+	if err := r.DB.First(&purchase, id).Error; err != nil {
+		return nil, err
+	}
+	return &purchase, nil
 }
