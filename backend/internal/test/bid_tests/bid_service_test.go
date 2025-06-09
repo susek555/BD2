@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	bid "github.com/susek555/BD2/car-dealer-api/internal/domains/bid"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/enums"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"github.com/susek555/BD2/car-dealer-api/internal/test/mocks"
@@ -24,26 +25,27 @@ func TestBidService_Create_OK(t *testing.T) {
 	svc := bid.NewBidService(repo, saleOfferRetriever, auctionPriceUpdater)
 
 	repo.On("Create", mock.MatchedBy(func(b *models.Bid) bool {
-		return b.AuctionID == 1 && b.BidderID == 1
+		return b.AuctionID == 1 && b.BidderID == 2
 	})).Return(nil)
 
 	buyNowPrice := uint(100)
-	saleOfferRetriever.On("GetByID", uint(1)).Return(&models.SaleOffer{
-		ID:     1,
-		Status: enums.PUBLISHED,
-		Auction: &models.Auction{
-			DateEnd:      time.Now().Add(24 * time.Hour),
-			BuyNowPrice:  &buyNowPrice,
-			InitialPrice: 50,
-		}}, nil)
+	saleOfferRetriever.On("GetDetailedByID", uint(1), (*uint)(nil)).Return(&sale_offer.RetrieveDetailedSaleOfferDTO{
+		ID:          1,
+		UserID:      1,
+		Username:    "testuser",
+		Brand:       "Test Manufacturer",
+		Model:       "Test Model",
+		BuyNowPrice: &buyNowPrice,
+		Status:      enums.PUBLISHED,
+	}, nil)
 
-	auctionPriceUpdater.On("UpdatePrice", mock.AnythingOfType("*models.SaleOffer"), uint(0)).Return(nil)
+	auctionPriceUpdater.On("UpdatePrice", uint(1), uint(0)).Return(nil)
 
 	dto := &bid.CreateBidDTO{
 		AuctionID: 1,
 		Amount:    0,
 	}
-	_, err := svc.Create(dto, 1)
+	_, err := svc.Create(dto, 2)
 	assert.NoError(t, err)
 }
 func TestBidService_Create_Error(t *testing.T) {
@@ -52,20 +54,21 @@ func TestBidService_Create_Error(t *testing.T) {
 	auctionPriceUpdater := new(mocks.AuctionPriceUpdaterInterface)
 	svc := bid.NewBidService(repo, saleOfferRetriever, auctionPriceUpdater)
 
-	expectedErr := errors.New("insert failed")
+	expectedErr := errors.New("bidder cannot bid on their own auction")
 
 	repo.On("Create", mock.MatchedBy(func(b *models.Bid) bool {
 		return b.AuctionID == 1
 	})).Return(expectedErr)
 	buyNowPrice := uint(100)
-	saleOfferRetriever.On("GetByID", uint(1)).Return(&models.SaleOffer{
-		ID:     1,
-		Status: enums.PUBLISHED,
-		Auction: &models.Auction{
-			DateEnd:      time.Now().Add(24 * time.Hour),
-			BuyNowPrice:  &buyNowPrice,
-			InitialPrice: 50,
-		}}, nil)
+	saleOfferRetriever.On("GetDetailedByID", uint(1), (*uint)(nil)).Return(&sale_offer.RetrieveDetailedSaleOfferDTO{
+		ID:          1,
+		UserID:      1,
+		Username:    "testuser",
+		Brand:       "Test Manufacturer",
+		Model:       "Test Model",
+		BuyNowPrice: &buyNowPrice,
+		Status:      enums.PUBLISHED,
+	}, nil)
 
 	auctionPriceUpdater.On("UpdatePrice", uint(1), uint(0)).Return(nil)
 
@@ -75,7 +78,7 @@ func TestBidService_Create_Error(t *testing.T) {
 	}
 	_, err := svc.Create(dto, 1)
 
-	assert.ErrorIs(t, err, expectedErr)
+	assert.EqualError(t, err, expectedErr.Error())
 }
 func TestBidService_Create_SerializesPerAuction(t *testing.T) {
 	repo := new(mocks.BidRepositoryInterface)
@@ -96,16 +99,14 @@ func TestBidService_Create_SerializesPerAuction(t *testing.T) {
 	}).Return(nil).Times(calls)
 
 	buyNowPrice := uint(100)
-	saleOfferRetriever.On("GetByID", uint(777)).Return(&models.SaleOffer{
-		ID:     777,
-		Status: enums.PUBLISHED,
-		Auction: &models.Auction{
-			DateEnd:      time.Now().Add(24 * time.Hour),
-			BuyNowPrice:  &buyNowPrice,
-			InitialPrice: 50,
-		}}, nil)
+	saleOfferRetriever.On("GetDetailedByID", uint(777), (*uint)(nil)).Return(&sale_offer.RetrieveDetailedSaleOfferDTO{
+		ID:          777,
+		UserID:      1,
+		Status:      enums.PUBLISHED,
+		BuyNowPrice: &buyNowPrice,
+	}, nil)
 
-	auctionPriceUpdater.On("UpdatePrice", mock.AnythingOfType("*models.SaleOffer"), mock.Anything).Run(func(args mock.Arguments) {
+	auctionPriceUpdater.On("UpdatePrice", uint(777), mock.Anything).Run(func(args mock.Arguments) {
 		if atomic.AddInt32(&running, 1) > 1 {
 			t.Errorf("mutex did not work - AuctionService.UpdatePrice")
 		}
@@ -115,17 +116,16 @@ func TestBidService_Create_SerializesPerAuction(t *testing.T) {
 	var wg sync.WaitGroup
 	wg.Add(calls)
 
-	for i := 0; i < calls; i++ {
+	for range make([]struct{}, calls) {
 		go func() {
 			defer wg.Done()
 			dto := &bid.CreateBidDTO{
 				AuctionID: aucID,
 			}
-			_, _ = svc.Create(dto, 1)
+			_, _ = svc.Create(dto, 2)
 		}()
 	}
-
-	wg.Wait()
+	wg.Wait() // Wait for all goroutines to finish before asserting expectations
 	repo.AssertExpectations(t)
 }
 
