@@ -3,6 +3,7 @@ package auction
 import (
 	"time"
 
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/notification"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/enums"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
@@ -26,8 +27,8 @@ type SaleOfferServiceInterface interface {
 type AuctionServiceInterface interface {
 	Create(auction *CreateAuctionDTO) (*sale_offer.RetrieveDetailedSaleOfferDTO, error)
 	Update(auction *UpdateAuctionDTO, userID uint) (*sale_offer.RetrieveDetailedSaleOfferDTO, error)
-	BuyNow(auctionID, userID uint) (*models.SaleOffer, error)
-	UpdatePrice(auction *models.SaleOffer, newPrice uint) error
+	BuyNow(auctionID, userID uint) (notification.SaleOfferInterface, error)
+	UpdatePrice(offerID uint, newPrice uint) error
 	Delete(id, userID uint) error
 }
 
@@ -77,7 +78,7 @@ func (s *AuctionService) Update(in *UpdateAuctionDTO, userID uint) (*sale_offer.
 	return s.saleOfferService.GetDetailedByID(updatedOffer.ID, &updatedOffer.UserID)
 }
 
-func (s *AuctionService) BuyNow(id uint, userID uint) (*models.SaleOffer, error) {
+func (s *AuctionService) BuyNow(id uint, userID uint) (notification.SaleOfferInterface, error) {
 	offer, err := s.saleOfferService.PrepareForBuySaleOffer(id, userID)
 	if offer.Auction.BuyNowPrice == nil {
 		return nil, ErrBuyNowNotAvailable
@@ -94,10 +95,14 @@ func (s *AuctionService) BuyNow(id uint, userID uint) (*models.SaleOffer, error)
 	if err := s.purchaseCreator.Create(purchaseModel); err != nil {
 		return nil, err
 	}
-	return offer, err
+	return s.saleOfferService.GetDetailedByID(offer.ID, &offer.UserID)
 }
 
-func (s *AuctionService) UpdatePrice(offer *models.SaleOffer, newPrice uint) error {
+func (s *AuctionService) UpdatePrice(offerID uint, newPrice uint) error {
+	offer, err := s.saleOfferRepo.GetByID(offerID)
+	if err != nil {
+		return err
+	}
 	if newPrice < offer.Price || newPrice < offer.Auction.InitialPrice {
 		return ErrNewPriceLessThanOfferPrice
 	}
