@@ -24,8 +24,6 @@ func (r *PurchaseRepository) Create(purchase *models.Purchase) error {
 
 func (r *PurchaseRepository) GetByID(id uint) (*models.Purchase, error) {
 	var purchase models.Purchase
-	if err := r.DB.First(&purchase, id).Error; err != nil {
-		return nil, err
-	}
-	return &purchase, nil
+	err := r.DB.First(&purchase, id).Error
+	return &purchase, err
 }
