@@ -11,7 +11,7 @@ export async function updateReview(review: UpdatedReview) {
   });
 
   if (!response.ok) {
-    throw new Error('Falied to update review');
+    throw new Error('Failed to update review');
   }
 
   return response.json();
@@ -26,7 +26,7 @@ export async function deleteReview(id: number) {
   });
 
   if (!response.ok) {
-    throw new Error('Falied to delete review');
+    throw new Error('Failed to delete review');
   }
 
   return response.json();
@@ -42,7 +42,7 @@ export async function addReview(review: NewReview) {
   });
 
   if (!response.ok) {
-    throw new Error('Falied to create review');
+    throw new Error('Failed to create review');
   }
 
   return response.json();
@@ -51,17 +51,25 @@ export async function addReview(review: NewReview) {
 export async function getReviewByRevieweeReviewer(
   revieweeId: number,
   reviewerId: number,
-): Promise<Review> {
+): Promise<Review | null> {
   console.log(
     `fetching review with revieweeId: ${revieweeId} and reviewerId: ${reviewerId}`,
   );
 
-  const url = getApiUrl(`/api/reviews/reviewee/${revieweeId}/reviewer/${reviewerId}`);
+  const url = getApiUrl(
+    `/api/reviews/reviewee/${revieweeId}/reviewer/${reviewerId}`,
+  );
   const response = await fetch(url);
 
   if (!response.ok) {
+    console.log(response);
+
     throw new Error(`HTTP error! status: ${response.status}`);
   }
 
-  return response.json();
+  const responseJson = await response.json();
+
+  if ('error_description' in responseJson) return null;
+
+  return responseJson;
 }

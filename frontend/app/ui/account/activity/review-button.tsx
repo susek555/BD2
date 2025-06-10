@@ -1,45 +1,33 @@
 'use client';
 
-import { getReviewByRevieweeReviewer } from '@/app/lib/api/reviews';
 import { Review } from '@/app/lib/definitions/reviews';
 import { MouseEvent, useState } from 'react';
-import toast from 'react-hot-toast';
 import { AverageRatingCard } from '../../review/average-rating-card';
 import ReviewModal from '../../review/review-modal';
 
 interface ReviewButtonProps {
   sellerId: number;
   userId: number;
-  reivew?: Review;
+  review?: Review | null;
 }
 
 export default function ReviewButton({
   sellerId,
   userId,
-  reivew,
+  review,
 }: ReviewButtonProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [review, setReview] = useState<Review | undefined>(undefined);
 
   const onClick = async (e: MouseEvent<HTMLButtonElement>) => {
     console.log('Review click');
     e.stopPropagation();
     e.preventDefault();
-    try {
-      if (!review) {
-        const review = await getReviewByRevieweeReviewer(sellerId, userId);
-        setReview(review);
-      }
-    } catch {
-      toast.error('Something went wrong fetching review');
-      return;
-    }
     setDialogOpen(true);
   };
 
   return (
     <>
-      {review?.rating ? (
+      {review && !('error_description' in review) ? (
         <button
           onClick={onClick}
           className='focus:ring-opacity-50 rounded-md transition-transform duration-200 hover:scale-105 focus:ring-2 focus:ring-blue-500 focus:outline-none'

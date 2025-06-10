@@ -9,7 +9,7 @@ export async function GET(
   const response = await fetch(
     `${process.env.API_URL}/review/reviewer/reviewee/${reviewerId}/${revieweeId}`,
   );
-  return response.json;
+  return response;
   // const review = {
   //   id: 1,
   //   description:

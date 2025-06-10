@@ -1,7 +1,6 @@
-import { authConfig } from '@/app/lib/authConfig';
+import { cachedSessionData } from '@/app/lib/data/account/data';
 import { HistoryOffer } from '@/app/lib/definitions/SaleOffer';
 import GenericOffersTable from '@/app/ui/(offers-table)/generic-offer-table';
-import { getServerSession } from 'next-auth';
 import SingleHistoryOffer from './history-offer-card';
 
 export default async function OffersHistory({
@@ -9,10 +8,10 @@ export default async function OffersHistory({
 }: {
   offers: HistoryOffer[];
 }) {
-  const session = await getServerSession(authConfig);
+  const userProfile = await cachedSessionData();
 
   const HistoryOfferWithUserId = (props: any) => (
-    <SingleHistoryOffer {...props} userId={session?.user?.userId} />
+    <SingleHistoryOffer {...props} userId={userProfile.userId} />
   );
 
   return (

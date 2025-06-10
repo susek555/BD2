@@ -42,7 +42,7 @@ export default async function SingleHistoryOffer({
           <ReviewButton
             userId={userId}
             sellerId={offer.seller_id}
-            reivew={sellerReview}
+            review={sellerReview}
           />
         </div>
       </div>
