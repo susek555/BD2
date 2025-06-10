@@ -65,6 +65,7 @@ services:
       - NEXTAUTH_URL=http://localhost:3000
       - NEXTAUTH_SECRET=secret-here
       - NODE_ENV=production
+      - URL=http://localhost:3000
     ports:
       - "3000:3000"
     depends_on:
