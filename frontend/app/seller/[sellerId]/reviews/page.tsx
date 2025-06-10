@@ -90,7 +90,7 @@ export default async function ReviewsPage({ params, searchParams }: PageProps) {
             </div>
           </div>
 
-          <div className='flex flex-1 flex-col'>
+          <div className='flex flex-1 flex-col lg:col-span-6'>
             <div className='flex-1, p-6 px-12'>
               <Suspense fallback={<ReviewGridSkeleton />}>
                 <ReviewGrid variant='for' reviewPage={reviewPage} />
