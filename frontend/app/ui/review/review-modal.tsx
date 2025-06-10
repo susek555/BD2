@@ -9,7 +9,7 @@ import ReviewForm from './review-form';
 
 interface ReviewDialogProps {
   review?: Review | null;
-  revieweeId?: number;
+  revieweeId: number;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   onSubmit?: () => void;
