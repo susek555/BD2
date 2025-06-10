@@ -12,7 +12,7 @@ interface ProfileInfoProps {
 
 export default async function ProfileInfo({ user }: ProfileInfoProps) {
   const rating = await fetchAverageRating(user.userId);
-  const distribution = await fetchRatingDistribution(1);
+  const distribution = await fetchRatingDistribution(user.userId);
 
   return (
     <div className='relative rounded-lg bg-white p-6 shadow'>
