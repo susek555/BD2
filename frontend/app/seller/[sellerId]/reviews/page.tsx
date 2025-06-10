@@ -9,6 +9,7 @@ import { RatingDistribution } from '@/app/ui/review/rating-distribution';
 import { ReviewFilterBox } from '@/app/ui/review/review-filters';
 import { ReviewGrid } from '@/app/ui/review/review-grid';
 import { ReviewGridSkeleton } from '@/app/ui/review/skeletons';
+import { ChevronLeftIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { Suspense } from 'react';
 
@@ -66,19 +67,8 @@ export default async function ReviewsPage({ params, searchParams }: PageProps) {
                 href={callbackUrl}
                 className='flex items-center text-gray-500 transition-colors hover:text-gray-700'
               >
-                <svg
-                  className='mr-2 h-5 w-5'
-                  fill='none'
-                  stroke='currentColor'
-                  viewBox='0 0 24 24'
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth={2}
-                    d='M15 19l-7-7 7-7'
-                  />
-                </svg>
+                <ChevronLeftIcon className='h-6 w-6 pr-1.5' />
+
                 <span className='hidden sm:inline'>Back to offer</span>
                 <span className='sm:hidden'>Back</span>
               </Link>
