@@ -39,7 +39,7 @@ func (c *Color) Scan(value any) error {
 	default:
 		return ErrStringConversion
 	}
-	*c = Color((convertDBFormatToAppFormat(sValue, false)))
+	*c = Color(convertDBFormatToAppFormat(sValue, false))
 	return nil
 }
 

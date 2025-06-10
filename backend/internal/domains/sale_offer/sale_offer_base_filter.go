@@ -92,8 +92,8 @@ func (of *BaseOfferFilter) ApplyOfferFilters(query *gorm.DB) (*gorm.DB, error) {
 	return query, nil
 }
 
-func (f *BaseOfferFilter) GetBase() *BaseOfferFilter {
-	return f
+func (of *BaseOfferFilter) GetBase() *BaseOfferFilter {
+	return of
 }
 
 func applyOfferTypeFilter(query *gorm.DB, offerType *OfferType) *gorm.DB {
