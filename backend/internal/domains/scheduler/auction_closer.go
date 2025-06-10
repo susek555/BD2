@@ -112,7 +112,11 @@ func (c *auctionCloser) CloseAuction(cmd CloseCmd) {
 		_ = c.purchaseCreator.Create(purchaseModel)
 	}
 
-	_ = c.saleRepo.UpdateStatus(offer, enums.SOLD)
+	err = c.saleRepo.UpdateStatus(offer, enums.SOLD)
+	if err != nil {
+		log.Printf("closer: UpdateStatus err: %v", err)
+		return
+	}
 
 	n := models.Notification{OfferID: auctionID}
 	offerDTO, err := c.saleOfferService.GetDetailedByID(auctionID, nil)
