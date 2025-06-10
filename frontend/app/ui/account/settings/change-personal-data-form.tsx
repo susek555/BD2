@@ -60,7 +60,11 @@ export default function ChangePersonalDataForm({
       return state;
     }
 
-    const updateResult = await updateProfile(state, formData, userProfile.id);
+    const updateResult = await updateProfile(
+      state,
+      formData,
+      userProfile.userId,
+    );
 
     if (!updateResult.state.errors && updateResult.newUserData) {
       await updateSession(updateResult.newUserData);
