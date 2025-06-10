@@ -1,0 +1,56 @@
+services:
+  postgres:
+    build:
+      context: ./database
+      dockerfile: Dockerfile
+    container_name: bd2-postgres
+    environment:
+      POSTGRES_USER: bd2_user
+      POSTGRES_PASSWORD: bd2_password
+      POSTGRES_DB: bd2_database
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ./database/insert-manufacturers-and-models.sql:/docker-entrypoint-initdb.d/02-insert-manufacturers-and-models.sql
+      - ./database/triggers.sql:/docker-entrypoint-initdb.d/03-triggers.sql
+      - ./database/init-test-db.sql:/docker-entrypoint-initdb.d/04-init-test-db.sql
+      - ./database/init-pg-ivm.sql:/docker-entrypoint-initdb.d/05-init-pg-ivm.sql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U bd2_user -d bd2_database" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: bd2-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: bd2-backend
+    env_file:
+      - ./backend/.env
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

@@ -1,0 +1,4016 @@
+{
+    "schemes": [
+        "http"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "Car-Dealer API",
+        "title": "Car‑Dealer API",
+        "contact": {
+            "name": "BD2"
+        },
+        "license": {
+            "name": "MIT"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "paths": {
+        "/auction": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates an existing auction with the provided details",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auction"
+                ],
+                "summary": "Update auction",
+                "parameters": [
+                    {
+                        "description": "Auction details",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/auction.UpdateAuctionDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated auction",
+                        "schema": {
+                            "$ref": "#/definitions/sale_offer.RetrieveSaleOfferDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Creates a new auction with the provided details",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auction"
+                ],
+                "summary": "Create Auction",
+                "parameters": [
+                    {
+                        "description": "Auction details",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/auction.CreateAuctionDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created auction",
+                        "schema": {
+                            "$ref": "#/definitions/sale_offer.RetrieveSaleOfferDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/auction/buy-now/{id}": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Allows a user to instantly purchase an auction at its buy now price if available",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auction"
+                ],
+                "summary": "Buy an auction at its buy now price",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Auction ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully purchased the auction"
+                    },
+                    "400": {
+                        "description": "Invalid auction ID or buy now operation failed",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - user not logged in",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/auction/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Deletes a specific auction by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auction"
+                ],
+                "summary": "Delete auction by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Auction ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/change-password": {
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Changes the password of the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Change user password",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Password change details",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/auth.ChangePasswordDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Password successfully changed"
+                    },
+                    "400": {
+                        "description": "Invalid request or password validation failed",
+                        "schema": {
+                            "$ref": "#/definitions/auth.ChangePasswordResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized access",
+                        "schema": {
+                            "$ref": "#/definitions/auth.ChangePasswordResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Authenticate user and return a pair of tokens and user data",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Login user",
+                "parameters": [
+                    {
+                        "description": "Login form",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/auth.LoginInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK - returns tokens and data of the user",
+                        "schema": {
+                            "$ref": "#/definitions/auth.LoginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input data",
+                        "schema": {
+                            "$ref": "#/definitions/auth.LoginResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/auth.LoginResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/auth.LoginResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/refresh": {
+            "post": {
+                "description": "Refresh access tokens",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Refresh tokens",
+                "parameters": [
+                    {
+                        "description": "Refresh token form",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/auth.RefreshInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK - returns new access token",
+                        "schema": {
+                            "$ref": "#/definitions/auth.LoginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input data",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/register": {
+            "post": {
+                "description": "Set up account and return the status",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Register new user",
+                "parameters": [
+                    {
+                        "description": "Registration form",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/user.CreateUserDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created - returns tokens",
+                        "schema": {
+                            "$ref": "#/definitions/auth.RegisterResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input data",
+                        "schema": {
+                            "$ref": "#/definitions/auth.RegisterResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Login taken",
+                        "schema": {
+                            "$ref": "#/definitions/auth.RegisterResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/auth.RegisterResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/bid": {
+            "get": {
+                "description": "Retrieve all bids",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "bid"
+                ],
+                "summary": "Get all bids",
+                "responses": {
+                    "200": {
+                        "description": "List of bids",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/bid.RetrieveBidDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create a new bid for an auction",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "bid"
+                ],
+                "summary": "Create a new bid",
+                "parameters": [
+                    {
+                        "description": "Bid details",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/bid.CreateBidDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created bid",
+                        "schema": {
+                            "$ref": "#/definitions/bid.RetrieveBidDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/bid/auction/{id}": {
+            "get": {
+                "description": "Retrieves all bids placed on a specific auction",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "bid"
+                ],
+                "summary": "Get bids by auction ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Auction ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of bids",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/bid.RetrieveBidDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid auction ID or retrieval error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/bid/bidder/{id}": {
+            "get": {
+                "description": "Retrieves all bids placed by a specific bidder",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "bid"
+                ],
+                "summary": "Get bids by bidder ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Bidder ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of bids",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/bid.RetrieveBidDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid bidder ID or retrieval error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/bid/highest/auction/{auctionID}/bidder/{bidderID}": {
+            "get": {
+                "description": "Retrieves the highest bid placed by a specific user on a specific auction",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "bid"
+                ],
+                "summary": "Get the highest bid by a user for a specific auction",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Auction ID",
+                        "name": "auctionID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Bidder ID",
+                        "name": "bidderID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Highest bid details",
+                        "schema": {
+                            "$ref": "#/definitions/bid.RetrieveBidDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid auction ID, bidder ID, or retrieval error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/bid/highest/{id}": {
+            "get": {
+                "description": "Retrieves the highest bid for a specific auction",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "bid"
+                ],
+                "summary": "Get the highest bid for an auction",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Auction ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Highest bid details",
+                        "schema": {
+                            "$ref": "#/definitions/bid.RetrieveBidDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid auction ID or retrieval error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/bid/{id}": {
+            "get": {
+                "description": "Retrieve a bid by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "bid"
+                ],
+                "summary": "Get bid by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Bid ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Bid details",
+                        "schema": {
+                            "$ref": "#/definitions/bid.RetrieveBidDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/car/colors": {
+            "get": {
+                "description": "Returns a list of all possible colors that are accepted when creating a new offer. If the color of your car is not in the list, choose 'other'.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "car"
+                ],
+                "summary": "Get all possible colors",
+                "responses": {
+                    "200": {
+                        "description": "List of colors",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/car/drives": {
+            "get": {
+                "description": "Returns a list of all possible drives that are accepted when creating a new offer.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "car"
+                ],
+                "summary": "Get all possible drives",
+                "responses": {
+                    "200": {
+                        "description": "List of drives",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/car/fuel-types": {
+            "get": {
+                "description": "Returns a list of all possible fuel types that are accepted when creating a new offer.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "car"
+                ],
+                "summary": "Get all possible fuel types",
+                "responses": {
+                    "200": {
+                        "description": "List of fuel types",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/car/manufacturer-model-map": {
+            "get": {
+                "description": "Get manufacturers and models map. Each manufacturer has a list of models (the indices are corresponding).",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "car"
+                ],
+                "summary": "Get manufacturers and models map",
+                "responses": {
+                    "200": {
+                        "description": "map of manufacturers and models",
+                        "schema": {
+                            "$ref": "#/definitions/car.ManufacturerModelMap"
+                        }
+                    },
+                    "404": {
+                        "description": "manufacturer of model not found",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/car/manufacturers": {
+            "get": {
+                "description": "Returns a list of all manufacturers stored in the database.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "car"
+                ],
+                "summary": "Get all manufacturers",
+                "responses": {
+                    "200": {
+                        "description": "List of manufacturers",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/manufacturer.RetrieveManufacturerDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/car/models/id/{id}": {
+            "get": {
+                "description": "Returns a list of all models stored in the database for a given manufacturer id.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "car"
+                ],
+                "summary": "Get all models by manufacturer id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Manufacturer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of models",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.RetrieveModelDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "ID is not a number",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Models not found",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/car/models/name/{name}": {
+            "get": {
+                "description": "Returns a list of all models stored in the database for a given manufacturer name.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "car"
+                ],
+                "summary": "Get all models by manufacturer name",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Manufacturer name",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of models",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.RetrieveModelDTO"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Models not found",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/car/transmissions": {
+            "get": {
+                "description": "Returns a list of all possible transmissions that are accepted when creating a new offer.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "car"
+                ],
+                "summary": "Get all possible transmissions",
+                "responses": {
+                    "200": {
+                        "description": "List of transmissions",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/favourite/dislike/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Dislike offer by giving it's id. You have to be logged in to perform this operation.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "favourite"
+                ],
+                "summary": "Dislike offer",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Sale offer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "400": {
+                        "description": "Invalid input data",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - user not logged in",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Sale offer not found",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/favourite/like/{id}": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Like new offer by giving it's id. You have to be logged in to perform this operation.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "favourite"
+                ],
+                "summary": "Like new offer",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Sale offer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Liked offer"
+                    },
+                    "400": {
+                        "description": "Invalid input data",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - user not logged in",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Sale offer not found",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/image": {
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Deletes an image by its URL. The user must be the owner of the image. Removes image from database and cloud storage - both operations must be successful to proceed.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "image"
+                ],
+                "summary": "Delete image",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Image URL",
+                        "name": "url",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content - image successfully deleted"
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - user must be logged in to delete images",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - usercan only images that refer to his own offers",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Image not found",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/image/offer/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Deletes all images for a sale offer. The user must be the owner of the given offer. Removes image from database and cloud storage - both operations must be successful to proceed.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "image"
+                ],
+                "summary": "Delete all images for a sale offer",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Sale offer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content - images successfully deleted"
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - user must be logged in to delete images ",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - user can only delete images for his own offers",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Sale offer not found",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/image/{id}": {
+            "patch": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Uploads images for a sale offer. You can upload multiple images at once, but 10 is the limit. Only offers with photos can be published later on (sale-offer/publish).",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "image"
+                ],
+                "summary": "Upload images for sale offer",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Sale offer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Images to upload",
+                        "name": "images",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated sale offer with images",
+                        "schema": {
+                            "$ref": "#/definitions/sale_offer.RetrieveDetailedSaleOfferDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - user must be logged in to upload images for sale offers",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - user can only upload images for his own offers",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Sale offer not found",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/logout": {
+            "post": {
+                "description": "Logout user and invalidate refresh token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Logout user",
+                "parameters": [
+                    {
+                        "description": "Logout form",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/auth.LogoutInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input data",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/notification/filter": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Gets a list of notifications based on provided filter criteria for the current user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "summary": "Retrieve filtered notifications for authenticated user",
+                "parameters": [
+                    {
+                        "description": "Filter criteria for notifications",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/notification.NotificationFilter"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of notifications",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/notification.RetrieveNotificationsWithPagination"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid body or bad request",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/notification/seen": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates the seen status of all notifications for the authenticated user to true",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "summary": "Mark all notifications as seen",
+                "responses": {
+                    "200": {
+                        "description": "Successfully marked all notifications as seen"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/notification/seen/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates the seen status of a specific notification to true for the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "summary": "Mark notification as seen",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Notification ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Status OK"
+                    },
+                    "400": {
+                        "description": "Bad Request - Invalid notification ID or update failed",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/notification/unseen": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates the seen status of all notifications for the authenticated user to false",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "summary": "Mark all notifications as unseen",
+                "responses": {
+                    "200": {
+                        "description": "Successfully marked all notifications as unseen"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/notification/unseen/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates the seen status of a notification to unseen for the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "summary": "Mark notification as unseen",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Notification ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/review": {
+            "get": {
+                "description": "Returns every review in the system as an array of DTOs.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "List all reviews",
+                "operationId": "getAllReviews",
+                "responses": {
+                    "200": {
+                        "description": "OK – list of reviews",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/review.RetrieveReviewDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request – query failed",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Updates a review and returns the updated entity.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "Update an existing review",
+                "operationId": "updateReview",
+                "parameters": [
+                    {
+                        "description": "Review payload",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/review.UpdateReviewDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK – review updated",
+                        "schema": {
+                            "$ref": "#/definitions/review.RetrieveReviewDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request – valIDation or update error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Persists a new review entity and returns the created review.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "Create a new review",
+                "operationId": "createReview",
+                "parameters": [
+                    {
+                        "description": "Review payload",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/review.CreateReviewDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created – review stored",
+                        "schema": {
+                            "$ref": "#/definitions/review.RetrieveReviewDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request – valIDation or persistence error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/review/average-rating/{id}": {
+            "get": {
+                "description": "Returns the average rating value calculated over all reviews for the given reviewee.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "Get average rating for a reviewee",
+                "operationId": "getAverageRatingByRevieweeID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Reviewee ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK – average rating (rounded to two decimals)",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request – invalID ID format or query failed",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/review/filter": {
+            "post": {
+                "description": "Returns reviews matching podanych kryteriów filtrowania wraz z paginacją.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "Filter reviews with pagination",
+                "operationId": "getFilteredReviews",
+                "parameters": [
+                    {
+                        "description": "Filter payload",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/review.ReviewFilter"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK ",
+                        "schema": {
+                            "$ref": "#/definitions/review.RetrieveReviewsWithPagination"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request – invalID filter or query failed",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/review/frequency/{id}": {
+            "get": {
+                "description": "Returns a map from rating value (1–5) to percentage frequency among all reviews for the given reviewee.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "Get distribution of ratings for a reviewee",
+                "operationId": "getFrequencyOfRatingByRevieweeID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Reviewee ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK – percentage frequencies for ratings 1 through 5",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request – invalID ID format or query failed",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/review/reviewee/{id}": {
+            "post": {
+                "description": "Returns all reviews where the given user is the reviewee.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "List reviews about a reviewee",
+                "operationId": "getReviewsByRevieweeID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Reviewee ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK – list of reviews",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/review.RetrieveReviewDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request – invalID ID format or query failed",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/review/reviewer/{id}": {
+            "post": {
+                "description": "Returns all reviews authored by the reviewer specified by ID.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "List reviews written by a reviewer",
+                "operationId": "getReviewsByReviewerID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Reviewer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK – list of reviews",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/review.RetrieveReviewDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request – invalID ID format or query failed",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/review/reviewer/{reviewerID}/reviewee/{revieweeID}": {
+            "get": {
+                "description": "Returns the review where \u003creviewerID\u003e is the author and \u003crevieweeID\u003e is the subject.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "Get review written by one user about another",
+                "operationId": "getReviewByReviewerAndReviewee",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Reviewer ID",
+                        "name": "reviewerID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Reviewee ID",
+                        "name": "revieweeID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK – review found",
+                        "schema": {
+                            "$ref": "#/definitions/review.RetrieveReviewDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request – invalID ID format or query failed",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/review/{id}": {
+            "get": {
+                "description": "Returns review that match given ID as an DTO.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "Get review by ID",
+                "operationId": "getReviewByID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Review ID",
+                        "name": "ID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK – review with given ID",
+                        "schema": {
+                            "$ref": "#/definitions/review.RetrieveReviewDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request – query failed",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deletes the review IDentified by its ID.",
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "Delete a review",
+                "operationId": "deleteReview",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Review ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content – review deleted",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request – invalID ID format or delete failed",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/sale-offer": {
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Updates an existing sale offer in the database. To update a sale offer, the user must be logged in and must be the owner of the offer. Constraints are the same as when creating a sale offer.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sale-offer"
+                ],
+                "summary": "Update a sale offer",
+                "parameters": [
+                    {
+                        "description": "Sale offer form",
+                        "name": "offer",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sale_offer.UpdateSaleOfferDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated - returns the updated sale offer",
+                        "schema": {
+                            "$ref": "#/definitions/sale_offer.RetrieveDetailedSaleOfferDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input data",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - user must be logged in to update his offer",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - user can only update his own offer",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Sale offer not found",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Creates a new sale offer in the database. To create a sale offer, the user must be logged in. There are several constraints on the offer fields, such as:\n- Color must be one of the predefined colors (endpoint: /car/colors)\n- Fuel type must be one of the predefined fuel types (endpoint: /car/fuel_types)\n- Transmission must be one of the predefined transmission types (endpoint: /car/transmissions)\n- Drive must be one of the predefined drive types (endpoint: /car/drives)\n- Model must be one of the predefined models (endpoint: /car/models or /car/models/:id)\n- Number of doors must be between 1 and 6\n- Number of seats must be between 2 and 100\n- Engine power must be less than or equal to 9999 (in horsepower)\n- Engine capacity must be less than or equal to 9000 (in cm3)\n- Number of gears must be between 1 and 10",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sale-offer"
+                ],
+                "summary": "Create a new sale offer",
+                "parameters": [
+                    {
+                        "description": "Sale offer form",
+                        "name": "offer",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sale_offer.CreateSaleOfferDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created - returns the created sale offer",
+                        "schema": {
+                            "$ref": "#/definitions/sale_offer.RetrieveDetailedSaleOfferDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input data",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - user not logged in",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/sale-offer/buy/{id}": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Allows a user to buy an item from a sale offer",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sale-offer"
+                ],
+                "summary": "Buy a sale offer",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Sale Offer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully purchased offer"
+                    },
+                    "401": {
+                        "description": "Unauthorized - user must be logged in to buy an offer"
+                    },
+                    "403": {
+                        "description": "Forbidden - user cannot buy his own offer"
+                    },
+                    "404": {
+                        "description": "Not Found - sale offer not found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/sale-offer/filtered": {
+            "post": {
+                "description": "Returns a list of sale offers in paginated form. If the user is logged in, the results contain he offers created by the user. The results are filtered based on request's body. There are several constraints on the filter fields, such as:\n- Auction type must be one of the predefined offer types (endpoint: /sale-offer/offer-types)\n- Order key must be one of the predefined order keys (endpoint: /sale-offer/order-keys)\n- List of manufacturers must contain only predefined manufacturers (endpoint: /car/manufacturers)\n- List of colors must contain only predefined colors (endpoint: /car/colors)\n- List of drives must contain only predefined drives (endpoint: /car/drives)\n- List of fuel types must contain only predefined fuel types (endpoint: /car/fuel_types)\n- List of transmissions must contain only predefined transmission types (endpoint: /car/transmissions)\n- Whenever you use a range, the min value must be less than or equal to the max value, you can provide only one of them, and the other will be ignored.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sale-offer"
+                ],
+                "summary": "Get filtered sale offers",
+                "parameters": [
+                    {
+                        "description": "Sale offer filter",
+                        "name": "filter",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sale_offer.OfferFilterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of sale offers",
+                        "schema": {
+                            "$ref": "#/definitions/sale_offer.RetrieveOffersWithPagination"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input data",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/sale-offer/id/{id}": {
+            "get": {
+                "description": "Returns a sale offer by its ID. Can be used to retrieve detailed information about sale offer.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sale-offer"
+                ],
+                "summary": "Get sale offer by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Sale offer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Sale offer details",
+                        "schema": {
+                            "$ref": "#/definitions/sale_offer.RetrieveDetailedSaleOfferDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input data",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Sale offer not found",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Deletes a sale offer from the database. To delete a sale offer, the user must be logged in and must be the owner of the offer.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sale-offer"
+                ],
+                "summary": "Delete a sale offer",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Sale offer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content - sale offer deleted successfully"
+                    },
+                    "400": {
+                        "description": "Invalid input data",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - user must be logged in to delete his offer",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - user can delete only his own offer. If the auction has any bids, the user cannot delete it.",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Sale offer not found",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/sale-offer/liked-offers": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Returns a list of sale offers that the logged-in user has liked. The results are filtered based on request's body. To check how filter should be set look at /filtered endpoint.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sale-offer"
+                ],
+                "summary": "Get liked only sale offers",
+                "parameters": [
+                    {
+                        "description": "Sale offer filter",
+                        "name": "filter",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sale_offer.OfferFilterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of sale offers",
+                        "schema": {
+                            "$ref": "#/definitions/sale_offer.RetrieveOffersWithPagination"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input data",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - user must be logged in to retrieve his offers",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - token is invalid or expired",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/sale-offer/my-offers": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Returns a list of all sale offers created by the logged-in user. The results are filtered based on request's body. To check how filter should be set look at /filtered endpoint.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sale-offer"
+                ],
+                "summary": "Get my sale offers",
+                "parameters": [
+                    {
+                        "description": "Pagination request",
+                        "name": "filter",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sale_offer.OfferFilterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of sale offers",
+                        "schema": {
+                            "$ref": "#/definitions/sale_offer.RetrieveOffersWithPagination"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input data - filter is invalid",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - user must be logged in to retrieve his offers",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - token has expired or is invalid",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/sale-offer/offer-types": {
+            "get": {
+                "description": "Returns a list of all possible offer types that are accepted when using filtering. If you choose both the auctions and regular offers will be found.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sale-offer"
+                ],
+                "summary": "Get offer types",
+                "responses": {
+                    "200": {
+                        "description": "List of offer types",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/sale-offer/order-keys": {
+            "get": {
+                "description": "Returns a list of all possible order keys that are accepted when using filtering.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sale-offer"
+                ],
+                "summary": "Get order keys",
+                "responses": {
+                    "200": {
+                        "description": "List of order keys",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/sale-offer/purchased-offers": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Returns a list of offers that the logged-in user has purchased. The results are filtered based on request's body. To check how filter should be set look at /filtered endpoint.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sale-offer"
+                ],
+                "summary": "Get purchased offers",
+                "parameters": [
+                    {
+                        "description": "Sale offer filter",
+                        "name": "filter",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sale_offer.OfferFilterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of sale offers",
+                        "schema": {
+                            "$ref": "#/definitions/sale_offer.RetrieveOffersWithPagination"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input data",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - user must be logged in to retrieve purchased offers",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - token is invalid or expired",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "description": "Return a list of all users stored in database. If user's subtype is person the company related fields will be omitted and vice versa.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Get all users",
+                "responses": {
+                    "200": {
+                        "description": "List of users",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/user.RetrieveUserDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Updates user's data in database from given form. Currently, you can only change basic fields (email, username, password), not the subtype.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Update user",
+                "parameters": [
+                    {
+                        "description": "Update form",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/user.UpdateUserDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User updated",
+                        "schema": {
+                            "$ref": "#/definitions/user.UpdateUserDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input data - email, username or nip taken",
+                        "schema": {
+                            "$ref": "#/definitions/user.UpdateResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - user be logged in to update his data",
+                        "schema": {
+                            "$ref": "#/definitions/user.UpdateResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - user can only update his own data",
+                        "schema": {
+                            "$ref": "#/definitions/user.UpdateResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "$ref": "#/definitions/user.UpdateResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/user.UpdateResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/email/{email}": {
+            "get": {
+                "description": "Returns user who has provided email. If user's subtype is person the company related fields will be omitted and vice versa.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Get user by email",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User email",
+                        "name": "email",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User found",
+                        "schema": {
+                            "$ref": "#/definitions/user.RetrieveUserDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/id/{id}": {
+            "get": {
+                "description": "Returns user who has provided id. If user's subtype is person the company related fields will be omitted and vice versa.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Get user by id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User",
+                        "schema": {
+                            "$ref": "#/definitions/user.RetrieveUserDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "ID is not a number",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Removes user who has provided id from database.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Delete user",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "User successfully deleted"
+                    },
+                    "400": {
+                        "description": "ID is not a number",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - user must be logged in to delete his account",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - user can only delete his own account",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/custom_errors.HTTPError"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "auction.CreateAuctionDTO": {
+            "type": "object",
+            "required": [
+                "color",
+                "description",
+                "drive",
+                "engine_capacity",
+                "engine_power",
+                "fuel_type",
+                "manufacturer",
+                "margin",
+                "mileage",
+                "model",
+                "number_of_doors",
+                "number_of_gears",
+                "number_of_seats",
+                "price",
+                "production_year",
+                "registration_date",
+                "registration_number",
+                "transmission",
+                "vin"
+            ],
+            "properties": {
+                "buy_now_price": {
+                    "type": "integer"
+                },
+                "color": {
+                    "$ref": "#/definitions/enums.Color"
+                },
+                "date_end": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "drive": {
+                    "$ref": "#/definitions/enums.Drive"
+                },
+                "engine_capacity": {
+                    "type": "integer"
+                },
+                "engine_power": {
+                    "type": "integer"
+                },
+                "fuel_type": {
+                    "$ref": "#/definitions/enums.FuelType"
+                },
+                "manufacturer": {
+                    "type": "string"
+                },
+                "margin": {
+                    "$ref": "#/definitions/enums.MarginValue"
+                },
+                "mileage": {
+                    "type": "integer"
+                },
+                "model": {
+                    "type": "string"
+                },
+                "number_of_doors": {
+                    "type": "integer"
+                },
+                "number_of_gears": {
+                    "type": "integer"
+                },
+                "number_of_seats": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "production_year": {
+                    "type": "integer"
+                },
+                "registration_date": {
+                    "type": "string"
+                },
+                "registration_number": {
+                    "type": "string"
+                },
+                "transmission": {
+                    "$ref": "#/definitions/enums.Transmission"
+                },
+                "vin": {
+                    "type": "string"
+                }
+            }
+        },
+        "auction.UpdateAuctionDTO": {
+            "type": "object",
+            "properties": {
+                "buy_now_price": {
+                    "type": "integer"
+                },
+                "color": {
+                    "$ref": "#/definitions/enums.Color"
+                },
+                "date_end": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "drive": {
+                    "$ref": "#/definitions/enums.Drive"
+                },
+                "engine_capacity": {
+                    "type": "integer"
+                },
+                "engine_power": {
+                    "type": "integer"
+                },
+                "fuel_type": {
+                    "$ref": "#/definitions/enums.FuelType"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "manufacturer": {
+                    "type": "string"
+                },
+                "margin": {
+                    "$ref": "#/definitions/enums.MarginValue"
+                },
+                "mileage": {
+                    "type": "integer"
+                },
+                "model": {
+                    "type": "string"
+                },
+                "number_of_doors": {
+                    "type": "integer"
+                },
+                "number_of_gears": {
+                    "type": "integer"
+                },
+                "number_of_seats": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "production_year": {
+                    "type": "integer"
+                },
+                "registration_date": {
+                    "type": "string"
+                },
+                "registration_number": {
+                    "type": "string"
+                },
+                "transmission": {
+                    "$ref": "#/definitions/enums.Transmission"
+                },
+                "vin": {
+                    "type": "string"
+                }
+            }
+        },
+        "auth.ChangePasswordDTO": {
+            "type": "object",
+            "required": [
+                "new_password",
+                "old_password"
+            ],
+            "properties": {
+                "new_password": {
+                    "type": "string"
+                },
+                "old_password": {
+                    "type": "string"
+                }
+            }
+        },
+        "auth.ChangePasswordResponse": {
+            "type": "object",
+            "properties": {
+                "errors": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "auth.LoginInput": {
+            "type": "object",
+            "required": [
+                "login",
+                "password"
+            ],
+            "properties": {
+                "login": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "auth.LoginResponse": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string"
+                },
+                "company_name": {
+                    "type": "string"
+                },
+                "company_nip": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "errors": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "person_name": {
+                    "type": "string"
+                },
+                "person_surname": {
+                    "type": "string"
+                },
+                "refresh_token": {
+                    "type": "string"
+                },
+                "selector": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "auth.LogoutInput": {
+            "type": "object",
+            "properties": {
+                "all_devices": {
+                    "type": "boolean"
+                },
+                "refresh_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "auth.RefreshInput": {
+            "type": "object",
+            "required": [
+                "refresh_token"
+            ],
+            "properties": {
+                "refresh_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "auth.RegisterResponse": {
+            "type": "object",
+            "properties": {
+                "errors": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "bid.CreateBidDTO": {
+            "type": "object",
+            "required": [
+                "amount",
+                "auction_id"
+            ],
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "auction_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "bid.RetrieveBidDTO": {
+            "type": "object",
+            "required": [
+                "amount",
+                "auction_id",
+                "bidder_id"
+            ],
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "auction_id": {
+                    "type": "integer"
+                },
+                "bidder_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "car.ManufacturerModelMap": {
+            "type": "object",
+            "properties": {
+                "manufacturers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "models": {
+                    "type": "array",
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "custom_errors.HTTPError": {
+            "type": "object",
+            "properties": {
+                "error_description": {
+                    "type": "string"
+                }
+            }
+        },
+        "enums.Color": {
+            "type": "string",
+            "enum": [
+                "Red",
+                "Blue",
+                "Yellow",
+                "Green",
+                "Orange",
+                "Purple",
+                "Brown",
+                "Black",
+                "White",
+                "Gray",
+                "Cyan",
+                "Magenta",
+                "Lime",
+                "Navy",
+                "Teal",
+                "Maroon",
+                "Olive",
+                "Beige",
+                "Gold",
+                "Other"
+            ],
+            "x-enum-varnames": [
+                "RED",
+                "BLUE",
+                "YELLOW",
+                "GREEN",
+                "ORANGE",
+                "PURPLE",
+                "BROWN",
+                "BLACK",
+                "WHITE",
+                "GRAY",
+                "CYAN",
+                "MAGENTA",
+                "LIME",
+                "NAVY",
+                "TEAL",
+                "MAROON",
+                "OLIVE",
+                "BEIGE",
+                "GOLD",
+                "OTHER"
+            ]
+        },
+        "enums.Drive": {
+            "type": "string",
+            "enum": [
+                "FWD",
+                "RWD",
+                "AWD"
+            ],
+            "x-enum-varnames": [
+                "FWD",
+                "RWD",
+                "AWD"
+            ]
+        },
+        "enums.FuelType": {
+            "type": "string",
+            "enum": [
+                "Diesel",
+                "Petrol",
+                "Electric",
+                "Ethanol",
+                "LPG",
+                "Biofuel",
+                "Hybrid",
+                "Hydrogen"
+            ],
+            "x-enum-varnames": [
+                "DIESEL",
+                "PETROL",
+                "ELECTRIC",
+                "ETHANOL",
+                "LPG",
+                "BIOFUEL",
+                "HYBRID",
+                "HYDROGEN"
+            ]
+        },
+        "enums.MarginValue": {
+            "type": "integer",
+            "enum": [
+                3,
+                5,
+                10
+            ],
+            "x-enum-varnames": [
+                "LOW_MARGIN",
+                "MEDIUM_MARGIN",
+                "HIGH_MARGIN"
+            ]
+        },
+        "enums.Transmission": {
+            "type": "string",
+            "enum": [
+                "Manual",
+                "Automatic",
+                "Cvt",
+                "Dual clutch"
+            ],
+            "x-enum-varnames": [
+                "MANUAL",
+                "AUTOMATIC",
+                "CVT",
+                "DUAL_CLUTCH"
+            ]
+        },
+        "manufacturer.RetrieveManufacturerDTO": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.RetrieveModelDTO": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "notification.NotificationFilter": {
+            "type": "object",
+            "properties": {
+                "is_order_desc": {
+                    "type": "boolean"
+                },
+                "order_key": {
+                    "type": "string"
+                },
+                "pagination": {
+                    "$ref": "#/definitions/pagination.PaginationRequest"
+                },
+                "receiver_id": {
+                    "type": "integer"
+                },
+                "seen": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "notification.RetrieveNotificationDTO": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "offer_id": {
+                    "type": "integer"
+                },
+                "seen": {
+                    "type": "boolean"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "notification.RetrieveNotificationsWithPagination": {
+            "type": "object",
+            "properties": {
+                "notifications": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/notification.RetrieveNotificationDTO"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/pagination.PaginationResponse"
+                }
+            }
+        },
+        "pagination.PaginationRequest": {
+            "type": "object",
+            "properties": {
+                "page": {
+                    "type": "integer"
+                },
+                "page_size": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pagination.PaginationResponse": {
+            "type": "object",
+            "properties": {
+                "total_pages": {
+                    "type": "integer"
+                },
+                "total_records": {
+                    "type": "integer"
+                }
+            }
+        },
+        "review.CreateReviewDTO": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "rating": {
+                    "type": "integer"
+                },
+                "reviewee_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "review.RetrieveReviewDTO": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "rating": {
+                    "type": "integer"
+                },
+                "review_date": {
+                    "type": "string"
+                },
+                "reviewee": {
+                    "$ref": "#/definitions/review.UserDTO"
+                },
+                "reviewer": {
+                    "$ref": "#/definitions/review.UserDTO"
+                }
+            }
+        },
+        "review.RetrieveReviewsWithPagination": {
+            "type": "object",
+            "properties": {
+                "pagination": {
+                    "$ref": "#/definitions/pagination.PaginationResponse"
+                },
+                "reviews": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/review.RetrieveReviewDTO"
+                    }
+                }
+            }
+        },
+        "review.ReviewFilter": {
+            "type": "object",
+            "properties": {
+                "is_order_desc": {
+                    "type": "boolean"
+                },
+                "order_key": {
+                    "type": "string"
+                },
+                "pagination": {
+                    "$ref": "#/definitions/pagination.PaginationRequest"
+                },
+                "ratings": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "reviewee_id": {
+                    "type": "integer"
+                },
+                "reviewer_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "review.UpdateReviewDTO": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "rating": {
+                    "type": "integer"
+                }
+            }
+        },
+        "review.UserDTO": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "sale_offer.BaseOfferFilter": {
+            "type": "object",
+            "properties": {
+                "car_registration_date_range": {
+                    "$ref": "#/definitions/sale_offer.MinMax-string"
+                },
+                "colors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/enums.Color"
+                    }
+                },
+                "drives": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/enums.Drive"
+                    }
+                },
+                "engine_capacity_range": {
+                    "$ref": "#/definitions/sale_offer.MinMax-uint"
+                },
+                "engine_power_range": {
+                    "$ref": "#/definitions/sale_offer.MinMax-uint"
+                },
+                "fuel_types": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/enums.FuelType"
+                    }
+                },
+                "is_order_desc": {
+                    "type": "boolean"
+                },
+                "manufacturers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "mileage_range": {
+                    "$ref": "#/definitions/sale_offer.MinMax-uint"
+                },
+                "offer_creation_date_range": {
+                    "$ref": "#/definitions/sale_offer.MinMax-string"
+                },
+                "offer_type": {
+                    "$ref": "#/definitions/sale_offer.OfferType"
+                },
+                "order_key": {
+                    "type": "string"
+                },
+                "price_range": {
+                    "$ref": "#/definitions/sale_offer.MinMax-uint"
+                },
+                "query": {
+                    "type": "string"
+                },
+                "transmissions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/enums.Transmission"
+                    }
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "year_range": {
+                    "$ref": "#/definitions/sale_offer.MinMax-uint"
+                }
+            }
+        },
+        "sale_offer.CreateSaleOfferDTO": {
+            "type": "object",
+            "required": [
+                "color",
+                "description",
+                "drive",
+                "engine_capacity",
+                "engine_power",
+                "fuel_type",
+                "manufacturer",
+                "margin",
+                "mileage",
+                "model",
+                "number_of_doors",
+                "number_of_gears",
+                "number_of_seats",
+                "price",
+                "production_year",
+                "registration_date",
+                "registration_number",
+                "transmission",
+                "vin"
+            ],
+            "properties": {
+                "color": {
+                    "$ref": "#/definitions/enums.Color"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "drive": {
+                    "$ref": "#/definitions/enums.Drive"
+                },
+                "engine_capacity": {
+                    "type": "integer"
+                },
+                "engine_power": {
+                    "type": "integer"
+                },
+                "fuel_type": {
+                    "$ref": "#/definitions/enums.FuelType"
+                },
+                "manufacturer": {
+                    "type": "string"
+                },
+                "margin": {
+                    "$ref": "#/definitions/enums.MarginValue"
+                },
+                "mileage": {
+                    "type": "integer"
+                },
+                "model": {
+                    "type": "string"
+                },
+                "number_of_doors": {
+                    "type": "integer"
+                },
+                "number_of_gears": {
+                    "type": "integer"
+                },
+                "number_of_seats": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "production_year": {
+                    "type": "integer"
+                },
+                "registration_date": {
+                    "type": "string"
+                },
+                "registration_number": {
+                    "type": "string"
+                },
+                "transmission": {
+                    "$ref": "#/definitions/enums.Transmission"
+                },
+                "vin": {
+                    "type": "string"
+                }
+            }
+        },
+        "sale_offer.MinMax-string": {
+            "type": "object",
+            "properties": {
+                "max": {
+                    "type": "string"
+                },
+                "min": {
+                    "type": "string"
+                }
+            }
+        },
+        "sale_offer.MinMax-uint": {
+            "type": "object",
+            "properties": {
+                "max": {
+                    "type": "integer"
+                },
+                "min": {
+                    "type": "integer"
+                }
+            }
+        },
+        "sale_offer.OfferFilterRequest": {
+            "type": "object",
+            "properties": {
+                "filter": {
+                    "$ref": "#/definitions/sale_offer.BaseOfferFilter"
+                },
+                "pagination": {
+                    "$ref": "#/definitions/pagination.PaginationRequest"
+                }
+            }
+        },
+        "sale_offer.OfferType": {
+            "type": "string",
+            "enum": [
+                "Regular offer",
+                "Auction",
+                "Both"
+            ],
+            "x-enum-varnames": [
+                "REGULAR_OFFER",
+                "AUCTION",
+                "BOTH"
+            ]
+        },
+        "sale_offer.RetrieveDetailedSaleOfferDTO": {
+            "type": "object",
+            "properties": {
+                "brand": {
+                    "type": "string"
+                },
+                "buy_now_price": {
+                    "type": "integer"
+                },
+                "can_modify": {
+                    "type": "boolean"
+                },
+                "color": {
+                    "$ref": "#/definitions/enums.Color"
+                },
+                "date_end": {
+                    "type": "string"
+                },
+                "date_of_issue": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "drive": {
+                    "$ref": "#/definitions/enums.Drive"
+                },
+                "engine_capacity": {
+                    "type": "integer"
+                },
+                "engine_power": {
+                    "type": "integer"
+                },
+                "fuel_type": {
+                    "$ref": "#/definitions/enums.FuelType"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "images_urls": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "is_auction": {
+                    "type": "boolean"
+                },
+                "is_liked": {
+                    "type": "boolean"
+                },
+                "issue_date": {
+                    "type": "string"
+                },
+                "margin": {
+                    "$ref": "#/definitions/enums.MarginValue"
+                },
+                "mileage": {
+                    "type": "integer"
+                },
+                "model": {
+                    "type": "string"
+                },
+                "number_of_doors": {
+                    "type": "integer"
+                },
+                "number_of_gears": {
+                    "type": "integer"
+                },
+                "number_of_seats": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "production_year": {
+                    "type": "integer"
+                },
+                "registration_date": {
+                    "type": "string"
+                },
+                "registration_number": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "transmission": {
+                    "$ref": "#/definitions/enums.Transmission"
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "username": {
+                    "type": "string"
+                },
+                "vin": {
+                    "type": "string"
+                }
+            }
+        },
+        "sale_offer.RetrieveOffersWithPagination": {
+            "type": "object",
+            "properties": {
+                "offers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/sale_offer.RetrieveSaleOfferDTO"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/pagination.PaginationResponse"
+                }
+            }
+        },
+        "sale_offer.RetrieveSaleOfferDTO": {
+            "type": "object",
+            "properties": {
+                "can_modify": {
+                    "type": "boolean"
+                },
+                "color": {
+                    "$ref": "#/definitions/enums.Color"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_auction": {
+                    "type": "boolean"
+                },
+                "is_liked": {
+                    "type": "boolean"
+                },
+                "issue_date": {
+                    "type": "string"
+                },
+                "main_url": {
+                    "type": "string"
+                },
+                "mileage": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "production_year": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "sale_offer.UpdateSaleOfferDTO": {
+            "type": "object",
+            "properties": {
+                "color": {
+                    "$ref": "#/definitions/enums.Color"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "drive": {
+                    "$ref": "#/definitions/enums.Drive"
+                },
+                "engine_capacity": {
+                    "type": "integer"
+                },
+                "engine_power": {
+                    "type": "integer"
+                },
+                "fuel_type": {
+                    "$ref": "#/definitions/enums.FuelType"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "manufacturer": {
+                    "type": "string"
+                },
+                "margin": {
+                    "$ref": "#/definitions/enums.MarginValue"
+                },
+                "mileage": {
+                    "type": "integer"
+                },
+                "model": {
+                    "type": "string"
+                },
+                "number_of_doors": {
+                    "type": "integer"
+                },
+                "number_of_gears": {
+                    "type": "integer"
+                },
+                "number_of_seats": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "production_year": {
+                    "type": "integer"
+                },
+                "registration_date": {
+                    "type": "string"
+                },
+                "registration_number": {
+                    "type": "string"
+                },
+                "transmission": {
+                    "$ref": "#/definitions/enums.Transmission"
+                },
+                "vin": {
+                    "type": "string"
+                }
+            }
+        },
+        "user.CreateUserDTO": {
+            "type": "object",
+            "required": [
+                "email",
+                "password",
+                "selector",
+                "username"
+            ],
+            "properties": {
+                "company_name": {
+                    "type": "string"
+                },
+                "company_nip": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "person_name": {
+                    "type": "string"
+                },
+                "person_surname": {
+                    "type": "string"
+                },
+                "selector": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "user.RetrieveUserDTO": {
+            "type": "object",
+            "properties": {
+                "company_name": {
+                    "type": "string"
+                },
+                "company_nip": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "person_name": {
+                    "type": "string"
+                },
+                "person_surname": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "user.UpdateResponse": {
+            "type": "object",
+            "properties": {
+                "errors": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "user.UpdateUserDTO": {
+            "type": "object",
+            "properties": {
+                "company_name": {
+                    "type": "string"
+                },
+                "company_nip": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "person_name": {
+                    "type": "string"
+                },
+                "person_surname": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
