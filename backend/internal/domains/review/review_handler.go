@@ -143,9 +143,11 @@ func (h *Handler) DeleteReview(c *gin.Context) {
 	reviewerID, err := auth.GetUserID(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+		return
 	}
 	if err := h.service.Delete(reviewerID, uint(id)); err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+		return
 	}
 	c.Status(http.StatusNoContent)
 }
@@ -165,6 +167,7 @@ func (h *Handler) GetReviewsByReviewerID(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+		return
 	}
 	userID := uint(id)
 	filter := NewReviewFilter()
@@ -198,6 +201,7 @@ func (h *Handler) GetReviewsByRevieweeID(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+		return
 	}
 	userID := uint(id)
 	filter := NewReviewFilter()
@@ -232,14 +236,17 @@ func (h *Handler) GetReviewsByReviewerIDAndRevieweeID(c *gin.Context) {
 	reviewerID, err := strconv.ParseUint(c.Param("reviewerID"), 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+		return
 	}
 	revieweeID, err := strconv.ParseUint(c.Param("revieweeID"), 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+		return
 	}
 	review, err := h.service.GetByReviewerIDAndRevieweeID(uint(reviewerID), uint(revieweeID))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+		return
 	}
 	c.JSON(http.StatusOK, review)
 }
@@ -285,6 +292,7 @@ func (h *Handler) GetAverageRatingByRevieweeID(c *gin.Context) {
 	ID, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+		return
 	}
 	revieweeID := uint(ID)
 	averageRating, err := h.service.GetAverageRatingByRevieweeID(revieweeID)
@@ -310,6 +318,7 @@ func (h *Handler) GetFrequencyOfRatingByRevieweeID(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+		return
 	}
 	revieweeID := uint(id)
 	frequency, err := h.service.GetFrequencyOfRatingByRevieweeID(revieweeID)
