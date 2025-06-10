@@ -245,7 +245,7 @@ func (h *Handler) GetReviewsByReviewerIDAndRevieweeID(c *gin.Context) {
 	}
 	review, err := h.service.GetByReviewerIDAndRevieweeID(uint(reviewerID), uint(revieweeID))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
+		c.JSON(http.StatusOK, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
 	c.JSON(http.StatusOK, review)
