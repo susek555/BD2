@@ -375,11 +375,11 @@ export function OfferForm(
                         <SelectionLabel id="transmission" name="Transmission" options={inputsData.gearboxes} />
                         <NumberInputField id="number_of_gears" name="Number of gears" />
                         <NumberInputField id="production_year" name="Production Year" />
-                        <NumberInputField id="mileage" name="Mileage" />
+                        <NumberInputField id="mileage" name="Mileage  [km]" />
                         <NumberInputField id="number_of_doors" name="Number of doors" />
                         <NumberInputField id="number_of_seats" name="Number of seats" />
-                        <NumberInputField id="engine_power" name="Power" />
-                        <NumberInputField id="engine_capacity" name="Engine displacement" />
+                        <NumberInputField id="engine_power" name="Power  [HP]" />
+                        <NumberInputField id="engine_capacity" name="Engine displacement  [cm3]" />
                         <DateSelectionField id="registration_date" name="Date of first registration" />
                         <TextInputField id="registration_number" name="Plate number" />
                         <TextInputField id="vin" name="VIN" />
@@ -451,7 +451,7 @@ export function OfferForm(
                                 value={is_auction.toString()}
                             />
                         )}
-                        <NumberInputField id="price" name="Price" />
+                        <NumberInputField id="price" name="Price [PLN]" />
                         <SelectionLabel id="margin" name="Margin ( % )" options={["3", "5", "10"]} required={progressState >= OfferFormEnum.pricingPart} />
                         <div className="flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
@@ -465,7 +465,7 @@ export function OfferForm(
                         {is_auction && (
                             <>
                                 <DateSelectionField id="date_end" name="Auction end date" hasHour={true} requiredPart={OfferFormEnum.pricingPart}/>
-                                <NumberInputField id="buy_now_price" name="Buy now price [ optional ]" />
+                                <NumberInputField id="buy_now_price" name="Buy now price [ optional ] [PLN]" />
                             </>
                         )}
 
