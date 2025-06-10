@@ -87,6 +87,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
                 id: id,
                 price: offer.price ?? 0,
                 isAuction: offer.isAuction,
+                isOwner: username === offer.sellerName,
                 auction: offer.auctionData,
                 isActive: offer.isActive,
                 myCurrentBid: myCurrentBid,
