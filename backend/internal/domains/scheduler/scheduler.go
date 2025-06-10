@@ -57,6 +57,10 @@ func (s *Scheduler) LoadAuctions() error {
 		auctionID := strconv.FormatUint(uint64(offer.ID), 10)
 		if offer.DateEnd.Local().Before(time.Now()) {
 			log.Printf("scheduler: skipping auction %s with end time %s, already ended", auctionID, offer.DateEnd)
+			s.closer.CloseAuction(CloseCmd{
+				AuctionID: offer.ID,
+				Reason:    ReasonTimer,
+			})
 			continue
 		}
 		item := &Item{
