@@ -1,6 +1,7 @@
 package sale_offer
 
 import (
+	"github.com/susek555/BD2/car-dealer-api/internal/enums"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
 )
 
@@ -35,6 +36,9 @@ func (e *OfferAccessEvaluator) CanBeModifiedByUser(offer SaleOfferEntityInterfac
 	}
 	if !offer.IsAuctionOffer() {
 		return true, nil
+	}
+	if offer.GetStatus() == enums.SOLD || offer.GetStatus() == enums.EXPIRED {
+		return false, nil
 	}
 	hasBids, err := e.hasBids(offer)
 	if err != nil {
