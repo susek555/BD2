@@ -28,7 +28,7 @@ var (
 	ErrOfferAlreadySold             = errors.New("offer is already sold - cannot buy it again")
 	ErrOfferNotPublished            = errors.New("offer is not published - cannot buy it")
 	ErrOfferIsAuction               = errors.New("offer is an auction - cannot buy it directly, use bids instead")
-	ErrOfferModification            = errors.New("offer cannot be modified - it doesn't belong to user or has some bids")
+	ErrOfferHasBids                 = errors.New("offer already has some bids - it cannot be updated/deleted")
 )
 
 var ErrorMap = map[error]int{
@@ -45,7 +45,6 @@ var ErrorMap = map[error]int{
 	ErrInvalidManufacturer:          http.StatusBadRequest,
 	ErrInvalidManufacturerModelPair: http.StatusBadRequest,
 	ErrOfferNotOwned:                http.StatusForbidden,
-	ErrOfferModification:            http.StatusForbidden,
 	gorm.ErrRecordNotFound:          http.StatusNotFound,
 	ErrOfferOwnedByUser:             http.StatusForbidden,
 	ErrOfferAlreadySold:             http.StatusConflict,
