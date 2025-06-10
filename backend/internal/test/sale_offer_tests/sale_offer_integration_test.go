@@ -15,6 +15,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/liked_offer"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/purchase"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/enums"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
@@ -818,6 +819,73 @@ func TestUpdateOffer_OfferAlreadySold(t *testing.T) {
 	assert.Equal(t, got.Description, sale_offer.ErrOfferModification.Error())
 }
 
+func TestUpdateOffer_ManufacturerAndModelDontMatch(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	var seedOffers = []models.SaleOffer{*createOffer(1)}
+	db, _ := setupDB()
+	server, _, _, _ := newTestServer(db, seedOffers)
+	invalidManufacturer := "InvalidManufacturer"
+	invalidModel := "InvalidModel"
+	body, err := json.Marshal(sale_offer.UpdateSaleOfferDTO{ID: 1, ManufacturerName: &invalidManufacturer, ModelName: &invalidModel})
+	assert.NoError(t, err)
+	user := USERS[0]
+	token, _ := u.GetValidToken(user.ID, user.Email)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPut, "/sale-offer/", body, &token)
+	assert.Equal(t, http.StatusBadRequest, receivedStatus)
+	var got custom_errors.HTTPError
+	err = json.Unmarshal(response, &got)
+	assert.NoError(t, err)
+	assert.Equal(t, got.Description, sale_offer.ErrInvalidManufacturerModelPair.Error())
+}
+
+func TestUpdateOffer_ModelOnly(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	var seedOffers = []models.SaleOffer{*u.Build(createOffer(1),
+		withCarField(u.WithField[models.Car]("ModelID", uint(4))))} //  Toyota Supra
+	db, _ := setupDB()
+	server, svc, _, _ := newTestServer(db, seedOffers)
+	model := "Corolla"
+	body, err := json.Marshal(sale_offer.UpdateSaleOfferDTO{ID: 1, ModelName: &model})
+	assert.NoError(t, err)
+	user := USERS[0]
+	token, _ := u.GetValidToken(user.ID, user.Email)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPut, "/sale-offer/", body, &token)
+	assert.Equal(t, http.StatusOK, receivedStatus)
+	var got sale_offer.RetrieveDetailedSaleOfferDTO
+	err = json.Unmarshal(response, &got)
+	assert.NoError(t, err)
+	offer, err := svc.GetDetailedByID(1, &user.ID)
+	assert.NoError(t, err)
+	assert.Equal(t, *offer, got)
+	assert.Equal(t, offer.Model, model)
+	u.CleanDB(DB)
+}
+
+func TestUpdateOffer_ModelAndManufacturer(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	var seedOffers = []models.SaleOffer{*u.Build(createOffer(1),
+		withCarField(u.WithField[models.Car]("ModelID", uint(4))))} //  Toyota Supra
+	db, _ := setupDB()
+	server, svc, _, _ := newTestServer(db, seedOffers)
+	manufacturer := "Audi"
+	model := "A3"
+	body, err := json.Marshal(sale_offer.UpdateSaleOfferDTO{ID: 1, ModelName: &model, ManufacturerName: &manufacturer})
+	assert.NoError(t, err)
+	user := USERS[0]
+	token, _ := u.GetValidToken(user.ID, user.Email)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPut, "/sale-offer/", body, &token)
+	assert.Equal(t, http.StatusOK, receivedStatus)
+	var got sale_offer.RetrieveDetailedSaleOfferDTO
+	err = json.Unmarshal(response, &got)
+	assert.NoError(t, err)
+	offer, err := svc.GetDetailedByID(1, &user.ID)
+	assert.NoError(t, err)
+	assert.Equal(t, *offer, got)
+	assert.Equal(t, offer.Model, model)
+	assert.Equal(t, offer.Brand, manufacturer)
+	u.CleanDB(DB)
+}
+
 func TestUpdateOffer_Description(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	var seedOffers = []models.SaleOffer{*createOffer(1)}
@@ -1581,11 +1649,6 @@ func TestUpdateOffer_RegistrationDate(t *testing.T) {
 	u.CleanDB(DB)
 }
 
-// ------------------------------
-// Get filtered sale offers tests
-// For more get filtered tests see: sale_offer_filter_test.go
-// ------------------------------
-
 func TestPubishSaleOffer_NotAuthorized(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	var seedOffers []models.SaleOffer = []models.SaleOffer{*createOffer(1)}
@@ -1718,11 +1781,251 @@ func TestPublishSaleOffer_Success(t *testing.T) {
 
 	offer, err := svc.GetDetailedByID(1, &user.ID)
 	assert.NoError(t, err)
-
 	assert.Equal(t, enums.PUBLISHED, offer.Status)
-
 	u.CleanDB(db)
 }
+
+// --------------------
+// Buy sale offer Tests
+// --------------------
+
+func TestBuySaleOffer_NotAuthorized(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	var seedOffers []models.SaleOffer = []models.SaleOffer{*createOffer(1)}
+	db, _ := setupDB()
+	server, _, _, _ := newTestServer(db, seedOffers)
+	_, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/buy/1", nil, nil)
+	assert.Equal(t, http.StatusUnauthorized, receivedStatus)
+	u.CleanDB(DB)
+}
+
+func TestBuySaleOffer_InvalidToken(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	var seedOffers []models.SaleOffer = []models.SaleOffer{*createOffer(1)}
+	db, _ := setupDB()
+	server, _, _, _ := newTestServer(db, seedOffers)
+	token := "invalid"
+	_, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/buy/1", nil, &token)
+	assert.Equal(t, http.StatusForbidden, receivedStatus)
+	u.CleanDB(DB)
+}
+
+func TestBuySaleOffer_OfferNotFound(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	var seedOffers []models.SaleOffer
+	db, _ := setupDB()
+	server, _, _, _ := newTestServer(db, seedOffers)
+	user := USERS[0]
+	token, _ := u.GetValidToken(user.ID, user.Email)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/buy/1", nil, &token)
+	assert.Equal(t, http.StatusNotFound, receivedStatus)
+	var got custom_errors.HTTPError
+	err := json.Unmarshal(response, &got)
+	assert.NoError(t, err)
+	assert.Equal(t, got.Description, gorm.ErrRecordNotFound.Error())
+	u.CleanDB(DB)
+}
+
+func TestBuySaleOffer_OwnOffer(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	var seedOffers []models.SaleOffer = []models.SaleOffer{*createOffer(1)}
+	db, _ := setupDB()
+	server, _, _, _ := newTestServer(db, seedOffers)
+	user := USERS[0]
+	token, _ := u.GetValidToken(user.ID, user.Email)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/buy/1", nil, &token)
+	assert.Equal(t, http.StatusForbidden, receivedStatus)
+	var got custom_errors.HTTPError
+	err := json.Unmarshal(response, &got)
+	assert.NoError(t, err)
+	assert.Equal(t, got.Description, sale_offer.ErrOfferOwnedByUser.Error())
+	u.CleanDB(DB)
+}
+
+func TestBuySaleOffer_NotPublishedPendingStatus(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	var seedOffers []models.SaleOffer = []models.SaleOffer{
+		*u.Build(createOffer(1), u.WithField[models.SaleOffer]("Status", enums.PENDING))}
+	db, _ := setupDB()
+	server, _, _, _ := newTestServer(db, seedOffers)
+	user := USERS[1]
+	token, _ := u.GetValidToken(user.ID, user.Email)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/buy/1", nil, &token)
+	assert.Equal(t, http.StatusBadRequest, receivedStatus)
+	var got custom_errors.HTTPError
+	err := json.Unmarshal(response, &got)
+	assert.NoError(t, err)
+	assert.Equal(t, got.Description, sale_offer.ErrOfferNotPublished.Error())
+	u.CleanDB(DB)
+}
+
+func TestBuySaleOffer_NotPublishedReadyStatus(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	var seedOffers []models.SaleOffer = []models.SaleOffer{
+		*u.Build(createOffer(1), u.WithField[models.SaleOffer]("Status", enums.READY))}
+	db, _ := setupDB()
+	server, _, _, _ := newTestServer(db, seedOffers)
+	user := USERS[1]
+	token, _ := u.GetValidToken(user.ID, user.Email)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/buy/1", nil, &token)
+	assert.Equal(t, http.StatusBadRequest, receivedStatus)
+	var got custom_errors.HTTPError
+	err := json.Unmarshal(response, &got)
+	assert.NoError(t, err)
+	assert.Equal(t, got.Description, sale_offer.ErrOfferNotPublished.Error())
+	u.CleanDB(DB)
+}
+
+func TestBuySaleOffer_NotPublishedSoldStatus(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	var seedOffers []models.SaleOffer = []models.SaleOffer{
+		*u.Build(createOffer(1), u.WithField[models.SaleOffer]("Status", enums.SOLD))}
+	db, _ := setupDB()
+	server, _, _, _ := newTestServer(db, seedOffers)
+	user := USERS[1]
+	token, _ := u.GetValidToken(user.ID, user.Email)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/buy/1", nil, &token)
+	assert.Equal(t, http.StatusBadRequest, receivedStatus)
+	var got custom_errors.HTTPError
+	err := json.Unmarshal(response, &got)
+	assert.NoError(t, err)
+	assert.Equal(t, got.Description, sale_offer.ErrOfferNotPublished.Error())
+	u.CleanDB(DB)
+}
+
+func TestBuySaleOffer_OfferIsAuction(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	var seedOffers []models.SaleOffer = []models.SaleOffer{*createAuctionSaleOffer(1)}
+	db, _ := setupDB()
+	server, _, _, _ := newTestServer(db, seedOffers)
+	user := USERS[1]
+	token, _ := u.GetValidToken(user.ID, user.Email)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/buy/1", nil, &token)
+	assert.Equal(t, http.StatusBadRequest, receivedStatus)
+	var got custom_errors.HTTPError
+	err := json.Unmarshal(response, &got)
+	assert.NoError(t, err)
+	assert.Equal(t, got.Description, sale_offer.ErrOfferIsAuction.Error())
+	u.CleanDB(DB)
+}
+
+func TestBuySaleOffer_Success(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	var seedOffers []models.SaleOffer = []models.SaleOffer{
+		*u.Build(createOffer(1), u.WithField[models.SaleOffer]("Status", enums.PUBLISHED))}
+	db, _ := setupDB()
+	server, svc, _, _ := newTestServer(db, seedOffers)
+	user := USERS[1]
+	token, _ := u.GetValidToken(user.ID, user.Email)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/buy/1", nil, &token)
+	assert.Equal(t, http.StatusOK, receivedStatus)
+	var got sale_offer.RetrieveDetailedSaleOfferDTO
+	err := json.Unmarshal(response, &got)
+	assert.NoError(t, err)
+	offer, err := svc.GetDetailedByID(1, &user.ID)
+	assert.NoError(t, err)
+	assert.Equal(t, *offer, got)
+	assert.Equal(t, enums.SOLD, offer.Status)
+	purchaseRepo := purchase.NewPurchaseRepository(DB)
+	purchase, err := purchaseRepo.GetByID(offer.ID)
+	assert.NoError(t, err)
+	assert.Equal(t, purchase.OfferID, offer.ID)
+	u.CleanDB(DB)
+}
+
+// -----------------------
+// Delete sale offer tests
+// -----------------------
+
+func TestDeleteOffer_NotAuthorized(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	var seedOffers []models.SaleOffer = []models.SaleOffer{*createOffer(1)}
+	db, _ := setupDB()
+	server, _, _, _ := newTestServer(db, seedOffers)
+	_, receivedStatus := u.PerformRequest(server, http.MethodDelete, "/sale-offer/1", nil, nil)
+	assert.Equal(t, http.StatusUnauthorized, receivedStatus)
+	u.CleanDB(DB)
+}
+
+func TestDeleteOffer_InvalidToken(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	var seedOffers []models.SaleOffer = []models.SaleOffer{*createOffer(1)}
+	db, _ := setupDB()
+	server, _, _, _ := newTestServer(db, seedOffers)
+	token := "invalid"
+	_, receivedStatus := u.PerformRequest(server, http.MethodDelete, "/sale-offer/1", nil, &token)
+	assert.Equal(t, http.StatusForbidden, receivedStatus)
+	u.CleanDB(DB)
+}
+
+func TestDeleteOffer_OfferNotFound(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	var seedOffers []models.SaleOffer
+	db, _ := setupDB()
+	server, _, _, _ := newTestServer(db, seedOffers)
+	user := USERS[0]
+	token, _ := u.GetValidToken(user.ID, user.Email)
+	response, receivedStatus := u.PerformRequest(server, http.MethodDelete, "/sale-offer/1", nil, &token)
+	assert.Equal(t, http.StatusNotFound, receivedStatus)
+	var got custom_errors.HTTPError
+	err := json.Unmarshal(response, &got)
+	assert.NoError(t, err)
+	assert.Equal(t, got.Description, gorm.ErrRecordNotFound.Error())
+	u.CleanDB(DB)
+}
+
+func TestDeleteOffer_NotUsersOffer(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	var seedOffers []models.SaleOffer = []models.SaleOffer{*createOffer(1)}
+	db, _ := setupDB()
+	server, _, _, _ := newTestServer(db, seedOffers)
+	user := USERS[1]
+	token, _ := u.GetValidToken(user.ID, user.Email)
+	response, receivedStatus := u.PerformRequest(server, http.MethodDelete, "/sale-offer/1", nil, &token)
+	assert.Equal(t, http.StatusForbidden, receivedStatus)
+	var got custom_errors.HTTPError
+	err := json.Unmarshal(response, &got)
+	assert.NoError(t, err)
+	assert.Equal(t, got.Description, sale_offer.ErrOfferModification.Error())
+	u.CleanDB(DB)
+}
+
+func TestDeleteOffer_OfferAlreadySold(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	var seedOffers []models.SaleOffer = []models.SaleOffer{
+		*u.Build(createOffer(1), u.WithField[models.SaleOffer]("Status", enums.SOLD))}
+	db, _ := setupDB()
+	server, _, _, _ := newTestServer(db, seedOffers)
+	user := USERS[0]
+	token, _ := u.GetValidToken(user.ID, user.Email)
+	response, receivedStatus := u.PerformRequest(server, http.MethodDelete, "/sale-offer/1", nil, &token)
+	assert.Equal(t, http.StatusForbidden, receivedStatus)
+	var got custom_errors.HTTPError
+	err := json.Unmarshal(response, &got)
+	assert.NoError(t, err)
+	assert.Equal(t, got.Description, sale_offer.ErrOfferModification.Error())
+	u.CleanDB(DB)
+}
+
+func TestDeleteOffer_Success(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	var seedOffers []models.SaleOffer = []models.SaleOffer{*createOffer(1)}
+	db, _ := setupDB()
+	server, svc, _, _ := newTestServer(db, seedOffers)
+	user := USERS[0]
+	token, _ := u.GetValidToken(user.ID, user.Email)
+	_, receivedStatus := u.PerformRequest(server, http.MethodDelete, "/sale-offer/1", nil, &token)
+	assert.Equal(t, http.StatusNoContent, receivedStatus)
+	_, err := svc.GetDetailedByID(1, &user.ID)
+	assert.Error(t, err)
+	assert.Equal(t, gorm.ErrRecordNotFound, err)
+	u.CleanDB(DB)
+}
+
+// ------------------------------
+// Get filtered sale offers tests
+// For more get filtered tests see: sale_offer_filter_test.go
+// ------------------------------
 
 func TestGetFiltered_OneRegularOffer(t *testing.T) {
 	gin.SetMode(gin.TestMode)
@@ -1841,6 +2144,111 @@ func TestGetFiltered_AuthorizedMyOffers(t *testing.T) {
 }
 
 // ----------------------
+// Get users offers tests
+// ----------------------
+func TestGetUsersOffers_NotAuthorized(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	seedOffers := []models.SaleOffer{*createOffer(1)}
+	server, _, _, _ := newTestServer(db, seedOffers)
+	_, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/my-offers", nil, nil)
+	assert.Equal(t, http.StatusUnauthorized, receivedStatus)
+	u.CleanDB(DB)
+}
+
+func TestGetUsersOffers_InvalidToken(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	seedOffers := []models.SaleOffer{*createOffer(1)}
+	server, _, _, _ := newTestServer(db, seedOffers)
+	token := "invalid"
+	_, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/my-offers", nil, &token)
+	assert.Equal(t, http.StatusForbidden, receivedStatus)
+	u.CleanDB(DB)
+}
+
+func TestGetUsersOffers_EmptyDatabase(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	var seedOffers []models.SaleOffer
+	server, _, _, _ := newTestServer(db, seedOffers)
+	filterRequest := sale_offer.NewOfferFilterRequest()
+	filterRequest.PagRequest = *u.GetDefaultPaginationRequest()
+	body, err := json.Marshal(filterRequest)
+	assert.NoError(t, err)
+	user := USERS[0]
+	token, _ := u.GetValidToken(user.ID, user.Email)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/my-offers", body, &token)
+	assert.Equal(t, http.StatusOK, receivedStatus)
+	var got sale_offer.RetrieveOffersWithPagination
+	err = json.Unmarshal(response, &got)
+	assert.NoError(t, err)
+	assert.Equal(t, 0, len(got.Offers))
+	u.CleanDB(DB)
+}
+
+func TestGetUsersOffers_OneRegularOffer(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	seedOffers := []models.SaleOffer{*createOffer(1)}
+	server, _, _, _ := newTestServer(db, seedOffers)
+	filterRequest := sale_offer.NewOfferFilterRequest()
+	filterRequest.PagRequest = *u.GetDefaultPaginationRequest()
+	body, err := json.Marshal(filterRequest)
+	assert.NoError(t, err)
+	user := USERS[0]
+	token, _ := u.GetValidToken(user.ID, user.Email)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/my-offers", body, &token)
+	assert.Equal(t, http.StatusOK, receivedStatus)
+	var got sale_offer.RetrieveOffersWithPagination
+	err = json.Unmarshal(response, &got)
+	assert.NoError(t, err)
+	assert.Equal(t, 1, len(got.Offers))
+	assert.Equal(t, seedOffers[0].ID, got.Offers[0].ID)
+	u.CleanDB(DB)
+}
+
+func TestGetUsersOffers_OneAuctionOffer(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	seedOffers := []models.SaleOffer{*createAuctionSaleOffer(1)}
+	server, _, _, _ := newTestServer(db, seedOffers)
+	filterRequest := sale_offer.NewOfferFilterRequest()
+	filterRequest.PagRequest = *u.GetDefaultPaginationRequest()
+	body, err := json.Marshal(filterRequest)
+	assert.NoError(t, err)
+	user := USERS[0]
+	token, _ := u.GetValidToken(user.ID, user.Email)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/my-offers", body, &token)
+	assert.Equal(t, http.StatusOK, receivedStatus)
+	var got sale_offer.RetrieveOffersWithPagination
+	err = json.Unmarshal(response, &got)
+	assert.NoError(t, err)
+	assert.Equal(t, 1, len(got.Offers))
+	assert.Equal(t, seedOffers[0].ID, got.Offers[0].ID)
+	u.CleanDB(DB)
+}
+
+func TestGetUsersOffers_AuctionsAndOffersCombined(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	seedOffers := []models.SaleOffer{
+		*createAuctionSaleOffer(1),
+		*createOffer(2),
+		*createAuctionSaleOffer(3),
+		*createOffer(4),
+	}
+	server, _, _, _ := newTestServer(db, seedOffers)
+	filterRequest := sale_offer.NewOfferFilterRequest()
+	filterRequest.PagRequest = *u.GetDefaultPaginationRequest()
+	body, err := json.Marshal(filterRequest)
+	assert.NoError(t, err)
+	user := USERS[0]
+	token, _ := u.GetValidToken(user.ID, user.Email)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/my-offers", body, &token)
+	assert.Equal(t, http.StatusOK, receivedStatus)
+	var got sale_offer.RetrieveOffersWithPagination
+	err = json.Unmarshal(response, &got)
+	assert.NoError(t, err)
+	assert.Equal(t, 4, len(got.Offers))
+	u.CleanDB(DB)
+}
+
+// ----------------------
 // Get offer by id tests
 // ----------------------
 
@@ -1941,6 +2349,16 @@ func TestGetMyOffers_NotAuthorized(t *testing.T) {
 	u.CleanDB(DB)
 }
 
+func TestGetMyOffers_InvalidToken(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	seedOffers := []models.SaleOffer{*createOffer(1)}
+	server, _, _, _ := newTestServer(db, seedOffers)
+	token := "invalid"
+	_, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/my-offers", nil, &token)
+	assert.Equal(t, http.StatusForbidden, receivedStatus)
+	u.CleanDB(DB)
+}
+
 func TestGetMyOffers_NoOffers(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	var seedOffers []models.SaleOffer
@@ -2030,6 +2448,159 @@ func TestGetMyOffers_AuctionsAndOffersCombined(t *testing.T) {
 	u.CleanDB(DB)
 }
 
+func TestGetMyOffers_OtherUserOffers(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	seedOffers := []models.SaleOffer{
+		*createAuctionSaleOffer(1),
+		*createOffer(2),
+		*createAuctionSaleOffer(3),
+		*createOffer(4),
+	}
+	server, _, _, _ := newTestServer(db, seedOffers)
+	user := USERS[1]
+	token, _ := u.GetValidToken(user.ID, user.Email)
+	filterRequest := sale_offer.NewOfferFilterRequest()
+	filterRequest.PagRequest = *u.GetDefaultPaginationRequest()
+	body, err := json.Marshal(filterRequest)
+	assert.NoError(t, err)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/my-offers", body, &token)
+	assert.Equal(t, http.StatusOK, receivedStatus)
+	var got sale_offer.RetrieveOffersWithPagination
+	err = json.Unmarshal(response, &got)
+	assert.NoError(t, err)
+	assert.Equal(t, 0, len(got.Offers))
+	u.CleanDB(DB)
+}
+
+// ----------------------
+// Get liked offers tests
+// ----------------------
+
+func TestGetLikedOffers_NotAuthorized(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	seedOffers := []models.SaleOffer{*createOffer(1)}
+	server, _, _, _ := newTestServer(db, seedOffers)
+	_, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/liked-offers", nil, nil)
+	assert.Equal(t, http.StatusUnauthorized, receivedStatus)
+	u.CleanDB(DB)
+}
+
+func TestGetLikedOffers_InvalidToken(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	seedOffers := []models.SaleOffer{*createOffer(1)}
+	server, _, _, _ := newTestServer(db, seedOffers)
+	token := "invalid"
+	_, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/liked-offers", nil, &token)
+	assert.Equal(t, http.StatusForbidden, receivedStatus)
+	u.CleanDB(DB)
+}
+
+func TestGetLikedOffers_NoOffersLiked(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	var seedOffers []models.SaleOffer
+	server, _, _, _ := newTestServer(db, seedOffers)
+	user := USERS[0]
+	token, _ := u.GetValidToken(user.ID, user.Email)
+	filterRequest := sale_offer.NewOfferFilterRequest()
+	filterRequest.PagRequest = *u.GetDefaultPaginationRequest()
+	body, err := json.Marshal(filterRequest)
+	assert.NoError(t, err)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/liked-offers", body, &token)
+	assert.Equal(t, http.StatusOK, receivedStatus)
+	var got sale_offer.RetrieveOffersWithPagination
+	err = json.Unmarshal(response, &got)
+	assert.NoError(t, err)
+	assert.Empty(t, got.Offers)
+	u.CleanDB(DB)
+}
+
+func TestGetLikedOffers_OneRegularOffer(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	seedOffers := []models.SaleOffer{*createOffer(1)}
+	server, s, _, _ := newTestServer(db, seedOffers)
+	user := USERS[1] // Assuming user[1] is the one who likes the offer
+	token, _ := u.GetValidToken(user.ID, user.Email)
+	likedOfferRepo := liked_offer.NewLikedOfferRepository(db)
+	likedOfferRepo.Create(&models.LikedOffer{
+		UserID:  user.ID,
+		OfferID: seedOffers[0].ID,
+	})
+	filterRequest := sale_offer.NewOfferFilterRequest()
+	filterRequest.PagRequest = *u.GetDefaultPaginationRequest()
+	body, err := json.Marshal(filterRequest)
+	assert.NoError(t, err)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/liked-offers", body, &token)
+	assert.Equal(t, http.StatusOK, receivedStatus)
+	var got sale_offer.RetrieveOffersWithPagination
+	err = json.Unmarshal(response, &got)
+	assert.NoError(t, err)
+	assert.Equal(t, 1, len(got.Offers))
+	offer, _ := s.GetByID(uint(1), &user.ID)
+	assert.Equal(t, *offer, got.Offers[0])
+	u.CleanDB(DB)
+}
+
+func TestGetLikedOffers_OneAuctionOffer(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	seedOffers := []models.SaleOffer{*createAuctionSaleOffer(1)}
+	server, s, _, _ := newTestServer(db, seedOffers)
+	user := USERS[1] // Assuming user[1] is the one who likes the offer
+	token, _ := u.GetValidToken(user.ID, user.Email)
+	likedOfferRepo := liked_offer.NewLikedOfferRepository(db)
+	likedOfferRepo.Create(&models.LikedOffer{
+		UserID:  user.ID,
+		OfferID: seedOffers[0].ID,
+	})
+	filterRequest := sale_offer.NewOfferFilterRequest()
+	filterRequest.PagRequest = *u.GetDefaultPaginationRequest()
+	body, err := json.Marshal(filterRequest)
+	assert.NoError(t, err)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/liked-offers", body, &token)
+	assert.Equal(t, http.StatusOK, receivedStatus)
+	var got sale_offer.RetrieveOffersWithPagination
+	err = json.Unmarshal(response, &got)
+	assert.NoError(t, err)
+	assert.Equal(t, 1, len(got.Offers))
+	offer, _ := s.GetByID(uint(1), &user.ID)
+	assert.Equal(t, *offer, got.Offers[0])
+	u.CleanDB(DB)
+}
+
+func TestGetLikedOffers_AuctionsAndOffersCombined(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	seedOffers := []models.SaleOffer{
+		*createAuctionSaleOffer(1),
+		*createOffer(2),
+		*createAuctionSaleOffer(3),
+		*createOffer(4),
+	}
+	server, s, _, _ := newTestServer(db, seedOffers)
+	user := USERS[1] // Assuming user[1] is the one who likes the offers
+	token, _ := u.GetValidToken(user.ID, user.Email)
+	likedOfferRepo := liked_offer.NewLikedOfferRepository(db)
+	for _, offer := range seedOffers {
+		likedOfferRepo.Create(&models.LikedOffer{
+			UserID:  user.ID,
+			OfferID: offer.ID,
+		})
+	}
+	filterRequest := sale_offer.NewOfferFilterRequest()
+	filterRequest.PagRequest = *u.GetDefaultPaginationRequest()
+	body, err := json.Marshal(filterRequest)
+	assert.NoError(t, err)
+	response, receivedStatus := u.PerformRequest(server, http.MethodPost, "/sale-offer/liked-offers", body, &token)
+	assert.Equal(t, http.StatusOK, receivedStatus)
+	var got sale_offer.RetrieveOffersWithPagination
+	err = json.Unmarshal(response, &got)
+	assert.NoError(t, err)
+	assert.Equal(t, len(seedOffers), len(got.Offers))
+	for i := range len(seedOffers) {
+		offer, _ := s.GetByID(uint(i+1), &user.ID)
+		assert.Equal(t, *offer, got.Offers[i])
+	}
+	u.CleanDB(DB)
+}
+
 // ----------
 // Like tests
 // ----------
@@ -2037,7 +2608,6 @@ func TestGetMyOffers_AuctionsAndOffersCombined(t *testing.T) {
 func TestLikeOffer_NotAuthorized(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedOffers := []models.SaleOffer{*createOffer(1)}
-
 	server, _, _, _ := newTestServer(db, seedOffers)
 	_, receivedStatus := u.PerformRequest(server, http.MethodPost, "/favourite/like/1", nil, nil)
 	assert.Equal(t, http.StatusUnauthorized, receivedStatus)
@@ -2047,7 +2617,6 @@ func TestLikeOffer_NotAuthorized(t *testing.T) {
 func TestLikeOffer_OfferNotFound(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedOffers := []models.SaleOffer{*createOffer(1)}
-
 	server, _, _, _ := newTestServer(db, seedOffers)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
@@ -2063,7 +2632,6 @@ func TestLikeOffer_OfferNotFound(t *testing.T) {
 func TestLikeOffer_OwnOffer(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedOffers := []models.SaleOffer{*createOffer(1)}
-
 	server, _, _, _ := newTestServer(db, seedOffers)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
@@ -2093,7 +2661,6 @@ func TestLikeOffer_Successful(t *testing.T) {
 func TestLikeOffer_AlreadyLiked(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedOffers := []models.SaleOffer{*createOffer(1)}
-
 	server, _, _, _ := newTestServer(db, seedOffers)
 	user := USERS[1]
 	token, _ := u.GetValidToken(user.ID, user.Email)
@@ -2114,7 +2681,6 @@ func TestLikeOffer_AlreadyLiked(t *testing.T) {
 func TestDislikeOffer_NotAuthorized(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedOffers := []models.SaleOffer{*createOffer(1)}
-
 	server, _, _, _ := newTestServer(db, seedOffers)
 	_, receivedStatus := u.PerformRequest(server, http.MethodDelete, "/favourite/dislike/1", nil, nil)
 	assert.Equal(t, http.StatusUnauthorized, receivedStatus)
@@ -2124,7 +2690,6 @@ func TestDislikeOffer_NotAuthorized(t *testing.T) {
 func TestDislikeOffer_OfferNotFound(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedOffers := []models.SaleOffer{*createOffer(1)}
-
 	server, _, _, _ := newTestServer(db, seedOffers)
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
@@ -2140,7 +2705,6 @@ func TestDislikeOffer_OfferNotFound(t *testing.T) {
 func TestDislikeOffer_NotLikedOffer(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedOffers := []models.SaleOffer{*createOffer(1)}
-
 	server, _, _, _ := newTestServer(db, seedOffers)
 	user := USERS[1]
 	token, _ := u.GetValidToken(user.ID, user.Email)
@@ -2155,7 +2719,6 @@ func TestDislikeOffer_NotLikedOffer(t *testing.T) {
 func TestDislikeOffer_Successful(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedOffers := []models.SaleOffer{*createOffer(1)}
-
 	server, _, _, _ := newTestServer(db, seedOffers)
 	user := USERS[1]
 	token, _ := u.GetValidToken(user.ID, user.Email)
@@ -2176,7 +2739,6 @@ func TestDislikeOffer_Successful(t *testing.T) {
 func TestGetOfferTypes_Successful(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedOffers := []models.SaleOffer{*createOffer(1)}
-
 	server, _, _, _ := newTestServer(db, seedOffers)
 	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/sale-offer/offer-types", nil, nil)
 	assert.Equal(t, http.StatusOK, receivedStatus)
@@ -2190,7 +2752,6 @@ func TestGetOfferTypes_Successful(t *testing.T) {
 func TestGetOrderKeys_Successful(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	seedOffers := []models.SaleOffer{*createOffer(1)}
-
 	server, _, _, _ := newTestServer(db, seedOffers)
 	response, receivedStatus := u.PerformRequest(server, http.MethodGet, "/sale-offer/order-keys", nil, nil)
 	assert.Equal(t, http.StatusOK, receivedStatus)

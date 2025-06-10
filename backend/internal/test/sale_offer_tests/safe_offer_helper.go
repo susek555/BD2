@@ -40,7 +40,8 @@ var MODELS = []models.Model{
 	{ID: 2, Name: "M3", ManufacturerID: 2},
 	{ID: 3, Name: "Astra", ManufacturerID: 3},
 	{ID: 4, Name: "Supra", ManufacturerID: 4},
-	{ID: 5, Name: "Octavia", ManufacturerID: 5},
+	{ID: 5, Name: "Corolla", ManufacturerID: 4},
+	{ID: 6, Name: "Octavia", ManufacturerID: 5},
 }
 
 var USERS = []models.User{
@@ -97,8 +98,12 @@ func newTestServer(db *gorm.DB, seedOffers []models.SaleOffer) (*gin.Engine, sal
 	mh := new(mocks.HubInterface)
 	mh.On("SubscribeUser", mock.Anything, mock.Anything).Return()
 	mh.On("UnsubscribeUser", mock.Anything, mock.Anything).Return()
+	mh.On("SaveNotificationForClients", mock.Anything, mock.Anything, mock.Anything).Return(nil)
+	mh.On("SendFourLatestNotificationsToClients", mock.Anything, mock.Anything).Return(nil)
+	mh.On("RemoveRoom", mock.Anything).Return()
 	likedOfferHandler := liked_offer.NewHandler(likedOfferService, mh)
 	mn := new(mocks.NotificationServiceInterface)
+	mn.On("CreateBuyNotification", mock.Anything, mock.Anything, mock.Anything).Return(nil)
 	saleOfferHandler := sale_offer.NewHandler(saleOfferService, mh, mn)
 	r := gin.Default()
 	saleOfferRoutes := r.Group("/sale-offer")
@@ -107,10 +112,13 @@ func newTestServer(db *gorm.DB, seedOffers []models.SaleOffer) (*gin.Engine, sal
 		saleOfferRoutes.PUT("/", middleware.Authenticate(verifier), saleOfferHandler.UpdateSaleOffer)
 		saleOfferRoutes.POST("/filtered", middleware.OptionalAuthenticate(verifier), saleOfferHandler.GetFilteredSaleOffers)
 		saleOfferRoutes.POST("/my-offers", middleware.Authenticate(verifier), saleOfferHandler.GetMySaleOffers)
+		saleOfferRoutes.POST("/liked-offers", middleware.Authenticate(verifier), saleOfferHandler.GetLikedOnlySaleOffers)
+		saleOfferRoutes.POST("/buy/:id", middleware.Authenticate(verifier), saleOfferHandler.Buy)
 		saleOfferRoutes.GET("/id/:id", middleware.OptionalAuthenticate(verifier), saleOfferHandler.GetDetailedSaleOfferByID)
 		saleOfferRoutes.GET("/offer-types", saleOfferHandler.GetSaleOfferTypes)
 		saleOfferRoutes.GET("/order-keys", saleOfferHandler.GetOrderKeys)
 		saleOfferRoutes.PUT("/publish/:id", middleware.Authenticate(verifier), saleOfferHandler.PublishSaleOffer)
+		saleOfferRoutes.DELETE("/:id", middleware.Authenticate(verifier), saleOfferHandler.DeleteSaleOffer)
 	}
 	favourtieRoutes := r.Group("/favourite")
 	{
@@ -147,12 +155,6 @@ func createOffer(id uint) *models.SaleOffer {
 		NumberOfGears:      6,
 		Drive:              enums.FWD,
 		ModelID:            1,
-		Model: &models.Model{
-			ID:             1,
-			Name:           MODELS[0].Name,
-			ManufacturerID: MODELS[0].ManufacturerID,
-			Manufacturer:   &MANUFACTURERS[0],
-		},
 	}
 	offer := &models.SaleOffer{
 		ID:          id,

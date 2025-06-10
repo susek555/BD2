@@ -149,7 +149,7 @@ func (h *Handler) Buy(c *gin.Context) {
 		custom_errors.HandleError(c, err, ErrorMap)
 		return
 	}
-	c.Status(http.StatusOK)
+	c.JSON(http.StatusOK, offer)
 	notification := &models.Notification{
 		OfferID: uint(offerID),
 	}
