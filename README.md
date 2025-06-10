@@ -50,7 +50,7 @@ Aplikacja ta umożliwia użytkownikom rejestrację, tworzenie i zarządzanie ofe
                               ▼
                        ┌─────────────────┐
                        │     Redis       │
-                       │   (Caching)     │
+                       │(Message Broker) │
                        └─────────────────┘
                               │
                               ▼
@@ -65,7 +65,7 @@ Aplikacja ta umożliwia użytkownikom rejestrację, tworzenie i zarządzanie ofe
 - **Modularność**: Podział na domeny i moduły dla lepszej organizacji kodu
 - **RESTful API**: Standardowe endpointy REST z kompleksową dokumentacją Swagger
 - **Komunikacja czasu rzeczywistego**: Integracja WebSocket dla aktualizacji na żywo
-- **Cachowanie**: Redis do zarządzania sesjami i optymalizacji wydajności
+- **Broker wiadomości**: Redis do przesyłania wiadomości
 - **Cloud Storage**: Zewnętrzne przechowywanie obrazów dla skalowalności
 - **Deployment Oparty na Kontenerach**: Konteneryzacja dla spójnych środowisk
 
@@ -75,7 +75,7 @@ Aplikacja ta umożliwia użytkownikom rejestrację, tworzenie i zarządzanie ofe
 - **Go 1.21+**: Główny język backendowy
 - **Gin Framework**: Framework webowy HTTP dla Go
 - **GORM**: Biblioteka object-relational mapping
-- **Redis**: Cachowanie i zarządzanie sesjami
+- **Redis**: Broker wiadomości
 - **JWT**: JSON Web Tokens do uwierzytelniania
 - **WebSocket**: Komunikacja real-time przez gorilla/websocket
 - **Swagger**: Dokumentacja API z gin-swagger
