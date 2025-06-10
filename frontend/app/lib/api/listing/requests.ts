@@ -1,4 +1,4 @@
-import { getApiUrl } from '../../get-api-url';
+import { fetchWithRefresh } from '../fetchWithRefresh';
 
 export const fetchListing = async (id: string) => {
   const response = await fetch(`/api/listing/${id}`, {
@@ -46,21 +46,20 @@ export const createListing = async (listingData: any) => {
 };
 
 export const deleteListing = async (id: string) => {
-  const url = getApiUrl(`/api/listing/${id}`);
-  console.log(url);
-
-  const response = await fetch(url, {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
+  const response = await fetchWithRefresh(
+    `${process.env.API_URL}/sale-offer/${id}`,
+    {
+      method: 'DELETE',
     },
-  });
+  );
 
   if (!response.ok) {
+    console.log('delete error throw', response);
+
     throw new Error('Failed to delete listing');
   }
 
-  return response.json();
+  return {};
 };
 
 export const updateFavoriteStatus = async (id: string, isFavorite: boolean) => {
