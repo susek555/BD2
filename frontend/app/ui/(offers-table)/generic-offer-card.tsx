@@ -78,7 +78,7 @@ export default function GenericOfferCard<T extends BaseOffer = BaseOffer>({
             <div className='text-right'>
               <p className='text-sm text-gray-600'>{getPriceLabel()}</p>
               <p className='text-2xl font-bold text-green-600'>
-                {offer.price.toString()} zł
+                {offer.price.toString()} PLN
               </p>
             </div>
           </div>
