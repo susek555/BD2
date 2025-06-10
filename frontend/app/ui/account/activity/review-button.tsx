@@ -13,7 +13,6 @@ interface ReviewButtonProps {
 
 export default function ReviewButton({
   sellerId,
-  userId,
   review,
 }: ReviewButtonProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -27,7 +26,7 @@ export default function ReviewButton({
 
   return (
     <>
-      {review && !('error_description' in review) ? (
+      {review ? (
         <button
           onClick={onClick}
           className='focus:ring-opacity-50 rounded-md transition-transform duration-200 hover:scale-105 focus:ring-2 focus:ring-blue-500 focus:outline-none'
