@@ -4,7 +4,7 @@ import { AtSymbolIcon, KeyIcon } from '@heroicons/react/24/outline';
 import { ArrowRightIcon } from '@heroicons/react/24/solid';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { redirect, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { Button } from '../(common)/button';
 import InputField from '../(common)/input-field';
@@ -15,7 +15,6 @@ export default function LoginForm({
 }: {
   onLoginSuccess?: () => void;
 }) {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [errors, setErrors] = useState<LoginError>({});
 
@@ -50,8 +49,7 @@ export default function LoginForm({
         onLoginSuccess();
       }
 
-      router.push(result?.url || callbackUrl);
-      router.refresh();
+      redirect(callbackUrl);
     }
   }
 
