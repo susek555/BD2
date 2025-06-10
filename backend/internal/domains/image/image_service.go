@@ -4,9 +4,14 @@ import (
 	"fmt"
 	"mime/multipart"
 
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/enums"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
 )
+
+type OfferAccessEvaluatorInterface interface {
+	CanBeModifiedByUser(offer sale_offer.SaleOfferEntityInterface, userID *uint) error
+}
 
 type OfferRepositoryInterface interface {
 	GetByID(offerID uint) (*models.SaleOffer, error)
@@ -20,13 +25,19 @@ type ImageServiceInterface interface {
 }
 
 type ImageService struct {
-	repo      ImageRepositoryInterface
-	bucket    ImageBucketInterface
-	offerRepo OfferRepositoryInterface
+	repo       ImageRepositoryInterface
+	bucket     ImageBucketInterface
+	offerRepo  OfferRepositoryInterface
+	accessEval OfferAccessEvaluatorInterface
 }
 
-func NewImageService(r ImageRepositoryInterface, b ImageBucketInterface, offerRepo OfferRepositoryInterface) ImageServiceInterface {
-	return &ImageService{repo: r, bucket: b, offerRepo: offerRepo}
+func NewImageService(
+	r ImageRepositoryInterface,
+	b ImageBucketInterface,
+	offerRepo OfferRepositoryInterface,
+	accessEval OfferAccessEvaluatorInterface,
+) ImageServiceInterface {
+	return &ImageService{repo: r, bucket: b, offerRepo: offerRepo, accessEval: accessEval}
 }
 
 func (s *ImageService) Store(offerID uint, images []*multipart.FileHeader, userID uint) error {
@@ -34,11 +45,8 @@ func (s *ImageService) Store(offerID uint, images []*multipart.FileHeader, userI
 	if err != nil {
 		return err
 	}
-	if offer.Status == enums.SOLD || offer.Status == enums.EXPIRED {
-		return ErrOfferNotActive
-	}
-	if !offer.BelongsToUser(userID) {
-		return ErrOfferNotOwned
+	if err := s.accessEval.CanBeModifiedByUser(offer, &userID); err != nil {
+		return err
 	}
 	storedImages, err := s.repo.GetByOfferID(offerID)
 	if err != nil {
@@ -62,8 +70,8 @@ func (s *ImageService) DeleteByURL(url string, userID uint) error {
 	if err != nil {
 		return err
 	}
-	if !offer.BelongsToUser(userID) {
-		return ErrOfferNotOwned
+	if err := s.accessEval.CanBeModifiedByUser(offer, &userID); err != nil {
+		return err
 	}
 	if err := s.repo.Delete(image.ID); err != nil {
 		return err
@@ -82,8 +90,8 @@ func (s *ImageService) DeleteByOfferID(offerID uint, userID uint) error {
 	if err != nil {
 		return err
 	}
-	if !offer.BelongsToUser(userID) {
-		return ErrOfferNotOwned
+	if err := s.accessEval.CanBeModifiedByUser(offer, &userID); err != nil {
+		return err
 	}
 	images, err := s.repo.GetByOfferID(offerID)
 	if err != nil {
