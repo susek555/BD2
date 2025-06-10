@@ -98,7 +98,7 @@ CREATE TABLE bids (
 
 CREATE TABLE cars (
     offer_id INTEGER PRIMARY KEY REFERENCES sale_offers(id) ON DELETE CASCADE,
-    vin VARCHAR(17),
+    vin VARCHAR(17) NOT NULL,
     production_year INTEGER NOT NULL,
     mileage INTEGER NOT NULL,
     number_of_doors INTEGER NOT NULL CHECK (number_of_doors BETWEEN 1 AND 6),
