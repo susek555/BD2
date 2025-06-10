@@ -1,7 +1,7 @@
 import LoginButtons from "@/app/ui/(topbar)/account-buttons";
-import SearchField from "@/app/ui/(topbar)/search-field";
+// import SearchField from "@/app/ui/(topbar)/search-field";
 import Link from "next/link";
-import { Suspense } from "react";
+// import { Suspense } from "react";
 import { BaseAccountButton } from "@/app/ui/(topbar)/base-account-buttons/base-account-button";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { authConfig } from "@/app/lib/authConfig";
@@ -18,9 +18,9 @@ export async function TopBar() {
         <HomeButton />
         <div className="flex grow flex-col justify-between px-2 py-0 md:flex-row md:items-top md:space-x-2">
           <div className="flex grow justify-center">
-            <Suspense>
+            {/* <Suspense>
               <SearchField placeholder="Search for cars..."/>
-            </Suspense>
+            </Suspense> */}
           </div>
           <div className="flex justify-end px-2">
             <div className="flex flex-row space-x-2">

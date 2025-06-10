@@ -46,27 +46,16 @@ export function OfferForm(
 
 
             // Otherwise call the API action with validated data
-            try{
-                if (apiAction === offerActionEnum.ADD_OFFER) {
-                    return await addOffer(offerFormState);
-                } else {
-                    const url = window.location.pathname;
-                    const pathSegments = url.split('/');
-                    const offerId = pathSegments[2];
-                    if (!offerId) {
-                        throw new Error('Offer ID is required for editing');
-                    }
-                    return await editOffer(offerId, offerFormState, imagesURLsToBeDeleted);
+            if (apiAction === offerActionEnum.ADD_OFFER) {
+                return await addOffer(offerFormState);
+            } else {
+                const url = window.location.pathname;
+                const pathSegments = url.split('/');
+                const offerId = pathSegments[2];
+                if (!offerId) {
+                    throw new Error('Offer ID is required for editing');
                 }
-            } catch (error) {
-                console.error("API Error:", error);
-                return {
-                    ...offerFormState,
-                    errors: {
-                        ...offerFormState.errors,
-                        upload_offer: ["Operation failed: " + (error instanceof Error ? error.message : String(error))]
-                    }
-                };
+                return await editOffer(offerId, offerFormState, imagesURLsToBeDeleted);
             }
     };
 
@@ -613,7 +602,7 @@ export function OfferForm(
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                     </svg>
                                 </div>
-                                <h2 className="text-2xl font-semibold text-gray-800">Offer Successfully Added</h2>
+                                <h2 className="text-2xl font-semibold text-gray-800">Offer Successfully Uploaded</h2>
                                 <p className="text-gray-600 max-w-md mx-auto">
                                     Your offer has been successfully submitted and is now available in your listings.
                                 </p>
