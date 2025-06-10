@@ -6,13 +6,12 @@ type AuctionEventKind int
 
 const (
 	EventAddTimer AuctionEventKind = iota
+	EventModifyTimer
 	EventForceClose
 )
 
 type AuctionEvent struct {
 	Kind AuctionEventKind
-	At time.Time
-	Cmd CloseCmd
+	At   time.Time
+	Cmd  CloseCmd
 }
-
-
