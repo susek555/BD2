@@ -45,9 +45,17 @@ export default async function Page({
         </div>
 
         <div className='flex flex-1 flex-col'>
-          <div className='flex-1 px-12'>
-            <NotificationsTable notifications={notifications} />
-          </div>
+          {totalNotifications > 0 ? (
+            <div className='flex-1 px-12'>
+              <NotificationsTable notifications={notifications} />
+            </div>
+          ) : (
+            <div className='flex flex-1 items-center justify-center px-12'>
+              <p className='text-lg text-gray-500'>
+                No notifications found.
+              </p>
+            </div>
+          )}
 
           {totalNotifications !== 0 && (
             <div className='mt-5 flex w-full justify-center'>
