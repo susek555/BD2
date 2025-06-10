@@ -34,11 +34,11 @@ func (e *OfferAccessEvaluator) CanBeModifiedByUser(offer SaleOfferEntityInterfac
 	if !offer.BelongsToUser(*userID) {
 		return false, nil
 	}
-	if !offer.IsAuctionOffer() {
-		return true, nil
-	}
 	if offer.GetStatus() == enums.SOLD || offer.GetStatus() == enums.EXPIRED {
 		return false, nil
+	}
+	if !offer.IsAuctionOffer() {
+		return true, nil
 	}
 	hasBids, err := e.hasBids(offer)
 	if err != nil {
