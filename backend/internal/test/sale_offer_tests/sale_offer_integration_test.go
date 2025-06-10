@@ -673,7 +673,7 @@ func TestUpdateOffer_NotUsersOffer(t *testing.T) {
 	var got custom_errors.HTTPError
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
-	assert.Equal(t, got.Description, sale_offer.ErrOfferNotOwned.Error())
+	assert.Equal(t, got.Description, sale_offer.ErrOfferModification.Error())
 }
 
 func TestUpdateOffer_OfferNotFound(t *testing.T) {
