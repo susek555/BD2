@@ -31,3 +31,7 @@ func (o *SaleOffer) IsAuctionOffer() bool {
 func (o *SaleOffer) BelongsToUser(userID uint) bool {
 	return o.UserID == userID
 }
+
+func (o *SaleOffer) GetStatus() enums.Status {
+	return o.Status
+}

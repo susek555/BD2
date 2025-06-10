@@ -47,3 +47,7 @@ func (v *SaleOfferView) IsAuctionOffer() bool {
 func (v *SaleOfferView) BelongsToUser(userID uint) bool {
 	return v.UserID == userID
 }
+
+func (v *SaleOfferView) GetStatus() enums.Status {
+	return v.Status
+}
