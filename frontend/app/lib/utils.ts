@@ -37,7 +37,8 @@ export const parseOfferForm = (
       buy_now_price: formDataObj.buy_now_price
       ? parseInt(formDataObj.buy_now_price as string) || undefined
       : undefined,
-      images: formData.getAll('images').filter(file => file instanceof File)
+      images: formData.getAll('images').filter(file => file instanceof File),
+      date_end: formDataObj.date_end || undefined,
     }
 
     let validatedFields;
@@ -45,12 +46,17 @@ export const parseOfferForm = (
       case OfferFormEnum.initialState:
         validatedFields = OfferDetailsFormSchema.safeParse(normalizedData);
         if (validatedFields.success) {
-          // FALSE POSITIVES: adding this fields to validatedFields.data here
-          validatedFields.data.price = normalizedData.price ? normalizedData.price : undefined;
-          validatedFields.data.margin = normalizedData.margin ? normalizedData.margin : undefined;
-          validatedFields.data.is_auction = normalizedData.is_auction ? normalizedData.is_auction : undefined;
-          validatedFields.data.buy_now_price = normalizedData.buy_now_price ? normalizedData.buy_now_price : undefined;
-          validatedFields.data.date_end = normalizedData.date_end ? normalizedData.date_end : undefined;
+          validatedFields = {
+          success: true,
+            data: {
+              ...validatedFields.data,
+              price: normalizedData.price,
+              margin: normalizedData.margin,
+              is_auction: normalizedData.is_auction,
+              buy_now_price: normalizedData.buy_now_price,
+              date_end: normalizedData.date_end
+            }
+          };
         }
       break;
       case OfferFormEnum.pricingPart:
@@ -66,11 +72,11 @@ export const parseOfferForm = (
 
 
     if (!validatedFields.success) {
-      console.log("Add Offer validation errors:", validatedFields.error.flatten().fieldErrors);
+      console.log("Add Offer validation errors:", validatedFields.error?.flatten().fieldErrors);
       return {
         progressState: progressState,
         offerFormState: {
-        errors: validatedFields.error.flatten().fieldErrors,
+        errors: validatedFields.error?.flatten().fieldErrors,
         values: normalizedData as OfferFormState['values']
         }
       };

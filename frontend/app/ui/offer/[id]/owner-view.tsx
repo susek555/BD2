@@ -15,7 +15,6 @@ export default function OwnerView({ can_edit, can_delete, offer_id, isAuction }:
         await deleteListingAction(offer_id);
         alert("Offer deleted successfully. Now you will be redirected to your listings page.");
         permanentRedirect("/account/listings");
-        setShowDeleteConfirm(false);
     }
 
     return (
