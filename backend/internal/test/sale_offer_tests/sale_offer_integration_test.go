@@ -782,7 +782,7 @@ func TestUpdateOffer_NotUsersOffer(t *testing.T) {
 	var got custom_errors.HTTPError
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
-	assert.Equal(t, got.Description, sale_offer.ErrOfferModification.Error())
+	assert.Equal(t, got.Description, sale_offer.ErrOfferNotOwned.Error())
 }
 
 func TestUpdateOffer_OfferNotFound(t *testing.T) {
@@ -812,11 +812,11 @@ func TestUpdateOffer_OfferAlreadySold(t *testing.T) {
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
 	response, receivedStatus := u.PerformRequest(server, http.MethodPut, "/sale-offer/", body, &token)
-	assert.Equal(t, http.StatusForbidden, receivedStatus)
+	assert.Equal(t, http.StatusConflict, receivedStatus)
 	var got custom_errors.HTTPError
 	err = json.Unmarshal(response, &got)
 	assert.NoError(t, err)
-	assert.Equal(t, got.Description, sale_offer.ErrOfferModification.Error())
+	assert.Equal(t, got.Description, sale_offer.ErrOfferAlreadySold.Error())
 }
 
 func TestUpdateOffer_ManufacturerAndModelDontMatch(t *testing.T) {
@@ -1986,7 +1986,7 @@ func TestDeleteOffer_NotUsersOffer(t *testing.T) {
 	var got custom_errors.HTTPError
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
-	assert.Equal(t, got.Description, sale_offer.ErrOfferModification.Error())
+	assert.Equal(t, got.Description, sale_offer.ErrOfferNotOwned.Error())
 	u.CleanDB(DB)
 }
 
@@ -1999,11 +1999,11 @@ func TestDeleteOffer_OfferAlreadySold(t *testing.T) {
 	user := USERS[0]
 	token, _ := u.GetValidToken(user.ID, user.Email)
 	response, receivedStatus := u.PerformRequest(server, http.MethodDelete, "/sale-offer/1", nil, &token)
-	assert.Equal(t, http.StatusForbidden, receivedStatus)
+	assert.Equal(t, http.StatusConflict, receivedStatus)
 	var got custom_errors.HTTPError
 	err := json.Unmarshal(response, &got)
 	assert.NoError(t, err)
-	assert.Equal(t, got.Description, sale_offer.ErrOfferModification.Error())
+	assert.Equal(t, got.Description, sale_offer.ErrOfferAlreadySold.Error())
 	u.CleanDB(DB)
 }
 
