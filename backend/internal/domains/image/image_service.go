@@ -34,6 +34,9 @@ func (s *ImageService) Store(offerID uint, images []*multipart.FileHeader, userI
 	if err != nil {
 		return err
 	}
+	if offer.Status == enums.SOLD || offer.Status == enums.EXPIRED {
+		return ErrOfferNotActive
+	}
 	if !offer.BelongsToUser(userID) {
 		return ErrOfferNotOwned
 	}
