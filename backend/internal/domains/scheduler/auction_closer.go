@@ -78,7 +78,7 @@ func (c *auctionCloser) CloseAuction(cmd CloseCmd) {
 		log.Printf("closer: cannot load offer %d: %v", auctionID, err)
 		return
 	}
-	if offer.Status != enums.PUBLISHED {
+	if offer.Status == enums.SOLD || offer.Status == enums.EXPIRED {
 		log.Printf("closer: auction %d already %s — skip", auctionID, offer.Status)
 		return
 	}
