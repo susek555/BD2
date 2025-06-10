@@ -1,19 +1,17 @@
-import { NextResponse } from 'next/server';
+import { fetchWithRefresh } from '@/app/lib/api/fetchWithRefresh';
+import { NextRequest } from 'next/server';
 
 export async function DELETE(
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  try {
-    const { id } = await params;
+  const { id } = await params;
+  const response = await fetchWithRefresh(
+    `${process.env.API_URL}/review/${id}`,
+    {
+      method: 'DELETE',
+    },
+  );
 
-    return NextResponse.json(
-      { message: 'Deleted successfully' },
-      { status: 200 },
-    );
-  } catch (error) {
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 },
-    );
-  }
+  return response;
 }
