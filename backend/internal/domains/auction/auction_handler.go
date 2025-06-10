@@ -73,7 +73,8 @@ func (h *Handler) CreateAuction(c *gin.Context) {
 		loc,
 	)
 	if err != nil {
-		// TODO: Do sth
+		log.Printf("Error parsing dateEnd: %v", err)
+		return
 	}
 	dateEnd := dateEndLocal.UTC()
 	userIDStr := strconv.FormatUint(uint64(userID), 10)
@@ -113,6 +114,23 @@ func (h *Handler) UpdateAuction(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, dto)
+	auctionID := strconv.FormatUint(uint64(dto.ID), 10)
+	loc, err := time.LoadLocation("Europe/Warsaw")
+	if err != nil {
+		log.Printf("Error loading location: %v", err)
+		return
+	}
+	dateEndLocal, err := time.ParseInLocation(
+		formats.DateTimeLayout,
+		*auctionInput.DateEnd,
+		loc,
+	)
+	if err != nil {
+		log.Printf("Error parsing dateEnd: %v", err)
+		return
+	}
+	dateEnd := dateEndLocal.UTC()
+	h.sched.ModifyAuction(auctionID, dateEnd)
 }
 
 // DeleteAuctionByID godoc
