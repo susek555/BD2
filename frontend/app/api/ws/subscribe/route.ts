@@ -3,6 +3,7 @@ import { NextRequest } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authConfig } from '@/app/lib/authConfig'
 import WebSocket from 'ws'
+import { NOTIFICATIONS_SOCKET_URL } from '@/app/lib/constants'
 
 const encoder = new TextEncoder()
 
@@ -18,7 +19,7 @@ export async function GET(request: NextRequest) {
 
   const stream = new ReadableStream({
     async start(controller) {
-      socket = new WebSocket('ws://localhost:8080/ws', [token])
+      socket = new WebSocket(`${NOTIFICATIONS_SOCKET_URL}/ws`, [token])
 
       socket.on('open', () => {
         console.log('✅ WS connected for user:', session?.user?.email)
@@ -61,4 +62,3 @@ export async function GET(request: NextRequest) {
     },
   })
 }
-
