@@ -22,12 +22,20 @@ export function ReviewCard({ review, variant }: ReviewCardProps) {
     setDialogOpen(true);
   };
 
+  const date = new Date(review.date);
+
+  const formatted = date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
   return (
     <div className='rounded-lg border border-gray-200 p-4 shadow-sm transition-shadow hover:shadow-md'>
       <div className='mb-2 flex items-center justify-between'>
         <span className='text-sm font-medium text-gray-700'>{headerText}</span>
         <div className='flex items-center gap-2'>
-          <span className='text-xs text-gray-500'>{review.date}</span>
+          <span className='text-xs text-gray-500'>{formatted}</span>
           {variant === 'by' && (
             <>
               <button
