@@ -137,6 +137,40 @@ func (_c *SchedulerInterface_LoadAuctions_Call) RunAndReturn(run func() error) *
 	return _c
 }
 
+// ModifyAuction provides a mock function with given fields: auctionID, end
+func (_m *SchedulerInterface) ModifyAuction(auctionID string, end time.Time) {
+	_m.Called(auctionID, end)
+}
+
+// SchedulerInterface_ModifyAuction_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ModifyAuction'
+type SchedulerInterface_ModifyAuction_Call struct {
+	*mock.Call
+}
+
+// ModifyAuction is a helper method to define mock.On call
+//   - auctionID string
+//   - end time.Time
+func (_e *SchedulerInterface_Expecter) ModifyAuction(auctionID interface{}, end interface{}) *SchedulerInterface_ModifyAuction_Call {
+	return &SchedulerInterface_ModifyAuction_Call{Call: _e.mock.On("ModifyAuction", auctionID, end)}
+}
+
+func (_c *SchedulerInterface_ModifyAuction_Call) Run(run func(auctionID string, end time.Time)) *SchedulerInterface_ModifyAuction_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(string), args[1].(time.Time))
+	})
+	return _c
+}
+
+func (_c *SchedulerInterface_ModifyAuction_Call) Return() *SchedulerInterface_ModifyAuction_Call {
+	_c.Call.Return()
+	return _c
+}
+
+func (_c *SchedulerInterface_ModifyAuction_Call) RunAndReturn(run func(string, time.Time)) *SchedulerInterface_ModifyAuction_Call {
+	_c.Run(run)
+	return _c
+}
+
 // Run provides a mock function with given fields: ctx
 func (_m *SchedulerInterface) Run(ctx context.Context) {
 	_m.Called(ctx)
