@@ -9,7 +9,7 @@ type LikedOfferRepositoryInterface interface {
 	Create(offer *models.LikedOffer) error
 	Delete(offerID, userID uint) error
 	GetByUserID(id uint) ([]models.LikedOffer, error)
-	IsOfferLikedByUser(userID uint, offerID uint) bool
+	IsOfferLikedByUser(userID uint, offerID uint) error
 }
 
 type LikedOfferRepository struct {
@@ -35,8 +35,8 @@ func (r *LikedOfferRepository) GetByUserID(id uint) ([]models.LikedOffer, error)
 	return likedOffers, err
 }
 
-func (r *LikedOfferRepository) IsOfferLikedByUser(offerID, userID uint) bool {
+func (r *LikedOfferRepository) IsOfferLikedByUser(offerID, userID uint) error {
 	var likedOffer models.LikedOffer
 	err := r.DB.Where("offer_id = ? AND user_id = ?", offerID, userID).First(&likedOffer).Error
-	return err == nil
+	return err
 }

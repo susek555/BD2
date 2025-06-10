@@ -25,7 +25,7 @@ func (s *LikedOfferService) LikeOffer(offerID, userID uint) error {
 	if err != nil {
 		return err
 	}
-	if s.likedOfferRepo.IsOfferLikedByUser(offerID, userID) {
+	if err := s.likedOfferRepo.IsOfferLikedByUser(offerID, userID); err == nil {
 		return ErrLikeAlreadyLikedOffer
 	}
 	if offer.BelongsToUser(userID) {
@@ -38,7 +38,7 @@ func (s *LikedOfferService) DislikeOffer(offerID, userID uint) error {
 	if _, err := s.saleOfferRetriever.GetByID(offerID); err != nil {
 		return err
 	}
-	if !s.likedOfferRepo.IsOfferLikedByUser(offerID, userID) {
+	if err := s.likedOfferRepo.IsOfferLikedByUser(offerID, userID); err != nil {
 		return ErrDislikeNotLikedOffer
 	}
 	return s.likedOfferRepo.Delete(offerID, userID)
