@@ -1,10 +1,10 @@
-"use client"
+'use client';
 
-import { BaseAccountButton } from "@/app/ui/(topbar)/base-account-buttons/base-account-button";
+import { BaseAccountButton } from '@/app/ui/(topbar)/base-account-buttons/base-account-button';
 import { ArrowLeftIcon } from '@heroicons/react/20/solid';
-import { signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 export function ClientLogoutButton() {
   const [isSigningOut, setIsSigningOut] = useState(false);
@@ -12,11 +12,11 @@ export function ClientLogoutButton() {
 
   const handleSignOut = async () => {
     if (isSigningOut) return;
-    setIsSigningOut(true)
+    setIsSigningOut(true);
     try {
-      const res = await fetch("/api/auth/logout", { method: "POST" });
-      if (!res.ok) throw new Error("Logout failed");
-      await signOut({ redirect: true });
+      const res = await fetch('/api/auth/logout', { method: 'POST' });
+      if (!res.ok) throw new Error('Logout failed');
+      await signOut({ redirect: false });
       router.refresh();
     } catch (err) {
       console.error(err);
@@ -27,7 +27,7 @@ export function ClientLogoutButton() {
 
   return (
     <BaseAccountButton onClick={handleSignOut}>
-      Log out <ArrowLeftIcon className="ml-auto w-5 text-gray-50" />
+      Log out <ArrowLeftIcon className='ml-auto w-5 text-gray-50' />
     </BaseAccountButton>
   );
 }
