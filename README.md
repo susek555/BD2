@@ -5,14 +5,14 @@ Damian D'Souza | Kamil Marszałek | Michał Suski | Michał Szwejk | Piotr Szkod
 
 1. Opracowanie modelu pojęciowego (E-R) ✅
 2. Na podstawie modelu pojęciowego opracowanie relacyjnego logicznego modelu danych ✅
-3. Zaprojektowanie funkcjonalności aplikacji: części operacyjnej (transakcyjnej) oraz części analityczno-raportowej ✅
-4. Optymalizacja modelu logicznego (w szczególności denormalizacja) w celu maksymalizacji wydajności systemu ✅
+3. Zaprojektowanie funkcjonalności aplikacji: części operacyjnej oraz części analityczno-raportowej ✅
+4. Optymalizacja modelu logicznego (zwłaszcza denormalizacja) w celu maksymalizacji wydajności systemu ✅
 5. Opracowanie elementów funkcjonalnych na poziomie bazy danych (triggery, procedury składowane) ✅
 6. Dobór technologii bazodanowej, instalacja i konfiguracja środowiska ✅
 7. Dobór technologii realizacji aplikacji, instalacja i konfiguracja środowiska rozwojowego ✅
 8. Opracowanie, wdrożenie i optymalizacja modelu fizycznego ✅
 9. Opracowanie scenariuszy i danych testowych ✅
-10. Opracowanie dokumentacji analityczno-projektowej (w szczególności diagramów modeli danych z opisami) ✅ / ❔
+10. Opracowanie dokumentacji analityczno-projektowej (w szczególności diagramów modeli danych z opisami) ✅
 11. Opracowanie dokumentacji użytkowej aplikacji ❔
 
 ## Spis Treści
@@ -29,7 +29,7 @@ Damian D'Souza | Kamil Marszałek | Michał Suski | Michał Szwejk | Piotr Szkod
 
 Aplikacja ta umożliwia użytkownikom rejestrację, tworzenie i zarządzanie ofertami sprzedaży samochodów, uczestnictwo w aukcjach oraz kupno pojazdu.
 
-### Kluczowe Funkcje
+### **Kluczowe Funkcje**
 
 - **Katalog Samochodów**: Kompleksowa baza danych samochodów z producentami, modelami i szczegółowymi specyfikacjami
 - **System Aukcji**: Licytowanie w czasie rzeczywistym
@@ -60,7 +60,7 @@ Aplikacja ta umożliwia użytkownikom rejestrację, tworzenie i zarządzanie ofe
                        └─────────────────┘
 ```
 
-### Zasady Architektury
+### **Zasady Architektury**
 
 - **Modularność**: Podział na domeny i moduły dla lepszej organizacji kodu
 - **RESTful API**: Standardowe endpointy REST z kompleksową dokumentacją Swagger
@@ -71,7 +71,7 @@ Aplikacja ta umożliwia użytkownikom rejestrację, tworzenie i zarządzanie ofe
 
 ## Stos Technologiczny
 
-### Technologie Backendowe
+### **Technologie Backendowe**
 - **Go 1.21+**: Główny język backendowy
 - **Gin Framework**: Framework webowy HTTP dla Go
 - **GORM**: Biblioteka object-relational mapping
@@ -82,20 +82,20 @@ Aplikacja ta umożliwia użytkownikom rejestrację, tworzenie i zarządzanie ofe
 - **Cloudinary**: Przechowywanie obrazów w chmurze
 - **bcrypt**: Hashowanie haseł
 
-### Technologie Frontendowe
+### **Technologie Frontendowe**
 - **Next.js 14**: Framework React z App Router
 - **TypeScript**: Type-safe JavaScript
 - **React 18**: Biblioteka UI z najnowszymi funkcjami
 - **NextAuth.js**: Framework uwierzytelniania
 - **TailwindCSS**: Utility-first CSS framework
 
-### Technologie Bazodanowe
+### **Technologie Bazodanowe**
 - **PostgreSQL 15+**: Główna baza danych
 - **pg_ivm**: Rozszerzenie Incremental View Maintenance
 - **Custom Triggers**: Logika biznesowa na poziomie bazy danych
 - **Widoki**: Materialized views dla optymalizacji zapytań
 
-### DevOps i Deployment
+### **DevOps i Deployment**
 - **Docker**: Platforma konteneryzacji
 - **Git**: System kontroli wersji
 
@@ -103,7 +103,14 @@ Aplikacja ta umożliwia użytkownikom rejestrację, tworzenie i zarządzanie ofe
 
 Baza danych zaprojektowana z wykorzystaniem PostgreSQL, z uwzględnieniem zasad normalizacji i integralności danych.
 
-### Struktura Plików Bazy Danych
+### **Model Pojęciowy**
+![er.png](er.png)
+
+### **Model Relacyjny**
+
+![relational.png](relational.png)
+
+### **Struktura Plików Bazy Danych**
 
 ```
 database/
@@ -114,10 +121,8 @@ database/
 └── Dockerfile          # Konfiguracja kontenera bazy danych
 ```
 
-![er.png](er.png)
 
-
-### Typy Danych i Enumy
+### **Typy Danych i Enumy**
 
 Baza danych używa niestandardowych enumów PostgreSQL dla bezpieczeństwa typów:
 
@@ -129,13 +134,24 @@ Baza danych używa niestandardowych enumów PostgreSQL dla bezpieczeństwa typó
 - **DRIVE**: Systemy napędu (`'fwd'`, `'rwd'`, `'awd'`)
 - **DOCUMENT_TYPE**: Klasyfikacje plików (`'invoice'`, `'receipt'`, `'other'`)
 
-### Zaawansowane Funkcje Bazy Danych
+### **Zaawansowane Funkcje Bazy Danych**
 
 #### Triggery (triggers.sql)
 - **Trigger Tworzenia Aukcji**: Automatycznie ustawia `is_auction = TRUE` kiedy rekord aukcji jest tworzony
 - **Trigger Usuwania Użytkownika**: Czyści niesprzedane oferty gdy użytkownik jest usuwany
 
-#### Materialized Views (init-pg-ivm.sql)
+#### Optymalizacje Wydajności
+- **Indeksy Unikalne**: Zoptymalizowane ograniczenia na materialized views
+- **Indeksy Złożone**: Indeksy wielokolumnowe dla częstych zapytań
+- **Ograniczenia Foreign Key**: Integralność referencyjna z kaskadowymi usunięciami
+- **Ograniczenia Check**: Walidacja danych na poziomie bazy danych
+
+### **Denormalizacja**
+
+Projekt wykorzystuje rozszerzenie **pg_ivm (Incremental View Maintenance)** do tworzenia inteligentnych widoków, które automatycznie utrzymują spójność danych:
+
+#### Materialized Views:
+
 - **offer_creators**: Szybkie wyszukiwanie twórców ofert
 - **offer_bidders**: Aktywni licytujący w opublikowanych aukcjach
 - **offer_likers**: Użytkownicy, którzy polubili opublikowane oferty
@@ -144,13 +160,29 @@ Baza danych używa niestandardowych enumów PostgreSQL dla bezpieczeństwa typó
 - **auction_sale_offer_view**: Kompleksowy widok ofert aukcyjnych
 - **sale_offer_view**: Połączony widok wszystkich ofert sprzedaży ze szczegółami samochodów
 
-#### Optymalizacje Wydajności
-- **Indeksy Unikalne**: Zoptymalizowane ograniczenia na materialized views
-- **Indeksy Złożone**: Indeksy wielokolumnowe dla częstych zapytań
-- **Ograniczenia Foreign Key**: Integralność referencyjna z kaskadowymi usunięciami
-- **Ograniczenia Check**: Walidacja danych na poziomie bazy danych
+#### Wydajność
+- **Eliminacja złożonych JOIN-ów**: Materialized views przechowują już połączone dane z wielu tabel
+- **Wstępne obliczenia sum**: Liczby ofert, średnie ceny, statystyki licytacji
+- **Aktualizacje przyrostowe**: pg_ivm aktualizuje tylko zmienione części widoków
 
-### Funkcje Integralności Danych
+#### Skalowalność
+- **Redukcja obciążenia CPU**: Brak konieczności wykonywania kosztownych JOIN-ów przy każdym zapytaniu
+- **Równoległy dostęp**: Odczyt z materialized views nie blokuje operacji transakcyjnych
+
+#### Spójność
+- **Automatyczna synchronizacja**: pg_ivm gwarantuje spójność danych w czasie rzeczywistym
+- **Integralność**: Aktualizacje widoków bez dodatkowych operacji
+
+#### Zalety
+- Dramatyczna poprawa wydajności zapytań odczytu
+- Uproszczenie logiki aplikacyjnej
+- Lepsza skalowalność przy dużych zbiorach danych
+
+#### Wady
+- Zwiększone zużycie przestrzeni dyskowej
+- Potencjalne opóźnienia w aktualizacji widoków
+
+### **Funkcje Integralności Danych**
 
 - **Kaskadowe Usunięcia**: Powiązane rekordy są odpowiednio czyszczone
 - **Wartości Domyślne**: Soft deletion używające domyślnego użytkownika (ID: 1) dla integralności referencyjnej
@@ -162,7 +194,7 @@ Baza danych używa niestandardowych enumów PostgreSQL dla bezpieczeństwa typó
 
 Backend aplikacji jest zbudowany w Go, używając frameworka Gin i GORM do interakcji z bazą danych PostgreSQL.
 
-### Struktura Domen
+### **Struktura Domen**
 
 ```
 internal/domains/
@@ -186,7 +218,7 @@ internal/domains/
 ```
 
 
-### Kluczowe Komponenty
+### **Kluczowe Komponenty**
 
 #### Warstwa Modeli
 - **Modele Bazy Danych**: Definicje modeli oparte na GORM
@@ -203,14 +235,14 @@ internal/domains/
 - **Middleware**: Uwierzytelnianie, CORS, logowanie
 - **Handlers**: Przetwarzanie żądań/odpowiedzi HTTP
 
-### Przepływ Uwierzytelniania
+### **Przepływ Uwierzytelniania**
 
 1. **Rejestracja**: Użytkownik tworzy konto (osoba lub firma)
 2. **Logowanie**: Walidacja danych uwierzytelniających, wydanie tokenów JWT
 3. **Odświeżanie Tokenów**: Automatyczne odnawianie tokenów
 4. **Autoryzacja**: Kontrola dostępu do chronionych zasobów
 
-### Funkcje Real-time
+### **Funkcje Real-time**
 
 - **Połączenia WebSocket**: Trwałe połączenia dla aktualizacji na żywo
 - **System Powiadomień**: Powiadomienia o ofertach w czasie rzeczywistym
@@ -220,7 +252,7 @@ internal/domains/
 
 Frontend aplikacji jest zbudowany w Next.js, wykorzystując TypeScript i TailwindCSS do tworzenia responsywnego interfejsu użytkownika.
 
-### Struktura Aplikacji
+### **Struktura Aplikacji**
 
 ```
 app/
@@ -246,7 +278,7 @@ app/
 └── ui/                  # Komponenty interfejsu użytkownika
 ```
 
-### Kluczowe Funkcje
+### **Kluczowe Funkcje**
 
 #### Integracja Uwierzytelniania
 - **NextAuth.js**: Bezpieczne uwierzytelnianie z JWT
@@ -266,7 +298,7 @@ app/
 
 ## Dokumentacja API
 
-### Główne Endpointy
+### **Główne Endpointy**
 
 
 #### Uwierzytelnianie
@@ -320,7 +352,7 @@ GET  /bid/highest/auction/{auctionID}/bidder/{bidderID} - Najwyższa oferta uży
 ```
 
 
-### Funkcje API
+### **Funkcje API**
 
 - **Dokumentacja Swagger**: Interaktywny eksplorator API pod `/swagger/`
 - **Modele Request/Response**: Kompleksowe schematy danych
@@ -331,7 +363,7 @@ GET  /bid/highest/auction/{auctionID}/bidder/{bidderID} - Najwyższa oferta uży
 
 ## Funkcje Real-time
 
-### Implementacja WebSocket
+### **Implementacja WebSocket**
 
 System implementuje funkcje real-time używając połączeń WebSocket:
 
