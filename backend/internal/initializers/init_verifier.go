@@ -1,9 +1,10 @@
 package initializers
 
 import (
-	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
 	"log"
 	"os"
+
+	"github.com/susek555/BD2/car-dealer-api/pkg/jwt"
 )
 
 var Verifier *jwt.JWTVerifier

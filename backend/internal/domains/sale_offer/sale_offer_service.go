@@ -13,7 +13,7 @@ import (
 	"github.com/susek555/BD2/car-dealer-api/pkg/pagination"
 )
 
-type ImageRemoverIntreface interface {
+type ImageRemoverInterface interface {
 	DeleteByFolderName(folder string) error
 }
 
@@ -69,7 +69,7 @@ type SaleOfferService struct {
 	manRetriever    ManufacturerRetrieverInterface
 	modelRetriever  ModelRetrieverInterface
 	imageRetriever  ImageRetrieverInterface
-	imageRemover    ImageRemoverIntreface
+	imageRemover    ImageRemoverInterface
 	accessEvaluator OfferAccessEvaluatorInterface
 	purchaseRepo    PurchaseRepositoryInterface
 }
@@ -79,7 +79,7 @@ func NewSaleOfferService(
 	manufacturerRetriever ManufacturerRetrieverInterface,
 	modelRetriever ModelRetrieverInterface,
 	imageRetriever ImageRetrieverInterface,
-	imageRemover ImageRemoverIntreface,
+	imageRemover ImageRemoverInterface,
 	accessEvaluator OfferAccessEvaluatorInterface,
 	purchaseRepo PurchaseRepositoryInterface,
 ) SaleOfferServiceInterface {

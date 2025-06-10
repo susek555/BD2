@@ -56,7 +56,7 @@ func (h *Handler) CreateAuction(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
-	in.UserID = (uint)(userID)
+	in.UserID = userID
 	dto, err := h.service.Create(&in)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
@@ -108,7 +108,7 @@ func (h *Handler) UpdateAuction(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
-	dto, err := h.service.Update(&auctionInput, uint(userID))
+	dto, err := h.service.Update(&auctionInput, userID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
@@ -157,7 +157,7 @@ func (h *Handler) DeleteAuctionByID(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return
 	}
-	err = h.service.Delete(uint(id), uint(userID))
+	err = h.service.Delete(uint(id), userID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, custom_errors.NewHTTPError(err.Error()))
 		return

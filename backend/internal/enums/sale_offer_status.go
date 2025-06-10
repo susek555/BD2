@@ -28,6 +28,6 @@ func (s *Status) Scan(value any) error {
 	return nil
 }
 
-func (c Status) Value() (driver.Value, error) {
-	return convertAppFormatToDBFormat(string(c)), nil
+func (s Status) Value() (driver.Value, error) {
+	return convertAppFormatToDBFormat(string(s)), nil
 }

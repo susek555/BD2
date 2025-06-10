@@ -9,7 +9,7 @@ import (
 
 var (
 	ErrMissingFields                = errors.New("some fields are missing - ensure that all required fields are present")
-	ErrInvalidProductionYear        = errors.New("invalid production year, it cannot be greater thatn current year")
+	ErrInvalidProductionYear        = errors.New("invalid production year, it cannot be greater than current year")
 	ErrInvalidRegistrationDate      = errors.New("invalid registration date, it cannot be in the future")
 	ErrInvalidColor                 = errors.New("invalid color")
 	ErrInvalidFuelType              = errors.New("invalid fuel type")

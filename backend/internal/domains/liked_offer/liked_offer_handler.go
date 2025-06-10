@@ -21,10 +21,10 @@ func NewHandler(service LikedOfferServiceInterface, hub ws.HubInterface) *Handle
 	}
 }
 
-// LikeNewOffer godoc
+// LikeOffer godoc
 //
 //	@Summary		Like new offer
-//	@Description	Like new offer by giving it's id. You have to be logged in to perform this operation.
+//	@Description	Like new offer by giving its id. You have to be logged in to perform this operation.
 //	@Tags			favourite
 //	@Accept			json
 //	@Produce		json
