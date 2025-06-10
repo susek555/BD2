@@ -150,22 +150,22 @@ func (m *MockImageRemoverInterface) DeleteByFolderName(folder string) error {
 }
 
 type MockOfferAccessEvaluatorInterface struct {
-	canBeModifiedByUserFunc func(offer sale_offer.SaleOfferEntityInterface, userID *uint) (bool, error)
-	isOfferLikedByUserFunc  func(offer sale_offer.SaleOfferEntityInterface, userID *uint) bool
+	canBeModifiedByUserFunc func(offer sale_offer.SaleOfferEntityInterface, userID *uint) error
+	isOfferLikedByUserFunc  func(offer sale_offer.SaleOfferEntityInterface, userID *uint) error
 }
 
-func (m *MockOfferAccessEvaluatorInterface) CanBeModifiedByUser(offer sale_offer.SaleOfferEntityInterface, userID *uint) (bool, error) {
+func (m *MockOfferAccessEvaluatorInterface) CanBeModifiedByUser(offer sale_offer.SaleOfferEntityInterface, userID *uint) error {
 	if m.canBeModifiedByUserFunc != nil {
 		return m.canBeModifiedByUserFunc(offer, userID)
 	}
-	return true, nil
+	return nil
 }
 
-func (m *MockOfferAccessEvaluatorInterface) IsOfferLikedByUser(offer sale_offer.SaleOfferEntityInterface, userID *uint) bool {
+func (m *MockOfferAccessEvaluatorInterface) IsOfferLikedByUser(offer sale_offer.SaleOfferEntityInterface, userID *uint) error {
 	if m.isOfferLikedByUserFunc != nil {
 		return m.isOfferLikedByUserFunc(offer, userID)
 	}
-	return false
+	return nil
 }
 
 func createMockSaleOfferService() (*sale_offer.SaleOfferService, *mockSaleOfferRepository, *MockManufacturerRetrieverInterface, *MockModelRetrieverInterface, *MockImageRetrieverInterface, *MockImageRemoverInterface, *MockOfferAccessEvaluatorInterface, *mockPurchaseCreator) {
@@ -287,11 +287,11 @@ func TestSaleOfferService_Create_Success(t *testing.T) {
 		return sampleView, nil
 	}
 
-	mockAccessEvaluator.isOfferLikedByUserFunc = func(offer sale_offer.SaleOfferEntityInterface, userID *uint) bool {
-		return false
+	mockAccessEvaluator.isOfferLikedByUserFunc = func(offer sale_offer.SaleOfferEntityInterface, userID *uint) error {
+		return errors.New("")
 	}
-	mockAccessEvaluator.canBeModifiedByUserFunc = func(offer sale_offer.SaleOfferEntityInterface, userID *uint) (bool, error) {
-		return true, nil
+	mockAccessEvaluator.canBeModifiedByUserFunc = func(offer sale_offer.SaleOfferEntityInterface, userID *uint) error {
+		return nil
 	}
 
 	mockImageRetriever.getByOfferIDFunc = func(offerID uint) ([]models.Image, error) {
@@ -359,11 +359,11 @@ func TestSaleOfferService_Update_Success(t *testing.T) {
 		return sampleView, nil
 	}
 
-	mockAccessEvaluator.canBeModifiedByUserFunc = func(offer sale_offer.SaleOfferEntityInterface, userID *uint) (bool, error) {
-		return true, nil
+	mockAccessEvaluator.canBeModifiedByUserFunc = func(offer sale_offer.SaleOfferEntityInterface, userID *uint) error {
+		return nil
 	}
-	mockAccessEvaluator.isOfferLikedByUserFunc = func(offer sale_offer.SaleOfferEntityInterface, userID *uint) bool {
-		return false
+	mockAccessEvaluator.isOfferLikedByUserFunc = func(offer sale_offer.SaleOfferEntityInterface, userID *uint) error {
+		return errors.New("")
 	}
 
 	mockImageRetriever.getByOfferIDFunc = func(offerID uint) ([]models.Image, error) {
@@ -387,17 +387,17 @@ func TestSaleOfferService_Update_NotOwned(t *testing.T) {
 	mockRepo.getByIDFunc = func(id uint) (*models.SaleOffer, error) {
 		return sampleOffer, nil
 	}
-	mockAccessEvaluator.canBeModifiedByUserFunc = func(offer sale_offer.SaleOfferEntityInterface, userID *uint) (bool, error) {
-		return false, nil
+	mockAccessEvaluator.canBeModifiedByUserFunc = func(offer sale_offer.SaleOfferEntityInterface, userID *uint) error {
+		return sale_offer.ErrOfferNotOwned
 	}
 	result, err := service.Update(updateDTO, 1)
 
 	assert.Error(t, err)
 	assert.Nil(t, result)
-	assert.Equal(t, sale_offer.ErrOfferModification, err)
+	assert.Equal(t, sale_offer.ErrOfferNotOwned, err)
 }
 
-func TestSaleOfferService_Update_CannotModify(t *testing.T) {
+func TestSaleOfferService_Update_OfferAlreadySold(t *testing.T) {
 	service, mockRepo, _, _, _, _, mockAccessEvaluator, _ := createMockSaleOfferService()
 
 	updateDTO := createSampleUpdateDTO()
@@ -407,15 +407,15 @@ func TestSaleOfferService_Update_CannotModify(t *testing.T) {
 		return sampleOffer, nil
 	}
 
-	mockAccessEvaluator.canBeModifiedByUserFunc = func(offer sale_offer.SaleOfferEntityInterface, userID *uint) (bool, error) {
-		return false, nil
+	mockAccessEvaluator.canBeModifiedByUserFunc = func(offer sale_offer.SaleOfferEntityInterface, userID *uint) error {
+		return sale_offer.ErrOfferAlreadySold
 	}
 
 	result, err := service.Update(updateDTO, 1)
 
 	assert.Error(t, err)
 	assert.Nil(t, result)
-	assert.Equal(t, sale_offer.ErrOfferModification, err)
+	assert.Equal(t, sale_offer.ErrOfferAlreadySold, err)
 }
 
 func TestSaleOfferService_Publish_Success(t *testing.T) {
@@ -435,11 +435,11 @@ func TestSaleOfferService_Publish_Success(t *testing.T) {
 		return sampleView, nil
 	}
 
-	mockAccessEvaluator.isOfferLikedByUserFunc = func(offer sale_offer.SaleOfferEntityInterface, userID *uint) bool {
-		return false
+	mockAccessEvaluator.isOfferLikedByUserFunc = func(offer sale_offer.SaleOfferEntityInterface, userID *uint) error {
+		return errors.New("")
 	}
-	mockAccessEvaluator.canBeModifiedByUserFunc = func(offer sale_offer.SaleOfferEntityInterface, userID *uint) (bool, error) {
-		return true, nil
+	mockAccessEvaluator.canBeModifiedByUserFunc = func(offer sale_offer.SaleOfferEntityInterface, userID *uint) error {
+		return nil
 	}
 
 	mockImageRetriever.getByOfferIDFunc = func(offerID uint) ([]models.Image, error) {
@@ -586,8 +586,8 @@ func TestSaleOfferService_Delete_Success(t *testing.T) {
 		return nil
 	}
 
-	mockAccessEvaluator.canBeModifiedByUserFunc = func(offer sale_offer.SaleOfferEntityInterface, userID *uint) (bool, error) {
-		return true, nil
+	mockAccessEvaluator.canBeModifiedByUserFunc = func(offer sale_offer.SaleOfferEntityInterface, userID *uint) error {
+		return nil
 	}
 
 	mockImageRemover.deleteByFolderNameFunc = func(folder string) error {
@@ -608,17 +608,17 @@ func TestSaleOfferService_Delete_NotOwned(t *testing.T) {
 	mockRepo.getByIDFunc = func(id uint) (*models.SaleOffer, error) {
 		return sampleOffer, nil
 	}
-	mockAccessEvaluator.canBeModifiedByUserFunc = func(offer sale_offer.SaleOfferEntityInterface, userID *uint) (bool, error) {
-		return false, nil
+	mockAccessEvaluator.canBeModifiedByUserFunc = func(offer sale_offer.SaleOfferEntityInterface, userID *uint) error {
+		return sale_offer.ErrOfferNotOwned
 	}
 
 	err := service.Delete(1, 1)
 
 	assert.Error(t, err)
-	assert.Equal(t, sale_offer.ErrOfferModification, err)
+	assert.Equal(t, sale_offer.ErrOfferNotOwned, err)
 }
 
-func TestSaleOfferService_Delete_CannotModify(t *testing.T) {
+func TestSaleOfferService_Delete_OfferAlreadySold(t *testing.T) {
 	service, mockRepo, _, _, _, _, mockAccessEvaluator, _ := createMockSaleOfferService()
 
 	sampleOffer := createSampleSaleOffer()
@@ -627,14 +627,14 @@ func TestSaleOfferService_Delete_CannotModify(t *testing.T) {
 		return sampleOffer, nil
 	}
 
-	mockAccessEvaluator.canBeModifiedByUserFunc = func(offer sale_offer.SaleOfferEntityInterface, userID *uint) (bool, error) {
-		return false, nil
+	mockAccessEvaluator.canBeModifiedByUserFunc = func(offer sale_offer.SaleOfferEntityInterface, userID *uint) error {
+		return sale_offer.ErrOfferAlreadySold
 	}
 
 	err := service.Delete(1, 1)
 
 	assert.Error(t, err)
-	assert.Equal(t, sale_offer.ErrOfferModification, err)
+	assert.Equal(t, sale_offer.ErrOfferAlreadySold, err)
 }
 
 func TestSaleOfferService_GetByID_Success(t *testing.T) {
@@ -647,11 +647,11 @@ func TestSaleOfferService_GetByID_Success(t *testing.T) {
 		return sampleView, nil
 	}
 
-	mockAccessEvaluator.isOfferLikedByUserFunc = func(offer sale_offer.SaleOfferEntityInterface, userID *uint) bool {
-		return true
+	mockAccessEvaluator.isOfferLikedByUserFunc = func(offer sale_offer.SaleOfferEntityInterface, userID *uint) error {
+		return nil
 	}
-	mockAccessEvaluator.canBeModifiedByUserFunc = func(offer sale_offer.SaleOfferEntityInterface, userID *uint) (bool, error) {
-		return false, nil
+	mockAccessEvaluator.canBeModifiedByUserFunc = func(offer sale_offer.SaleOfferEntityInterface, userID *uint) error {
+		return sale_offer.ErrOfferNotOwned
 	}
 
 	mockImageRetriever.getByOfferIDFunc = func(offerID uint) ([]models.Image, error) {
@@ -694,11 +694,11 @@ func TestSaleOfferService_GetDetailedByID_Success(t *testing.T) {
 		return sampleView, nil
 	}
 
-	mockAccessEvaluator.isOfferLikedByUserFunc = func(offer sale_offer.SaleOfferEntityInterface, userID *uint) bool {
-		return false
+	mockAccessEvaluator.isOfferLikedByUserFunc = func(offer sale_offer.SaleOfferEntityInterface, userID *uint) error {
+		return errors.New("")
 	}
-	mockAccessEvaluator.canBeModifiedByUserFunc = func(offer sale_offer.SaleOfferEntityInterface, userID *uint) (bool, error) {
-		return true, nil
+	mockAccessEvaluator.canBeModifiedByUserFunc = func(offer sale_offer.SaleOfferEntityInterface, userID *uint) error {
+		return nil
 	}
 
 	mockImageRetriever.getByOfferIDFunc = func(offerID uint) ([]models.Image, error) {
@@ -737,11 +737,11 @@ func TestSaleOfferService_GetFiltered_Success(t *testing.T) {
 		return []views.SaleOfferView{*sampleView}, &pagination.PaginationResponse{TotalPages: 1, TotalRecords: 0}, nil
 	}
 
-	mockAccessEvaluator.isOfferLikedByUserFunc = func(offer sale_offer.SaleOfferEntityInterface, userID *uint) bool {
-		return false
+	mockAccessEvaluator.isOfferLikedByUserFunc = func(offer sale_offer.SaleOfferEntityInterface, userID *uint) error {
+		return nil
 	}
-	mockAccessEvaluator.canBeModifiedByUserFunc = func(offer sale_offer.SaleOfferEntityInterface, userID *uint) (bool, error) {
-		return true, nil
+	mockAccessEvaluator.canBeModifiedByUserFunc = func(offer sale_offer.SaleOfferEntityInterface, userID *uint) error {
+		return nil
 	}
 
 	mockImageRetriever.getByOfferIDFunc = func(offerID uint) ([]models.Image, error) {

@@ -93,7 +93,7 @@ func newTestServer(db *gorm.DB, seedOffers []models.SaleOffer) (*gin.Engine, sal
 	purchaseCreator := purchase.NewPurchaseRepository(db)
 	saleOfferService := sale_offer.NewSaleOfferService(saleOfferRepo, manufacturerRepo, modelRepo, imageRepo, imageBucket, accessEvaluator, purchaseCreator)
 	likedOfferService := liked_offer.NewLikedOfferService(likedOfferRepository, saleOfferRepo)
-	imageService := image.NewImageService(imageRepo, imageBucket, saleOfferRepo)
+	imageService := image.NewImageService(imageRepo, imageBucket, saleOfferRepo, accessEvaluator)
 	imageHandler := image.NewHandler(imageService, saleOfferService)
 	mh := new(mocks.HubInterface)
 	mh.On("SubscribeUser", mock.Anything, mock.Anything).Return()
