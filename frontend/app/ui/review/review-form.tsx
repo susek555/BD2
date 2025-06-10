@@ -10,7 +10,7 @@ import { ChangeEvent, useEffect, useState } from 'react';
 
 interface ReviewFormProps {
   review?: Review | null;
-  revieweeId?: number;
+  revieweeId: number;
   onSubmitSuccess?: () => void;
 }
 
@@ -46,49 +46,43 @@ export default function ReviewForm({
   };
 
   const handleSubmit = async () => {
-    let response: Response | undefined;
-    if (rating > 0) {
-      if (isEditMode && review) {
+    console.log('edit mode', isEditMode);
+
+    try {
+      if (isEditMode) {
         const updatedReview: UpdatedReview = {
           id: review.id,
           rating,
           description: description.trim(),
         };
 
-        response = await updateReview(updatedReview);
+        await updateReview(updatedReview);
       } else {
-        if (!revieweeId) {
-          console.error('revieweeId is required for creating new reviews');
-          return;
-        }
-
         const newReview: NewReview = {
           revieweeId,
           rating,
           description: description.trim(),
         };
 
-        response = await addReview(newReview);
+        console.log(newReview);
+
+        await addReview(newReview);
       }
-    }
 
-    console.log(response);
-
-    if (!response?.ok) {
-      setError(true);
-    } else if (response?.ok) {
       onSubmitSuccess?.();
+    } catch (_error) {
+      setError(true);
     }
   };
 
   const handleDelete = async () => {
-    if (!review) return;
-    const response: Response = await deleteReview(review.id);
-    console.log(response);
+    try {
+      if (!review) return;
+      console.log('review id', review.id);
 
-    if (response.ok) {
+      await deleteReview(review.id);
       onSubmitSuccess?.();
-    } else {
+    } catch (_error) {
       setError(true);
     }
   };
