@@ -216,9 +216,6 @@ func (s *SaleOfferService) PrepareForUpdateSaleOffer(in *UpdateSaleOfferDTO, use
 	if err != nil {
 		return nil, err
 	}
-	if !offer.BelongsToUser(userID) {
-		return nil, ErrOfferNotOwned
-	}
 	if err := s.authorizeModificationByUser(offer, userID); err != nil {
 		return nil, err
 	}
@@ -353,9 +350,6 @@ func (s *SaleOfferService) getIssueDate(offer *views.SaleOfferView, userID *uint
 }
 
 func (s *SaleOfferService) authorizeModificationByUser(offer SaleOfferEntityInterface, userID uint) error {
-	if !offer.BelongsToUser(userID) {
-		return ErrOfferNotOwned
-	}
 	canBeModifed, err := s.accessEvaluator.CanBeModifiedByUser(offer, &userID)
 	if err != nil {
 		return err

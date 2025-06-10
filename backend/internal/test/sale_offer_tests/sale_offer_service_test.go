@@ -378,7 +378,7 @@ func TestSaleOfferService_Update_Success(t *testing.T) {
 }
 
 func TestSaleOfferService_Update_NotOwned(t *testing.T) {
-	service, mockRepo, _, _, _, _, _, _ := createMockSaleOfferService()
+	service, mockRepo, _, _, _, _, mockAccessEvaluator, _ := createMockSaleOfferService()
 
 	updateDTO := createSampleUpdateDTO()
 	sampleOffer := createSampleSaleOffer()
@@ -387,12 +387,14 @@ func TestSaleOfferService_Update_NotOwned(t *testing.T) {
 	mockRepo.getByIDFunc = func(id uint) (*models.SaleOffer, error) {
 		return sampleOffer, nil
 	}
-
+	mockAccessEvaluator.canBeModifiedByUserFunc = func(offer sale_offer.SaleOfferEntityInterface, userID *uint) (bool, error) {
+		return false, nil
+	}
 	result, err := service.Update(updateDTO, 1)
 
 	assert.Error(t, err)
 	assert.Nil(t, result)
-	assert.Equal(t, sale_offer.ErrOfferNotOwned, err)
+	assert.Equal(t, sale_offer.ErrOfferModification, err)
 }
 
 func TestSaleOfferService_Update_CannotModify(t *testing.T) {
@@ -598,7 +600,7 @@ func TestSaleOfferService_Delete_Success(t *testing.T) {
 }
 
 func TestSaleOfferService_Delete_NotOwned(t *testing.T) {
-	service, mockRepo, _, _, _, _, _, _ := createMockSaleOfferService()
+	service, mockRepo, _, _, _, _, mockAccessEvaluator, _ := createMockSaleOfferService()
 
 	sampleOffer := createSampleSaleOffer()
 	sampleOffer.UserID = 2 // Different user
@@ -606,11 +608,14 @@ func TestSaleOfferService_Delete_NotOwned(t *testing.T) {
 	mockRepo.getByIDFunc = func(id uint) (*models.SaleOffer, error) {
 		return sampleOffer, nil
 	}
+	mockAccessEvaluator.canBeModifiedByUserFunc = func(offer sale_offer.SaleOfferEntityInterface, userID *uint) (bool, error) {
+		return false, nil
+	}
 
 	err := service.Delete(1, 1)
 
 	assert.Error(t, err)
-	assert.Equal(t, sale_offer.ErrOfferNotOwned, err)
+	assert.Equal(t, sale_offer.ErrOfferModification, err)
 }
 
 func TestSaleOfferService_Delete_CannotModify(t *testing.T) {
