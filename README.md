@@ -3,6 +3,18 @@ Damian D'Souza | Kamil Marszałek | Michał Suski | Michał Szwejk | Piotr Szkod
 
 # Dokumentacja Systemu Aukcji Samochodowych
 
+1. Opracowanie modelu pojęciowego (E-R) ✅
+2. Na podstawie modelu pojęciowego opracowanie relacyjnego logicznego modelu danych ✅
+3. Zaprojektowanie funkcjonalności aplikacji: części operacyjnej (transakcyjnej) oraz części analityczno-raportowej ✅
+4. Optymalizacja modelu logicznego (w szczególności denormalizacja) w celu maksymalizacji wydajności systemu ✅
+5. Opracowanie elementów funkcjonalnych na poziomie bazy danych (triggery, procedury składowane) ✅
+6. Dobór technologii bazodanowej, instalacja i konfiguracja środowiska ✅
+7. Dobór technologii realizacji aplikacji, instalacja i konfiguracja środowiska rozwojowego ✅
+8. Opracowanie, wdrożenie i optymalizacja modelu fizycznego ✅
+9. Opracowanie scenariuszy i danych testowych ✅
+10. Opracowanie dokumentacji analityczno-projektowej (w szczególności diagramów modeli danych z opisami) ✅ / ❔
+11. Opracowanie dokumentacji użytkowej aplikacji ❔
+
 ## Spis Treści
 1. [Przegląd Systemu](#przegląd-systemu)
 2. [Architektura Systemu](#architektura-systemu)
