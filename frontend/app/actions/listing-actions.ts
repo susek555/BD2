@@ -6,7 +6,6 @@ import { revalidatePath } from 'next/cache';
 export async function deleteListingAction(listingId: string) {
   try {
     const response = await deleteListing(listingId);
-    console.log('delete', response);
     return { success: true };
   } catch (error) {
     return { success: false, error: 'Failed to delete listing' };
