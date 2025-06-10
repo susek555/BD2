@@ -156,7 +156,7 @@ func (s *SaleOfferService) Delete(id uint, userID uint) error {
 	if err != nil {
 		return err
 	}
-	if err := s.authorizeModificationByUser(offer, userID); err != nil {
+	if err := s.accessEvaluator.CanBeModifiedByUser(offer, &userID); err != nil {
 		return err
 	}
 	if err := s.saleOfferRepo.Delete(id); err != nil {
@@ -216,7 +216,7 @@ func (s *SaleOfferService) PrepareForUpdateSaleOffer(in *UpdateSaleOfferDTO, use
 	if err != nil {
 		return nil, err
 	}
-	if err := s.authorizeModificationByUser(offer, userID); err != nil {
+	if err := s.accessEvaluator.CanBeModifiedByUser(offer, &userID); err != nil {
 		return nil, err
 	}
 	modelID, err := s.determineNewModelID(offer, in)
@@ -321,10 +321,13 @@ func (s *SaleOfferService) mapOfferWithAdditionalFieldsDetailed(offer *views.Sal
 }
 
 func (s *SaleOfferService) getUserContextFields(offer *views.SaleOfferView, userID *uint) (*UserContext, error) {
-	isLiked := s.accessEvaluator.IsOfferLikedByUser(offer, userID)
-	canModify, err := s.accessEvaluator.CanBeModifiedByUser(offer, userID)
-	if err != nil {
-		return nil, err
+	var isLiked bool
+	var canModify bool
+	if err := s.accessEvaluator.IsOfferLikedByUser(offer, userID); err == nil {
+		isLiked = true
+	}
+	if err := s.accessEvaluator.CanBeModifiedByUser(offer, userID); err == nil {
+		canModify = true
 	}
 	return &UserContext{IsLiked: isLiked, CanModify: canModify}, nil
 }
@@ -345,17 +348,6 @@ func (s *SaleOfferService) getIssueDate(offer *views.SaleOfferView, userID *uint
 		}
 		date := purchase.IssueDate.Format(formats.DateTimeLayout)
 		return &date
-	}
-	return nil
-}
-
-func (s *SaleOfferService) authorizeModificationByUser(offer SaleOfferEntityInterface, userID uint) error {
-	canBeModifed, err := s.accessEvaluator.CanBeModifiedByUser(offer, &userID)
-	if err != nil {
-		return err
-	}
-	if !canBeModifed {
-		return ErrOfferModification
 	}
 	return nil
 }

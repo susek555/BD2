@@ -6,7 +6,7 @@ import (
 )
 
 type LikedOfferCheckerInterface interface {
-	IsOfferLikedByUser(offerID, userID uint) bool
+	IsOfferLikedByUser(offerID, userID uint) error
 }
 
 type BidRetrieverInterface interface {
@@ -14,8 +14,8 @@ type BidRetrieverInterface interface {
 }
 
 type OfferAccessEvaluatorInterface interface {
-	CanBeModifiedByUser(SaleOfferEntityInterface, *uint) (bool, error)
-	IsOfferLikedByUser(SaleOfferEntityInterface, *uint) bool
+	CanBeModifiedByUser(SaleOfferEntityInterface, *uint) error
+	IsOfferLikedByUser(SaleOfferEntityInterface, *uint) error
 }
 
 type OfferAccessEvaluator struct {
@@ -27,29 +27,29 @@ func NewAccessEvaluator(bidRetriever BidRetrieverInterface, likedChecker LikedOf
 	return &OfferAccessEvaluator{bidRetriever: bidRetriever, likedChecker: likedChecker}
 }
 
-func (e *OfferAccessEvaluator) CanBeModifiedByUser(offer SaleOfferEntityInterface, userID *uint) (bool, error) {
-	if userID == nil {
-		return false, nil
-	}
-	if !offer.BelongsToUser(*userID) {
-		return false, nil
+func (e *OfferAccessEvaluator) CanBeModifiedByUser(offer SaleOfferEntityInterface, userID *uint) error {
+	if userID == nil || !offer.BelongsToUser(*userID) {
+		return ErrOfferNotOwned
 	}
 	if offer.GetStatus() == enums.SOLD || offer.GetStatus() == enums.EXPIRED {
-		return false, nil
+		return ErrOfferAlreadySold
 	}
 	if !offer.IsAuctionOffer() {
-		return true, nil
+		return nil
 	}
 	hasBids, err := e.hasBids(offer)
 	if err != nil {
-		return false, err
+		return err
 	}
-	return !hasBids, nil
+	if hasBids {
+		return ErrOfferHasBids
+	}
+	return nil
 }
 
-func (e *OfferAccessEvaluator) IsOfferLikedByUser(offer SaleOfferEntityInterface, userID *uint) bool {
+func (e *OfferAccessEvaluator) IsOfferLikedByUser(offer SaleOfferEntityInterface, userID *uint) error {
 	if userID == nil {
-		return false
+		return ErrOfferNotOwned
 	}
 	return e.likedChecker.IsOfferLikedByUser(offer.GetID(), *userID)
 }
