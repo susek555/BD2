@@ -4,14 +4,17 @@ import { BasePriceButton } from "@/app/ui/offer/[id]/price-buttons/base-price-bu
 import Link from "next/link";
 import { useState } from "react";
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/20/solid";
-import { deleteListing } from "@/app/lib/api/listing/requests";
+import { deleteListingAction } from "@/app/actions/listing-actions";
+import { permanentRedirect } from "next/navigation";
 
 export default function OwnerView({ can_edit, can_delete, offer_id, isAuction }: { can_edit: boolean, can_delete: boolean, offer_id: string, isAuction: boolean }) {
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
     async function handleDelete() {
         console.log("Delete offer with ID:", offer_id);
-        await deleteListing(offer_id);
+        await deleteListingAction(offer_id);
+        alert("Offer deleted successfully. Now you will be redirected to your listings page.");
+        permanentRedirect("/account/listings");
         setShowDeleteConfirm(false);
     }
 
