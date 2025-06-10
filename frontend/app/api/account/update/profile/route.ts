@@ -4,6 +4,8 @@ import snakecaseKeys from 'snakecase-keys';
 
 export async function PUT(request: NextRequest) {
   const userProfile = snakecaseKeys(await request.json());
+  console.log(userProfile);
+
   const response = await fetchWithRefresh(`${process.env.API_URL}/users`, {
     method: 'PUT',
     headers: {

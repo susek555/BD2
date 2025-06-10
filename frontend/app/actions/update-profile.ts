@@ -27,8 +27,9 @@ export async function updateProfile(
     };
   }
   const updateResult: AccountFieldValidationResult = await changePersonalData({
-    id,
     ...validatedFields.data,
+    // @ts-ignore
+    id,
   });
 
   if (updateResult.errors) {
@@ -44,9 +45,10 @@ export async function updateProfile(
     };
   } else {
     const updatedUserProfile: UserProfile = {
-      id,
+      userId: id,
       ...camelcaseKeys(validatedFields.data, { deep: true }),
     };
+
     return { state: {}, newUserData: updatedUserProfile };
   }
 }

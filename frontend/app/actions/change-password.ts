@@ -21,7 +21,6 @@ export async function changePasswordAction(
   }
 
   const response = await changePassword({
-    id,
     currentPassword: validatedFields.data.current_password,
     newPassword: validatedFields.data.new_password,
   });
