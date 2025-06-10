@@ -74,7 +74,6 @@ func setupDB() (*gorm.DB, error) {
 func getRepositoryWithSaleOffers(db *gorm.DB, offers []models.SaleOffer) sale_offer.SaleOfferRepositoryInterface {
 	repo := sale_offer.NewSaleOfferRepository(db)
 	for _, offer := range offers {
-		offer.Status = enums.PUBLISHED
 		repo.Create(&offer)
 	}
 	return repo
@@ -219,10 +218,6 @@ func createSaleOfferDTO() *sale_offer.CreateSaleOfferDTO {
 		ManufacturerName:   "Audi",
 		ModelName:          "A3",
 	}
-}
-
-func setOffersStatusToPublished(db *gorm.DB) {
-	db.Model(&models.SaleOffer{}).Update("status", enums.PUBLISHED)
 }
 
 func wasEntityAddedToDB[T any](db *gorm.DB, id uint) bool {
