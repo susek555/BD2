@@ -13,7 +13,7 @@ Damian D'Souza | Kamil Marszałek | Michał Suski | Michał Szwejk | Piotr Szkod
 8. Opracowanie, wdrożenie i optymalizacja modelu fizycznego ✅
 9. Opracowanie scenariuszy i danych testowych ✅
 10. Opracowanie dokumentacji analityczno-projektowej (w szczególności diagramów modeli danych z opisami) ✅
-11. Opracowanie dokumentacji użytkowej aplikacji ❔
+11. Opracowanie dokumentacji użytkowej aplikacji ✅
 
 ## Spis Treści
 1. [Przegląd Systemu](#przegląd-systemu)
@@ -104,11 +104,11 @@ Aplikacja ta umożliwia użytkownikom rejestrację, tworzenie i zarządzanie ofe
 Baza danych zaprojektowana z wykorzystaniem PostgreSQL, z uwzględnieniem zasad normalizacji i integralności danych.
 
 ### **Model Pojęciowy**
-![er.png](er.png)
+![er.png](images/er.png)
 
 ### **Model Relacyjny**
 
-![relational.png](relational.png)
+![relational.png](images/relational.png)
 
 ### **Struktura Plików Bazy Danych**
 
