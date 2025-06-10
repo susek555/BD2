@@ -24,6 +24,7 @@ type Scheduler struct {
 //go:generate mockery --name=SchedulerInterface --output=../../test/mocks --case=snake --with-expecter
 type SchedulerInterface interface {
 	AddAuction(auctionID string, end time.Time)
+	ModifyAuction(auctionID string, end time.Time)
 	Run(ctx context.Context)
 	LoadAuctions() error
 	ForceCloseAuction(auctionID string, buyerID uint, amount uint)
@@ -87,6 +88,19 @@ func (s *Scheduler) AddAuction(auctionID string, endAt time.Time) {
 	}
 }
 
+func (s *Scheduler) ModifyAuction(auctionID string, endAt time.Time) {
+	id, _ := strconv.Atoi(auctionID)
+	s.eventsCh <- AuctionEvent{
+		Kind: EventModifyTimer,
+		At:   endAt,
+		Cmd: CloseCmd{
+			AuctionID: uint(id),
+			Reason:    ReasonTimer,
+		},
+	}
+	log.Printf("scheduler: modified auction %s to end at %s", auctionID, endAt)
+}
+
 func (s *Scheduler) Run(ctx context.Context) {
 	var timer *time.Timer = time.NewTimer(time.Hour * 24 * 365)
 
@@ -117,6 +131,16 @@ func (s *Scheduler) Run(ctx context.Context) {
 			case EventForceClose:
 				s.removeFromHeap(strconv.Itoa(int(ev.Cmd.AuctionID)))
 				s.closer.CloseAuction(ev.Cmd)
+
+			case EventModifyTimer:
+				s.removeFromHeap(strconv.Itoa(int(ev.Cmd.AuctionID)))
+				s.mu.Lock()
+				heap.Push(&s.heap, &Item{
+					AuctionID: strconv.Itoa(int(ev.Cmd.AuctionID)),
+					EndAt:     ev.At,
+				})
+				s.mu.Unlock()
+				log.Printf("scheduler: modified auction %v to end at %s", ev.Cmd.AuctionID, ev.At)
 			}
 
 		case <-timer.C:
