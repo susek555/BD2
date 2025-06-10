@@ -35,7 +35,6 @@ services:
       timeout: 5s
       retries: 5
     restart: unless-stopped
-
   backend:
     build:
       context: ./backend
@@ -43,6 +42,9 @@ services:
     container_name: bd2-backend
     env_file:
       - ./backend/.env
+    environment:
+      - DATABASE_URL=host=postgres user=bd2_user password=bd2_password dbname=bd2_database port=5432 sslmode=disable TimeZone=UTC
+      - REDIS_ADDR=redis:6379
     ports:
       - "8080:8080"
     depends_on:
@@ -50,6 +52,23 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: bd2-frontend
+    environment:
+      - API_URL=http://backend:8080
+      - NEXT_PUBLIC_API_URL=http://localhost:8080
+      - NEXTAUTH_URL=http://localhost:3000
+      - NEXTAUTH_SECRET=secret-here
+      - NODE_ENV=production
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
     restart: unless-stopped
 
 volumes:

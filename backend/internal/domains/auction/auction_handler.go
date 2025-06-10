@@ -9,12 +9,15 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/auth"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/notification"
+	"github.com/susek555/BD2/car-dealer-api/internal/domains/sale_offer"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/scheduler"
 	"github.com/susek555/BD2/car-dealer-api/internal/domains/ws"
 	"github.com/susek555/BD2/car-dealer-api/internal/models"
 	"github.com/susek555/BD2/car-dealer-api/pkg/custom_errors"
 	"github.com/susek555/BD2/car-dealer-api/pkg/formats"
 )
+
+type RetrieveDetailedSaleOfferDTO = sale_offer.RetrieveDetailedSaleOfferDTO
 
 type Handler struct {
 	service             AuctionServiceInterface
@@ -40,7 +43,7 @@ func NewHandler(service AuctionServiceInterface, sched scheduler.SchedulerInterf
 //	@Accept			json
 //	@Produce		json
 //	@Param			body	body		CreateAuctionDTO				true	"Auction details"
-//	@Success		201		{object}	sale_offer.RetrieveSaleOfferDTO	"Created auction"
+//	@Success		201		{object}	RetrieveDetailedSaleOfferDTO	"Created auction"
 //	@Failure		400		{object}	custom_errors.HTTPError			"Bad request"
 //	@Failure		401		{object}	custom_errors.HTTPError			"Unauthorized"
 //	@Router			/auction [post]
@@ -92,7 +95,7 @@ func (h *Handler) CreateAuction(c *gin.Context) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			body	body		UpdateAuctionDTO				true	"Auction details"
-//	@Success		200		{object}	sale_offer.RetrieveSaleOfferDTO	"Updated auction"
+//	@Success		200		{object}	RetrieveDetailedSaleOfferDTO	"Updated auction"
 //	@Failure		400		{object}	custom_errors.HTTPError			"Bad request"
 //	@Failure		401		{object}	custom_errors.HTTPError			"Unauthorized"
 //	@Router			/auction [put]
