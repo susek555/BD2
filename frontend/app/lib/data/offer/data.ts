@@ -84,8 +84,8 @@ export async function fetchOfferDetails(
       value: fetchedData.date_of_issue
       }
       ],
-      sellerName: await getSellerName(fetchedData.user_id),
-      sellerId: fetchedData.user_id,
+      sellerName: await getSellerName(fetchedData.seller_id),
+      sellerId: fetchedData.seller_id,
       is_favourite: fetchedData.is_liked,
       can_delete: fetchedData.can_modify,
       can_edit: fetchedData.can_modify,
