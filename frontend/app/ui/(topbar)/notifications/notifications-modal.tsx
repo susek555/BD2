@@ -51,6 +51,7 @@ export default function NotificationsModal({
                   You don&apos;t have any notifications
                 </div>
               )}
+              {notifications && notifications.length > 0 && (
               <div className="p-4 border-t border-gray-200">
                 <a
                   href="/account/notifications"
@@ -59,6 +60,7 @@ export default function NotificationsModal({
                   See more notifications
                 </a>
               </div>
+              )}
             </div>
 
             <Dialog.Close asChild>
