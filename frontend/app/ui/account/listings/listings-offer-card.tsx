@@ -37,7 +37,11 @@ export default function SingleListingsOffer({ offer }: { offer: BaseOffer }) {
     <div className='flex space-x-2 pr-4'>
       <button
         disabled={!offer.can_modify}
-        className='rounded-md bg-blue-600 px-3 py-1 text-sm font-medium text-white transition-colors hover:bg-blue-700'
+        className={`rounded-md px-3 py-1 text-sm font-medium text-white transition-colors ${
+          offer.can_modify
+            ? 'bg-blue-600 hover:bg-blue-700'
+            : 'cursor-not-allowed bg-gray-400'
+        }`}
         onClick={(e) => {
           e.stopPropagation();
           e.preventDefault();
@@ -47,7 +51,12 @@ export default function SingleListingsOffer({ offer }: { offer: BaseOffer }) {
         <PencilIcon className='h-5 w-5' />
       </button>
       <button
-        className='rounded-md bg-red-600 px-3 py-1 text-sm font-medium text-white transition-colors hover:bg-red-700'
+        disabled={!offer.can_modify}
+        className={`rounded-md px-3 py-1 text-sm font-medium text-white transition-colors ${
+          offer.can_modify
+            ? 'bg-red-600 hover:bg-red-700'
+            : 'cursor-not-allowed bg-gray-400'
+        }`}
         onClick={(e) => {
           e.stopPropagation();
           e.preventDefault();
