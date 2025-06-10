@@ -42,12 +42,12 @@ func InitializeServices() {
 	}
 	AuthService = auth.NewAuthService(UserRepo, RefreshTokenService, []byte(secret))
 	CarService = car.NewCarService(ManufacturerRepo, ModelRepo)
-	ImageService = image.NewImageService(ImageRepo, ImageBucket, SaleOfferRepo)
 	ManufacturerService = manufacturer.NewManufacturerService(ManufacturerRepo)
 	ModelService = model.NewModelService(ModelRepo)
 	NotificationService = notification.NewNotificationService(NotificationRepo, ClientNotificationRepo)
 	ReviewService = review.NewReviewService(ReviewRepo)
 	AccessEvaluator = sale_offer.NewAccessEvaluator(BidRepo, LikedOfferRepo)
+	ImageService = image.NewImageService(ImageRepo, ImageBucket, SaleOfferRepo, AccessEvaluator)
 	SaleOfferService = sale_offer.NewSaleOfferService(SaleOfferRepo, ManufacturerRepo, ModelRepo, ImageRepo, ImageBucket, AccessEvaluator, PurchaseRepo)
 	AuctionService = auction.NewAuctionService(SaleOfferRepo, SaleOfferService, PurchaseRepo)
 	BidService = bid.NewBidService(BidRepo, bid.SaleOfferAdapter{Svc: SaleOfferService}, AuctionService)
