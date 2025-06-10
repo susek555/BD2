@@ -66,6 +66,7 @@ services:
       - NEXTAUTH_SECRET=secret-here
       - NODE_ENV=production
       - URL=http://localhost:3000
+      - NOTIFICATIONS_SOCKET_URL=ws://backend:8080
     ports:
       - "3000:3000"
     depends_on:
