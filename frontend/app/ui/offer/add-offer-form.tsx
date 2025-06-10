@@ -30,7 +30,7 @@ export function OfferForm(
         setImagesURLsToBeDeleted(prev => [...prev, url]);
     };
 
-    const offerWrapper = (state: OfferFormState, formData: FormData) => {
+    const offerWrapper = async (state: OfferFormState, formData: FormData) => {
             const progressState = formData.get('progressState') ? parseInt(formData.get('progressState') as string) : parseInt(OfferFormEnum.initialState.toString());
             formData.delete('progressState');
 
@@ -46,16 +46,27 @@ export function OfferForm(
 
 
             // Otherwise call the API action with validated data
-            if (apiAction === offerActionEnum.ADD_OFFER) {
-                return addOffer(offerFormState);
-            } else {
-                const url = window.location.pathname;
-                const pathSegments = url.split('/');
-                const offerId = pathSegments[2];
-                if (!offerId) {
-                    throw new Error('Offer ID is required for editing');
+            try{
+                if (apiAction === offerActionEnum.ADD_OFFER) {
+                    return await addOffer(offerFormState);
+                } else {
+                    const url = window.location.pathname;
+                    const pathSegments = url.split('/');
+                    const offerId = pathSegments[2];
+                    if (!offerId) {
+                        throw new Error('Offer ID is required for editing');
+                    }
+                    return await editOffer(offerId, offerFormState, imagesURLsToBeDeleted);
                 }
-                return editOffer(offerId, offerFormState, imagesURLsToBeDeleted);
+            } catch (error) {
+                console.error("API Error:", error);
+                return {
+                    ...offerFormState,
+                    errors: {
+                        ...offerFormState.errors,
+                        upload_offer: ["Operation failed: " + (error instanceof Error ? error.message : String(error))]
+                    }
+                };
             }
     };
 
@@ -69,6 +80,7 @@ export function OfferForm(
         if (typeof state.values?.is_auction === "boolean") {
             setIsAuction(state.values.is_auction);
         }
+        setCurrentlyUploading(false);
 
         console.log("State errors:", state.errors);
         console.log("State values:", state.values);
@@ -95,7 +107,11 @@ export function OfferForm(
         setIsAuction(isAuction);
     };
 
+    const [currentlyUploading, setCurrentlyUploading] = React.useState<boolean>(false);
+
     const handleSubmit = (formData: FormData) => {
+        setCurrentlyUploading(true);
+
         console.log("Called handleSubmit");
 
         // formData.append("isAuction", liveState.values?.isAuction == null ? "false" : liveState.values.isAuction.toString());
@@ -351,7 +367,7 @@ export function OfferForm(
                             value={producer}
                             onChange={e => {
                                 handleProducerChange(e.target.value);
-                                setProducer(e.target.value); // Aktualizuj lokalny stan
+                                setProducer(e.target.value);
                             } }
                         >
                             <option value="" disabled>Select a producer...</option>
@@ -535,10 +551,30 @@ export function OfferForm(
                         </div>
 
                         <button type="button" className="bg-blue-600 text-white rounded p-2" onClick={() => setProgressState(OfferFormEnum.pricingPart)}>Back to Pricing</button>
-                        <button type="submit" className="bg-blue-600 text-white rounded p-2">Submit Offer</button>
+                        <button type="submit" className={`bg-blue-600 text-white rounded p-2`} onClick={() => setCurrentlyUploading(true)}>Submit Offer</button>
                     </>
                 </div>
             </form>
+            {/* Currently uploading */}
+            <div className={`fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50 ${currentlyUploading ? "block" : "hidden"}`}>
+                <div
+                    className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full"
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <div className="flex items-center justify-center mb-4">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-16 w-16 text-blue-500 animate-spin"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                        >
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2.93 6.364A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3.93-1.574z"></path>
+                        </svg>
+                    </div>
+                    <p className="text-lg text-gray-700 text-center">Uploading your offer...</p>
+                </div>
+            </div>
             {/* Upload Results */}
             <div className={`rounded-lg bg-gray-50 px-6 pb-4 pt-8 flex flex-col gap-4 ${progressState === OfferFormEnum.readyToApi ? "block" : "hidden"}`}>
                     <>
