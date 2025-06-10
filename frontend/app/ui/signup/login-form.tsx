@@ -64,7 +64,7 @@ export default function LoginForm({
             id='login'
             name='login'
             label='Login'
-            placeholder='Enter your email address or username'
+            placeholder='Enter your email address'
             defaultValue=''
             icon={AtSymbolIcon}
             errors={[]}
