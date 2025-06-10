@@ -23,7 +23,7 @@ export default function ChangePasswordForm({
     state: ChangePasswordFormState,
     formData: FormData,
   ) => {
-    return changePasswordAction(state, formData, userProfile.id);
+    return changePasswordAction(state, formData, userProfile.userId);
   };
 
   const [state, action] = useActionState(wrappedChangePassword, initialState);
