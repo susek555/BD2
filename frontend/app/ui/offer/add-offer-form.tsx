@@ -402,45 +402,55 @@ export function OfferForm(
                 {/* Pricing Part */}
                 <div className={`rounded-lg bg-gray-50 px-6 pb-4 pt-8 flex flex-col gap-4 ${progressState === OfferFormEnum.pricingPart ? "block" : "hidden"}`}>
                     <>
-                        <label htmlFor="offer type" className="text-lg font-semibold">
-                            Offer Type
-                        </label>
-                        <div className="flex gap-8">
-                            <div className="flex items-center">
-                                <input
-                                    id="standard offer"
-                                    type="radio"
-                                    name="is_auction"
-                                    value="false"
-                                    checked={is_auction === false}
-                                    onChange={() => changeOfferType(false)}
-                                    className="h-4 w-4 text-blue-500 focus:ring-blue-400" />
-                                <label htmlFor="standard offer" className="ml-2 text-sm font-medium text-gray-900">
-                                    Standard offer
+                        { apiAction === offerActionEnum.ADD_OFFER ? (
+                            <>
+                                <label htmlFor="offer type" className="text-lg font-semibold">
+                                    Offer Type
                                 </label>
-                            </div>
-                            <div className="flex items-center">
-                                <input
-                                    id="auction"
-                                    type="radio"
-                                    name="is_auction"
-                                    value="true"
-                                    checked={is_auction === true}
-                                    onChange={() => changeOfferType(true)}
-                                    className="h-4 w-4 text-blue-500 focus:ring-blue-400" />
-                                <label htmlFor="auction" className="ml-2 text-sm font-medium text-gray-900">
-                                    Auction
-                                </label>
-                            </div>
-                        </div>
-                        <div id="username-error" aria-live="polite" aria-atomic="true">
-                            {state?.errors?.is_auction &&
-                                state.errors.is_auction.map((error: string) => (
-                                    <p className="mt-2 text-sm text-red-500" key={error}>
-                                        {error}
-                                    </p>
-                                ))}
-                        </div>
+                                <div className="flex gap-8">
+                                    <div className="flex items-center">
+                                        <input
+                                            id="standard offer"
+                                            type="radio"
+                                            name="is_auction"
+                                            value="false"
+                                            checked={is_auction === false}
+                                            onChange={() => changeOfferType(false)}
+                                            className="h-4 w-4 text-blue-500 focus:ring-blue-400" />
+                                        <label htmlFor="standard offer" className="ml-2 text-sm font-medium text-gray-900">
+                                            Standard offer
+                                        </label>
+                                    </div>
+                                    <div className="flex items-center">
+                                        <input
+                                            id="auction"
+                                            type="radio"
+                                            name="is_auction"
+                                            value="true"
+                                            checked={is_auction === true}
+                                            onChange={() => changeOfferType(true)}
+                                            className="h-4 w-4 text-blue-500 focus:ring-blue-400" />
+                                        <label htmlFor="auction" className="ml-2 text-sm font-medium text-gray-900">
+                                            Auction
+                                        </label>
+                                    </div>
+                                </div>
+                                <div id="username-error" aria-live="polite" aria-atomic="true">
+                                    {state?.errors?.is_auction &&
+                                        state.errors.is_auction.map((error: string) => (
+                                            <p className="mt-2 text-sm text-red-500" key={error}>
+                                                {error}
+                                            </p>
+                                        ))}
+                                </div>
+                                </>
+                        ) : (
+                            <input
+                                type="hidden"
+                                name="is_auction"
+                                value={is_auction.toString()}
+                            />
+                        )}
                         <NumberInputField id="price" name="Price" />
                         <SelectionLabel id="margin" name="Margin ( % )" options={["3", "5", "10"]} required={progressState >= OfferFormEnum.pricingPart} />
                         <div className="flex items-center gap-2">
