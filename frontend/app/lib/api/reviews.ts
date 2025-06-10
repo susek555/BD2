@@ -14,22 +14,22 @@ export async function updateReview(review: UpdatedReview) {
     throw new Error('Failed to update review');
   }
 
-  return response.json();
+  return response;
 }
 
 export async function deleteReview(id: number) {
-  const response = await fetch(`/api/reviews/${id}`, {
+  const url = getApiUrl(`/api/reviews/${id}`);
+  const response = await fetch(url, {
     method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-    },
   });
+
+  console.log(response);
 
   if (!response.ok) {
     throw new Error('Failed to delete review');
   }
 
-  return response.json();
+  return response;
 }
 
 export async function addReview(review: NewReview) {
@@ -38,14 +38,18 @@ export async function addReview(review: NewReview) {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(review),
+    body: JSON.stringify({
+      reviewee_id: review.revieweeId,
+      description: review.description,
+      rating: review.rating,
+    }),
   });
 
   if (!response.ok) {
     throw new Error('Failed to create review');
   }
 
-  return response.json();
+  return response;
 }
 
 export async function getReviewByRevieweeReviewer(
@@ -68,6 +72,8 @@ export async function getReviewByRevieweeReviewer(
   }
 
   const responseJson = await response.json();
+
+  console.log(responseJson);
 
   if ('error_description' in responseJson) return null;
 
