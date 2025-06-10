@@ -26,7 +26,7 @@ export const OfferDetailsFormSchema = z.object({
   number_of_doors: z
     .number()
     .min(1, { message: 'Number of doors must be greater than or equal to 0' })
-    .max(6, { message: 'Number of doors must be less than or equal to 100' }),
+    .max(6, { message: 'Number of doors must be less than or equal to 6' }),
   number_of_seats: z
     .number()
     .min(2, { message: 'Number of seats must be greater than or equal to 1' })
@@ -34,11 +34,11 @@ export const OfferDetailsFormSchema = z.object({
   number_of_gears: z
     .number()
     .min(1, { message: 'Number of gears must be greater than or equal to 0' })
-    .max(10, { message: 'Number of gears must be less than or equal to 100' }),
+    .max(10, { message: 'Number of gears must be less than or equal to 10' }),
   engine_power: z
     .number()
     .min(0, { message: 'Power must be greater than or equal to 0' })
-    .max(9_999, { message: 'Power must be less than or equal to 1,000' }),
+    .max(9_999, { message: 'Power must be less than or equal to 9,999' }),
   registration_date: z
     .string()
     .refine((date) => {
@@ -53,7 +53,7 @@ export const OfferDetailsFormSchema = z.object({
   engine_capacity: z
     .number()
     .min(0, { message: 'Engine displacement must be greater than or equal to 0' })
-    .max(9_000, { message: 'Engine displacement must be less than or equal to 10,000' }),
+    .max(9_000, { message: 'Engine displacement must be less than or equal to 9,000' }),
   vin: z
     .string()
     .min(17, { message: 'VIN must be 17 characters long' })
