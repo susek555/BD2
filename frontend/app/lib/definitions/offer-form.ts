@@ -255,8 +255,8 @@ export const CombinedImagesOfferFormSchema = (minImages: number = 3) => z
 
 export function editFormWrapper(offer: SaleOfferDetails) : Partial<OfferFormState['values']> {
   return {
-    manufacturer: offer.name.split(' ')[0],
-    model: offer.name,
+    manufacturer: offer.manufacturer,
+    model: offer.name.replace(offer.manufacturer + ' ', ''),
     color: offer.details.find(detail => detail.name === 'Color')?.value || '',
     fuel_type: offer.details.find(detail => detail.name === 'Fuel Type')?.value || '',
     transmission: offer.details.find(detail => detail.name === 'Transmission')?.value || '',

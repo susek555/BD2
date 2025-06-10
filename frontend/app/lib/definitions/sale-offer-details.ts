@@ -1,4 +1,5 @@
 export type SaleOfferDetails = {
+  manufacturer: string; // producer
   id: number;
   name: string; // producer and model
   price?: number;

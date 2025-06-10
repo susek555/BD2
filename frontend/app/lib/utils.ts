@@ -78,11 +78,10 @@ export const parseOfferForm = (
 
     if (progressState === OfferFormEnum.imagesPart) {
       // convert model from "producer model" to "model"
+      console.log("Previous model:", validatedFields.data.model);
+      console.log("Manufacturer:", validatedFields.data.manufacturer);
       if ('model' in validatedFields.data) {
-          const firstSpaceIndex = validatedFields.data.model!.indexOf(' ');
-          if (firstSpaceIndex !== -1) {
-              validatedFields.data.model! = validatedFields.data.model!.substring(firstSpaceIndex + 1);
-          }
+          validatedFields.data.model! = validatedFields.data.model!.replace(validatedFields.data.manufacturer, '').trim();
       console.log("Sanitized model:", validatedFields.data.model);
       }
     }

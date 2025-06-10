@@ -15,6 +15,7 @@ export async function fetchOfferDetails(
     return null;
   } else {
     const data: SaleOfferDetails = {
+      manufacturer: fetchedData.brand,
       id: fetchedData.id,
       name: `${fetchedData.brand} ${fetchedData.model}`,
       price: fetchedData.is_auction ? fetchedData.buy_now_price || null : fetchedData.price,
@@ -90,7 +91,7 @@ export async function fetchOfferDetails(
       can_delete: fetchedData.can_modify,
       can_edit: fetchedData.can_modify,
       auctionData: fetchedData.is_auction ? {
-      endDate: new Date(new Date(fetchedData.date_end).getTime() - 2 * 60 * 60 * 1000),
+      endDate: new Date(new Date(fetchedData.date_end).getTime()),
       currentBid: fetchedData.price || 0,
       } : undefined,
       margin: fetchedData.margin || 0,

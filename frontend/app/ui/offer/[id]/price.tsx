@@ -55,7 +55,7 @@ export default function Price({ data, loggedIn }: { data: PriceData, loggedIn: b
                 isAuction ? (
                     <div className="flex justify-center items-center flex-col h-full gap-8">
                         <div className="flex flex-row gap-20">
-                            <TimeLeft endDate={new Date(new Date(auction!.endDate).getTime() + 2 * 60 * 60 * 1000)}/>
+                            <TimeLeft endDate={new Date(new Date(auction!.endDate).getTime())}/>
                             <div className="flex flex-col gap-2 justify-center items-center">
                                 <p className="text-2xl">Current bid</p>
                                 <p className="font-bold text-2xl">{auction!.currentBid.toString()} PLN</p>

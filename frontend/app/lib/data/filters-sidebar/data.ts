@@ -10,7 +10,7 @@ export async function fetchOfferTypes() : Promise<string[]> {
     let data = await getOfferTypes();
 
     data = ["All", ...data];
-    console.log("Offer types data: ", data);
+    // console.log("Offer types data: ", data);
 
     return data;
 }
@@ -30,7 +30,7 @@ export async function fetchSortingOptions() : Promise<string[]> {
 async function fetchGearboxes() : Promise<string[]> {
     const data = await getTransmissions();
 
-    console.log("Gearboxes data: ", data);
+    // console.log("Gearboxes data: ", data);
 
     return data;
 }
@@ -38,7 +38,7 @@ async function fetchGearboxes() : Promise<string[]> {
 async function fetchFuelTypes() : Promise<string[]> {
     const data = await getFuelTypes();
 
-    console.log("Fuel types data: ", data);
+    // console.log("Fuel types data: ", data);
 
   return data;
 }
@@ -46,7 +46,7 @@ async function fetchFuelTypes() : Promise<string[]> {
 async function fetchColors() : Promise<string[]> {
     const data = await getColors();
 
-    console.log("Colors data: ", data);
+    // console.log("Colors data: ", data);
 
     return data;
 }
@@ -54,7 +54,7 @@ async function fetchColors() : Promise<string[]> {
 async function fetchDriveTypes() : Promise<string[]> {
     const data = await getDrives();
 
-    console.log("Drive types data: ", data);
+    // console.log("Drive types data: ", data);
 
     return data;
 }
@@ -64,7 +64,7 @@ async function fetchDriveTypes() : Promise<string[]> {
 export async function fetchProducersAndModels() : Promise<ModelFieldData> {
     const receivedData = await getProducersAndModels();
 
-    console.log("Producers and models data: ", receivedData);
+    // console.log("Producers and models data: ", receivedData);
 
     type ProducersAndModelsResponse = {
         producers: string[];

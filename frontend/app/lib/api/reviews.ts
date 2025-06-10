@@ -1,4 +1,5 @@
 import { NewReview, Review, UpdatedReview } from '../definitions/reviews';
+import { getApiUrl } from '../get-api-url';
 
 export async function updateReview(review: UpdatedReview) {
   const response = await fetch(`/api/reviews`, {
@@ -55,9 +56,8 @@ export async function getReviewByRevieweeReviewer(
     `fetching review with revieweeId: ${revieweeId} and reviewerId: ${reviewerId}`,
   );
 
-  const response = await fetch(
-    `/api/reviews/reviewee/${revieweeId}/reviewer/${reviewerId}`,
-  );
+  const url = getApiUrl(`/api/reviews/reviewee/${revieweeId}/reviewer/${reviewerId}`);
+  const response = await fetch(url);
 
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
